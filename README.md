@@ -6,5 +6,5 @@ author: <https://atcoder.jp/users/nsubaru>
 
 |class|備考|
 |-|-|
-|[FastPrinter](./FastPrinter.java)|従来の方式とは異なり、内部ですべての出力をStringBuilderで溜め、flush()メソッドでまとめて出力します。また配列やリストの出力なども可能となっています。|
+|[FastPrinter](./FastPrinter.java)|従来の方式とは異なり、内部ですべての出力をStringBuilderに溜め、flush()メソッドでまとめて出力します。また配列やリストの出力なども可能となっています。|
 |[FastScanner](./FastScanner.java)|配列での入力に加え、様々な方式での入力を提供します。|
