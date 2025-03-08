@@ -6,5 +6,5 @@ author: <https://atcoder.jp/users/nsubaru>
 
 |class|備考|
 |-|-|
-|[FastPrinter](./FastPrinter.java)|従来の方式とは異なり、内部ですべての出力をStringBuilderに溜め、flush()メソッドでまとめて出力します。また配列やリストの出力なども可能となっています。|
-|[FastScanner](./FastScanner.java)|配列での入力に加え、様々な方式での入力を提供します。|
+|[FastPrinter](./FastPrinter.java)|標準出力を高速に処理するためのクラスです。実装は内部バッファに出力内容をため込み、満杯になったタイミングで出力内容を表示させます。処理の途中で出力内容をすぐ反映させる場合は、明示的に flush() をy日出す必要があります。また処理の最後にもflush()をする必要があります。|
+|[FastScanner](./FastScanner.java)|標準入力を管理するクラスです。配列の入力に加え、様々な方式での入力を提供します。（ArrayList, HashSet, マルチセット）|
