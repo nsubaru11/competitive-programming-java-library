@@ -221,3 +221,41 @@ ContestPrinter output test.
 8
 10
 ```
+
+### AbstractBinarySearch
+
+- **用途**  
+  - 整数および長整数に対して、通常の二分探索、上限探索（Upper Bound）、下限探索（Lower Bound）を行うための抽象クラス
+- **特徴**  
+  - ユーザーは抽象メソッド `comparator(long n)` を実装することで、任意の探索条件を定義可能  
+  - 通常探索（`normalSearch`）では、条件に一致する任意の値が見つかった時点で探索を終了する  
+  - 上限探索（`upperBoundSearch`）では、条件に一致する範囲のうち最大のインデックスを返す（条件に合致する最後の値の位置）  
+  - 下限探索（`lowerBoundSearch`）では、条件に一致する範囲のうち最小のインデックスを返す（条件に合致する最初の値の位置）  
+  - 探索に失敗した場合、戻り値は「~挿入位置（ビット反転、すなわち -(挿入位置) - 1)」となる
+
+#### 使用例
+
+以下は、ソート済みの整数配列から特定の値（target）を探索する例です。  
+※実際の使用には、対象となるデータ構造や条件に合わせて `comparator(long n)` を実装してください。
+```java
+int target = 7;
+int[] intArray = {1, 2, 4, 7, 7, 8, 20};
+AbstractBinarySearch binarySearch = new AbstractBinarySearch() {
+    @Override
+    protected int comparator(long l) {
+        return Integer.compare(intArray[(int) l], target);
+    }
+};
+int normal = binarySearch.normalSearch(0, intArray.length);
+int upper = binarySearch.upperBoundSearch(0, intArray.length);
+int lower = binarySearch.lowerBoundSearch(0, intArray.length);
+System.out.println(normal);
+System.out.println(lower);
+System.out.println(upper);
+```
+【出力例】
+```
+3
+3
+4
+```
