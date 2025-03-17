@@ -9,22 +9,22 @@ abstract class AbstractBinarySearch {
 	 * 整数範囲での通常の二分探索を行います。comparatorが0を返した時点で探索を終了します。
 	 * 
 	 * @param l 下限値 (この数を含む)
-	 * @param r 上限値 (この数を含む)
-	 * @return int
+	 * @param r 上限値 (この数を含まない)
+	 * @return 条件にちょうど当てはまる整数。
 	 */
 	public final int normalSearch(int l, int r) {
-		return binarySearch(l, r, SearchType.NORMAL);
+		return binarySearch(l, r - 1, SearchType.NORMAL);
 	}
 
 	/**
 	 * 長整数範囲での通常の二分探索を行います。comparatorが0を返した時点で探索を終了します。
 	 * 
 	 * @param l 下限値 (この数を含む)
-	 * @param r 上限値 (この数を含む)
-	 * @return long
+	 * @param r 上限値 (この数を含まない)
+	 * @return 条件にちょうど当てはまる整数。
 	 */
 	public final long normalSearch(long l, long r) {
-		return binarySearch(l, r, SearchType.NORMAL);
+		return binarySearch(l, r - 1, SearchType.NORMAL);
 	}
 
 	/**
@@ -32,11 +32,11 @@ abstract class AbstractBinarySearch {
 	 * comparatorが0を返した際、その値を記憶します。
 	 * 
 	 * @param l 下限値 (この数を含む)
-	 * @param r 上限値 (この数を含む)
+	 * @param r 上限値 (この数を含まない)
 	 * @return 条件にちょうど当てはまる整数。もしくは上限値+1(挿入位置)。
 	 */
 	public final int upperBoundSearch(int l, int r) {
-		return binarySearch(l, r, SearchType.UPPER_BOUND);
+		return binarySearch(l, r - 1, SearchType.UPPER_BOUND);
 	}
 
 	/**
@@ -44,11 +44,11 @@ abstract class AbstractBinarySearch {
 	 * comparatorが0を返した際、その値を記憶します。
 	 * 
 	 * @param l 下限値 (この数を含む)
-	 * @param r 上限値 (この数を含む)
+	 * @param r 上限値 (この数を含まない)
 	 * @return 条件にちょうど当てはまる長整数。もしくは上限値+1(挿入位置)。
 	 */
 	public final long upperBoundSearch(long l, long r) {
-		return binarySearch(l, r, SearchType.UPPER_BOUND);
+		return binarySearch(l, r - 1, SearchType.UPPER_BOUND);
 	}
 
 	/**
@@ -56,11 +56,11 @@ abstract class AbstractBinarySearch {
 	 * comparatorが0を返した際、その値を記憶します。
 	 * 
 	 * @param l 下限値 (この数を含む)
-	 * @param r 上限値 (この数を含む)
+	 * @param r 上限値 (この数を含まない)
 	 * @return 条件にちょうど当てはまる整数。もしくは下限値-1(挿入位置)。
 	 */
 	public final int lowerBoundSearch(int l, int r) {
-		return binarySearch(l, r, SearchType.LOWER_BOUND);
+		return binarySearch(l, r - 1, SearchType.LOWER_BOUND);
 	}
 
 	/**
@@ -68,11 +68,11 @@ abstract class AbstractBinarySearch {
 	 * comparatorが0を返した際、その値を記憶します。
 	 * 
 	 * @param l 下限値 (この数を含む)
-	 * @param r 上限値 (この数を含む)
+	 * @param r 上限値 (この数を含まない)
 	 * @return 条件にちょうど当てはまる長整数。もしくは下限値-1(挿入位置)。
 	 */
 	public final long lowerBoundSearch(long l, long r) {
-		return binarySearch(l, r, SearchType.LOWER_BOUND);
+		return binarySearch(l, r - 1, SearchType.LOWER_BOUND);
 	}
 
 	/**
