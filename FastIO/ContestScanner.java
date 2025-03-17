@@ -1,3 +1,4 @@
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -10,6 +11,47 @@ import static java.util.Arrays.sort;
  */
 @SuppressWarnings("unused")
 public final class ContestScanner extends FastScanner {
+
+//  ---------------------- コンストラクタ ----------------------
+
+	/**
+	 * デフォルトの設定でContestScannerを初期化します。<br>
+	 * バッファ容量: 65536 <br>
+	 * InputStream: System.in <br>
+	 */
+	public ContestScanner() {
+		super();
+	}
+
+	/**
+	 * 指定されたInputStreamを用いてContestScannerを初期化します。<br>
+	 * バッファ容量: 65536 <br>
+	 *
+	 * @param in 入力元の InputStream
+	 */
+	public ContestScanner(InputStream in) {
+		super(in);
+	}
+
+	/**
+	 * 指定されたバッファ容量でContestScannerを初期化します。<br>
+	 * InputStream: System.in <br>
+	 *
+	 * @param bufferSize 内部バッファの容量（文字単位）
+	 */
+	public ContestScanner(int bufferSize) {
+		super(bufferSize);
+	}
+
+	/**
+	 * 指定されたバッファ容量とInputStreamでContestScannerを初期化します。<br>
+	 *
+	 * @param in         入力元の InputStream
+	 * @param bufferSize 内部バッファの容量（文字単位）
+	 */
+	public ContestScanner(InputStream in, int bufferSize) {
+		super(in, bufferSize);
+	}
 
 //  --------------------- 一次元配列入力メソッド ---------------------
 
