@@ -2,9 +2,222 @@
 
 author: <https://atcoder.jp/users/nsubaru>
 
-このリポジトリーは`Java`で書かれた競技プログラミングで使える様々なライブラリを載せています。バグが多く含まれている可能性が高く、また頻繁に更新を行いますのでご了承ください。
+このリポジトリーは、Java で書かれた競技プログラミング向けの各種ライブラリを掲載しています。  
+バグを含む可能性が高く、完全な動作は保証しません。あくまでライブラリ作成のヒントとしてご利用ください。
 
-|class|備考|
-|-|-|
-|[FastPrinter](./FastPrinter.java)|標準出力を高速に処理するためのクラスです。実装は内部バッファに出力内容をため込み、満杯になったタイミングで出力内容を表示させます。処理の途中で出力内容をすぐ反映させる場合は、明示的に flush() をy日出す必要があります。また処理の最後にもflush()をする必要があります。|
-|[FastScanner](./FastScanner.java)|標準入力を管理するクラスです。配列の入力に加え、様々な方式での入力を提供します。（ArrayList, HashSet, マルチセット）|
+## クラス一覧
+
+### FastScanner
+
+- **用途**  
+  - 標準入力（`InputStream`）を高速に処理するクラス
+- **特徴**  
+  - 内部バッファを使用して効率的に入力を読み込む  
+  - ASCII 範囲外の文字には対応していない  
+  - `AutoCloseable` を実装しているため、try-with-resources の利用が推奨される
+
+#### 使用例
+```java
+try (FastScanner sc = new FastScanner()) {
+    // 整数入力
+    int intValue = sc.nextInt();
+    // 長整数入力
+    long longValue = sc.nextLong();
+    // 小数入力
+    double doubleValue = sc.nextDouble();
+    // 文字入力
+    char charValue = sc.nextChar();
+    // 文字列入力
+    String stringValue = sc.next();
+} catch (Exception e) {
+    throw new RuntimeException(e);
+}
+```
+
+#### 実際の入出力例
+
+【入力例】
+```
+42 9876543210
+3.1415 Z
+HelloWorld
+```
+
+【出力例】  
+（各メソッドで読み込んだ値をそのまま出力した場合）
+```
+42
+9876543210
+3.1415
+Z
+HelloWorld
+```
+
+---
+
+### FastPrinter
+
+- **用途**  
+  - 標準出力（`OutputStream`）を高速に処理するクラス
+- **特徴**  
+  - 内部バッファに出力内容を蓄積し、バッファが満杯になったタイミングで指定の `OutputStream` に書き出す  
+  - ASCII 範囲外の文字は取り扱わない  
+  - `AutoCloseable` を実装しているため、try-with-resources の利用が推奨される
+
+#### 使用例
+```java
+try (FastPrinter out = new FastPrinter()) {
+    // 整数出力
+    out.println(123);
+    // 長整数出力
+    out.println(12345678910L);
+    // 小数出力
+    out.println(78.9);
+    // 文字出力
+    out.println('A');
+    // boolean 出力
+    out.println(true);
+    // 文字列出力
+    out.println("Hello, World!");
+} catch (Exception e) {
+    throw new RuntimeException(e);
+}
+```
+
+#### 実際の入出力例
+
+【出力例】
+```
+123
+12345678910
+78.9
+A
+Yes
+Hello, World!
+```
+
+---
+
+### ContestScanner
+
+- **用途**  
+  - FastScanner を拡張し、競技プログラミングでよく使用される入力形式の処理をサポートするユーティリティクラス
+- **特徴**  
+  - 以下の入力形式を高速に読み込む  
+    - 一次元配列（整数、長整数、浮動小数点数、文字、文字列）
+    - 二次元・三次元配列
+    - ソート済み配列
+    - 累積和配列
+    - 逆写像配列（入力値に対応する元のインデックスを保持）
+    - 各種コレクション（ArrayList、HashSet、TreeSet など）
+  - 内部バッファを利用し、FastScanner 同様に効率的な入力処理が可能  
+  - `AutoCloseable` を実装しているため、try-with-resources の利用が推奨される
+
+#### 使用例
+```java
+try (ContestScanner cs = new ContestScanner(System.in)) {
+    // 整数配列入力（例：要素数 5 の整数配列）
+    int[] intArray = cs.nextInt(5);
+    
+    // ソート済み整数配列入力（例：要素数 5 の配列を読み込んでソート）
+    int[] sortedIntArray = cs.nextSortedInt(5);
+    
+    // 2次元整数配列入力（例：行数 3, 列数 3 の行列）
+    int[][] intMatrix = cs.nextIntMat(3, 3);
+    
+    // 逆写像配列入力（例：1-indexed の入力に対する逆写像）
+    int[] inverseMapping = cs.nextIntInverseMapping(5);
+    
+    // 任意のコレクション入力（例：文字列の ArrayList）
+    ArrayList<String> stringList = cs.nextStringAL(3);
+} catch (Exception e) {
+    throw new RuntimeException(e);
+}
+```
+
+#### 実際の入出力例
+
+【入力例】  
+（各行はスペースまたは改行で区切られたデータ）
+```
+3 1 2 5 4
+10 7 3 1 9
+1 2 3
+4 5 6
+7 8 9
+2 3 1 4 5
+apple orange banana
+```
+
+【出力例】  
+各メソッドで読み込んだ結果を確認すると、例えば：
+- `nextInt(5)` の結果: `[3, 1, 2, 5, 4]`
+- `nextSortedInt(5)` の結果: `[1, 3, 7, 9, 10]`
+- `nextIntMat(3, 3)` の結果:
+  ```
+  [
+    [1, 2, 3],
+    [4, 5, 6],  // ※入力例はあくまでイメージです。実際は入力数と形状に注意
+    [7, 8, 9]
+  ]
+  ```
+- `nextIntInverseMapping(5)`（1-indexedの場合）の結果:  
+  入力が `[2, 3, 1, 4, 5]` なら、各入力値から 1 を引いた位置に元の入力順序を記録して `[2, 0, 1, 3, 4]` のような配列になる
+
+※ 入出力例はあくまで概念を示すものであり、実際の利用時は問題の仕様に合わせた入力形式となります。
+
+---
+
+### ContestPrinter
+
+- **用途**  
+  - FastPrinter を拡張し、競技プログラミングで頻繁に使用される出力形式の処理をサポートするユーティリティクラス
+- **特徴**  
+  - 配列や 2 次元配列の出力を簡便に行える（各要素間にスペース、各行は改行で区切る）  
+  - 任意のオブジェクトは `toString()` を利用して出力可能  
+  - 変換処理を適用した出力（関数適用後の配列出力など）にも対応  
+  - null チェックを導入しているため、NullPointerException の発生リスクを低減  
+  - `AutoCloseable` を実装しているため、try-with-resources の利用が推奨される
+
+#### 使用例
+```java
+try (ContestPrinter cp = new ContestPrinter(System.out)) {
+    // 整数配列出力（各要素間にスペース、最後に改行）
+    int[] intArray = {1, 2, 3, 4, 5};
+    cp.print(intArray);
+    
+    // 2次元整数配列出力（各行を改行で区切る）
+    int[][] intMatrix = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    cp.println(intMatrix);
+    
+    // 任意のオブジェクト出力（toString() を利用）
+    String message = "ContestPrinter output test.";
+    cp.println(message);
+    
+    // ラムダ式を利用した変換出力（例：配列各要素を 2 倍して出力）
+    cp.println(intArray, x -> x * 2);
+} catch (Exception e) {
+    throw new RuntimeException(e);
+}
+```
+
+#### 実際の入出力例
+
+【入力例】  
+（ContestPrinter は出力用ユーティリティなので、入力例はなく、以下は出力内容の例）
+
+【出力例】
+```
+1 2 3 4 5
+1 2 3
+4 5 6
+ContestPrinter output test.
+2
+4
+6
+8
+10
+```
