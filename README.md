@@ -7,7 +7,7 @@ author: <https://atcoder.jp/users/nsubaru>
 
 ## クラス一覧
 
-### FastScanner
+### [FastScanner](./FastIO/FastScanner.java)
 
 - **用途**  
   - 標準入力（`InputStream`）を高速に処理するクラス
@@ -55,7 +55,7 @@ HelloWorld
 
 ---
 
-### FastPrinter
+### [FastPrinter](/FastIO/FastPrinter.java)
 
 - **用途**  
   - 標準出力（`OutputStream`）を高速に処理するクラス
@@ -98,7 +98,7 @@ Hello, World!
 
 ---
 
-### ContestScanner
+### [ContestScanner](/FastIO/ContestScanner.java)
 
 - **用途**  
   - FastScanner を拡張し、競技プログラミングでよく使用される入力形式の処理をサポートするユーティリティクラス
@@ -168,7 +168,7 @@ apple orange banana
 
 ---
 
-### ContestPrinter
+### [ContestPrinter](/FastIO/ContestPrinter.java)
 
 - **用途**  
   - FastPrinter を拡張し、競技プログラミングで頻繁に使用される出力形式の処理をサポートするユーティリティクラス
@@ -222,7 +222,7 @@ ContestPrinter output test.
 10
 ```
 
-### AbstractBinarySearch
+### [AbstractBinarySearch](/AbstractBinarySearch.java)
 
 - **用途**  
   - 整数および長整数に対して、通常の二分探索、上限探索（Upper Bound）、下限探索（Lower Bound）を行うための抽象クラス
