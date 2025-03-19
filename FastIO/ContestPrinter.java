@@ -13,7 +13,7 @@ import static java.lang.Math.*;
 @SuppressWarnings("unused")
 public final class ContestPrinter extends FastPrinter {
 
-// ------------------------ コンストラクタ ------------------------
+	/* ------------------------ コンストラクタ ------------------------ */
 
 	/**
 	 * デフォルトの設定で ContestPrinter を初期化します。<br>
@@ -102,10 +102,10 @@ public final class ContestPrinter extends FastPrinter {
 		super(out, bufferSize, autoFlush);
 	}
 
-// ------------------------ ペア出力メソッド（改行付き） ------------------------
+	/* ------------------------ ペア出力メソッド（改行付き） ------------------------ */
 
 	/**
-	 * 2 つの整数値（int, int）をそれぞれ改行して出力します。
+	 * 2 つの整数値（int, int）を改行区切りで出力します。（改行付き）
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する int 値
@@ -115,7 +115,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 2 つの整数値（int, long）をそれぞれ改行して出力します。
+	 * 2 つの整数値（int, long）を改行区切りで出力します。（改行付き）
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する long 値
@@ -125,7 +125,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 2 つの整数値（long, int）をそれぞれ改行して出力します。
+	 * 2 つの整数値（long, int）を改行区切りで出力します。（改行付き）
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する int 値
@@ -135,7 +135,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 2 つの整数値（int または long）をそれぞれ改行して出力します。
+	 * 2 つの整数値（int または long）を改行区切りで出力します。（改行付き）
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する long 値
@@ -160,10 +160,10 @@ public final class ContestPrinter extends FastPrinter {
 		if (autoFlush) flush();
 	}
 
-// ------------------------ ペア出力メソッド（改行無し） ------------------------
+	/* ------------------------ ペア出力メソッド（改行無し） ------------------------ */
 
 	/**
-	 * 2 つの整数値（int, int）を半角スペース区切りで出力します。
+	 * 2 つの整数値（int, int）を半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する int 値
@@ -173,7 +173,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 2 つの整数値（int, long）を半角スペース区切りで出力します。
+	 * 2 つの整数値（int, long）を半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する long 値
@@ -183,7 +183,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 2 つの整数値（long, int）を半角スペース区切りで出力します。
+	 * 2 つの整数値（long, int）を半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する int 値
@@ -193,7 +193,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 2 つの整数値（long, long）を半角スペース区切りで出力します。
+	 * 2 つの整数値（long, long）を半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する long 値
@@ -217,7 +217,7 @@ public final class ContestPrinter extends FastPrinter {
 		if (autoFlush) flush();
 	}
 
-// ------------------------ 小数系メソッド ------------------------
+	/* ------------------------ 小数系メソッド ------------------------ */
 
 	/**
 	 * double 値を指定された小数点以下桁数で出力します（四捨五入）。（改行付き）
@@ -259,10 +259,10 @@ public final class ContestPrinter extends FastPrinter {
 		if (autoFlush) flush();
 	}
 
-//  --------------------- 1次元配列系メソッド（改行付き） ---------------------
+	/* ------------------------ 1次元配列系メソッド（改行付き） ------------------------ */
 
 	/**
-	 * int 配列の各要素を改行区切りで出力します。
+	 * int 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する int 配列（null の場合何も出力を行いません）
 	 */
@@ -271,7 +271,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * long 配列の各要素を改行区切りで出力します。
+	 * long 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する long 配列（null の場合何も出力を行いません）
 	 */
@@ -280,7 +280,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * char 配列の各要素を改行区切りで出力します。
+	 * char 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する char 配列（null の場合何も出力を行いません）
 	 */
@@ -289,7 +289,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * boolean 配列の各要素を改行区切りで出力します。
+	 * boolean 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する boolean 配列（null の場合何も出力を行いません）
 	 */
@@ -298,7 +298,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * String 配列の各要素を改行区切りで出力します。
+	 * String 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する String 配列（null の場合何も出力を行いません）
 	 */
@@ -307,7 +307,7 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
-	 * 可変長の Object 配列の各要素を改行区切りで出力します。
+	 * 可変長の Object 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する Object 配列（null の場合何も出力を行いません）
 	 */
@@ -372,7 +372,7 @@ public final class ContestPrinter extends FastPrinter {
 		println();
 	}
 
-//  --------------------- 1次元配列系メソッド（改行無し） ---------------------
+	/* ------------------------ 1次元配列系メソッド（改行付き） ------------------------ */
 
 	/**
 	 * int 配列の各要素を半角スペース区切りで出力します。（改行無し）
@@ -532,7 +532,7 @@ public final class ContestPrinter extends FastPrinter {
 		}
 	}
 
-//  ----------------------- 1次元配列の関数変換系メソッド（改行付き） -----------------------
+	/* ------------------------ 1次元配列の関数変換系メソッド（改行付き） ------------------------ */
 
 	/**
 	 * int 配列の各要素を指定された関数で変換し、改行区切りで出力します。
@@ -599,8 +599,7 @@ public final class ContestPrinter extends FastPrinter {
 			println(function.apply(s));
 	}
 
-
-//  ----------------------- 1次元配列の関数変換系メソッド（改行無し） -----------------------
+	/* ------------------------ 1次元配列の関数変換系メソッド（改行無し） ------------------------ */
 
 	/**
 	 * int 配列の各要素を指定された関数で変換し、半角スペース区切りで出力します。（改行無し）
@@ -692,7 +691,7 @@ public final class ContestPrinter extends FastPrinter {
 		}
 	}
 
-//  ----------------------- 2次元配列系メソッド -----------------------
+	/* ------------------------ 2次元配列系メソッド ------------------------ */
 
 	/**
 	 * 二次元の int 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
@@ -827,7 +826,7 @@ public final class ContestPrinter extends FastPrinter {
 		}
 	}
 
-//  ----------------------- 2次元配列関数変換系メソッド -----------------------
+	/* ------------------------ 2次元配列関数変換系メソッド ------------------------ */
 
 	/**
 	 * 二次元の int 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
@@ -904,7 +903,7 @@ public final class ContestPrinter extends FastPrinter {
 		}
 	}
 
-//  ----------------------- char配列系メソッド -----------------------
+	/* ------------------------ char配列系メソッド ------------------------ */
 
 	/**
 	 * char 配列の各要素を区切り文字無しで出力します。（改行無し）

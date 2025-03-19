@@ -11,85 +11,102 @@ import java.math.BigInteger;
 @SuppressWarnings("unused")
 public class FastScanner implements AutoCloseable {
 
-//  ------------------------ 定数 ------------------------
+	/* ------------------------ 定数 ------------------------ */
 
 	/**
-	 * 入力用内部バッファのデフォルトサイズ（バイト単位）。
+	 * 入力用内部バッファのデフォルトサイズ（バイト単位）
 	 */
 	private static final int DEFAULT_BUFFER_SIZE = 65536;
 
-//  --------------------- インスタンス変数 ---------------------
+	/* ------------------------ インスタンス変数 ------------------------ */
 
 	/**
-	 * 入力元の InputStream です。デフォルトは {@code System.in} です。
+	 * 入力元の {@code InputStream}（通常は {@code System.in}）
 	 */
 	private final InputStream in;
 
 	/**
-	 * 入力データを一時的に格納する内部バッファです。<br>
+	 * 入力データを一時的に格納する内部バッファです。
 	 * 読み込み時に {@link #read()} でデータを取得し、バッファから消費します。
 	 */
 	private final byte[] buffer;
 
 	/**
-	 * 現在のバッファ内で次に読み込む位置
+	 * バッファ内で次に読み込む位置
 	 */
 	private int pos = 0;
 
 	/**
-	 * バッファに読み込まれているバイト数
+	 * バッファに読み込まれている有効なバイト数
 	 */
 	private int bufferLength = 0;
 
-//  ---------------------- コンストラクタ ----------------------
+	/* ------------------------ コンストラクタ ------------------------ */
 
 	/**
-	 * デフォルトの設定でFastScannerを初期化します。<br>
-	 * バッファ容量: 65536 <br>
-	 * InputStream: System.in <br>
+	 * デフォルトの設定で {@code FastScanner} を初期化します。
+	 * <ul>
+	 *   <li>バッファ容量: 65536</li>
+	 *   <li>{@code InputStream}: {@code System.in}</li>
+	 * </ul>
 	 */
 	public FastScanner() {
 		this(System.in, DEFAULT_BUFFER_SIZE);
 	}
 
 	/**
-	 * 指定されたInputStreamを用いてFastScannerを初期化します。<br>
-	 * バッファ容量: 65536 <br>
+	 * 指定された {@code InputStream} を使用して {@code FastScanner} を初期化します。
+	 * <ul>
+	 *   <li>バッファ容量: 65536</li>
+	 * </ul>
 	 *
-	 * @param in 入力元の InputStream
+	 * @param in 入力元の {@code InputStream}
 	 */
-	public FastScanner(InputStream in) {
+	public FastScanner(final InputStream in) {
 		this(in, DEFAULT_BUFFER_SIZE);
 	}
 
 	/**
-	 * 指定されたバッファ容量でFastScannerを初期化します。<br>
-	 * InputStream: System.in <br>
+	 * 指定されたバッファ容量を用いて {@code FastScanner} を初期化します。
+	 * <ul>
+	 *   <li>入力元: {@code System.in}</li>
+	 * </ul>
 	 *
-	 * @param bufferSize 内部バッファの容量（文字単位）
+	 * @param bufferSize 内部バッファの容量（バイト単位）
 	 */
-	public FastScanner(int bufferSize) {
+	public FastScanner(final int bufferSize) {
 		this(System.in, bufferSize);
 	}
 
 	/**
-	 * 指定されたバッファ容量とInputStreamでFastScannerを初期化します。<br>
+	 * 指定された {@code InputStream} とバッファ容量で {@code FastScanner} を初期化します。
 	 *
-	 * @param in         入力元の InputStream
-	 * @param bufferSize 内部バッファの容量（文字単位）
+	 * @param in         入力元の {@code InputStream}
+	 * @param bufferSize 内部バッファの容量（バイト単位）
 	 */
-	public FastScanner(InputStream in, int bufferSize) {
+	public FastScanner(final InputStream in, final int bufferSize) {
 		this.in = in;
 		this.buffer = new byte[bufferSize];
 	}
 
-//  -------------------- オーバーライドメソッド --------------------
+	/* ------------------------ オーバーライドメソッド ------------------------ */
 
 	/**
-	 * このInputStreamを閉じます。
-	 * 入力元が {@code System.in} の場合、閉じません。
+	 * 指定した文字コードが空白文字かどうか判定します。
+	 * このメソッドでは、半角スペース、改行（'\n'）、復帰（'\r'）、およびタブ（'\t'）を空白文字として扱います。
 	 *
-	 * @throws IOException {@code close}の際にエラーが発生した場合
+	 * @param c 判定対象の文字コード
+	 * @return 空白文字の場合 {@code true}、それ以外の場合 {@code false}
+	 */
+	private static boolean isWhitespace(final int c) {
+		return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+	}
+
+	/**
+	 * このスキャナが使用する {@code InputStream} を閉じます。
+	 * 入力元が {@code System.in} の場合は閉じません。
+	 *
+	 * @throws IOException {@code InputStream} のクローズ中にエラーが発生した場合
 	 */
 	@Override
 	public void close() throws IOException {
@@ -97,14 +114,16 @@ public class FastScanner implements AutoCloseable {
 			in.close();
 	}
 
+	/* ------------------------ 基本入力メソッド ------------------------ */
+
 	/**
-	 * 内部バッファから 1 バイトを読み込みます。<br>
-	 * バッファが空の場合、新たにデータを読み込みます。
+	 * 内部バッファから 1 バイトを読み込みます。
+	 * バッファが空の場合は新たにデータを読み込みます。
 	 *
 	 * @return 読み込んだバイト
 	 * @throws RuntimeException 入力終了または I/O エラー時
 	 */
-	public byte read() {
+	private byte read() {
 		if (pos >= bufferLength) {
 			try {
 				bufferLength = in.read(buffer, pos = 0, buffer.length);
@@ -118,16 +137,14 @@ public class FastScanner implements AutoCloseable {
 		return buffer[pos++];
 	}
 
-//  -------------------- 基本入力メソッド --------------------
-
 	/**
 	 * 次の int 値を読み込みます。
 	 *
 	 * @return 読み込んだ int 値
 	 */
-	public int nextInt() {
+	public final int nextInt() {
 		int b = read();
-		while (isDelimiter(b)) b = read();
+		while (isWhitespace(b)) b = read();
 		boolean negative = b == '-';
 		if (negative) b = read();
 		int result = 0;
@@ -143,9 +160,9 @@ public class FastScanner implements AutoCloseable {
 	 *
 	 * @return 読み込んだ long 値
 	 */
-	public long nextLong() {
+	public final long nextLong() {
 		int b = read();
-		while (isDelimiter(b)) b = read();
+		while (isWhitespace(b)) b = read();
 		boolean negative = b == '-';
 		if (negative) b = read();
 		long result = 0;
@@ -161,9 +178,9 @@ public class FastScanner implements AutoCloseable {
 	 *
 	 * @return 読み込んだ double 値
 	 */
-	public double nextDouble() {
+	public final double nextDouble() {
 		int b = read();
-		while (isDelimiter(b)) b = read();
+		while (isWhitespace(b)) b = read();
 		boolean negative = b == '-';
 		if (negative) b = read();
 		double result = 0;
@@ -188,9 +205,9 @@ public class FastScanner implements AutoCloseable {
 	 *
 	 * @return 読み込んだ char 値
 	 */
-	public char nextChar() {
+	public final char nextChar() {
 		byte b = read();
-		while (isDelimiter(b)) b = read();
+		while (isWhitespace(b)) b = read();
 		return (char) b;
 	}
 
@@ -199,20 +216,20 @@ public class FastScanner implements AutoCloseable {
 	 *
 	 * @return 読み込んだ String
 	 */
-	public String next() {
+	public final String next() {
 		return nextStringBuilder().toString();
 	}
 
 	/**
-	 * 次の StringBuilder（空白で区切られた文字列）を読み込みます。
+	 * 次の {@code StringBuilder}（空白で区切られた文字列）を読み込みます。
 	 *
-	 * @return 読み込んだ StringBuilder
+	 * @return 読み込んだ {@code StringBuilder}
 	 */
-	public StringBuilder nextStringBuilder() {
-		StringBuilder sb = new StringBuilder();
+	public final StringBuilder nextStringBuilder() {
+		final StringBuilder sb = new StringBuilder();
 		byte b = read();
-		while (isDelimiter(b)) b = read();
-		while (!isDelimiter(b)) {
+		while (isWhitespace(b)) b = read();
+		while (!isWhitespace(b)) {
 			sb.appendCodePoint(b);
 			b = read();
 		}
@@ -222,10 +239,10 @@ public class FastScanner implements AutoCloseable {
 	/**
 	 * 次の1行を読み込みます。（改行文字は読み飛ばされます）
 	 *
-	 * @return 読み込んだ String
+	 * @return 読み込んだ 1 行の String
 	 */
-	public String nextLine() {
-		StringBuilder sb = new StringBuilder();
+	public final String nextLine() {
+		final StringBuilder sb = new StringBuilder();
 		int b = read();
 		while (b != 0 && b != '\r' && b != '\n') {
 			sb.appendCodePoint(b);
@@ -235,32 +252,22 @@ public class FastScanner implements AutoCloseable {
 	}
 
 	/**
-	 * 次のトークンを BigInteger として読み込みます。
+	 * 次のトークンを {@code BigInteger} として読み込みます。
 	 *
-	 * @return 読み込んだ BigInteger
+	 * @return 読み込んだ {@code BigInteger}
 	 */
-	public BigInteger nextBigInteger() {
+	public final BigInteger nextBigInteger() {
 		return new BigInteger(next());
 	}
 
+	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
+
 	/**
-	 * 次のトークンを BigDecimal として読み込みます。
+	 * 次のトークンを {@code BigDecimal} として読み込みます。
 	 *
-	 * @return 読み込んだ BigDecimal
+	 * @return 読み込んだ {@code BigDecimal}
 	 */
-	public BigDecimal nextBigDecimal() {
+	public final BigDecimal nextBigDecimal() {
 		return new BigDecimal(next());
-	}
-
-	// -------------------- プライベートヘルパーメソッド --------------------
-
-	/**
-	 * 指定した文字コードが空白文字（' '、'\n'、'\r'）かどうか判定します。
-	 *
-	 * @param c 判定対象の文字コード
-	 * @return 空白文字の場合 true、それ以外の場合 false
-	 */
-	private boolean isDelimiter(int c) {
-		return ' ' == c || '\n' == c || '\r' == c;
 	}
 }

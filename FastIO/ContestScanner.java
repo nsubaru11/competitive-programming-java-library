@@ -12,48 +12,54 @@ import static java.util.Arrays.sort;
 @SuppressWarnings("unused")
 public final class ContestScanner extends FastScanner {
 
-//  ---------------------- コンストラクタ ----------------------
+	/* ------------------------ コンストラクタ ------------------------ */
 
 	/**
-	 * デフォルトの設定でContestScannerを初期化します。<br>
-	 * バッファ容量: 65536 <br>
-	 * InputStream: System.in <br>
+	 * デフォルトの設定で {@code ContestScanner} を初期化します。
+	 * <ul>
+	 *   <li>バッファ容量: 65536</li>
+	 *   <li>{@code InputStream}: {@code System.in}</li>
+	 * </ul>
 	 */
 	public ContestScanner() {
 		super();
 	}
 
 	/**
-	 * 指定されたInputStreamを用いてContestScannerを初期化します。<br>
-	 * バッファ容量: 65536 <br>
+	 * 指定された {@code InputStream} を使用して {@code ContestScanner} を初期化します。
+	 * <ul>
+	 *   <li>バッファ容量: 65536</li>
+	 * </ul>
 	 *
-	 * @param in 入力元の InputStream
+	 * @param in 入力元の {@code InputStream}
 	 */
-	public ContestScanner(InputStream in) {
+	public ContestScanner(final InputStream in) {
 		super(in);
 	}
 
 	/**
-	 * 指定されたバッファ容量でContestScannerを初期化します。<br>
-	 * InputStream: System.in <br>
+	 * 指定されたバッファ容量を用いて {@code ContestScanner} を初期化します。
+	 * <ul>
+	 *   <li>入力元: {@code System.in}</li>
+	 * </ul>
 	 *
-	 * @param bufferSize 内部バッファの容量（文字単位）
+	 * @param bufferSize 内部バッファの容量（バイト単位）
 	 */
-	public ContestScanner(int bufferSize) {
+	public ContestScanner(final int bufferSize) {
 		super(bufferSize);
 	}
 
 	/**
-	 * 指定されたバッファ容量とInputStreamでContestScannerを初期化します。<br>
+	 * 指定された {@code InputStream} とバッファ容量で {@code FastScanner} を初期化します。
 	 *
-	 * @param in         入力元の InputStream
-	 * @param bufferSize 内部バッファの容量（文字単位）
+	 * @param in         入力元の {@code InputStream}
+	 * @param bufferSize 内部バッファの容量（バイト単位）
 	 */
-	public ContestScanner(InputStream in, int bufferSize) {
+	public ContestScanner(final InputStream in, final int bufferSize) {
 		super(in, bufferSize);
 	}
 
-//  --------------------- 一次元配列入力メソッド ---------------------
+	/* ------------------------ 1次元配列入力メソッド ------------------------ */
 
 	/**
 	 * 指定された長さの int 配列を読み込みます。
@@ -121,11 +127,11 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public String[] nextStrings(final int n) {
 		final String[] s = new String[n];
-		setAll(s, x -> next());
+		setAll(s, i -> next());
 		return s;
 	}
 
-//  --------------------- 通常の2次元配列入力メソッド ---------------------
+	/* ------------------------ 2次元配列入力メソッド ------------------------ */
 
 	/**
 	 * 指定された行数・列数の int の2次元配列を読み込みます。
@@ -137,7 +143,7 @@ public final class ContestScanner extends FastScanner {
 	public int[][] nextIntMat(final int h, final int w) {
 		final int[][] a = new int[h][w];
 		for (int i = 0; i < h; i++)
-			setAll(a[i], x -> nextInt());
+			setAll(a[i], j -> nextInt());
 		return a;
 	}
 
@@ -151,7 +157,7 @@ public final class ContestScanner extends FastScanner {
 	public long[][] nextLongMat(final int h, final int w) {
 		final long[][] a = new long[h][w];
 		for (int i = 0; i < h; i++)
-			setAll(a[i], x -> nextLong());
+			setAll(a[i], j -> nextLong());
 		return a;
 	}
 
@@ -165,7 +171,7 @@ public final class ContestScanner extends FastScanner {
 	public double[][] nextDoubleMat(final int h, final int w) {
 		final double[][] a = new double[h][w];
 		for (int i = 0; i < h; i++)
-			setAll(a[i], x -> nextDouble());
+			setAll(a[i], j -> nextDouble());
 		return a;
 	}
 
@@ -177,7 +183,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public char[][] nextCharMat(final int n) {
 		final char[][] c = new char[n][];
-		setAll(c, x -> nextChars());
+		setAll(c, j -> nextChars());
 		return c;
 	}
 
@@ -206,11 +212,11 @@ public final class ContestScanner extends FastScanner {
 	public String[][] nextStringMat(final int h, final int w) {
 		final String[][] s = new String[h][w];
 		for (int i = 0; i < h; i++)
-			setAll(s[i], x -> next());
+			setAll(s[i], j -> next());
 		return s;
 	}
 
-//  --------------------- 3次元配列入力メソッド ---------------------
+	/* ------------------------ 3次元配列入力メソッド ------------------------ */
 
 	/**
 	 * 指定されたサイズの3次元 int 配列を読み込みます。
@@ -246,7 +252,7 @@ public final class ContestScanner extends FastScanner {
 		return a;
 	}
 
-//  --------------------- ソート済み配列入力メソッド ---------------------
+	/* ------------------------ ソート済み1次元配列入力メソッド ------------------------ */
 
 	/**
 	 * 指定された長さの int 配列を読み込み、ソートして返します。
@@ -319,7 +325,7 @@ public final class ContestScanner extends FastScanner {
 		return s;
 	}
 
-//  --------------------- 累積和配列入力メソッド ---------------------
+	/* ------------------------ 累積和配列入力メソッド ------------------------ */
 
 	/**
 	 * 整数の累積和配列を読み込みます。
@@ -328,9 +334,9 @@ public final class ContestScanner extends FastScanner {
 	 * @return 累積和配列(int[])
 	 */
 	public int[] nextIntPrefixSum(final int n) {
-		final int[] prefixSum = new int[n];
-		setAll(prefixSum, i -> i > 0 ? nextInt() + prefixSum[i - 1] : nextInt());
-		return prefixSum;
+		final int[] ps = new int[n];
+		setAll(ps, i -> i > 0 ? nextInt() + ps[i - 1] : nextInt());
+		return ps;
 	}
 
 	/**
@@ -340,9 +346,9 @@ public final class ContestScanner extends FastScanner {
 	 * @return 累積和配列(long[])
 	 */
 	public long[] nextLongPrefixSum(final int n) {
-		final long[] prefixSum = new long[n];
-		setAll(prefixSum, i -> i > 0 ? nextLong() + prefixSum[i - 1] : nextLong());
-		return prefixSum;
+		final long[] ps = new long[n];
+		setAll(ps, i -> i > 0 ? nextLong() + ps[i - 1] : nextLong());
+		return ps;
 	}
 
 	/**
@@ -354,12 +360,12 @@ public final class ContestScanner extends FastScanner {
 	 * @return 2次元累積和配列(int[][])
 	 */
 	public int[][] nextIntPrefixSum(final int h, final int w) {
-		final int[][] prefixSum = new int[h + 1][w + 1];
+		final int[][] ps = new int[h + 1][w + 1];
 		for (int i = 1; i <= h; i++) {
 			int j = i;
-			setAll(prefixSum[i], k -> k > 0 ? nextInt() + prefixSum[j - 1][k] + prefixSum[j][k - 1] - prefixSum[j - 1][k - 1] : 0);
+			setAll(ps[i], k -> k > 0 ? nextInt() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
 		}
-		return prefixSum;
+		return ps;
 	}
 
 	/**
@@ -371,12 +377,10 @@ public final class ContestScanner extends FastScanner {
 	 * @return 2次元累積和配列(long[][])
 	 */
 	public long[][] nextLongPrefixSum(final int h, final int w) {
-		final long[][] prefixSum = new long[h + 1][w + 1];
-		for (int i = 1; i <= h; i++) {
-			int j = i;
-			setAll(prefixSum[i], k -> k > 0 ? nextLong() + prefixSum[j - 1][k] + prefixSum[j][k - 1] - prefixSum[j - 1][k - 1] : 0);
-		}
-		return prefixSum;
+		final long[][] ps = new long[h + 1][w + 1];
+		for (int i = 1, j = i; i <= h; i++)
+			setAll(ps[i], k -> k > 0 ? nextLong() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
+		return ps;
 	}
 
 	/**
@@ -389,14 +393,12 @@ public final class ContestScanner extends FastScanner {
 	 * @return 3次元累積和配列（int[][][]）
 	 */
 	public int[][][] nextIntPrefixSum(final int x, final int y, final int z) {
-		final int[][][] e = new int[x + 1][y + 1][z + 1];
+		final int[][][] ps = new int[x + 1][y + 1][z + 1];
 		for (int a = 1; a <= x; a++)
-			for (int b = 1; b <= y; b++) {
-				int A = a, B = b;
-				setAll(e[A][B], c -> c > 0 ? nextInt() + e[A - 1][B][c] + e[A][B - 1][c] + e[A][B][c - 1]
-						- e[A - 1][B - 1][c] - e[A - 1][B][c - 1] - e[A][B - 1][c - 1] + e[A - 1][B - 1][c - 1] : 0);
-			}
-		return e;
+			for (int b = 1, A = a, B = b; b <= y; b++)
+				setAll(ps[A][B], c -> c > 0 ? nextInt() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
+						- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
+		return ps;
 	}
 
 	/**
@@ -409,17 +411,15 @@ public final class ContestScanner extends FastScanner {
 	 * @return 3次元累積和配列（long[][][]）
 	 */
 	public long[][][] nextLongPrefixSum(final int x, final int y, final int z) {
-		final long[][][] e = new long[x + 1][y + 1][z + 1];
+		final long[][][] ps = new long[x + 1][y + 1][z + 1];
 		for (int a = 1; a <= x; a++)
-			for (int b = 1; b <= y; b++) {
-				int A = a, B = b;
-				setAll(e[A][B], c -> c > 0 ? nextLong() + e[A - 1][B][c] + e[A][B - 1][c] + e[A][B][c - 1]
-						- e[A - 1][B - 1][c] - e[A - 1][B][c - 1] - e[A][B - 1][c - 1] + e[A - 1][B - 1][c - 1] : 0);
-			}
-		return e;
+			for (int b = 1, A = a, B = b; b <= y; b++)
+				setAll(ps[A][B], c -> c > 0 ? nextLong() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
+						- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
+		return ps;
 	}
 
-//  --------------------- 逆写像配列入力メソッド ---------------------
+	/* ------------------------ 逆写像配列入力メソッド ------------------------ */
 
 	/**
 	 * 入力値が1-indexedの整数に対する逆写像を生成します。<br>
@@ -429,13 +429,13 @@ public final class ContestScanner extends FastScanner {
 	 * @return 各入力値に対して、入力された順序（0-indexed）を格納した逆写像
 	 */
 	public int[] nextIntInverseMapping(final int n) {
-		final int[] a = new int[n];
+		final int[] inv = new int[n];
 		for (int i = 0; i < n; i++)
-			a[nextInt() - 1] = i;
-		return a;
+			inv[nextInt() - 1] = i;
+		return inv;
 	}
 
-//  --------------------- Collection<Integer>入力メソッド ---------------------
+	/* ------------------------ Collection<Integer>入力メソッド ------------------------ */
 
 	/**
 	 * 整数を読み込み、指定したコレクションに格納して返します。
@@ -445,12 +445,12 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier コレクションのインスタンスを生成するサプライヤ
 	 * @return 読み込んだ整数のコレクション
 	 */
-	private <T extends Collection<Integer>> T nextIntCollection(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Collection<Integer>> T nextIntCollection(int n, final Supplier<T> supplier) {
+		final T collection = supplier.get();
 		while (n-- > 0) {
-			c.add(nextInt());
+			collection.add(nextInt());
 		}
-		return c;
+		return collection;
 	}
 
 	/**
@@ -459,7 +459,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ ArrayList&lt;Integer&gt;
 	 */
-	public ArrayList<Integer> nextIntAL(int n) {
+	public ArrayList<Integer> nextIntAL(final int n) {
 		return nextIntCollection(n, () -> new ArrayList<>(n));
 	}
 
@@ -469,7 +469,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ HashSet&lt;Integer&gt;
 	 */
-	public HashSet<Integer> nextIntHS(int n) {
+	public HashSet<Integer> nextIntHS(final int n) {
 		return nextIntCollection(n, () -> new HashSet<>(n));
 	}
 
@@ -479,11 +479,11 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ TreeSet&lt;Integer&gt;
 	 */
-	public TreeSet<Integer> nextIntTS(int n) {
+	public TreeSet<Integer> nextIntTS(final int n) {
 		return nextIntCollection(n, TreeSet::new);
 	}
 
-//  --------------------- Collection<Long>入力メソッド ---------------------
+	/* ------------------------ Collection<Long>入力メソッド ------------------------ */
 
 	/**
 	 * 長整数を読み込み、指定したコレクションに格納して返します。
@@ -493,12 +493,12 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier コレクションのインスタンスを生成するサプライヤ
 	 * @return 読み込んだ長整数のコレクション
 	 */
-	private <T extends Collection<Long>> T nextLongCollection(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Collection<Long>> T nextLongCollection(int n, final Supplier<T> supplier) {
+		final T collection = supplier.get();
 		while (n-- > 0) {
-			c.add(nextLong());
+			collection.add(nextLong());
 		}
-		return c;
+		return collection;
 	}
 
 	/**
@@ -507,7 +507,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ ArrayList&lt;Long&gt;
 	 */
-	public ArrayList<Long> nextLongAL(int n) {
+	public ArrayList<Long> nextLongAL(final int n) {
 		return nextLongCollection(n, () -> new ArrayList<>(n));
 	}
 
@@ -517,7 +517,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ HashSet&lt;Long&gt;
 	 */
-	public HashSet<Long> nextLongHS(int n) {
+	public HashSet<Long> nextLongHS(final int n) {
 		return nextLongCollection(n, () -> new HashSet<>(n));
 	}
 
@@ -527,11 +527,11 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ TreeSet&lt;Long&gt;
 	 */
-	public TreeSet<Long> nextLongTS(int n) {
+	public TreeSet<Long> nextLongTS(final int n) {
 		return nextLongCollection(n, TreeSet::new);
 	}
 
-//  --------------------- Collection<Character>入力メソッド ---------------------
+	/* ------------------------ Collection<Character>入力メソッド ------------------------ */
 
 	/**
 	 * 文字を読み込み、指定したコレクションに格納して返します。
@@ -541,12 +541,12 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier コレクションのインスタンスを生成するサプライヤ
 	 * @return 読み込んだ文字のコレクション
 	 */
-	private <T extends Collection<Character>> T nextCharacterCollection(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Collection<Character>> T nextCharacterCollection(int n, final Supplier<T> supplier) {
+		final T collection = supplier.get();
 		while (n-- > 0) {
-			c.add(nextChar());
+			collection.add(nextChar());
 		}
-		return c;
+		return collection;
 	}
 
 	/**
@@ -555,7 +555,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ ArrayList&lt;Character&gt;
 	 */
-	public ArrayList<Character> nextCharacterAL(int n) {
+	public ArrayList<Character> nextCharacterAL(final int n) {
 		return nextCharacterCollection(n, () -> new ArrayList<>(n));
 	}
 
@@ -565,7 +565,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ HashSet&lt;Character&gt;
 	 */
-	public HashSet<Character> nextCharacterHS(int n) {
+	public HashSet<Character> nextCharacterHS(final int n) {
 		return nextCharacterCollection(n, () -> new HashSet<>(n));
 	}
 
@@ -575,11 +575,11 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ TreeSet&lt;Character&gt;
 	 */
-	public TreeSet<Character> nextCharacterTS(int n) {
+	public TreeSet<Character> nextCharacterTS(final int n) {
 		return nextCharacterCollection(n, TreeSet::new);
 	}
 
-//  --------------------- Collection<String>入力メソッド ---------------------
+	/* ------------------------ Collection<String>入力メソッド ------------------------ */
 
 	/**
 	 * 文字列を読み込み、指定したコレクションに格納して返します。
@@ -589,12 +589,12 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier コレクションのインスタンスを生成するサプライヤ
 	 * @return 読み込んだ文字列のコレクション
 	 */
-	private <T extends Collection<String>> T nextStringCollection(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Collection<String>> T nextStringCollection(int n, final Supplier<T> supplier) {
+		final T collection = supplier.get();
 		while (n-- > 0) {
-			c.add(next());
+			collection.add(next());
 		}
-		return c;
+		return collection;
 	}
 
 	/**
@@ -603,7 +603,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ ArrayList&lt;String&gt;
 	 */
-	public ArrayList<String> nextStringAL(int n) {
+	public ArrayList<String> nextStringAL(final int n) {
 		return nextStringCollection(n, () -> new ArrayList<>(n));
 	}
 
@@ -613,7 +613,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ HashSet&lt;String&gt;
 	 */
-	public HashSet<String> nextStringHS(int n) {
+	public HashSet<String> nextStringHS(final int n) {
 		return nextStringCollection(n, () -> new HashSet<>(n));
 	}
 
@@ -623,12 +623,11 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 読み込んだ TreeSet&lt;String&gt;
 	 */
-	public TreeSet<String> nextStringTS(int n) {
+	public TreeSet<String> nextStringTS(final int n) {
 		return nextStringCollection(n, TreeSet::new);
 	}
 
-// -------------------- Multiset (Map) 入力メソッド --------------------
-
+	/* ------------------------ Multiset (Map) 入力メソッド ------------------------ */
 
 	/**
 	 * 整数の出現回数をカウントしたマルチセットを読み込みます。<br>
@@ -639,13 +638,13 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier マップのインスタンスを生成するサプライヤ
 	 * @return 整数のマルチセット（マップ）
 	 */
-	private <T extends Map<Integer, Integer>> T nextIntMultiset(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Map<Integer, Integer>> T nextIntMultiset(int n, final Supplier<T> supplier) {
+		final T multiSet = supplier.get();
 		while (n-- > 0) {
-			int a = nextInt();
-			c.put(a, c.getOrDefault(a, 0) + 1);
+			final int i = nextInt();
+			multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
 		}
-		return c;
+		return multiSet;
 	}
 
 	/**
@@ -654,7 +653,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 整数のマルチセット（HashMap）
 	 */
-	public HashMap<Integer, Integer> nextIntMultisetHM(int n) {
+	public HashMap<Integer, Integer> nextIntMultisetHM(final int n) {
 		return nextIntMultiset(n, () -> new HashMap<>(n));
 	}
 
@@ -664,7 +663,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 整数のマルチセット（TreeMap）
 	 */
-	public TreeMap<Integer, Integer> nextIntMultisetTM(int n) {
+	public TreeMap<Integer, Integer> nextIntMultisetTM(final int n) {
 		return nextIntMultiset(n, TreeMap::new);
 	}
 
@@ -677,13 +676,13 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier マップのインスタンスを生成するサプライヤ
 	 * @return 長整数のマルチセット（マップ）
 	 */
-	private <T extends Map<Long, Integer>> T nextLongMultiset(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Map<Long, Integer>> T nextLongMultiset(int n, final Supplier<T> supplier) {
+		final T multiSet = supplier.get();
 		while (n-- > 0) {
-			long a = nextLong();
-			c.put(a, c.getOrDefault(a, 0) + 1);
+			final long l = nextLong();
+			multiSet.put(l, multiSet.getOrDefault(l, 0) + 1);
 		}
-		return c;
+		return multiSet;
 	}
 
 	/**
@@ -692,7 +691,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 長整数のマルチセット（HashMap）
 	 */
-	public HashMap<Long, Integer> nextLongMultisetHM(int n) {
+	public HashMap<Long, Integer> nextLongMultisetHM(final int n) {
 		return nextLongMultiset(n, () -> new HashMap<>(n));
 	}
 
@@ -702,7 +701,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 長整数のマルチセット（TreeMap）
 	 */
-	public TreeMap<Long, Integer> nextLongMultisetTM(int n) {
+	public TreeMap<Long, Integer> nextLongMultisetTM(final int n) {
 		return nextLongMultiset(n, TreeMap::new);
 	}
 
@@ -715,13 +714,13 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier マップのインスタンスを生成するサプライヤ
 	 * @return 文字のマルチセット（マップ）
 	 */
-	private <T extends Map<Character, Integer>> T nextCharMultiset(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Map<Character, Integer>> T nextCharMultiset(int n, final Supplier<T> supplier) {
+		final T multiSet = supplier.get();
 		while (n-- > 0) {
-			char a = nextChar();
-			c.put(a, c.getOrDefault(a, 0) + 1);
+			final char c = nextChar();
+			multiSet.put(c, multiSet.getOrDefault(c, 0) + 1);
 		}
-		return c;
+		return multiSet;
 	}
 
 	/**
@@ -730,7 +729,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 文字のマルチセット（HashMap）
 	 */
-	public HashMap<Character, Integer> nextCharMultisetHM(int n) {
+	public HashMap<Character, Integer> nextCharMultisetHM(final int n) {
 		return nextCharMultiset(n, () -> new HashMap<>(n));
 	}
 
@@ -740,7 +739,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 文字のマルチセット（TreeMap）
 	 */
-	public TreeMap<Character, Integer> nextCharMultisetTM(int n) {
+	public TreeMap<Character, Integer> nextCharMultisetTM(final int n) {
 		return nextCharMultiset(n, TreeMap::new);
 	}
 
@@ -753,13 +752,13 @@ public final class ContestScanner extends FastScanner {
 	 * @param supplier マップのインスタンスを生成するサプライヤ
 	 * @return 文字列のマルチセット（マップ）
 	 */
-	private <T extends Map<String, Integer>> T nextStringMultiset(int n, Supplier<T> supplier) {
-		T c = supplier.get();
+	private <T extends Map<String, Integer>> T nextStringMultiset(int n, final Supplier<T> supplier) {
+		final T multiSet = supplier.get();
 		while (n-- > 0) {
-			String a = next();
-			c.put(a, c.getOrDefault(a, 0) + 1);
+			final String s = next();
+			multiSet.put(s, multiSet.getOrDefault(s, 0) + 1);
 		}
-		return c;
+		return multiSet;
 	}
 
 	/**
@@ -768,7 +767,7 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 文字列のマルチセット（HashMap）
 	 */
-	public HashMap<String, Integer> nextStringMultisetHM(int n) {
+	public HashMap<String, Integer> nextStringMultisetHM(final int n) {
 		return nextStringMultiset(n, () -> new HashMap<>(n));
 	}
 
@@ -778,7 +777,62 @@ public final class ContestScanner extends FastScanner {
 	 * @param n 要素数
 	 * @return 文字列のマルチセット（TreeMap）
 	 */
-	public TreeMap<String, Integer> nextStringMultisetTM(int n) {
+	public TreeMap<String, Integer> nextStringMultisetTM(final int n) {
 		return nextStringMultiset(n, TreeMap::new);
+	}
+
+	/* ------------------------ Multiset (配列) 入力メソッド ------------------------ */
+
+	/**
+	 * 整数のマルチセットを int[] で読み込みます。
+	 *
+	 * @param n 要素数
+	 * @param m 要素の最大値
+	 * @return 整数のマルチセット（int[]）
+	 */
+	public int[] nextIntMultiset(final int n, final int m) {
+		final int[] multiset = new int[m];
+		for (int i = 0; i < n; i++) {
+			final int value = nextInt() - 1;
+			multiset[value] = multiset[value] + 1;
+		}
+		return multiset;
+	}
+
+	/**
+	 * 大文字のマルチセットを char[] で読み込みます。
+	 *
+	 * @param n 要素数
+	 * @return 整数のマルチセット（char[]）
+	 */
+	public int[] nextUpperCharMultiset(final int n) {
+		return nextCharMultiset(n, 'A', 'Z');
+	}
+
+	/**
+	 * 小文字のマルチセットを char[] で読み込みます。
+	 *
+	 * @param n 要素数
+	 * @return 整数のマルチセット（char[]）
+	 */
+	public int[] nextLowerCharMultiset(final int n) {
+		return nextCharMultiset(n, 'a', 'z');
+	}
+
+	/**
+	 * 連続する文字のマルチセットを char[] で読み込みます。
+	 *
+	 * @param n 要素数
+	 * @param l 最小文字
+	 * @param r 最大文字
+	 * @return 整数のマルチセット（char[]）
+	 */
+	public int[] nextCharMultiset(int n, final char l, final char r) {
+		final int[] multiset = new int[r - l + 1];
+		while (n-- > 0) {
+			final int c = nextChar() - l;
+			multiset[c]++;
+		}
+		return multiset;
 	}
 }

@@ -16,7 +16,7 @@ import static java.lang.Math.min;
 @SuppressWarnings("unused")
 public class FastPrinter implements AutoCloseable {
 
-//  ------------------------ 定数 ------------------------
+	/* ------------------------ 定数 ------------------------ */
 
 	/**
 	 * int 型の値を文字列に変換した際に必要となる最大桁数（符号込み）<br>
@@ -41,7 +41,7 @@ public class FastPrinter implements AutoCloseable {
 	 */
 	private static final byte[] TWO_DIGIT_NUMBERS = new byte[200];
 
-	//  -------------------- 静的イニシャライザ --------------------
+	/* ------------------------ 静的イニシャライザ ------------------------ */
 	/*
 	 * TWO_DIGIT_NUMBERS の初期化を行います。
 	 */
@@ -57,7 +57,7 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-//  --------------------- インスタンス変数 ---------------------
+	/* ------------------------ インスタンス変数 ------------------------ */
 	/**
 	 * 出力先の内部バッファです。書き込みはこの配列に対して行い、必要に応じて {@link #flush()} で出力します。
 	 */
@@ -79,7 +79,7 @@ public class FastPrinter implements AutoCloseable {
 	 */
 	protected int pos = 0;
 
-//  ---------------------- コンストラクタ ----------------------
+	/* ------------------------ コンストラクタ ------------------------ */
 
 	/**
 	 * デフォルトの設定でFastPrinterを初期化します。<br>
@@ -170,7 +170,7 @@ public class FastPrinter implements AutoCloseable {
 		this.autoFlush = autoFlush;
 	}
 
-//  -------------------- オーバーライドメソッド --------------------
+	/* ------------------------ オーバーライドメソッド ------------------------ */
 
 	/**
 	 * {@code flush()}を実行し、このOutputStreamを閉じます。<br>
@@ -199,7 +199,7 @@ public class FastPrinter implements AutoCloseable {
 		pos = 0;
 	}
 
-//  -------------------- println() 系メソッド --------------------
+	/* ------------------------ println() 系メソッド ------------------------ */
 
 	/**
 	 * 改行のみ出力します。
@@ -318,7 +318,7 @@ public class FastPrinter implements AutoCloseable {
 		print(bd.toString(), true);
 	}
 
-//  --------------------- print() 系メソッド ---------------------
+	/* ------------------------ print() 系メソッド ------------------------ */
 
 	/**
 	 * int 値を出力します。（改行無し）
@@ -424,7 +424,7 @@ public class FastPrinter implements AutoCloseable {
 		print(bd.toString(), false);
 	}
 
-//  --------------------- printf() 系メソッド ---------------------
+	/* ------------------------ printf() 系メソッド ------------------------ */
 
 	/**
 	 * 指定されたフォーマットに従い文字列を生成して出力します。（改行無し）
@@ -447,7 +447,7 @@ public class FastPrinter implements AutoCloseable {
 		print(String.format(locale, format, args), false);
 	}
 
-//  --------------------- 内部メソッド ---------------------
+	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
 
 	/**
 	 * 指定されたバイト数のデータを出力するために必要な領域を保証します。<br>
