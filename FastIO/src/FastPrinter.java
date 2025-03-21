@@ -42,6 +42,7 @@ public class FastPrinter implements AutoCloseable {
 	private static final byte[] TWO_DIGIT_NUMBERS = new byte[200];
 
 	/* ------------------------ 静的イニシャライザ ------------------------ */
+
 	/*
 	 * TWO_DIGIT_NUMBERS の初期化を行います。
 	 */
@@ -58,6 +59,7 @@ public class FastPrinter implements AutoCloseable {
 	}
 
 	/* ------------------------ インスタンス変数 ------------------------ */
+
 	/**
 	 * 出力先の内部バッファです。書き込みはこの配列に対して行い、必要に応じて {@link #flush()} で出力します。
 	 */

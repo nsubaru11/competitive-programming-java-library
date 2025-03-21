@@ -378,8 +378,10 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public long[][] nextLongPrefixSum(final int h, final int w) {
 		final long[][] ps = new long[h + 1][w + 1];
-		for (int i = 1, j = i; i <= h; i++)
+		for (int i = 1; i <= h; i++) {
+			final int j = i;
 			setAll(ps[i], k -> k > 0 ? nextLong() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
+		}
 		return ps;
 	}
 
@@ -395,9 +397,11 @@ public final class ContestScanner extends FastScanner {
 	public int[][][] nextIntPrefixSum(final int x, final int y, final int z) {
 		final int[][][] ps = new int[x + 1][y + 1][z + 1];
 		for (int a = 1; a <= x; a++)
-			for (int b = 1, A = a, B = b; b <= y; b++)
+			for (int b = 1; b <= y; b++) {
+				final int A = a, B = b;
 				setAll(ps[A][B], c -> c > 0 ? nextInt() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
 						- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
+			}
 		return ps;
 	}
 

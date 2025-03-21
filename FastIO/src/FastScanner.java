@@ -89,7 +89,7 @@ public class FastScanner implements AutoCloseable {
 		this.buffer = new byte[bufferSize];
 	}
 
-	/* ------------------------ オーバーライドメソッド ------------------------ */
+	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
 
 	/**
 	 * 指定した文字コードが空白文字かどうか判定します。
@@ -102,6 +102,8 @@ public class FastScanner implements AutoCloseable {
 		return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 	}
 
+	/* ------------------------ オーバーライドメソッド ------------------------ */
+
 	/**
 	 * このスキャナが使用する {@code InputStream} を閉じます。
 	 * 入力元が {@code System.in} の場合は閉じません。
@@ -113,8 +115,6 @@ public class FastScanner implements AutoCloseable {
 		if (in != System.in)
 			in.close();
 	}
-
-	/* ------------------------ 基本入力メソッド ------------------------ */
 
 	/**
 	 * 内部バッファから 1 バイトを読み込みます。
@@ -130,12 +130,13 @@ public class FastScanner implements AutoCloseable {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			if (bufferLength < 0) {
+			if (bufferLength < 0)
 				throw new RuntimeException(new IOException("End of input reached"));
-			}
 		}
 		return buffer[pos++];
 	}
+
+	/* ------------------------ 基本入力メソッド ------------------------ */
 
 	/**
 	 * 次の int 値を読み込みます。
@@ -260,8 +261,6 @@ public class FastScanner implements AutoCloseable {
 		return new BigInteger(next());
 	}
 
-	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
-
 	/**
 	 * 次のトークンを {@code BigDecimal} として読み込みます。
 	 *
@@ -270,4 +269,5 @@ public class FastScanner implements AutoCloseable {
 	public final BigDecimal nextBigDecimal() {
 		return new BigDecimal(next());
 	}
+
 }
