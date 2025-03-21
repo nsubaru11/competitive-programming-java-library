@@ -7,6 +7,14 @@
 # Java関連のファイル
 **/*.class             # コンパイル後のJavaクラスファイル
 
+# IntelliJ の設定ファイル
+.idea/
+*.iml
+
+# ビルド成果物
+out/
+*.class
+
 # Eclipse & IntelliJ project files
 **/.idea/           # IntelliJ の設定ディレクトリ（全てのディレクトリに適用）
 **/*.iml               # IntelliJ のプロジェクト設定ファイル
