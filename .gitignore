@@ -1,0 +1,40 @@
+# OSごとの不要なファイル
+.DS_Store           # macOSの不要なファイル
+Thumbs.db           # Windowsの不要なファイル
+._*                 # macOSの隠しファイル
+desktop.ini         # Windowsの設定ファイル
+
+# Compiled class files
+*.class             # Java コンパイル後のクラスファイル
+
+# Eclipse & IntelliJ project files
+*.iml               # IntelliJ のプロジェクト設定
+.idea/              # IntelliJ の設定ディレクトリ
+.classpath          # Eclipse の設定
+.project            # Eclipse の設定
+.settings/          # Eclipse の設定
+*.ipr               # IntelliJ のプロジェクト設定
+*.iws               # IntelliJ のワークスペース設定
+
+# Build directories (ビルドディレクトリ)
+bin/                # Eclipse などのビルドディレクトリ
+out/                # IntelliJ などのビルドディレクトリ
+target/             # Mavenのビルドディレクトリ
+build/              # Gradleのビルドディレクトリ
+.gradle/            # Gradleの設定ディレクトリ
+.mvn/               # Mavenの設定ディレクトリ
+
+# Logs
+*.log               # ログファイル
+
+# ユーザー設定ファイル
+*.swp               # Vimの一時ファイル
+*.swo               # Vimの一時ファイル
+
+# Maven & Gradle の依存関係
+*.jar               # ローカルのJARファイル
+*.war               # Webアーカイブファイル
+*.ear               # エンタープライズアプリケーションアーカイブ
+
+# Javaの依存関係管理ファイル
+*.class             # 競技プログラミング用のクラスファイル
