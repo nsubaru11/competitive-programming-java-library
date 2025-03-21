@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="7b9bbdb5-42d6-40bb-86e9-bbd2e35fdb0c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AbstractBinarySearch.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/FastIO/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/CompressedFastPrinter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/CompressedFastScanner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/ContestPrinter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/ContestScanner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/Example.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/FastIO.iml" beforeDir="false" afterPath="$PROJECT_DIR$/FastIO/FastIO.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/FastPrinter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/FastScanner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/PrinterGuide.md" beforeDir="false" afterPath="$PROJECT_DIR$/FastIO/PrinterGuide.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FastIO/ScannerGuide.md" beforeDir="false" afterPath="$PROJECT_DIR$/FastIO/ScannerGuide.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/competitive-programming-java-library.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BinarySearch/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/BinarySearch/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,6 +49,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "Errors",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -81,7 +69,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1742544776141</updated>
-      <workItem from="1742544777467" duration="482000" />
+      <workItem from="1742544777467" duration="1143000" />
     </task>
     <servers />
   </component>

@@ -4,37 +4,40 @@ Thumbs.db           # Windowsの不要なファイル
 ._*                 # macOSの隠しファイル
 desktop.ini         # Windowsの設定ファイル
 
-# Compiled class files
-*.class             # Java コンパイル後のクラスファイル
+# Java関連のファイル
+*.class             # コンパイル後のJavaクラスファイル
 
 # Eclipse & IntelliJ project files
-*.iml               # IntelliJ のプロジェクト設定
 .idea/              # IntelliJ の設定ディレクトリ
-.classpath          # Eclipse の設定
-.project            # Eclipse の設定
-.settings/          # Eclipse の設定
-*.ipr               # IntelliJ のプロジェクト設定
-*.iws               # IntelliJ のワークスペース設定
+*.iml               # IntelliJ のプロジェクト設定ファイル
+*.ipr               # IntelliJ のプロジェクト設定ファイル
+*.iws               # IntelliJ のワークスペース設定ファイル
+.classpath          # Eclipse のプロジェクト設定ファイル
+.project            # Eclipse のプロジェクト設定ファイル
+.settings/          # Eclipse の設定ディレクトリ
 
-# Build directories (ビルドディレクトリ)
-bin/                # Eclipse などのビルドディレクトリ
-out/                # IntelliJ などのビルドディレクトリ
-target/             # Mavenのビルドディレクトリ
-build/              # Gradleのビルドディレクトリ
-.gradle/            # Gradleの設定ディレクトリ
-.mvn/               # Mavenの設定ディレクトリ
+# ビルドディレクトリ
+bin/                # Eclipse のビルドディレクトリ
+out/                # IntelliJ のビルドディレクトリ
+target/             # Maven のビルドディレクトリ
+build/              # Gradle のビルドディレクトリ
+.gradle/            # Gradle の設定ディレクトリ
+.mvn/               # Maven の設定ディレクトリ
 
-# Logs
+# ログファイル
 *.log               # ログファイル
 
-# ユーザー設定ファイル
-*.swp               # Vimの一時ファイル
-*.swo               # Vimの一時ファイル
-
-# Maven & Gradle の依存関係
-*.jar               # ローカルのJARファイル
+# 仮想環境や依存関係管理ファイル
+node_modules/       # Node.js の依存関係
+venv/               # Python の仮想環境
+*.jar               # ローカルで生成したJARファイル
 *.war               # Webアーカイブファイル
-*.ear               # エンタープライズアプリケーションアーカイブ
+*.ear               # エンタープライズアーカイブファイル
 
-# Javaの依存関係管理ファイル
-*.class             # 競技プログラミング用のクラスファイル
+# エディタの一時ファイル
+*.swp               # Vim のスワップファイル
+*.swo               # Vim のオープンファイル
+*.bak               # エディタでバックアップされたファイル
+
+# その他の一時ファイル
+*.tmp               # 一時ファイル
