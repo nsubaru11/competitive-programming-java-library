@@ -3,12 +3,14 @@ import java.util.Map;
 
 /**
  * シンプルなTrieデータ構造。
+ * Trieは文字列の集合を効率的に管理するデータ構造であり、
+ * 単語の挿入、検索、プレフィックス検索などを高速に実行できる。
  */
 public class Trie {
 	private final Map<Character, TrieNode> children;
 
 	/**
-	 * デフォルトコンストラクタ。
+	 * Trieのルートノードを初期化するコンストラクタ。
 	 */
 	public Trie() {
 		children = new HashMap<>();
@@ -21,22 +23,23 @@ public class Trie {
 	 * @throws IllegalArgumentException 単語がnullの場合にスローされる。
 	 */
 	public void insert(String word) {
-		if (word == null)
+		if (word == null || word.isEmpty())
 			throw new IllegalArgumentException("word cannot be null");
 		Map<Character, TrieNode> nodes = children;
-		for (int i = 0; i < word.length(); i++) {
-			char c = word.charAt(i);
-			boolean isEnd = (i == word.length() - 1);
-			TrieNode node = getOrCreateChild(nodes, c, isEnd);
+		TrieNode node = null;
+		for (char c : word.toCharArray()) {
+			node = nodes.computeIfAbsent(c, k -> new TrieNode());
+			node.increment();
 			nodes = node.getChildren();
 		}
+		node.setEnd();
 	}
 
 	/**
 	 * 単語がTrieに存在するかどうかを検索する。
 	 *
 	 * @param word 検索する単語。nullであってはならない。
-	 * @return 単語が存在すればtrue、存在しなければfalse
+	 * @return 単語が存在すればtrue、存在しなければfalse。
 	 * @throws IllegalArgumentException 単語がnullの場合にスローされる。
 	 */
 	public boolean search(String word) {
@@ -50,7 +53,7 @@ public class Trie {
 	 * 指定したプレフィックスで始まる単語の出現回数を返す。
 	 *
 	 * @param prefix 検索するプレフィックス。nullであってはならない。
-	 * @return プレフィックスに一致する単語の出現回数
+	 * @return プレフィックスに一致する単語の出現回数。
 	 * @throws IllegalArgumentException プレフィックスがnullの場合にスローされる。
 	 */
 	public int countPrefix(String prefix) {
@@ -63,8 +66,8 @@ public class Trie {
 	/**
 	 * 指定した文字列に対応するTrieNodeを走査して返す。
 	 *
-	 * @param key 走査する文字列 (nullであってはならない)
-	 * @return 最後の文字に対応するTrieNode、存在しなければnull
+	 * @param key 走査する文字列。nullであってはならない。
+	 * @return 最後の文字に対応するTrieNode。存在しなければnull。
 	 */
 	private TrieNode findLastNode(String key) {
 		Map<Character, TrieNode> nodes = children;
@@ -80,25 +83,6 @@ public class Trie {
 	}
 
 	/**
-	 * 指定したキーの子ノードを取得する。存在しなければ新規作成し、存在する場合は終端フラグを更新する。
-	 *
-	 * @param nodes 子ノードのマップ
-	 * @param key   子ノードのキー
-	 * @param isEnd 終端フラグ
-	 * @return 対応する子ノード
-	 */
-	private TrieNode getOrCreateChild(Map<Character, TrieNode> nodes, char key, boolean isEnd) {
-		TrieNode node = nodes.get(key);
-		if (node == null) {
-			node = new TrieNode(isEnd);
-			nodes.put(key, node);
-		} else {
-			node.increment(isEnd);
-		}
-		return node;
-	}
-
-	/**
 	 * Trie内の各ノードを表す内部クラス。
 	 */
 	private static class TrieNode {
@@ -108,19 +92,17 @@ public class Trie {
 
 		/**
 		 * ノードを生成するコンストラクタ。
-		 *
-		 * @param end このノードが単語の終端であるか
 		 */
-		public TrieNode(boolean end) {
-			this.end = end;
-			frequency = 1;
-			children = new HashMap<>();
+		public TrieNode() {
+			this.end = false;
+			this.frequency = 0;
+			this.children = new HashMap<>();
 		}
 
 		/**
 		 * 子ノードのマップを返す。
 		 *
-		 * @return 子ノードのマップ
+		 * @return 子ノードのマップ。
 		 */
 		public Map<Character, TrieNode> getChildren() {
 			return children;
@@ -129,7 +111,7 @@ public class Trie {
 		/**
 		 * このノードに登録された単語の出現回数を返す。
 		 *
-		 * @return 出現回数
+		 * @return 出現回数。
 		 */
 		public int frequency() {
 			return frequency;
@@ -138,20 +120,24 @@ public class Trie {
 		/**
 		 * このノードが単語の終端であるかを返す。
 		 *
-		 * @return 終端であればtrue、そうでなければfalse
+		 * @return 終端であればtrue、そうでなければfalse。
 		 */
 		public boolean isEnd() {
 			return end;
 		}
 
 		/**
-		 * 終端フラグを更新する。
-		 *
-		 * @param isEnd この単語が終端かどうか
+		 * このノードを単語の終端としてマークする。
 		 */
-		public void increment(boolean isEnd) {
+		public void setEnd() {
+			this.end = true;
+		}
+
+		/**
+		 * 単語の出現回数をインクリメントする。
+		 */
+		public void increment() {
 			frequency++;
-			this.end |= isEnd;
 		}
 	}
 }
