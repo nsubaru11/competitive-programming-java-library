@@ -58,28 +58,37 @@ author: <https://atcoder.jp/users/nsubaru>
   - null チェックを導入しているため、NullPointerException の発生リスクを低減  
   - `AutoCloseable` を実装しているため、try-with-resources の利用が推奨される
 
-### [AbstractBinarySearch](./BinarySearch/src/AbstractBinarySearch.java)
+---
 
+## [AbstractBinarySearch](./BinarySearch/src/AbstractBinarySearch.java)
 - **用途**  
-  - 整数および長整数に対して、通常の二分探索、上限探索（Upper Bound）、下限探索（Lower Bound）を行うための抽象クラス
+  - 整数および長整数に対する **汎用的な二分探索のための抽象クラス**  
+
 - **特徴**  
-  - ユーザーは抽象メソッド `comparator(long n)` を実装することで、任意の探索条件を定義可能  
-  - 通常探索（`normalSearch`）では、条件に一致する任意の値が見つかった時点で探索を終了する  
-  - 上限探索（`upperBoundSearch`）では、条件に一致する範囲のうち最大のインデックスを返す（条件に合致する最後の値の位置）  
-  - 下限探索（`lowerBoundSearch`）では、条件に一致する範囲のうち最小のインデックスを返す（条件に合致する最初の値の位置）  
-  - 探索に失敗した場合、戻り値は「~挿入位置（ビット反転、すなわち -(挿入位置) - 1)」となる
+  - ユーザーは `comparator(long n)` を実装することで、**自由に探索条件を定義** できる  
+  - **三種類の探索をサポート**  
+    - `normalSearch(n)`: 条件を満たす **任意の要素のインデックス** を返す  
+    - `lowerBoundSearch(n)`: 条件を満たす範囲の **最も左側のインデックス** を返す  
+    - `upperBoundSearch(n)`: 条件を満たす範囲の **最も右側のインデックス** を返す  
+  - **探索対象は整数 (`int` or `long`)**
+  - **見つからなかった場合の戻り値**  
+    - `~挿入位置`（`-(挿入位置) - 1`）を返す  
+    - **例**: `5` を `[1, 3, 7, 9]` で探索 → 挿入位置 `2` → 戻り値 `-3`  
 
 ---
 
-### [ArrayBinarySearch](./BinarySearch/src/ArrayBinarySearch.java)
+## [ArrayBinarySearch](./BinarySearch/src/ArrayBinarySearch.java)
+- **用途**  
+  - **ソート済み配列に対する高速な二分探索を提供**  
 
-- **用途**
-  - ソート済み配列に対して、通常の二分探索、上限探索（Upper Bound）、下限探索（Lower Bound）を行うためのクラス
-- **特徴**
-  - 通常探索（`normalSearch`）では、条件に一致する任意の値が見つかった時点で探索を終了する
-  - 上限探索（`upperBoundSearch`）では、条件に一致する範囲のうち最大のインデックスを返す（条件に合致する最後の値の位置）
-  - 下限探索（`lowerBoundSearch`）では、条件に一致する範囲のうち最小のインデックスを返す（条件に合致する最初の値の位置）
-  - 各探索において、探索範囲を指定可能。
-  - 探索に失敗した場合、戻り値は「~挿入位置（ビット反転、すなわち -(挿入位置) - 1)」となる
+- **特徴**  
+  - **三種類の探索をサポート**（AbstractBinarySearch と同じ）  
+    - `normalSearch(n)`: **任意の要素のインデックス** を返す  
+    - `lowerBoundSearch(n)`: **最も左側のインデックス** を返す  
+    - `upperBoundSearch(n)`: **最も右側のインデックス** を返す  
+  - **探索対象はソート済みの `int[]` 配列**  
+  - **探索範囲を指定可能**
+  - **見つからなかった場合の戻り値**  
+    - `~挿入位置`（`-(挿入位置) - 1`）を返す  
 
 ---
