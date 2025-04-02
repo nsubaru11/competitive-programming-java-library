@@ -60,7 +60,7 @@ author: <https://atcoder.jp/users/nsubaru>
 
 ---
 
-## [AbstractBinarySearch](./BinarySearch/src/AbstractBinarySearch.java)
+### [AbstractBinarySearch](./BinarySearch/src/AbstractBinarySearch.java)
 - **用途**  
   - 整数および長整数に対する **汎用的な二分探索のための抽象クラス**  
 
@@ -77,7 +77,7 @@ author: <https://atcoder.jp/users/nsubaru>
 
 ---
 
-## [ArrayBinarySearch](./BinarySearch/src/ArrayBinarySearch.java)
+### [ArrayBinarySearch](./BinarySearch/src/ArrayBinarySearch.java)
 - **用途**  
   - **ソート済み配列に対する高速な二分探索を提供**  
 
