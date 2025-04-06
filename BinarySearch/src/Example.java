@@ -57,7 +57,7 @@ public class Example {
 		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index);
 		target = 0;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, target);
-		System.out.print("上限探索: " + target + " 以上の最小値のインデックス = " + index);
+		System.out.print("下限探索: " + target + " 以下の最大値のインデックス = " + index);
 		insertPos = -index - 1; // 挿入位置の計算
 		System.out.println(", 挿入位置 = " + insertPos);
 		System.out.println();
