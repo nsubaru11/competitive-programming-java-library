@@ -36,42 +36,113 @@
 
 #### 改行付き
 
-- `void println(int a, int b)` - 2つの整数値を改行区切りで出力（改行付き）
-- `void println(int a, long b)` - int値とlong値を改行区切りで出力（改行付き）
-- `void println(long a, int b)` - long値とint値を改行区切りで出力（改行付き）
-- `void println(long a, long b)` - 2つのlong値を改行区切りで出力（改行付き）
-- `void println(long a, long b, char delimiter)` - 2つの整数値を指定した区切り文字で出力（改行付き）
+| メソッド                                      | 説明                        |
+|-------------------------------------------|---------------------------|
+| `println(int a, int b)`                   | 2つの整数値を改行区切りで出力（改行付き）     |
+| `println(int a, long b)`                  | int値とlong値を改行区切りで出力（改行付き） |
+| `println(long a, int b)`                  | long値とint値を改行区切りで出力（改行付き） |
+| `println(long a, long b)`                 | 2つのlong値を改行区切りで出力（改行付き）   |
+| `println(long a, long b, char delimiter)` | 2つの整数値を指定した区切り文字で出力（改行付き） |
 
 #### 改行無し
 
-- `void print(int a, int b)` - 2つの int 値を半角スペース区切りで出力
-- `void print(int a, long b)` - int 値と long 値を半角スペース区切りで出力
-- `void print(long a, int b)` - long 値と int 値を半角スペース区切りで出力
-- `void print(long a, long b)` - 2つの long 値を半角スペース区切りで出力
-- `void print(long a, long b, char delimiter)` - 2つの整数値を指定した区切り文字で出力
+| メソッド                                    | 説明                            |
+|-----------------------------------------|-------------------------------|
+| `print(int a, int b)`                   | 2つの整数値を半角スペース区切りで出力（改行無し）     |
+| `print(int a, long b)`                  | int値とlong値を半角スペース区切りで出力（改行無し） |
+| `print(long a, int b)`                  | long値とint値を半角スペース区切りで出力（改行無し） |
+| `print(long a, long b)`                 | 2つのlong値を半角スペース区切りで出力（改行無し）   |
+| `print(long a, long b, char delimiter)` | 2つの整数値を指定した区切り文字で出力（改行無し）     |
 
-### 3. 配列出力メソッド
+### 3. 小数系メソッド
 
-様々な型 {U: int, long, double, char, String, Object} の配列の出力を行います。
+| メソッド                       | 説明                                 |
+|----------------------------|------------------------------------|
+| `println(double d, int n)` | double値を指定された小数点以下桁数で出力（四捨五入、改行付き） |
+| `print(double d, int n)`   | double値を指定された小数点以下桁数で出力（四捨五入、改行無し） |
 
-- `void println(U[] arr)` - 配列の要素を改行区切りで出力（行末改行）
-- `void print(U[] arr)` - 配列の要素を半角スペース区切りで出力
-- `void println(U[] arr, char delimiter)` - 配列の要素を指定した区切り文字で出力（行末改行）
-- `void print(U[] arr, char delimiter)` - 配列の要素を指定した区切り文字で出力
+### 4. 1次元配列出力メソッド
 
-### 4. 変換関数を用いた出力
+#### 改行付き
 
-- `<T, U> void println(T[] arr, Function<T, U> mapper)` - 配列の各要素に変換関数を適用して出力（改行区切り）
-- `<T, U> void print(T[] arr, Function<T, U> mapper)` - 配列の各要素に変換関数を適用して出力（半角スペース区切り）
+| メソッド                               | 説明                              |
+|------------------------------------|---------------------------------|
+| `println(int[] arr)`               | int配列の各要素を改行区切りで出力（改行付き）        |
+| `println(long[] arr)`              | long配列の各要素を改行区切りで出力（改行付き）       |
+| `println(char[] arr)`              | char配列の各要素を改行区切りで出力（改行付き）       |
+| `println(boolean[] arr)`           | boolean配列の各要素を改行区切りで出力（改行付き）    |
+| `println(String[] arr)`            | String配列の各要素を改行区切りで出力（改行付き）     |
+| `println(Object... arr)`           | 可変長のObject配列の各要素を改行区切りで出力（改行付き） |
+| `println(U[] arr, char delimiter)` | 配列の各要素を指定した区切り文字で出力（改行付き）       |
 
-### 5. char配列を文字列として出力
+#### 改行無し
 
-- `void printChars(char[] arr)` - 配列の各要素区切り文字無しで出力
-- `void printChars(char[][] arr)` - 配列の各要素区切り文字無しで出力（各行改行付き）
+| メソッド                             | 説明                                  |
+|----------------------------------|-------------------------------------|
+| `print(int[] arr)`               | int配列の各要素を半角スペース区切りで出力（改行無し）        |
+| `print(long[] arr)`              | long配列の各要素を半角スペース区切りで出力（改行無し）       |
+| `print(char[] arr)`              | char配列の各要素を半角スペース区切りで出力（改行無し）       |
+| `print(boolean[] arr)`           | boolean配列の各要素を半角スペース区切りで出力（改行無し）    |
+| `print(String[] arr)`            | String配列の各要素を半角スペース区切りで出力（改行無し）     |
+| `print(Object... arr)`           | 可変長のObject配列の各要素を半角スペース区切りで出力（改行無し） |
+| `print(U[] arr, char delimiter)` | 配列の各要素を指定した区切り文字で出力（改行無し）           |
+
+### 5. 1次元配列の関数変換系メソッド
+
+#### 改行付き
+
+| メソッド                                                    | 説明                                 |
+|---------------------------------------------------------|------------------------------------|
+| `println(int[] arr, IntFunction<T> function)`           | int配列の各要素を指定された関数で変換し、改行区切りで出力     |
+| `println(long[] arr, LongFunction<T> function)`         | long配列の各要素を指定された関数で変換し、改行区切りで出力    |
+| `println(char[] arr, Function<Character, T> function)`  | char配列の各要素を指定された関数で変換し、改行区切りで出力    |
+| `println(boolean[] arr, Function<Boolean, T> function)` | boolean配列の各要素を指定された関数で変換し、改行区切りで出力 |
+| `println(String[] arr, Function<String, T> function)`   | String配列の各要素を指定された関数で変換し、改行区切りで出力  |
+
+#### 改行無し
+
+| メソッド                                                  | 説明                                     |
+|-------------------------------------------------------|----------------------------------------|
+| `print(int[] arr, IntFunction<T> function)`           | int配列の各要素を指定された関数で変換し、半角スペース区切りで出力     |
+| `print(long[] arr, LongFunction<T> function)`         | long配列の各要素を指定された関数で変換し、半角スペース区切りで出力    |
+| `print(char[] arr, Function<Character, T> function)`  | char配列の各要素を指定された関数で変換し、半角スペース区切りで出力    |
+| `print(boolean[] arr, Function<Boolean, T> function)` | boolean配列の各要素を指定された関数で変換し、半角スペース区切りで出力 |
+| `print(String[] arr, Function<String, T> function)`   | String配列の各要素を指定された関数で変換し、半角スペース区切りで出力  |
+
+### 6. 2次元配列出力メソッド
+
+| メソッド                                   | 説明                                     |
+|----------------------------------------|----------------------------------------|
+| `println(int[][] arr2d)`               | 二次元のint配列を、各行を半角スペース区切りで出力（各行末に改行）     |
+| `println(long[][] arr2d)`              | 二次元のlong配列を、各行を半角スペース区切りで出力（各行末に改行）    |
+| `println(char[][] arr2d)`              | 二次元のchar配列を、各行を半角スペース区切りで出力（各行末に改行）    |
+| `println(boolean[][] arr2d)`           | 二次元のboolean配列を、各行を半角スペース区切りで出力（各行末に改行） |
+| `println(String[][] arr2d)`            | 二次元のString配列を、各行を半角スペース区切りで出力（各行末に改行）  |
+| `println(Object[][] arr2d)`            | 二次元のObject配列を、各行を半角スペース区切りで出力（各行末に改行）  |
+| `println(U[][] arr2d, char delimiter)` | 二次元配列を、各行を指定した区切り文字で出力（各行末に改行）         |
+
+### 7. 2次元配列の関数変換系メソッド
+
+| メソッド                                                        | 説明                                            |
+|-------------------------------------------------------------|-----------------------------------------------|
+| `println(int[][] arr2d, IntFunction<T> function)`           | 二次元のint配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力     |
+| `println(long[][] arr2d, LongFunction<T> function)`         | 二次元のlong配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力    |
+| `println(char[][] arr2d, LongFunction<T> function)`         | 二次元のchar配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力    |
+| `println(boolean[][] arr2d, Function<Boolean, T> function)` | 二次元のboolean配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力 |
+| `println(String[][] arr2d, Function<String, T> function)`   | 二次元のString配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力  |
+
+### 8. char配列系メソッド
+
+| メソッド                                                                  | 説明                                       |
+|-----------------------------------------------------------------------|------------------------------------------|
+| `printChars(char[] arr)`                                              | char配列の各要素を区切り文字無しで出力（改行無し）              |
+| `printChars(char[] arr, Function<Character, Character> function)`     | char配列の各要素を指定された関数で変換し、区切り文字無しで出力        |
+| `printChars(char[][] arr2d)`                                          | 二次元のchar配列を、各行を区切り文字無しで出力（各行末に改行）        |
+| `printChars(char[][] arr2d, Function<Character, Character> function)` | 二次元のchar配列の各要素を指定された関数で変換し、各行を区切り文字無しで出力 |
 
 ## 利用例
 
-``` java
+```java
 int[] numbers = {1, 2, 3, 4, 5};
 int a = 10, b = 20;
 

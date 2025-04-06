@@ -51,7 +51,7 @@
 
 ## 利用例
 
-``` java
+```java
 try (FastPrinter fp = new FastPrinter()) {
 	fp.println("競技プログラミング用出力");
 	fp.print(12345);
