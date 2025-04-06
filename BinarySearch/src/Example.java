@@ -1,54 +1,97 @@
 import java.util.Arrays;
 
+/**
+ * BinarySearchとArrayBinarySearchの使用例とテストケース
+ */
 public class Example {
 
 	public static void main(String[] args) {
-		int[] arr = {1, 2, 2, 3, 4, 5, 7, 9, 11, 12, 12, 15};
-		System.out.println(Arrays.toString(arr));
-		BinarySearch bs = new BinarySearch(arr);
-		for (int i = 0; i < arr.length; i++) {
-			int t = (int) (Math.random() * 15);
-			AbstractBinarySearch search = new AbstractBinarySearch() {
-				@Override
-				public int comparator(long m) {
-					int i = (int) m;
-					return Long.compare(arr[i], t);
-				}
-			};
-			System.out.println(t);
-			System.out.print("normal search: " + search.normalSearch(0, arr.length) + " " + bs.normalSearch(t));
-			System.out.print(", lower search: " + search.lowerBoundSearch(0, arr.length) + " " + bs.lowerBoundSearch(t));
-			System.out.println(", upper search: " + search.upperBoundSearch(0, arr.length) + " " + bs.upperBoundSearch(t));
-		}
+		// 両方のBinarySearchクラスの機能をテスト
+		testArrayBinarySearch();
+		testBinarySearch();
 	}
 
-	private static class BinarySearch extends AbstractBinarySearch {
-		private final int[] arr;
-		private int target;
+	/**
+	 * ArrayBinarySearchの使用例とテスト
+	 */
+	private static void testArrayBinarySearch() {
+		System.out.println("\n===== ArrayBinarySearch テスト =====");
 
-		public BinarySearch(int[] arr) {
-			this.arr = arr;
-		}
+		// テスト用の整数配列
+		int[] sortedArray = {10, 20, 30, 30, 50, 60, 70, 70, 70};
+		System.out.println("配列: " + Arrays.toString(sortedArray));
 
-		public int normalSearch(int target) {
-			this.target = target;
-			return normalSearch(0, arr.length);
-		}
+		// 通常の二分探索
+		int target = 30;
+		int index = ArrayBinarySearch.normalSearch(sortedArray, target);
+		System.out.println("通常探索: 値 " + target + " のインデックス = " + index);
 
-		public int lowerBoundSearch(int target) {
-			this.target = target;
-			return lowerBoundSearch(0, arr.length);
-		}
+		// 存在しない値の探索
+		target = 35;
+		index = ArrayBinarySearch.normalSearch(sortedArray, target);
+		System.out.print("通常探索: 存在しない値 " + target + " の結果 = " + index);
+		int insertPos = -index - 1; // 挿入位置の計算
+		System.out.println(", 挿入位置 = " + insertPos);
+		System.out.println();
 
-		public int upperBoundSearch(int target) {
-			this.target = target;
-			return upperBoundSearch(0, arr.length);
-		}
+		// 上限探索(Upper Bound)
+		target = 30;
+		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
+		System.out.println("上限探索: " + target + " 以上の最小値のインデックス = " + index);
+		target = 70;
+		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
+		System.out.println("上限探索: " + target + " 以上の最小値のインデックス = " + index);
+		target = 100;
+		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
+		System.out.print("上限探索: " + target + " 以上の最小値のインデックス = " + index);
+		insertPos = -index - 1; // 挿入位置の計算
+		System.out.println(", 挿入位置 = " + insertPos);
+		System.out.println();
 
-		@Override
-		public int comparator(long m) {
-			int i = (int) m;
-			return Integer.compare(arr[i], target);
-		}
+		// 下限探索(Lower Bound)
+		target = 30;
+		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, 0, sortedArray.length, target);
+		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index);
+		target = 70;
+		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, 0, sortedArray.length, target);
+		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index);
+		target = 0;
+		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, target);
+		System.out.print("上限探索: " + target + " 以上の最小値のインデックス = " + index);
+		insertPos = -index - 1; // 挿入位置の計算
+		System.out.println(", 挿入位置 = " + insertPos);
+		System.out.println();
+	}
+
+	/**
+	 * BinarySearchの使用例とテスト
+	 */
+	private static void testBinarySearch() {
+		System.out.println("\n===== BinarySearch テスト =====");
+
+		// カスタム比較関数での通常の二分探索 (12345678 < x⁵ < 1234567890 を満たす x を探索)
+		int target2 = 1234567890;
+		int result = BinarySearch.normalSearch(0, 100, i -> {
+			long k = i * i * i * i * i;
+			return target2 / 100 < k && k < target2 ? 0 : k >= target2 ? 1 : -1;
+		});
+		System.out.println("12345678 < x⁵ < 1234567890 を満たす値 x = " + result);
+		System.out.println("検証:" + result + "⁵ = " + (result * result * result * result * result));
+
+		// カスタム比較関数での下限探索 (12345678 < x⁵ < 1234567890 を満たす最小の x を探索)
+		result = BinarySearch.lowerBoundSearch(0, 100, i -> {
+			long k = i * i * i * i * i;
+			return target2 / 100 < k && k < target2 ? 0 : k >= target2 ? 1 : -1;
+		});
+		System.out.println("12345678 < x⁵ < 1234567890 を満たす最小の x = " + result);
+		System.out.println("検証:" + result + "⁵ = " + (result * result * result * result * result));
+
+		// カスタム比較関数での上限探索 (12345678 < x⁵ < 1234567890 を満たす最大の x を探索)
+		result = BinarySearch.upperBoundSearch(0, 100, i -> {
+			long k = i * i * i * i * i;
+			return target2 / 100 < k && k < target2 ? 0 : k >= target2 ? 1 : -1;
+		});
+		System.out.println("12345678 < x⁵ < 1234567890 を満たす最大の x = " + result);
+		System.out.println("検証:" + result + "⁵ = " + (result * result * result * result * result));
 	}
 }
