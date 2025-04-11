@@ -1,9 +1,11 @@
 # Copilot Instructions
 
 ## プロジェクト概要
+
 このプロジェクトは競技プログラミング用のJavaライブラリを提供します。
 
 ## コーディング規則
+
 - **JavaDoc コメント**: 圧縮版のクラス以外の全てのクラス・メソッドでJavaDocコメントを記述すること。
 - **定数の命名規則**: 定数はUPPER_SNAKE_CASEで記述すること。
 - **インデント**: インデントにはタブキーを使用すること。
@@ -13,253 +15,109 @@
 - **多次元配列の圧縮**: 内部的に多次元配列を用いる場合、1次元に圧縮すること。
 
 ## ディレクトリ構成
+
 - `src`: ソースコードを含む。
 - `docs`: ドキュメントを含む。
   C:.
-  │  .gitignore
-  │  README.md
-  │
   ├─.github
-  │      copilot-instructions.md
-  │
+  │ ├─ISSUE_TEMPLATE
+  │ └─PULL_REQUEST_TEMPLATE
   ├─.idea
-  │      competitive-programming-java-library.iml
-  │      misc.xml
-  │      modules.xml
-  │      vcs.xml
-  │      workspace.xml
-  │
+  │ └─inspectionProfiles
+  ├─Algorithms
+  │ ├─.idea
+  │ ├─BinarySearch
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─MathFunctions
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─MinimumSpaningTree
+  │ │ ├─.idea
+  │ │ │ └─inspectionProfiles
+  │ │ ├─docs
+  │ │ ├─out
+  │ │ │ └─production
+  │ │ │ └─MinimumSpaningTree
+  │ │ └─src
+  │ ├─Palindrome
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ ├─out
+  │ │ │ └─production
+  │ │ │ └─Palindrome
+  │ │ └─src
+  │ ├─Permutation
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─PrimeNumber
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ ├─out
+  │ │ │ └─production
+  │ │ │ └─PrimeNumber
+  │ │ └─src
+  │ ├─ShortestPath
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─Sort
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─StringSearch
+  │ │ ├─.idea
+  │ │ └─src
+  │ └─TernarySearch
+  │ ├─.idea
+  │ └─src
+  ├─Data Structures
+  │ ├─BinaryIndexedTree
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─BinarySearchTree
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─FastIO
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─RingBuffer
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─SegmentTree
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─SparseTable
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ └─src
+  │ ├─Trie
+  │ │ ├─.idea
+  │ │ ├─docs
+  │ │ ├─out
+  │ │ │ └─production
+  │ │ │ └─Trie
+  │ │ └─src
+  │ └─UnionFind
+  │ ├─.idea
+  │ ├─docs
+  │ └─src
+  └─out
+  └─production
   ├─BinarySearch
-  │  │  BinarySearch.iml
-  │  │
-  │  ├─docs
-  │  │      BinarySearchGuide.md
-  │  │
-  │  └─src
-  │          AbstractBinarySearch.java
-  │          ArrayBinarySearch.java
-  │          Example.java
-  │
-  ├─FastIO
-  │  │  FastIO.iml
-  │  │
-  │  ├─docs
-  │  │      PrinterGuide.md
-  │  │      ScannerGuide.md
-  │  │
-  │  └─src
-  │          CompressedFastPrinter.java
-  │          CompressedFastScanner.java
-  │          ContestPrinter.java
-  │          ContestScanner.java
-  │          Example.java
-  │          FastPrinter.java
-  │          FastScanner.java
-  │
-  ├─MathFunctions
-  │  │  .gitignore
-  │  │  MathFunctions.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  └─src
-  │          MathFn.java
-  │
-  ├─out
-  │  └─production
-  │      ├─BinarySearch
-  │      │      AbstractBinarySearch$1.class
-  │      │      AbstractBinarySearch$SearchType.class
-  │      │      AbstractBinarySearch.class
-  │      │      ArrayBinarySearch.class
-  │      │      Example$1.class
-  │      │      Example$BinarySearch.class
-  │      │      Example.class
-  │      │
-  │      ├─FastIO
-  │      │      CompressedFastPrinter$FastPrinter.class
-  │      │      CompressedFastPrinter.class
-  │      │      CompressedFastScanner$FastScanner.class
-  │      │      CompressedFastScanner.class
-  │      │      ContestPrinter.class
-  │      │      ContestScanner.class
-  │      │      Example.class
-  │      │      FastPrinter.class
-  │      │      FastScanner.class
-  │      │
-  │      ├─Palindrome
-  │      │      Example.class
-  │      │      Manacher.class
-  │      │      PalindromeUtils.class
-  │      │
-  │      └─ShortestPath
-  │              BellmanFord$Edge.class
-  │              BellmanFord.class
-  │              Dijkstra$Edge.class
-  │              Dijkstra$Vertex.class
-  │              Dijkstra.class
-  │              Example.class
-  │              Warshallfroyd.class
-  │
-  ├─Palindrome
-  │  │  .gitignore
-  │  │  Palindrome.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  ├─out
-  │  │  └─production
-  │  │      └─Palindrome
-  │  │              Example.class
-  │  │              Manacher.class
-  │  │              PalindromeUtils.class
-  │  │
-  │  └─src
-  │          Example.java
-  │          Manacher.java
-  │          PalindromeUtils.java
-  │
-  ├─Permutation
-  │  │  .gitignore
-  │  │  Permutation.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  └─src
-  │          Permutation.java
-  │
-  ├─PrimeNumber
-  │  │  .gitignore
-  │  │  PrimeNumber.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  ├─out
-  │  │  └─production
-  │  │      └─PrimeNumber
-  │  │              Example.class
-  │  │              PrecomputedPrimes$1.class
-  │  │              PrecomputedPrimes.class
-  │  │              PrimeUtils.class
-  │  │
-  │  └─src
-  │          Example.java
-  │          PrecomputedPrimes.java
-  │          PrimeUtils.java
-  │
-  ├─RingBuffer
-  │  │  .gitignore
-  │  │  RingBuffer.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  ├─docs
-  │  │      RingBufferGuide.md
-  │  │
-  │  └─src
-  │          IntegerRingBuffer.java
-  │          LongRingBuffer.java
-  │          RingBuffer.java
-  │
-  ├─ShortestPath
-  │  │  ShortestPath.iml
-  │  │
-  │  ├─docs
-  │  │      ShortestPathGuide.md
-  │  │
-  │  └─src
-  │          BellmanFord.java
-  │          Dijkstra.java
-  │          Example.java
-  │          Warshallfroyd.java
-  │
-  ├─TernarySearch
-  │  │  .gitignore
-  │  │  TernarySearch.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  └─src
-  │          Example.java
-  │          TernarySearch.java
-  │
-  ├─Trie
-  │  │  .gitignore
-  │  │  Trie.iml
-  │  │
-  │  ├─.idea
-  │  │      .gitignore
-  │  │      misc.xml
-  │  │      modules.xml
-  │  │      vcs.xml
-  │  │      workspace.xml
-  │  │
-  │  ├─docs
-  │  │      guide.md
-  │  │
-  │  ├─out
-  │  │  └─production
-  │  │      └─Trie
-  │  │              CompactTrie.class
-  │  │              DoubleArrayTrie.class
-  │  │              Example.class
-  │  │              PatriciaTree.class
-  │  │              SuffixArray.class
-  │  │              SuffixTree.class
-  │  │              TernarySearchTree.class
-  │  │              Trie$TrieNode.class
-  │  │              Trie.class
-  │  │
-  │  └─src
-  │          CompactTrie.java
-  │          DoubleArrayTrie.java
-  │          Example.java
-  │          PatriciaTrie.java
-  │          SuffixArray.java
-  │          SuffixTree.java
-  │          TernarySearchTree.java
-  │          Trie.java
-  │
-  └─UnionFind
-  │  .gitignore
-  │  UnionFind.iml
-  │
-  ├─.idea
-  │      .gitignore
-  │      misc.xml
-  │      modules.xml
-  │      vcs.xml
-  │      workspace.xml
-  │
-  └─src
-  UnionFind.java
+  └─MathFunctions
+
+## JDKバージョン
+
+このプロジェクトは **JDK 17** を使用して開発を行います。
+
+- JDK 17の最新機能を活用し、コードの最適化や安全性の向上を図ること。
+- IntelliJ IDEAの設定やビルドツール（例: Maven, Gradleなど）がJDK 17に対応していることを確認すること。
+- 環境変数およびIDEの構成でJDK 17が優先されるように設定してください。
+
+<!-- jdk1hsjava17 のラベルが付与されています。プロジェクトの全コードはJDK 17の基準に従って作成すること。 -->
