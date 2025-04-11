@@ -1,0 +1,14 @@
+# GitHub Copilotの設定ファイルです
+contents:
+  github:
+    copilot:
+      enabled: true             # Copilot全体を有効にします
+      promptSuggestions:
+        enabled: true           # プロンプト補完の提案を有効にします
+      autoComplete:
+        enabled: true           # 自動補完機能を有効にします
+      languages:
+        markdown:
+          enabled: true         # MarkdownファイルでのCopilot機能を有効にします
+        java:
+          enabled: true         # JavaファイルでのCopilot機能を有効にします
