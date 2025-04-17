@@ -393,7 +393,7 @@ public class ArrayBinarySearch {
 	 * @return 条件にちょうど当てはまるインデックス。探索に失敗した際の戻り値は-(挿入位置 + 1)となっています。
 	 */
 	private static int binarySearch(int[] arr, int l, int r, int target, SearchType type) {
-		Integer ans = null;
+		int ans = -1;
 		while (l <= r) {
 			int m = l + ((r - l) >>> 1);
 			switch (Integer.compare(arr[m], target)) {
@@ -418,7 +418,7 @@ public class ArrayBinarySearch {
 					break;
 			}
 		}
-		return ans == null ? ~l : ans;
+		return ans == -1 ? ~l : ans;
 	}
 
 	/**
@@ -515,10 +515,14 @@ public class ArrayBinarySearch {
 		while (l <= r) {
 			int m = l + ((r - l) >>> 1);
 			T element = arr[m];
-			if (element == null) {
-				throw new BSException(BSException.ErrorType.NULL_ELEMENT, m);
+			int comparison;
+			try {
+				comparison = element.compareTo(target);
+			} catch (NullPointerException e) {
+				throw new BSException(BSException.ErrorType.NULL_TARGET);
 			}
-			switch (element.compareTo(target)) {
+
+			switch (comparison) {
 				case 1:
 					r = m - 1;
 					break;
@@ -616,6 +620,9 @@ public class ArrayBinarySearch {
 	private static void validateRange(Object[] arr, int l, int r, Object target) {
 		if (arr == null) {
 			throw new BSException(BSException.ErrorType.NULL_ARRAY);
+		}
+		if (target == null) {
+			throw new BSException(BSException.ErrorType.NULL_TARGET);
 		}
 		if (l < 0 || r > arr.length) {
 			throw new BSException(BSException.ErrorType.INVALID_RANGE, l, r, arr.length);

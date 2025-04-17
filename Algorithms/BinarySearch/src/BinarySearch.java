@@ -122,8 +122,15 @@ public final class BinarySearch {
 	private static long binarySearch(long l, long r, SearchType type, CompareFunction comparator) {
 		Long k = null;
 		while (l <= r) {
-			long m = l + ((r - l) >>> 1L);
-			long c = comparator.compare(m);
+			long m = l + ((r - l) >>> 1);
+			long c;
+			try {
+				c = comparator.compare(m);
+			} catch (Exception e) {
+				// 比較関数内での例外は上位に伝播
+				throw new BSException(BSException.ErrorType.COMPARATOR_ERROR, e);
+			}
+
 			if (c > 0) {
 				r = m - 1;
 			} else if (c < 0) {
@@ -224,11 +231,22 @@ public final class BinarySearch {
 		}
 
 		/**
+		 * 指定されたエラーの種類と原因例外から例外を構築します。
+		 *
+		 * @param type エラーの種類
+		 * @param cause 原因となる例外
+		 */
+		private BSException(ErrorType type, Throwable cause) {
+			super(type.format(cause.getMessage()), cause);
+		}
+
+		/**
 		 * エラーの種類を表す列挙型
 		 */
 		private enum ErrorType {
 			NULL_COMPARATOR("ComparatorFunction is null."),
-			INVALID_BOUNDS("Invalid bounds: left=%d, right=%d.");
+			INVALID_BOUNDS("Invalid bounds: left=%d, right=%d."),
+			COMPARATOR_ERROR("Error occurred in comparator function: %s");
 
 			private final String messageFormat;
 
