@@ -42,7 +42,7 @@ author: <https://atcoder.jp/users/nsubaru>
         - 逆写像配列（入力値に対応する元のインデックスを保持）
         - 各種コレクション（`ArrayList`、`HashSet`、`TreeSet`）
         - MultiSet（入力値の出現回数を保持）（`HashMap`, `TreeMap`, `int[]`, `char[]`）
-    - 内部バッファを利用し、FastScanner 同様に効率的な入力処理が可能
+    - 内部バッファを利用し、`FastScanner` 同様に効率的な入力処理が可能
     - `AutoCloseable`を実装しているため、`try-with-resources`の利用が推奨される
 
 ---
@@ -50,13 +50,13 @@ author: <https://atcoder.jp/users/nsubaru>
 ### [ContestPrinter](./FastIO/src/ContestPrinter.java)
 
 - **用途**
-    - FastPrinter を拡張し、競技プログラミングで頻繁に使用される出力形式の処理をサポートするユーティリティクラス
+    - `FastPrinter` を拡張し、競技プログラミングで頻繁に使用される出力形式の処理をサポートするユーティリティクラス
 - **特徴**
     - 配列や 2 次元配列の出力を簡便に行える（各要素間にスペース、各行は改行で区切る）
     - 任意のオブジェクトは `toString()` を利用して出力可能
     - 変換処理を適用した出力（関数適用後の配列出力など）にも対応
-    - null チェックを導入しているため、NullPointerException の発生リスクを低減
-    - `AutoCloseable` を実装しているため、try-with-resources の利用が推奨される
+    - `null` チェックを導入しているため、`NullPointerException` の発生リスクを低減
+    - `AutoCloseable` を実装しているため、`try-with-resources` の利用が推奨される
 
 ---
 
