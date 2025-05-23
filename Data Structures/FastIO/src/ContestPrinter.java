@@ -1,4 +1,5 @@
 import java.io.OutputStream;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
@@ -100,6 +101,87 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public ContestPrinter(final OutputStream out, final int bufferSize, final boolean autoFlush) {
 		super(out, bufferSize, autoFlush);
+	}
+
+	/**
+	 * Object を {@code toString()} で文字列化し出力します。（改行付き）
+	 * 要素が String, Long, Integer, Double, Boolean, Character,
+	 * int[], long[], double[], char[], String[], Object[] 型である場合、
+	 * その型に沿った出力をします。
+	 *
+	 * @param o 出力するオブジェクト
+	 */
+	@Override
+	public void println(final Object o) {
+		if (o == null) return;
+		if (o instanceof String s) {
+			println(s);
+		} else if (o instanceof Long l) {
+			println(l.longValue());
+		} else if (o instanceof Integer i) {
+			println(i.intValue());
+		} else if (o instanceof Double d) {
+			println(d.toString());
+		} else if (o instanceof Boolean b) {
+			println(b.booleanValue());
+		} else if (o instanceof Character c) {
+			println(c.charValue());
+		} else if (o instanceof int[] arr) {
+			println(arr);
+		} else if (o instanceof long[] arr) {
+			println(arr);
+		} else if (o instanceof double[] arr) {
+			println(arr);
+		} else if (o instanceof boolean[] arr) {
+			println(arr);
+		} else if (o instanceof char[] arr) {
+			println(arr);
+		} else if (o instanceof String[] arr) {
+			println(arr);
+		} else if (o instanceof Object[] arr) {
+			println(arr);
+		} else {
+			println(o.toString());
+		}
+	}
+
+	/**
+	 * Object を {@code toString()} で文字列化し出力します。（改行無し）
+	 *
+	 * @param o 出力するオブジェクト
+	 */
+	@Override
+	public void print(final Object o) {
+		if (o == null) return;
+		if (o instanceof String s) {
+			print(s);
+		} else if (o instanceof Long l) {
+			print(l.longValue());
+		} else if (o instanceof Integer i) {
+			print(i.intValue());
+		} else if (o instanceof Double d) {
+			print(d.toString());
+		} else if (o instanceof Boolean b) {
+			print(b.booleanValue());
+		} else if (o instanceof Character c) {
+			print(c.charValue());
+		} else if (o instanceof int[] arr) {
+			print(arr);
+		} else if (o instanceof long[] arr) {
+			print(arr);
+		} else if (o instanceof double[] arr) {
+			print(arr);
+		} else if (o instanceof boolean[] arr) {
+			print(arr);
+		} else if (o instanceof char[] arr) {
+			print(arr);
+		} else if (o instanceof String[] arr) {
+			print(arr);
+		} else if (o instanceof Object[] arr) {
+			print(arr);
+		} else {
+			print(o.toString());
+		}
 	}
 
 	/* ------------------------ ペア出力メソッド（改行付き） ------------------------ */
@@ -280,6 +362,15 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
+	 * double 配列の各要素を改行区切りで出力します。（改行付き）
+	 *
+	 * @param arr 出力する double 配列（null の場合何も出力を行いません）
+	 */
+	public void println(final double[] arr) {
+		println(arr, '\n');
+	}
+
+	/**
 	 * char 配列の各要素を改行区切りで出力します。（改行付き）
 	 *
 	 * @param arr 出力する char 配列（null の場合何も出力を行いません）
@@ -340,6 +431,17 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
+	 * double 配列の各要素を指定の区切り文字で出力します。（改行付き）
+	 *
+	 * @param arr       出力する double 配列（null の場合何も出力を行いません）
+	 * @param delimiter 区切り文字
+	 */
+	public void println(final double[] arr, final char delimiter) {
+		print(arr, delimiter);
+		println();
+	}
+
+	/**
 	 * char 配列の各要素を指定の区切り文字で出力します。（改行付き）
 	 *
 	 * @param arr       出力する char 配列（null の場合何も出力を行いません）
@@ -372,7 +474,7 @@ public final class ContestPrinter extends FastPrinter {
 		println();
 	}
 
-	/* ------------------------ 1次元配列系メソッド（改行付き） ------------------------ */
+	/* ------------------------ 1次元配列系メソッド（改行無し） ------------------------ */
 
 	/**
 	 * int 配列の各要素を半角スペース区切りで出力します。（改行無し）
@@ -389,6 +491,15 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr 出力する long 配列（null の場合何も出力を行いません）
 	 */
 	public void print(final long[] arr) {
+		print(arr, ' ');
+	}
+
+	/**
+	 * double 配列の各要素を半角スペース区切りで出力します。（改行無し）
+	 *
+	 * @param arr 出力する double 配列（null の場合何も出力を行いません）
+	 */
+	public void print(final double[] arr) {
 		print(arr, ' ');
 	}
 
@@ -474,6 +585,25 @@ public final class ContestPrinter extends FastPrinter {
 	}
 
 	/**
+	 * double 配列の各要素を指定の区切り文字で出力します。（改行無し）
+	 *
+	 * @param arr       出力する double 配列（null の場合何も出力を行いません）
+	 * @param delimiter 区切り文字
+	 */
+	public void print(final double[] arr, final char delimiter) {
+		if (arr == null) return;
+		final int len = arr.length;
+		if (len == 0) return;
+		print(arr[0], 16);
+		for (int i = 1; i < len; i++) {
+			ensureBufferSpace(1);
+			buffer[pos++] = (byte) delimiter;
+			print(arr[i], 16);
+		}
+		if (autoFlush) flush();
+	}
+
+	/**
 	 * char 配列の各要素を指定の区切り文字で出力します。（改行無し）
 	 *
 	 * @param arr       出力する char 配列（null の場合何も出力を行いません）
@@ -525,10 +655,10 @@ public final class ContestPrinter extends FastPrinter {
 		if (arr == null) return;
 		final int len = arr.length;
 		if (len == 0) return;
-		print(arr[0], false);
+		print(arr[0]);
 		for (int i = 1; i < len; i++) {
 			print(delimiter);
-			print(arr[i], false);
+			print(arr[i]);
 		}
 	}
 
@@ -543,6 +673,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final int[] arr, final IntFunction<T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			println(arr);
+			return;
+		}
 		for (final int i : arr)
 			println(function.apply(i));
 	}
@@ -556,7 +690,28 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final long[] arr, final LongFunction<T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			println(arr);
+			return;
+		}
 		for (final long l : arr)
+			println(function.apply(l));
+	}
+
+	/**
+	 * double 配列の各要素を指定された関数で変換し、改行区切りで出力します。
+	 *
+	 * @param arr      出力する double 配列（null の場合何も出力を行いません）
+	 * @param function double を変換する関数
+	 * @param <T>      変換後の型
+	 */
+	public <T> void println(final double[] arr, final DoubleFunction<T> function) {
+		if (arr == null) return;
+		if (function == null) {
+			println(arr);
+			return;
+		}
+		for (final double l : arr)
 			println(function.apply(l));
 	}
 
@@ -569,6 +724,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final char[] arr, final Function<Character, T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			println(arr);
+			return;
+		}
 		for (final char c : arr)
 			println(function.apply(c));
 	}
@@ -582,6 +741,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final boolean[] arr, final Function<Boolean, T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			println(arr);
+			return;
+		}
 		for (final boolean b : arr)
 			println(function.apply(b));
 	}
@@ -595,6 +758,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final String[] arr, final Function<String, T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			println(arr);
+			return;
+		}
 		for (final String s : arr)
 			println(function.apply(s));
 	}
@@ -610,6 +777,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void print(final int[] arr, final IntFunction<T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			print(arr, ' ');
+			return;
+		}
 		final int len = arr.length;
 		if (len == 0) return;
 		print(function.apply(arr[0]));
@@ -628,6 +799,32 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void print(final long[] arr, final LongFunction<T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			print(arr, ' ');
+			return;
+		}
+		final int len = arr.length;
+		if (len == 0) return;
+		print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			print(' ');
+			print(function.apply(arr[i]));
+		}
+	}
+
+	/**
+	 * double 配列の各要素を指定された関数で変換し、半角スペース区切りで出力します。（改行無し）
+	 *
+	 * @param arr      出力する double 配列（null の場合何も出力を行いません）
+	 * @param function double を変換する関数
+	 * @param <T>      変換後の型
+	 */
+	public <T> void print(final double[] arr, final DoubleFunction<T> function) {
+		if (arr == null) return;
+		if (function == null) {
+			print(arr, ' ');
+			return;
+		}
 		final int len = arr.length;
 		if (len == 0) return;
 		print(function.apply(arr[0]));
@@ -646,6 +843,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void print(final char[] arr, final Function<Character, T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			print(arr, ' ');
+			return;
+		}
 		final int len = arr.length;
 		if (len == 0) return;
 		print(function.apply(arr[0]));
@@ -664,6 +865,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void print(final boolean[] arr, final Function<Boolean, T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			print(arr, ' ');
+			return;
+		}
 		final int len = arr.length;
 		if (len == 0) return;
 		print(function.apply(arr[0]));
@@ -682,6 +887,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void print(final String[] arr, final Function<String, T> function) {
 		if (arr == null) return;
+		if (function == null) {
+			print(arr, ' ');
+			return;
+		}
 		final int len = arr.length;
 		if (len == 0) return;
 		print(function.apply(arr[0]));
@@ -708,6 +917,15 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d 出力する二次元の long 配列（null の場合何も出力を行いません）
 	 */
 	public void println(final long[][] arr2d) {
+		println(arr2d, ' ');
+	}
+
+	/**
+	 * 二次元の double 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
+	 *
+	 * @param arr2d 出力する二次元の double 配列（null の場合何も出力を行いません）
+	 */
+	public void println(final double[][] arr2d) {
 		println(arr2d, ' ');
 	}
 
@@ -747,7 +965,6 @@ public final class ContestPrinter extends FastPrinter {
 		println(arr2d, ' ');
 	}
 
-
 	/**
 	 * 二次元の int 配列を、各行を指定した区切り文字で出力します。（各行末に改行）
 	 *
@@ -769,6 +986,18 @@ public final class ContestPrinter extends FastPrinter {
 	public void println(final long[][] arr2d, final char delimiter) {
 		if (arr2d == null) return;
 		for (final long[] arr : arr2d)
+			println(arr, delimiter);
+	}
+
+	/**
+	 * 二次元の double 配列を、各行を指定した区切り文字で出力します。（各行末に改行）
+	 *
+	 * @param arr2d     出力する二次元の double 配列（null の場合何も出力を行いません）
+	 * @param delimiter 区切り文字
+	 */
+	public void println(final double[][] arr2d, final char delimiter) {
+		if (arr2d == null) return;
+		for (final double[] arr : arr2d)
 			println(arr, delimiter);
 	}
 
@@ -837,6 +1066,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final int[][] arr2d, final IntFunction<T> function) {
 		if (arr2d == null) return;
+		if (function == null) {
+			println(arr2d);
+			return;
+		}
 		for (final int[] arr : arr2d) {
 			print(arr, function);
 			println();
@@ -852,7 +1085,30 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final long[][] arr2d, final LongFunction<T> function) {
 		if (arr2d == null) return;
+		if (function == null) {
+			println(arr2d);
+			return;
+		}
 		for (final long[] arr : arr2d) {
+			print(arr, function);
+			println();
+		}
+	}
+
+	/**
+	 * 二次元の double 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
+	 *
+	 * @param arr2d    出力する二次元の double 配列（null の場合何も出力を行いません）
+	 * @param function double を変換する関数
+	 * @param <T>      変換後の型
+	 */
+	public <T> void println(final double[][] arr2d, final DoubleFunction<T> function) {
+		if (arr2d == null) return;
+		if (function == null) {
+			println(arr2d);
+			return;
+		}
+		for (final double[] arr : arr2d) {
 			print(arr, function);
 			println();
 		}
@@ -867,6 +1123,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final char[][] arr2d, final LongFunction<T> function) {
 		if (arr2d == null) return;
+		if (function == null) {
+			println(arr2d);
+			return;
+		}
 		for (final char[] arr : arr2d) {
 			print(arr, function);
 			println();
@@ -882,6 +1142,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final boolean[][] arr2d, final Function<Boolean, T> function) {
 		if (arr2d == null) return;
+		if (function == null) {
+			println(arr2d);
+			return;
+		}
 		for (final boolean[] arr : arr2d) {
 			print(arr, function);
 			println();
@@ -897,6 +1161,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> void println(final String[][] arr2d, final Function<String, T> function) {
 		if (arr2d == null) return;
+		if (function == null) {
+			println(arr2d);
+			return;
+		}
 		for (final String[] arr : arr2d) {
 			print(arr, function);
 			println();
@@ -932,6 +1200,10 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public void printChars(final char[] arr, final Function<Character, Character> function) {
 		if (arr == null) return;
+		if (function == null) {
+			printChars(arr);
+			return;
+		}
 		int i = 0;
 		final int len = arr.length;
 		while (i < len) {
@@ -965,10 +1237,123 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public void printChars(final char[][] arr2d, final Function<Character, Character> function) {
 		if (arr2d == null) return;
+		if (function == null) {
+			printChars(arr2d);
+			return;
+		}
 		for (final char[] arr : arr2d) {
 			printChars(arr, function);
 			println();
 		}
 	}
 
+	/* ------------------------ Iterableオブジェクト用メソッド（改行付き） ------------------------ */
+
+	/**
+	 * イテラブルオブジェクトの各要素を改行区切りで出力（各行末に改行）
+	 *
+	 * @param iter 出力するイテラブルオブジェクト（null の場合何も出力を行いません）（改行付き）
+	 * @param <T>  各要素の型
+	 */
+	public <T> void println(final Iterable<T> iter) {
+		print(iter, '\n');
+		println();
+	}
+
+	/**
+	 * イテラブルオブジェクトの各要素を区切り文字を指定して出力（改行付き）
+	 *
+	 * @param iter      出力するイテラブルオブジェクト（null の場合何も出力を行いません）
+	 * @param delimiter 区切り文字
+	 * @param <T>       各要素の型
+	 */
+	public <T> void println(final Iterable<T> iter, final char delimiter) {
+		print(iter, delimiter);
+		println();
+	}
+
+	/**
+	 * イテラブルオブジェクトの各要素を指定された関数で変換し、改行区切りで出力（改行付き）
+	 *
+	 * @param iter     出力するイテラブルオブジェクト（null の場合何も出力を行いません）
+	 * @param function 変換する関数
+	 * @param <T>      変換前の型
+	 * @param <U>      変換後の型
+	 */
+	public <T, U> void println(final Iterable<T> iter, final Function<T, U> function) {
+		print(iter, function, '\n');
+		println();
+	}
+
+	/* ------------------------ Iterableオブジェクト用メソッド（改行無し） ------------------------ */
+
+	/**
+	 * イテラブルオブジェクトの各要素を半角スペース区切りで出力（各行末に改行）
+	 *
+	 * @param iter 出力するイテラブルオブジェクト（null の場合何も出力を行いません）（改行無し）
+	 * @param <T>  各要素の型
+	 */
+	public <T> void print(final Iterable<T> iter) {
+		print(iter, ' ');
+	}
+
+	/**
+	 * イテラブルオブジェクトの各要素を区切り文字を指定して出力（改行無し）
+	 *
+	 * @param iter      出力するイテラブルオブジェクト（null の場合何も出力を行いません）
+	 * @param delimiter 区切り文字
+	 * @param <T>       各要素の型
+	 */
+	public <T> void print(final Iterable<T> iter, final char delimiter) {
+		if (iter == null) return;
+		boolean first = true;
+		for (final T t : iter) {
+			if (first) {
+				first = false;
+			} else {
+				ensureBufferSpace(1);
+				buffer[pos++] = (byte) delimiter;
+			}
+			print(t);
+		}
+	}
+
+	/**
+	 * イテラブルオブジェクトの各要素を指定された関数で変換し、半角スペース区切りで出力（改行無し）
+	 *
+	 * @param iter     出力するイテラブルオブジェクト（null の場合何も出力を行いません）
+	 * @param function 変換する関数
+	 * @param <T>      変換前の型
+	 * @param <U>      変換後の型
+	 */
+	public <T, U> void print(final Iterable<T> iter, final Function<T, U> function) {
+		print(iter, function, ' ');
+	}
+
+	/**
+	 * イテラブルオブジェクトの各要素を指定された関数で変換し、区切り文字を指定して出力（改行無し）
+	 *
+	 * @param iter      出力するイテラブルオブジェクト（null の場合何も出力を行いません）
+	 * @param function  変換する関数
+	 * @param delimiter 区切り文字
+	 * @param <T>       変換前の型
+	 * @param <U>       変換後の型
+	 */
+	public <T, U> void print(final Iterable<T> iter, final Function<T, U> function, final char delimiter) {
+		if (iter == null) return;
+		if (function == null) {
+			print(iter, delimiter);
+			return;
+		}
+		boolean first = true;
+		for (final T t : iter) {
+			if (first) {
+				first = false;
+			} else {
+				ensureBufferSpace(1);
+				buffer[pos++] = (byte) delimiter;
+			}
+			print(function.apply(t));
+		}
+	}
 }

@@ -242,7 +242,10 @@ public class FastPrinter implements AutoCloseable {
 	 * @param d 出力する double 値
 	 */
 	public final void println(final double d) {
-		print(Double.toString(d), true);
+		fillBuffer(Double.toString(d));
+		ensureBufferSpace(1);
+		buffer[pos++] = '\n';
+		if (autoFlush) flush();
 	}
 
 	/**
@@ -275,30 +278,35 @@ public class FastPrinter implements AutoCloseable {
 	 * @param s 出力する String 値
 	 */
 	public final void println(final String s) {
-		print(s, true);
+		fillBuffer(s);
+		ensureBufferSpace(1);
+		buffer[pos++] = '\n';
+		if (autoFlush) flush();
 	}
 
 	/**
 	 * Object を {@code toString()} で文字列化し出力します。（改行付き）
+	 * 要素が String, Long, Integer, Double Boolean Character 型である場合、
+	 * その型に沿った出力をします。
 	 *
 	 * @param o 出力するオブジェクト
 	 */
-	public final void println(final Object o) {
+	public void println(final Object o) {
 		if (o == null) return;
 		if (o instanceof String s) {
-			print(s, true);
+			println(s);
 		} else if (o instanceof Long l) {
 			println(l.longValue());
 		} else if (o instanceof Integer i) {
 			println(i.intValue());
 		} else if (o instanceof Double d) {
-			print(d.toString(), true);
+			println(d.toString());
 		} else if (o instanceof Boolean b) {
 			println(b.booleanValue());
 		} else if (o instanceof Character c) {
 			println(c.charValue());
 		} else {
-			print(o.toString(), true);
+			println(o.toString());
 		}
 	}
 
@@ -308,7 +316,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param bi 出力するオブジェクト
 	 */
 	public final void println(final BigInteger bi) {
-		print(bi.toString(), true);
+		println(bi.toString());
 	}
 
 	/**
@@ -317,7 +325,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param bd 出力するオブジェクト
 	 */
 	public final void println(final BigDecimal bd) {
-		print(bd.toString(), true);
+		println(bd.toString());
 	}
 
 	/* ------------------------ print() 系メソッド ------------------------ */
@@ -350,7 +358,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param d 出力する double 値
 	 */
 	public final void print(final double d) {
-		print(Double.toString(d), false);
+		print(Double.toString(d));
 	}
 
 	/**
@@ -381,30 +389,33 @@ public class FastPrinter implements AutoCloseable {
 	 * @param s 出力する String 値
 	 */
 	public final void print(final String s) {
-		print(s, false);
+		fillBuffer(s);
+		if (autoFlush) flush();
 	}
 
 	/**
 	 * Object を {@code toString()} で文字列化し出力します。（改行無し）
+	 * 要素が String, Long, Integer, Double Boolean Character 型である場合、
+	 * その型に沿った出力をします。
 	 *
 	 * @param o 出力するオブジェクト
 	 */
-	public final void print(final Object o) {
+	public void print(final Object o) {
 		if (o == null) return;
 		if (o instanceof String s) {
-			print(s, false);
+			print(s);
 		} else if (o instanceof Long l) {
 			print(l.longValue());
 		} else if (o instanceof Integer i) {
 			print(i.intValue());
 		} else if (o instanceof Double d) {
-			print(d.toString(), false);
+			print(d.toString());
 		} else if (o instanceof Boolean b) {
 			print(b.booleanValue());
 		} else if (o instanceof Character c) {
 			print(c.charValue());
 		} else {
-			print(o.toString(), false);
+			print(o.toString());
 		}
 	}
 
@@ -414,7 +425,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param bi 出力するオブジェクト
 	 */
 	public final void print(final BigInteger bi) {
-		print(bi.toString(), false);
+		print(bi.toString());
 	}
 
 	/**
@@ -423,7 +434,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param bd 出力するオブジェクト
 	 */
 	public final void print(final BigDecimal bd) {
-		print(bd.toString(), false);
+		print(bd.toString());
 	}
 
 	/* ------------------------ printf() 系メソッド ------------------------ */
@@ -435,7 +446,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param args   書式引数
 	 */
 	public final void printf(final String format, final Object... args) {
-		print(String.format(format, args), false);
+		print(String.format(format, args));
 	}
 
 	/**
@@ -446,7 +457,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param args   書式引数
 	 */
 	public final void printf(final Locale locale, final String format, final Object... args) {
-		print(String.format(locale, format, args), false);
+		print(String.format(locale, format, args));
 	}
 
 	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
@@ -466,22 +477,6 @@ public class FastPrinter implements AutoCloseable {
 			}
 			pos = 0;
 		}
-	}
-
-	/**
-	 * 指定された文字列を出力し、オプションで改行を追加します。<br>
-	 * 内部的にバッファへ書き込みを行い、autoFlush が有効な場合は自動で flush されます。
-	 *
-	 * @param s       出力する文字列
-	 * @param newline true の場合、出力後に改行を追加
-	 */
-	protected final void print(final String s, final boolean newline) {
-		fillBuffer(s);
-		if (newline) {
-			ensureBufferSpace(1);
-			buffer[pos++] = '\n';
-		}
-		if (autoFlush) flush();
 	}
 
 	/**
@@ -539,7 +534,7 @@ public class FastPrinter implements AutoCloseable {
 			return;
 		}
 
-		boolean negative = (i < 0);
+		boolean negative = i < 0;
 		if (negative) {
 			i = -i;
 			buffer[pos++] = '-';
@@ -600,7 +595,7 @@ public class FastPrinter implements AutoCloseable {
 			return;
 		}
 
-		boolean negative = (l < 0);
+		boolean negative = l < 0;
 		if (negative) {
 			l = -l;
 			buffer[pos++] = '-';

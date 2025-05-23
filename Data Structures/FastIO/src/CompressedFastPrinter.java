@@ -3,6 +3,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Locale;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
@@ -110,7 +111,10 @@ public class CompressedFastPrinter {
 		}
 
 		public void println(final double d) {
-			print(Double.toString(d), true);
+			fillBuffer(Double.toString(d));
+			ensureBufferSpace(1);
+			buffer[pos++] = '\n';
+			if (autoFlush) flush();
 		}
 
 		public void println(final char c) {
@@ -128,34 +132,51 @@ public class CompressedFastPrinter {
 		}
 
 		public void println(final String s) {
-			print(s, true);
+			fillBuffer(s);
+			ensureBufferSpace(1);
+			buffer[pos++] = '\n';
+			if (autoFlush) flush();
 		}
 
 		public void println(final Object o) {
 			if (o == null) return;
 			if (o instanceof String s) {
-				print(s, true);
+				println(s);
 			} else if (o instanceof Long l) {
 				println(l.longValue());
 			} else if (o instanceof Integer i) {
 				println(i.intValue());
 			} else if (o instanceof Double d) {
-				print(d.toString(), true);
+				println(d.toString());
 			} else if (o instanceof Boolean b) {
 				println(b.booleanValue());
 			} else if (o instanceof Character c) {
 				println(c.charValue());
+			} else if (o instanceof int[] arr) {
+				println(arr);
+			} else if (o instanceof long[] arr) {
+				println(arr);
+			} else if (o instanceof double[] arr) {
+				println(arr);
+			} else if (o instanceof boolean[] arr) {
+				println(arr);
+			} else if (o instanceof char[] arr) {
+				println(arr);
+			} else if (o instanceof String[] arr) {
+				println(arr);
+			} else if (o instanceof Object[] arr) {
+				println(arr);
 			} else {
-				print(o.toString(), true);
+				println(o.toString());
 			}
 		}
 
 		public void println(final BigInteger bi) {
-			print(bi.toString(), true);
+			println(bi.toString());
 		}
 
 		public void println(final BigDecimal bd) {
-			print(bd.toString(), true);
+			println(bd.toString());
 		}
 
 		public void print(final int i) {
@@ -171,7 +192,7 @@ public class CompressedFastPrinter {
 		}
 
 		public void print(final double d) {
-			print(Double.toString(d), false);
+			print(Double.toString(d));
 		}
 
 		public void print(final char c) {
@@ -187,42 +208,57 @@ public class CompressedFastPrinter {
 		}
 
 		public void print(final String s) {
-			print(s, false);
+			fillBuffer(s);
+			if (autoFlush) flush();
 		}
 
 		public void print(final Object o) {
 			if (o == null) return;
 			if (o instanceof String s) {
-				print(s, false);
+				print(s);
 			} else if (o instanceof Long l) {
 				print(l.longValue());
 			} else if (o instanceof Integer i) {
 				print(i.intValue());
 			} else if (o instanceof Double d) {
-				print(d.toString(), false);
+				print(d.toString());
 			} else if (o instanceof Boolean b) {
 				print(b.booleanValue());
 			} else if (o instanceof Character c) {
 				print(c.charValue());
+			} else if (o instanceof int[] arr) {
+				print(arr);
+			} else if (o instanceof long[] arr) {
+				print(arr);
+			} else if (o instanceof double[] arr) {
+				print(arr);
+			} else if (o instanceof boolean[] arr) {
+				print(arr);
+			} else if (o instanceof char[] arr) {
+				print(arr);
+			} else if (o instanceof String[] arr) {
+				print(arr);
+			} else if (o instanceof Object[] arr) {
+				print(arr);
 			} else {
-				print(o.toString(), false);
+				print(o.toString());
 			}
 		}
 
 		public void print(final BigInteger bi) {
-			print(bi.toString(), false);
+			print(bi.toString());
 		}
 
 		public void print(final BigDecimal bd) {
-			print(bd.toString(), false);
+			print(bd.toString());
 		}
 
 		public void printf(final String format, final Object... args) {
-			print(String.format(format, args), false);
+			print(String.format(format, args));
 		}
 
 		public void printf(final Locale locale, final String format, final Object... args) {
-			print(String.format(locale, format, args), false);
+			print(String.format(locale, format, args));
 		}
 
 		private void ensureBufferSpace(final int size) {
@@ -234,15 +270,6 @@ public class CompressedFastPrinter {
 				}
 				pos = 0;
 			}
-		}
-
-		private void print(final String s, final boolean newline) {
-			fillBuffer(s);
-			if (newline) {
-				ensureBufferSpace(1);
-				buffer[pos++] = '\n';
-			}
-			if (autoFlush) flush();
 		}
 
 		private void fillBuffer(final String s) {
@@ -283,7 +310,7 @@ public class CompressedFastPrinter {
 				buffer[pos++] = '8';
 				return;
 			}
-			boolean negative = (i < 0);
+			boolean negative = i < 0;
 			if (negative) {
 				i = -i;
 				buffer[pos++] = '-';
@@ -334,7 +361,7 @@ public class CompressedFastPrinter {
 				buffer[pos++] = '8';
 				return;
 			}
-			boolean negative = (l < 0);
+			boolean negative = l < 0;
 			if (negative) {
 				l = -l;
 				buffer[pos++] = '-';
@@ -468,6 +495,10 @@ public class CompressedFastPrinter {
 			println(arr, '\n');
 		}
 
+		public void println(final double[] arr) {
+			println(arr, '\n');
+		}
+
 		public void println(final char[] arr) {
 			println(arr, '\n');
 		}
@@ -496,6 +527,11 @@ public class CompressedFastPrinter {
 			println();
 		}
 
+		public void println(final double[] arr, final char delimiter) {
+			print(arr, delimiter);
+			println();
+		}
+
 		public void println(final char[] arr, final char delimiter) {
 			print(arr, delimiter);
 			println();
@@ -516,6 +552,10 @@ public class CompressedFastPrinter {
 		}
 
 		public void print(final long[] arr) {
+			print(arr, ' ');
+		}
+
+		public void print(final double[] arr) {
 			print(arr, ' ');
 		}
 
@@ -568,6 +608,19 @@ public class CompressedFastPrinter {
 			if (autoFlush) flush();
 		}
 
+		public void print(final double[] arr, final char delimiter) {
+			if (arr == null) return;
+			final int len = arr.length;
+			if (len == 0) return;
+			print(arr[0], 16);
+			for (int i = 1; i < len; i++) {
+				ensureBufferSpace(1);
+				buffer[pos++] = (byte) delimiter;
+				print(arr[i], 16);
+			}
+			if (autoFlush) flush();
+		}
+
 		public void print(final char[] arr, final char delimiter) {
 			if (arr == null) return;
 			final int len = arr.length;
@@ -602,45 +655,79 @@ public class CompressedFastPrinter {
 			if (arr == null) return;
 			final int len = arr.length;
 			if (len == 0) return;
-			print(arr[0], false);
+			print(arr[0]);
 			for (int i = 1; i < len; i++) {
 				print(delimiter);
-				print(arr[i], false);
+				print(arr[i]);
 			}
 		}
 
 		public <T> void println(final int[] arr, final IntFunction<T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				println(arr);
+				return;
+			}
 			for (final int i : arr)
 				println(function.apply(i));
 		}
 
 		public <T> void println(final long[] arr, final LongFunction<T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				println(arr);
+				return;
+			}
 			for (final long l : arr)
+				println(function.apply(l));
+		}
+
+		public <T> void println(final double[] arr, final DoubleFunction<T> function) {
+			if (arr == null) return;
+			if (function == null) {
+				println(arr);
+				return;
+			}
+			for (final double l : arr)
 				println(function.apply(l));
 		}
 
 		public <T> void println(final char[] arr, final Function<Character, T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				println(arr);
+				return;
+			}
 			for (final char c : arr)
 				println(function.apply(c));
 		}
 
 		public <T> void println(final boolean[] arr, final Function<Boolean, T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				println(arr);
+				return;
+			}
 			for (final boolean b : arr)
 				println(function.apply(b));
 		}
 
 		public <T> void println(final String[] arr, final Function<String, T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				println(arr);
+				return;
+			}
 			for (final String s : arr)
 				println(function.apply(s));
 		}
 
 		public <T> void print(final int[] arr, final IntFunction<T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				print(arr, ' ');
+				return;
+			}
 			final int len = arr.length;
 			if (len == 0) return;
 			print(function.apply(arr[0]));
@@ -652,6 +739,25 @@ public class CompressedFastPrinter {
 
 		public <T> void print(final long[] arr, final LongFunction<T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				print(arr, ' ');
+				return;
+			}
+			final int len = arr.length;
+			if (len == 0) return;
+			print(function.apply(arr[0]));
+			for (int i = 1; i < len; i++) {
+				print(' ');
+				print(function.apply(arr[i]));
+			}
+		}
+
+		public <T> void print(final double[] arr, final DoubleFunction<T> function) {
+			if (arr == null) return;
+			if (function == null) {
+				print(arr, ' ');
+				return;
+			}
 			final int len = arr.length;
 			if (len == 0) return;
 			print(function.apply(arr[0]));
@@ -663,6 +769,10 @@ public class CompressedFastPrinter {
 
 		public <T> void print(final char[] arr, final Function<Character, T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				print(arr, ' ');
+				return;
+			}
 			final int len = arr.length;
 			if (len == 0) return;
 			print(function.apply(arr[0]));
@@ -674,6 +784,10 @@ public class CompressedFastPrinter {
 
 		public <T> void print(final boolean[] arr, final Function<Boolean, T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				print(arr, ' ');
+				return;
+			}
 			final int len = arr.length;
 			if (len == 0) return;
 			print(function.apply(arr[0]));
@@ -685,6 +799,10 @@ public class CompressedFastPrinter {
 
 		public <T> void print(final String[] arr, final Function<String, T> function) {
 			if (arr == null) return;
+			if (function == null) {
+				print(arr, ' ');
+				return;
+			}
 			final int len = arr.length;
 			if (len == 0) return;
 			print(function.apply(arr[0]));
@@ -699,6 +817,10 @@ public class CompressedFastPrinter {
 		}
 
 		public void println(final long[][] arr2d) {
+			println(arr2d, ' ');
+		}
+
+		public void println(final double[][] arr2d) {
 			println(arr2d, ' ');
 		}
 
@@ -727,6 +849,12 @@ public class CompressedFastPrinter {
 		public void println(final long[][] arr2d, final char delimiter) {
 			if (arr2d == null) return;
 			for (final long[] arr : arr2d)
+				println(arr, delimiter);
+		}
+
+		public void println(final double[][] arr2d, final char delimiter) {
+			if (arr2d == null) return;
+			for (final double[] arr : arr2d)
 				println(arr, delimiter);
 		}
 
@@ -762,6 +890,10 @@ public class CompressedFastPrinter {
 
 		public <T> void println(final int[][] arr2d, final IntFunction<T> function) {
 			if (arr2d == null) return;
+			if (function == null) {
+				println(arr2d);
+				return;
+			}
 			for (final int[] arr : arr2d) {
 				print(arr, function);
 				println();
@@ -770,7 +902,23 @@ public class CompressedFastPrinter {
 
 		public <T> void println(final long[][] arr2d, final LongFunction<T> function) {
 			if (arr2d == null) return;
+			if (function == null) {
+				println(arr2d);
+				return;
+			}
 			for (final long[] arr : arr2d) {
+				print(arr, function);
+				println();
+			}
+		}
+
+		public <T> void println(final double[][] arr2d, final DoubleFunction<T> function) {
+			if (arr2d == null) return;
+			if (function == null) {
+				println(arr2d);
+				return;
+			}
+			for (final double[] arr : arr2d) {
 				print(arr, function);
 				println();
 			}
@@ -778,6 +926,10 @@ public class CompressedFastPrinter {
 
 		public <T> void println(final char[][] arr2d, final LongFunction<T> function) {
 			if (arr2d == null) return;
+			if (function == null) {
+				println(arr2d);
+				return;
+			}
 			for (final char[] arr : arr2d) {
 				print(arr, function);
 				println();
@@ -786,6 +938,10 @@ public class CompressedFastPrinter {
 
 		public <T> void println(final boolean[][] arr2d, final Function<Boolean, T> function) {
 			if (arr2d == null) return;
+			if (function == null) {
+				println(arr2d);
+				return;
+			}
 			for (final boolean[] arr : arr2d) {
 				print(arr, function);
 				println();
@@ -794,9 +950,120 @@ public class CompressedFastPrinter {
 
 		public <T> void println(final String[][] arr2d, final Function<String, T> function) {
 			if (arr2d == null) return;
+			if (function == null) {
+				println(arr2d);
+				return;
+			}
 			for (final String[] arr : arr2d) {
 				print(arr, function);
 				println();
+			}
+		}
+
+		public void printChars(final char[] arr) {
+			if (arr == null) return;
+			int i = 0;
+			final int len = arr.length;
+			while (i < len) {
+				ensureBufferSpace(1);
+				int limit = min(buffer.length - pos, len - i);
+				while (limit-- > 0) {
+					buffer[pos++] = (byte) arr[i++];
+				}
+			}
+			if (autoFlush) flush();
+		}
+
+		public void printChars(final char[] arr, final Function<Character, Character> function) {
+			if (arr == null) return;
+			if (function == null) {
+				printChars(arr);
+				return;
+			}
+			int i = 0;
+			final int len = arr.length;
+			while (i < len) {
+				ensureBufferSpace(1);
+				int limit = min(buffer.length - pos, len - i);
+				while (limit-- > 0) {
+					buffer[pos++] = (byte) function.apply(arr[i++]).charValue();
+				}
+			}
+			if (autoFlush) flush();
+		}
+
+		public void printChars(final char[][] arr2d) {
+			if (arr2d == null) return;
+			for (final char[] arr : arr2d) {
+				printChars(arr);
+				println();
+			}
+		}
+
+		public void printChars(final char[][] arr2d, final Function<Character, Character> function) {
+			if (arr2d == null) return;
+			if (function == null) {
+				printChars(arr2d);
+				return;
+			}
+			for (final char[] arr : arr2d) {
+				printChars(arr, function);
+				println();
+			}
+		}
+
+		public <T> void println(final Iterable<T> iter) {
+			print(iter, '\n');
+			println();
+		}
+
+		public <T> void println(final Iterable<T> iter, final char delimiter) {
+			print(iter, delimiter);
+			println();
+		}
+
+		public <T, U> void println(final Iterable<T> iter, final Function<T, U> function) {
+			print(iter, function, '\n');
+			println();
+		}
+
+		public <T> void print(final Iterable<T> iter) {
+			print(iter, ' ');
+		}
+
+		public <T> void print(final Iterable<T> iter, final char delimiter) {
+			if (iter == null) return;
+			boolean first = true;
+			for (final T t : iter) {
+				if (first) {
+					first = false;
+				} else {
+					ensureBufferSpace(1);
+					buffer[pos++] = (byte) delimiter;
+				}
+				print(t);
+			}
+		}
+
+		public <T, U> void print(final Iterable<T> iter, final Function<T, U> function) {
+			print(iter, function, ' ');
+		}
+
+		public <T, U> void print(final Iterable<T> iter, final Function<T, U> function, final char delimiter) {
+			if (iter == null) return;
+			if (function == null) {
+				print(iter, delimiter);
+				return;
+			}
+			boolean first = true;
+			for (final T t : iter) {
+				if (first) {
+					first = false;
+				} else {
+					ensureBufferSpace(1);
+					buffer[pos++] = (byte) delimiter;
+				}
+				print(function.apply(t));
 			}
 		}
 	}
