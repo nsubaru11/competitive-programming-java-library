@@ -69,6 +69,7 @@
 |------------------------------------|---------------------------------|
 | `println(int[] arr)`               | int配列の各要素を改行区切りで出力（改行付き）        |
 | `println(long[] arr)`              | long配列の各要素を改行区切りで出力（改行付き）       |
+| `println(double[] arr)`            | double配列の各要素を改行区切りで出力（改行付き）     |
 | `println(char[] arr)`              | char配列の各要素を改行区切りで出力（改行付き）       |
 | `println(boolean[] arr)`           | boolean配列の各要素を改行区切りで出力（改行付き）    |
 | `println(String[] arr)`            | String配列の各要素を改行区切りで出力（改行付き）     |
@@ -81,6 +82,7 @@
 |----------------------------------|-------------------------------------|
 | `print(int[] arr)`               | int配列の各要素を半角スペース区切りで出力（改行無し）        |
 | `print(long[] arr)`              | long配列の各要素を半角スペース区切りで出力（改行無し）       |
+| `print(double[] arr)`            | double配列の各要素を半角スペース区切りで出力（改行無し）     |
 | `print(char[] arr)`              | char配列の各要素を半角スペース区切りで出力（改行無し）       |
 | `print(boolean[] arr)`           | boolean配列の各要素を半角スペース区切りで出力（改行無し）    |
 | `print(String[] arr)`            | String配列の各要素を半角スペース区切りで出力（改行無し）     |
@@ -95,6 +97,7 @@
 |---------------------------------------------------------|------------------------------------|
 | `println(int[] arr, IntFunction<T> function)`           | int配列の各要素を指定された関数で変換し、改行区切りで出力     |
 | `println(long[] arr, LongFunction<T> function)`         | long配列の各要素を指定された関数で変換し、改行区切りで出力    |
+| `println(double[] arr, DoubleFunction<T> function)`     | double配列の各要素を指定された関数で変換し、改行区切りで出力  |
 | `println(char[] arr, Function<Character, T> function)`  | char配列の各要素を指定された関数で変換し、改行区切りで出力    |
 | `println(boolean[] arr, Function<Boolean, T> function)` | boolean配列の各要素を指定された関数で変換し、改行区切りで出力 |
 | `println(String[] arr, Function<String, T> function)`   | String配列の各要素を指定された関数で変換し、改行区切りで出力  |
@@ -105,6 +108,7 @@
 |-------------------------------------------------------|----------------------------------------|
 | `print(int[] arr, IntFunction<T> function)`           | int配列の各要素を指定された関数で変換し、半角スペース区切りで出力     |
 | `print(long[] arr, LongFunction<T> function)`         | long配列の各要素を指定された関数で変換し、半角スペース区切りで出力    |
+| `print(double[] arr, DoubleFunction<T> function)`     | double配列の各要素を指定された関数で変換し、半角スペース区切りで出力  |
 | `print(char[] arr, Function<Character, T> function)`  | char配列の各要素を指定された関数で変換し、半角スペース区切りで出力    |
 | `print(boolean[] arr, Function<Boolean, T> function)` | boolean配列の各要素を指定された関数で変換し、半角スペース区切りで出力 |
 | `print(String[] arr, Function<String, T> function)`   | String配列の各要素を指定された関数で変換し、半角スペース区切りで出力  |
@@ -127,7 +131,8 @@
 |-------------------------------------------------------------|-----------------------------------------------|
 | `println(int[][] arr2d, IntFunction<T> function)`           | 二次元のint配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力     |
 | `println(long[][] arr2d, LongFunction<T> function)`         | 二次元のlong配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力    |
-| `println(char[][] arr2d, LongFunction<T> function)`         | 二次元のchar配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力    |
+| `println(double[][] arr2d, DoubleFunction<T> function)`     | 二次元のdouble配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力  |
+| `println(char[][] arr2d, Function<Character, T> function)`  | 二次元のchar配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力    |
 | `println(boolean[][] arr2d, Function<Boolean, T> function)` | 二次元のboolean配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力 |
 | `println(String[][] arr2d, Function<String, T> function)`   | 二次元のString配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力  |
 
@@ -139,6 +144,25 @@
 | `printChars(char[] arr, Function<Character, Character> function)`     | char配列の各要素を指定された関数で変換し、区切り文字無しで出力        |
 | `printChars(char[][] arr2d)`                                          | 二次元のchar配列を、各行を区切り文字無しで出力（各行末に改行）        |
 | `printChars(char[][] arr2d, Function<Character, Character> function)` | 二次元のchar配列の各要素を指定された関数で変換し、各行を区切り文字無しで出力 |
+
+### 9. Iterableオブジェクト出力メソッド
+
+#### 改行付き
+
+| メソッド                                                 | 説明                                         |
+|------------------------------------------------------|--------------------------------------------|
+| `println(Iterable<T> iter)`                          | イテラブルオブジェクトの各要素を改行区切りで出力（改行付き）             |
+| `println(Iterable<T> iter, char delimiter)`          | イテラブルオブジェクトの各要素を指定した区切り文字で出力（改行付き）         |
+| `println(Iterable<T> iter, Function<T, U> function)` | イテラブルオブジェクトの各要素を指定された関数で変換し、改行区切りで出力（改行付き） |
+
+#### 改行無し
+
+| メソッド                                                               | 説明                                             |
+|--------------------------------------------------------------------|------------------------------------------------|
+| `print(Iterable<T> iter)`                                          | イテラブルオブジェクトの各要素を半角スペース区切りで出力（改行無し）             |
+| `print(Iterable<T> iter, char delimiter)`                          | イテラブルオブジェクトの各要素を指定した区切り文字で出力（改行無し）             |
+| `print(Iterable<T> iter, Function<T, U> function)`                 | イテラブルオブジェクトの各要素を指定された関数で変換し、半角スペース区切りで出力（改行無し） |
+| `print(Iterable<T> iter, Function<T, U> function, char delimiter)` | イテラブルオブジェクトの各要素を指定された関数で変換し、指定した区切り文字で出力（改行無し） |
 
 ## 利用例
 
@@ -175,4 +199,10 @@ try (ContestPrinter cp = new ContestPrinter()) {
 
 ## バージョン情報
 
-- 初期バージョン: `FastPrinter`を拡張し、配列やペアの出力機能を追加
+- バージョン 1.0: `FastPrinter`を拡張し、配列やペアの出力機能を追加
+- バージョン 2.0: double型配列の出力メソッド、Iterableオブジェクト出力メソッドを追加し、Object型の出力をさらに拡張
+
+### バージョン管理について
+バージョン番号は2桁で管理します：
+- **1桁目（メジャーバージョン）**: メソッドの追加や機能拡張があった場合に更新
+- **2桁目（マイナーバージョン）**: 誤字修正、バグ修正、マイクロ高速化などの小さな更新があった場合に更新
