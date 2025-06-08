@@ -249,6 +249,7 @@ public class FastScanner implements AutoCloseable {
 			sb.appendCodePoint(b);
 			b = read();
 		}
+		read(); // 改行文字を読み飛ばす
 		return sb.toString();
 	}
 
