@@ -118,7 +118,7 @@ public class CompressedFastScanner {
 		}
 
 		public StringBuilder nextStringBuilder() {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			byte b = read();
 			while (isWhitespace(b)) b = read();
 			while (!isWhitespace(b)) {
@@ -129,7 +129,7 @@ public class CompressedFastScanner {
 		}
 
 		public String nextLine() {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			int b = read();
 			while (b != 0 && b != '\r' && b != '\n') {
 				sb.appendCodePoint(b);
@@ -321,11 +321,9 @@ public class CompressedFastScanner {
 		public long[][][] nextLongPrefixSum(final int x, final int y, final int z) {
 			final long[][][] ps = new long[x + 1][y + 1][z + 1];
 			for (int a = 1; a <= x; a++)
-				for (int b = 1; b <= y; b++) {
-					final int A = a, B = b;
+				for (int b = 1, A = a, B = b; b <= y; b++)
 					setAll(ps[A][B], c -> c > 0 ? nextLong() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
 							- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
-				}
 			return ps;
 		}
 
@@ -417,12 +415,12 @@ public class CompressedFastScanner {
 		}
 
 		private <T extends Map<Integer, Integer>> T nextIntMultiset(int n, final Supplier<T> supplier) {
-			final T collection = supplier.get();
+			final T multiSet = supplier.get();
 			while (n-- > 0) {
 				final int i = nextInt();
-				collection.put(i, collection.getOrDefault(i, 0) + 1);
+				multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
 			}
-			return collection;
+			return multiSet;
 		}
 
 		public HashMap<Integer, Integer> nextIntMultisetHM(final int n) {
@@ -471,7 +469,7 @@ public class CompressedFastScanner {
 			final T multiSet = supplier.get();
 			while (n-- > 0) {
 				final String s = next();
-				multiSet.put(next(), multiSet.getOrDefault(s, 0) + 1);
+				multiSet.put(s, multiSet.getOrDefault(s, 0) + 1);
 			}
 			return multiSet;
 		}
@@ -487,8 +485,7 @@ public class CompressedFastScanner {
 		public int[] nextIntMultiset(final int n, final int m) {
 			final int[] multiset = new int[m];
 			for (int i = 0; i < n; i++) {
-				final int value = nextInt() - 1;
-				multiset[value] = multiset[value] + 1;
+				multiset[nextInt() - 1]++;
 			}
 			return multiset;
 		}

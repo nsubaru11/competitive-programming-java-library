@@ -797,8 +797,7 @@ public final class ContestScanner extends FastScanner {
 	public int[] nextIntMultiset(final int n, final int m) {
 		final int[] multiset = new int[m];
 		for (int i = 0; i < n; i++) {
-			final int value = nextInt() - 1;
-			multiset[value] = multiset[value] + 1;
+			multiset[nextInt() - 1]++;
 		}
 		return multiset;
 	}
