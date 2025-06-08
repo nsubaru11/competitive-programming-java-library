@@ -867,7 +867,7 @@ public class CompressedFastPrinter {
 			}
 		}
 
-		public <T> void println(final char[][] arr2d, final LongFunction<T> function) {
+		public <T> void println(final char[][] arr2d, final Function<Character, T> function) {
 			if (arr2d == null) return;
 			if (function == null) {
 				println(arr2d);

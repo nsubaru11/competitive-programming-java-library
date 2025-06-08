@@ -135,6 +135,7 @@ public class CompressedFastScanner {
 				sb.appendCodePoint(b);
 				b = read();
 			}
+			read();
 			return sb.toString();
 		}
 

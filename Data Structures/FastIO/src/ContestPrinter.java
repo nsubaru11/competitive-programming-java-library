@@ -1121,7 +1121,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param function char を変換する関数
 	 * @param <T>      変換後の型
 	 */
-	public <T> void println(final char[][] arr2d, final LongFunction<T> function) {
+	public <T> void println(final char[][] arr2d, final Function<Character, T> function) {
 		if (arr2d == null) return;
 		if (function == null) {
 			println(arr2d);
