@@ -2,25 +2,18 @@
 
 ## 概要
 
-`ContestScanner`は、競技プログラミング向けに設計された高度な入力クラスです。  
-`FastScanner`を拡張し、各種配列、2次元・3次元配列、ソート済み配列、累積和配列、逆写像配列、各種コレクションの入力をサポートします。
+`ContestScanner`は、`FastScanner`を拡張し、競技プログラミングで頻出する多様なデータ構造（配列、コレクション、累積和など）を一行で読み込むためのメソッドを提供する高速入力クラスです。
 
 ## 特徴
 
-- `FastScanner`の高速な入力処理機能を継承
-- 1次元・2次元・3次元配列の一括入力
-- ソート済み配列の生成
-- 累積和配列の生成
-- 逆写像配列の生成
-- 各種コレクション（ArrayList, HashSet, TreeSet）への入力
-- マルチセット（出現回数カウント）の生成
-- 文字列処理の拡張機能
+- **コードの簡略化**: `for`ループを使わずに、配列やコレクションを一行で読み込めます。
+- **多機能**: 1次元から3次元までの配列、ソート済み配列、累積和配列、各種コレクション、マルチセットなど、多彩な入力パターンに対応します。
+- **高速性**: `FastScanner`の高速な入力処理を継承しています。
 
 ## 依存関係
 
 - `FastScanner`クラス
-- Java標準のコレクションライブラリ（`ArrayList`, `HashSet`, `TreeSet`, `HashMap`, `TreeMap`）
-- `java.util.Arrays`の`setAll`と`sort`メソッド
+- `java.util.Arrays`, `java.util.function.Supplier`, および各種コレクションクラス
 
 ## 主な機能
 
@@ -129,106 +122,58 @@
 | `nextLowerCharMultiset(int n)`            | `int[]` | 小文字のマルチセットをchar[]で読み込む    |
 | `nextCharMultiset(int n, char l, char r)` | `int[]` | 連続する文字のマルチセットをchar[]で読み込む |
 
-### メソッド詳細
-
-#### nextInt(int n)
-
-- **説明**: 指定された長さの整数配列を読み込みます
-- **引数**: `n` - 配列の長さ
-- **戻り値**: 読み込んだ整数配列（`int[]`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
-#### nextIntMat(int h, int w)
-
-- **説明**: 指定された行数・列数の整数2次元配列を読み込みます
-- **引数**: 
-  - `h` - 行数
-  - `w` - 列数
-- **戻り値**: 読み込んだ2次元整数配列（`int[][]`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
-#### nextSortedInt(int n)
-
-- **説明**: 指定された長さの整数配列を読み込み、ソートして返します
-- **引数**: `n` - 配列の長さ
-- **戻り値**: ソートされた整数配列（`int[]`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
-#### nextIntPrefixSum(int n)
-
-- **説明**: 整数の累積和配列を読み込みます
-- **引数**: `n` - 配列の長さ
-- **戻り値**: 累積和配列（`int[]`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
-#### nextIntInverseMapping(int n)
-
-- **説明**: 入力値が1-indexedの整数に対する逆写像を生成します
-- **引数**: `n` - 配列の長さ
-- **戻り値**: 各入力値に対して、入力された順序（0-indexed）を格納した逆写像（`int[]`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
-#### nextIntAL(int n)
-
-- **説明**: 指定された長さの整数ArrayListを読み込みます
-- **引数**: `n` - 要素数
-- **戻り値**: 読み込んだ整数ArrayList（`ArrayList<Integer>`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
-#### nextIntMultisetHM(int n)
-
-- **説明**: 整数のマルチセットをHashMapで読み込みます
-- **引数**: `n` - 要素数
-- **戻り値**: 整数のマルチセット（`HashMap<Integer, Integer>`型）
-- **例外**: 入力がない場合や入力が整数でない場合は`RuntimeException`
-
 ## 利用例
 
 ```java
 // 基本的な使用例
-try(ContestScanner sc = new ContestScanner()){
-    // 1次元配列の読み込み
-    int n = sc.nextInt();
-    int[] a = sc.nextInt(n);
+try (ContestScanner sc = new ContestScanner()) {
+// 1次元配列の読み込み
+int n = sc.nextInt();
+int[] a = sc.nextInt(n);
 
-    // 2次元配列の読み込み
-    int h = sc.nextInt();
-    int w = sc.nextInt();
-    int[][] mat = sc.nextIntMat(h, w);
+// 2次元配列の読み込み
+int h = sc.nextInt();
+int w = sc.nextInt();
+int[][] mat = sc.nextIntMat(h, w);
 
-    // ソート済み配列の読み込み
-    int[] sorted = sc.nextSortedInt(n);
+// ソート済み配列の読み込み
+int[] sorted = sc.nextSortedInt(n);
 
-    // 累積和配列の読み込み
-    int[] prefixSum = sc.nextIntPrefixSum(n);
+// 累積和配列の読み込み
+int[] prefixSum = sc.nextIntPrefixSum(n);
 
-    // 逆写像配列の読み込み
-    int[] inv = sc.nextIntInverseMapping(n);
+// 逆写像配列の読み込み
+int[] inv = sc.nextIntInverseMapping(n);
 
-    // コレクションの読み込み
-    ArrayList<Integer> list = sc.nextIntAL(n);
-    HashSet<Integer> set = sc.nextIntHS(n);
+// コレクションの読み込み
+ArrayList<Integer> list = sc.nextIntAL(n);
+HashSet<Integer> set = sc.nextIntHS(n);
 
-    // マルチセットの読み込み
-    HashMap<Integer, Integer> multiset = sc.nextIntMultisetHM(n);
+// マルチセットの読み込み
+HashMap<Integer, Integer> multiset = sc.nextIntMultisetHM(n);
 
-    // 処理
+// 処理
 } 
 ```
 
 ## 注意事項
 
-1. `FastScanner`と同様に、ASCII範囲外の文字（全角文字など）は正しく処理できません
-2. 入力は半角スペースまたは改行で区切られていることを前提としています
-3. 累積和配列の2次元・3次元版は、戻り値の配列サイズが入力サイズより1大きくなります（0-indexedの累積和を計算するため）
-4. 逆写像配列は入力値が1-indexedであることを前提としています
-5. マルチセットの配列版は、要素の最大値を指定する必要があります
+- `FastScanner`の注意事項がすべて適用されます。
+- 累積和配列の2次元・3次元版は、戻り値の配列サイズが入力サイズより1大きくなります。
+- 逆写像配列 (`nextIntInverseMapping`) は入力値が1-indexedであることを前提としています。
 
 ## パフォーマンス特性
 
-- 時間計算量: トークン数に対して線形（O(n)）
-- 空間計算量: 指定したバッファサイズ（デフォルト: 65536バイト）に加えて、生成する配列やコレクションのサイズ
+- `FastScanner`に準じますが、配列やコレクションの生成に伴うオーバーヘッドがあります。
 
 ## バージョン情報
 
-- 新機能: 各種配列、2次元・3次元配列、ソート済み配列、累積和配列、逆写像配列、各種コレクション、マルチセットのサポート
+| バージョン番号       | 年月日        | 詳細                       |
+|:--------------|:-----------|:-------------------------|
+| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。 |
+
+### バージョン管理について
+
+バージョン番号は2桁で管理します：
+- 1桁目（メジャーバージョン）: メソッドの追加や機能拡張があった場合に更新
+- 2桁目（マイナーバージョン）: 誤字修正、バグ修正、マイクロ高速化などの小さな更新があった場合に更新
