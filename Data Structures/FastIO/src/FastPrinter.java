@@ -37,26 +37,37 @@ public class FastPrinter implements AutoCloseable {
 	private static final int DEFAULT_BUFFER_SIZE = 65536;
 
 	/**
-	 * 00～99 の2桁の数字を連続した1次元配列として格納
+	 * 00～99 の2桁の数字の2桁目を格納
 	 */
-	private static final byte[] TWO_DIGIT_NUMBERS = new byte[200];
+	private static final byte[] DigitTens = {
+			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
+			'2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
+			'3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
+			'4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
+			'5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
+			'6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
+			'7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
+			'8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
+			'9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
+	};
 
-	/* ------------------------ 静的イニシャライザ ------------------------ */
-
-	/*
-	 * TWO_DIGIT_NUMBERS の初期化を行います。
+	/**
+	 * 00～99 の1桁の数字の2桁目を格納
 	 */
-	static {
-		byte tens = '0', ones = '0';
-		for (int i = 0; i < 100; i++) {
-			TWO_DIGIT_NUMBERS[i << 1] = tens;
-			TWO_DIGIT_NUMBERS[(i << 1) + 1] = ones;
-			if (++ones > '9') {
-				ones = '0';
-				tens++;
-			}
-		}
-	}
+	private static final byte[] DigitOnes = {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	};
+
 
 	/* ------------------------ インスタンス変数 ------------------------ */
 
@@ -513,151 +524,63 @@ public class FastPrinter implements AutoCloseable {
 	}
 
 	/**
-	 * 指定された int 値を文字列に変換してバッファに格納します。<br>
+	 * 指定された整数値を文字列に変換してバッファに格納します。<br>
 	 * 負の値の場合は先頭に '-' を付加します。
 	 *
-	 * @param i 出力する int 値
+	 * @param l 出力する整数値
 	 */
-	protected final void fillBuffer(int i) {
-		if (i == Integer.MIN_VALUE) {
+	protected void fillBuffer(long l) {
+		if (l < 0) {
 			buffer[pos++] = '-';
-			buffer[pos++] = '2';
-			buffer[pos++] = '1';
-			buffer[pos++] = '4';
-			buffer[pos++] = '7';
-			buffer[pos++] = '4';
-			buffer[pos++] = '8';
-			buffer[pos++] = '3';
-			buffer[pos++] = '6';
-			buffer[pos++] = '4';
-			buffer[pos++] = '8';
-			return;
-		}
-
-		boolean negative = i < 0;
-		if (negative) {
-			i = -i;
-			buffer[pos++] = '-';
-		}
-
-		int numOfDigits = countDigits(i);
-		int writePos = pos + numOfDigits;
-		while (i >= 100) {
-			int quotient = i / 100;
-			int remainder = (i - quotient * 100) << 1;
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[remainder + 1];
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[remainder];
-			i = quotient;
-		}
-
-		if (i < 10) {
-			buffer[--writePos] = (byte) ('0' + i);
 		} else {
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[(i << 1) + 1];
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[i << 1];
-		}
-
-		pos += numOfDigits;
-	}
-
-	/**
-	 * 指定された long 値を文字列に変換してバッファに格納します。<br>
-	 * 負の値の場合は先頭に '-' を付加します。
-	 *
-	 * @param l 出力する long 値
-	 */
-	protected final void fillBuffer(long l) {
-		if ((int) l == l) {
-			fillBuffer((int) l);
-			return;
-		}
-		if (l == Long.MIN_VALUE) {
-			buffer[pos++] = '-';
-			buffer[pos++] = '9';
-			buffer[pos++] = '2';
-			buffer[pos++] = '2';
-			buffer[pos++] = '3';
-			buffer[pos++] = '3';
-			buffer[pos++] = '7';
-			buffer[pos++] = '2';
-			buffer[pos++] = '0';
-			buffer[pos++] = '3';
-			buffer[pos++] = '6';
-			buffer[pos++] = '8';
-			buffer[pos++] = '5';
-			buffer[pos++] = '4';
-			buffer[pos++] = '7';
-			buffer[pos++] = '7';
-			buffer[pos++] = '5';
-			buffer[pos++] = '8';
-			buffer[pos++] = '0';
-			buffer[pos++] = '8';
-			return;
-		}
-
-		boolean negative = l < 0;
-		if (negative) {
 			l = -l;
-			buffer[pos++] = '-';
 		}
-
-		int numOfDigits = countDigits(l);
+		long quotient;
+		int remainder;
+		final int numOfDigits = countDigits(l);
 		int writePos = pos + numOfDigits;
-		while (l >= 100) {
-			long quotient = l / 100;
-			int remainder = (int) (l - quotient * 100) << 1;
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[remainder + 1];
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[remainder];
+		while (l <= -100) {
+			quotient = l / 100;
+			remainder = (int) (quotient * 100 - l);
+			buffer[--writePos] = DigitOnes[remainder];
+			buffer[--writePos] = DigitTens[remainder];
 			l = quotient;
 		}
-
-		if (l < 10) {
-			buffer[--writePos] = (byte) ('0' + l);
-		} else {
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[(int) (l << 1) + 1];
-			buffer[--writePos] = TWO_DIGIT_NUMBERS[(int) l << 1];
+		quotient = l / 10;
+		remainder = (int) (quotient * 10 - l);
+		buffer[--writePos] = (byte) ('0' + remainder);
+		if (quotient < 0) {
+			buffer[--writePos] = (byte) ('0' - quotient);
 		}
-
 		pos += numOfDigits;
 	}
 
 	/**
-	 * 指定された int 値の桁数を数えます。
-	 * 与えられる数値は正の整数であることを前提とした実装です。
+	 * 指定された整数値の桁数を数えます。
+	 * 与えられる数値は負の整数であることを前提とした実装です。
 	 *
-	 * @param i 数値
-	 * @return 桁数
-	 */
-	private int countDigits(final int i) {
-		if (i < 10) return 1;
-		if (i < 100) return 2;
-		if (i < 1000) return 3;
-		if (i < 10000) return 4;
-		if (i < 100000) return 5;
-		if (i < 1000000) return 6;
-		if (i < 10000000) return 7;
-		if (i < 100000000) return 8;
-		if (i < 1000000000) return 9;
-		return 10;
-	}
-
-	/**
-	 * 指定された long 値の桁数を数えます。
-	 * 与えられる数値は正の整数であり、int の範囲外が保証されることを前提とした実装です。
-	 *
-	 * @param l 数値
+	 * @param l 整数
 	 * @return 桁数
 	 */
 	private int countDigits(final long l) {
-		if (l < 10000000000L) return 10;
-		if (l < 100000000000L) return 11;
-		if (l < 1000000000000L) return 12;
-		if (l < 10000000000000L) return 13;
-		if (l < 100000000000000L) return 14;
-		if (l < 1000000000000000L) return 15;
-		if (l < 10000000000000000L) return 16;
-		if (l < 100000000000000000L) return 17;
-		if (l < 1000000000000000000L) return 18;
+		if (l > -10) return 1;
+		if (l > -100) return 2;
+		if (l > -1000) return 3;
+		if (l > -10000) return 4;
+		if (l > -100000) return 5;
+		if (l > -1000000) return 6;
+		if (l > -10000000) return 7;
+		if (l > -100000000) return 8;
+		if (l > -1000000000) return 9;
+		if (l > -10000000000L) return 10;
+		if (l > -100000000000L) return 11;
+		if (l > -1000000000000L) return 12;
+		if (l > -10000000000000L) return 13;
+		if (l > -100000000000000L) return 14;
+		if (l > -1000000000000000L) return 15;
+		if (l > -10000000000000000L) return 16;
+		if (l > -100000000000000000L) return 17;
+		if (l > -1000000000000000000L) return 18;
 		return 19;
 	}
 
