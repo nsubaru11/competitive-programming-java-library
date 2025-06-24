@@ -191,12 +191,13 @@ public class FastScanner implements AutoCloseable {
 		}
 		if (b == '.') {
 			b = read();
-			double factor = 10;
+			long f = 0, d = 1;
 			while ('0' <= b && b <= '9') {
-				result += (b - '0') / factor;
-				factor *= 10;
+				f = f * 10 + b - '0';
+				d *= 10;
 				b = read();
 			}
+			result += (double) f / d;
 		}
 		return negative ? -result : result;
 	}
