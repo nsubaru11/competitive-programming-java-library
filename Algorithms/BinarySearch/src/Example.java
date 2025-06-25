@@ -21,12 +21,12 @@ public class Example {
 		int[] sortedArray = {10, 20, 30, 30, 50, 60, 70, 70, 70};
 		System.out.println("配列: " + Arrays.toString(sortedArray));
 		System.out.println("--------------------------------");
-	
+
 		// 通常の二分探索（成功ケース）
 		int target = 30;
 		int index = ArrayBinarySearch.normalSearch(sortedArray, target);
 		System.out.println("【成功】通常探索: 値 " + target + " のインデックス = " + index + " → 値: " + sortedArray[index]);
-	
+
 		// 存在しない値の探索（失敗ケース）
 		target = 35;
 		index = ArrayBinarySearch.normalSearch(sortedArray, target);
@@ -34,16 +34,16 @@ public class Example {
 		int insertPos = -index - 1; // 挿入位置の計算
 		System.out.println(", 挿入位置 = " + insertPos + " (この位置に挿入すると配列はソート状態を維持する)");
 		System.out.println("--------------------------------");
-	
+
 		// 上限探索(Upper Bound)
 		target = 30;
 		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
 		System.out.println("上限探索: " + target + " 以上の最小値のインデックス = " + index + " → 値: " + sortedArray[index]);
-		
+
 		target = 70;
 		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
 		System.out.println("上限探索: " + target + " 以上の最小値のインデックス = " + index + " → 値: " + sortedArray[index]);
-		
+
 		target = 100;
 		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
 		System.out.print("上限探索: " + target + " 以上の最小値のインデックス = " + index);
@@ -54,16 +54,16 @@ public class Example {
 			System.out.println(" → 値: " + sortedArray[index]);
 		}
 		System.out.println("--------------------------------");
-	
+
 		// 下限探索(Lower Bound)
 		target = 30;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, 0, sortedArray.length, target);
 		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index + " → 値: " + sortedArray[index]);
-		
+
 		target = 70;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, 0, sortedArray.length, target);
 		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index + " → 値: " + sortedArray[index]);
-		
+
 		target = 0;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, target);
 		System.out.print("下限探索: " + target + " 以下の最大値のインデックス = " + index);

@@ -120,7 +120,7 @@ public final class BinarySearch {
 	 * @return 探索結果のインデックス。または -(挿入位置 + 1) を返します。
 	 */
 	private static long binarySearch(long l, long r, SearchType type, CompareFunction comparator) {
-		Long k = null;
+		Long ans = null;
 		while (l <= r) {
 			long m = l + ((r - l) >>> 1);
 			long c;
@@ -146,10 +146,10 @@ public final class BinarySearch {
 					case NORMAL:
 						return m;
 				}
-				k = m;
+				ans = m;
 			}
 		}
-		return k != null ? k : ~l;
+		return ans != null ? ans : ~l;
 	}
 
 	/* -------------------------- 内部エラーハンドリング処理 -------------------------- */
