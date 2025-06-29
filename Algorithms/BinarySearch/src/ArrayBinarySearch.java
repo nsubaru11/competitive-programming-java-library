@@ -25,7 +25,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int normalSearch(int[] arr, int target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int lowerBoundSearch(int[] arr, int target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int upperBoundSearch(int[] arr, int target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int normalSearch(int[] arr, int l, int r, int target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, l, r - 1, target);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int lowerBoundSearch(int[] arr, int l, int r, int target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, l, r - 1, target);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int upperBoundSearch(int[] arr, int l, int r, int target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, l, r - 1, target);
 	}
 
 	/* -------------------------- 長整数配列（long） -------------------------- */
@@ -117,7 +117,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int normalSearch(long[] arr, long target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int lowerBoundSearch(long[] arr, long target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int upperBoundSearch(long[] arr, long target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int normalSearch(long[] arr, int l, int r, long target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, l, r - 1, target);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int lowerBoundSearch(long[] arr, int l, int r, long target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, l, r - 1, target);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int upperBoundSearch(long[] arr, int l, int r, long target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, l, r - 1, target);
 	}
 
 	/* -------------------------- 倍浮動小数点数配列（double） -------------------------- */
@@ -209,7 +209,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int normalSearch(double[] arr, double target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int lowerBoundSearch(double[] arr, double target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int upperBoundSearch(double[] arr, double target) {
 		validateRange(arr, 0, arr.length);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int normalSearch(double[] arr, int l, int r, double target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, l, r - 1, target);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int lowerBoundSearch(double[] arr, int l, int r, double target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, l, r - 1, target);
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class ArrayBinarySearch {
 	 */
 	public static int upperBoundSearch(double[] arr, int l, int r, double target) {
 		validateRange(arr, l, r);
-		return binarySearch(arr, l, r - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, l, r - 1, target);
 	}
 
 	/* -------------------------- ジェネリクス配列（T extends Comparable<? super T>） -------------------------- */
@@ -301,7 +301,7 @@ public class ArrayBinarySearch {
 	 */
 	public static <T extends Comparable<? super T>> int normalSearch(T[] arr, T target) {
 		validateRange(arr, 0, arr.length, target);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class ArrayBinarySearch {
 	 */
 	public static <T extends Comparable<? super T>> int lowerBoundSearch(T[] arr, T target) {
 		validateRange(arr, 0, arr.length, target);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -329,7 +329,7 @@ public class ArrayBinarySearch {
 	 */
 	public static <T extends Comparable<? super T>> int upperBoundSearch(T[] arr, T target) {
 		validateRange(arr, 0, arr.length, target);
-		return binarySearch(arr, 0, arr.length - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, 0, arr.length - 1, target);
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class ArrayBinarySearch {
 	 */
 	public static <T extends Comparable<? super T>> int normalSearch(T[] arr, int l, int r, T target) {
 		validateRange(arr, l, r, target);
-		return binarySearch(arr, l, r - 1, target, SearchType.NORMAL);
+		return binarySearchNormal(arr, l, r - 1, target);
 	}
 
 	/**
@@ -361,7 +361,7 @@ public class ArrayBinarySearch {
 	 */
 	public static <T extends Comparable<? super T>> int lowerBoundSearch(T[] arr, int l, int r, T target) {
 		validateRange(arr, l, r, target);
-		return binarySearch(arr, l, r - 1, target, SearchType.LOWER_BOUND);
+		return binarySearchLowerBound(arr, l, r - 1, target);
 	}
 
 	/**
@@ -377,171 +377,260 @@ public class ArrayBinarySearch {
 	 */
 	public static <T extends Comparable<? super T>> int upperBoundSearch(T[] arr, int l, int r, T target) {
 		validateRange(arr, l, r, target);
-		return binarySearch(arr, l, r - 1, target, SearchType.UPPER_BOUND);
+		return binarySearchUpperBound(arr, l, r - 1, target);
 	}
 
 	/* -------------------------- 内部コア処理メソッド -------------------------- */
 
 	/**
-	 * 整数配列に対する二分探索の内部実装です。
+	 * 整数配列に対する通常の二分探索の内部実装です。
 	 *
 	 * @param arr    探索対象の整数配列
 	 * @param l      探索開始位置（この位置を含む）
 	 * @param r      探索終了位置（この位置を含む）
 	 * @param target 探索対象の整数値
-	 * @param type   探索の種類
 	 * @return 条件にちょうど当てはまるインデックス。探索に失敗した際の戻り値は-(挿入位置 + 1)となっています。
 	 */
-	private static int binarySearch(int[] arr, int l, int r, int target, SearchType type) {
+	private static int binarySearchNormal(int[] arr, int l, int r, int target) {
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			int c = Integer.compare(arr[m], target);
+			if (c > 0) {
+				r = m - 1;
+			} else if (c < 0) {
+				l = m + 1;
+			} else {
+				return m;
+			}
+		}
+		return ~l;
+	}
+
+	private static int binarySearchUpperBound(int[] arr, int l, int r, int target) {
 		int ans = -1;
 		while (l <= r) {
 			int m = l + ((r - l) >>> 1);
-			switch (Integer.compare(arr[m], target)) {
-				case 1:
-					r = m - 1;
-					break;
-				case 0:
-					switch (type) {
-						case UPPER_BOUND:
-							l = m + 1;
-							break;
-						case LOWER_BOUND:
-							r = m - 1;
-							break;
-						case NORMAL:
-							return m;
-					}
+			int c = Integer.compare(arr[m], target);
+			if (c > 0) {
+				r = m - 1;
+			} else {
+				if (c == 0) {
 					ans = m;
-					break;
-				case -1:
-					l = m + 1;
-					break;
+				}
+				l = m + 1;
+			}
+		}
+		return ans == -1 ? ~l : ans;
+	}
+
+	private static int binarySearchLowerBound(int[] arr, int l, int r, int target) {
+		int ans = -1;
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			int c = Integer.compare(arr[m], target);
+			if (c < 0) {
+				l = m + 1;
+			} else {
+				if (c == 0) {
+					ans = m;
+				}
+				r = m - 1;
 			}
 		}
 		return ans == -1 ? ~l : ans;
 	}
 
 	/**
-	 * 長整数配列に対する二分探索の内部実装です。
+	 * 長整数配列に対する通常の二分探索の内部実装です。
 	 *
 	 * @param arr    探索対象の長整数配列
 	 * @param l      探索開始位置（この位置を含む）
 	 * @param r      探索終了位置（この位置を含む）
 	 * @param target 探索対象の長整数値
-	 * @param type   探索の種類
 	 * @return 条件にちょうど当てはまるインデックス。探索に失敗した際の戻り値は-(挿入位置 + 1)となっています。
 	 */
-	private static int binarySearch(long[] arr, int l, int r, long target, SearchType type) {
+	private static int binarySearchNormal(long[] arr, int l, int r, long target) {
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			int c = Long.compare(arr[m], target);
+			if (c > 0) {
+				r = m - 1;
+			} else if (c < 0) {
+				l = m + 1;
+			} else {
+				return m;
+			}
+		}
+		return ~l;
+	}
+
+	private static int binarySearchUpperBound(long[] arr, int l, int r, long target) {
 		int ans = -1;
 		while (l <= r) {
 			int m = l + ((r - l) >>> 1);
-			switch (Long.compare(arr[m], target)) {
-				case 1:
-					r = m - 1;
-					break;
-				case 0:
-					switch (type) {
-						case UPPER_BOUND:
-							l = m + 1;
-							break;
-						case LOWER_BOUND:
-							r = m - 1;
-							break;
-						case NORMAL:
-							return m;
-					}
+			int c = Long.compare(arr[m], target);
+			if (c > 0) {
+				r = m - 1;
+			} else {
+				if (c == 0) {
 					ans = m;
-					break;
-				case -1:
-					l = m + 1;
-					break;
+				}
+				l = m + 1;
+			}
+		}
+		return ans == -1 ? ~l : ans;
+	}
+
+	private static int binarySearchLowerBound(long[] arr, int l, int r, long target) {
+		int ans = -1;
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			int c = Long.compare(arr[m], target);
+			if (c < 0) {
+				l = m + 1;
+			} else {
+				if (c == 0) {
+					ans = m;
+				}
+				r = m - 1;
 			}
 		}
 		return ans == -1 ? ~l : ans;
 	}
 
 	/**
-	 * 倍精度浮動小数点数配列に対する二分探索の内部実装です。
+	 * 倍精度浮動小数点数配列に対する通常の二分探索の内部実装です。
 	 *
 	 * @param arr    探索対象の倍精度浮動小数点数配列
 	 * @param l      探索開始位置（この位置を含む）
 	 * @param r      探索終了位置（この位置を含む）
 	 * @param target 探索対象の倍精度浮動小数点数値
-	 * @param type   探索の種類
 	 * @return 条件にちょうど当てはまるインデックス。探索に失敗した際の戻り値は-(挿入位置 + 1)となっています。
 	 */
-	private static int binarySearch(double[] arr, int l, int r, double target, SearchType type) {
+	private static int binarySearchNormal(double[] arr, int l, int r, double target) {
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			int c = Double.compare(arr[m], target);
+			if (c > 0) {
+				r = m - 1;
+			} else if (c < 0) {
+				l = m + 1;
+			} else {
+				return m;
+			}
+		}
+		return ~l;
+	}
+
+	private static int binarySearchUpperBound(double[] arr, int l, int r, double target) {
 		int ans = -1;
 		while (l <= r) {
 			int m = l + ((r - l) >>> 1);
-			switch (Double.compare(arr[m], target)) {
-				case 1:
-					r = m - 1;
-					break;
-				case 0:
-					switch (type) {
-						case UPPER_BOUND:
-							l = m + 1;
-							break;
-						case LOWER_BOUND:
-							r = m - 1;
-							break;
-						case NORMAL:
-							return m;
-					}
+			int c = Double.compare(arr[m], target);
+			if (c > 0) {
+				r = m - 1;
+			} else {
+				if (c == 0) {
 					ans = m;
-					break;
-				case -1:
-					l = m + 1;
-					break;
+				}
+				l = m + 1;
+			}
+		}
+		return ans == -1 ? ~l : ans;
+	}
+
+	private static int binarySearchLowerBound(double[] arr, int l, int r, double target) {
+		int ans = -1;
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			int c = Double.compare(arr[m], target);
+			if (c < 0) {
+				l = m + 1;
+			} else {
+				if (c == 0) {
+					ans = m;
+				}
+				r = m - 1;
 			}
 		}
 		return ans == -1 ? ~l : ans;
 	}
 
 	/**
-	 * 比較可能な型の配列に対する二分探索の内部実装です。
+	 * 比較可能な型の配列に対する通常の二分探索の内部実装です。
 	 *
 	 * @param arr    探索対象の配列
 	 * @param l      探索開始位置（この位置を含む）
 	 * @param r      探索終了位置（この位置を含む）
 	 * @param target 探索対象の値
-	 * @param type   探索の種類
 	 * @return 条件にちょうど当てはまるインデックス。探索に失敗した際の戻り値は-(挿入位置 + 1)となっています。
 	 * @throws BSException 配列要素が {@code null} の場合
 	 */
-	private static <T extends Comparable<? super T>> int binarySearch(T[] arr, int l, int r, T target, SearchType type) {
-		int ans = -1;
+	private static <T extends Comparable<? super T>> int binarySearchNormal(T[] arr, int l, int r, T target) {
 		while (l <= r) {
 			int m = l + ((r - l) >>> 1);
 			T element = arr[m];
-			int comparison;
+			int c;
 			try {
-				comparison = element.compareTo(target);
+				c = element.compareTo(target);
 			} catch (NullPointerException e) {
 				throw new BSException(BSException.ErrorType.NULL_TARGET);
 			}
 
-			switch (comparison) {
-				case 1:
-					r = m - 1;
-					break;
-				case 0:
-					switch (type) {
-						case UPPER_BOUND:
-							l = m + 1;
-							break;
-						case LOWER_BOUND:
-							r = m - 1;
-							break;
-						case NORMAL:
-							return m;
-					}
+			if (c > 0) {
+				r = m - 1;
+			} else if (c < 0) {
+				l = m + 1;
+			} else {
+				return m;
+			}
+		}
+		return ~l;
+	}
+
+	private static <T extends Comparable<? super T>> int binarySearchUpperBound(T[] arr, int l, int r, T target) {
+		int ans = -1;
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			T element = arr[m];
+			int c;
+			try {
+				c = element.compareTo(target);
+			} catch (NullPointerException e) {
+				throw new BSException(BSException.ErrorType.NULL_TARGET);
+			}
+
+			if (c > 0) {
+				r = m - 1;
+			} else {
+				if (c == 0) {
 					ans = m;
-					break;
-				case -1:
-					l = m + 1;
-					break;
+				}
+				l = m + 1;
+			}
+		}
+		return ans == -1 ? ~l : ans;
+	}
+
+	private static <T extends Comparable<? super T>> int binarySearchLowerBound(T[] arr, int l, int r, T target) {
+		int ans = -1;
+		while (l <= r) {
+			int m = l + ((r - l) >>> 1);
+			T element = arr[m];
+			int c;
+			try {
+				c = element.compareTo(target);
+			} catch (NullPointerException e) {
+				throw new BSException(BSException.ErrorType.NULL_TARGET);
+			}
+
+			if (c < 0) {
+				l = m + 1;
+			} else {
+				if (c == 0) {
+					ans = m;
+				}
+				r = m - 1;
 			}
 		}
 		return ans == -1 ? ~l : ans;
@@ -630,15 +719,6 @@ public class ArrayBinarySearch {
 		if (l >= r) {
 			throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 		}
-	}
-
-	/* -------------------------- 探索種別 (内部用 Enum 定義) -------------------------- */
-
-	/**
-	 * 内部的に利用される探索種別を示す列挙型
-	 */
-	private enum SearchType {
-		NORMAL, UPPER_BOUND, LOWER_BOUND
 	}
 
 	/* -------------------------- 二分探索専用例外クラス BSException -------------------------- */

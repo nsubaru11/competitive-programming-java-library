@@ -26,7 +26,7 @@ public final class BinarySearch {
 	 */
 	public static int normalSearch(int l, int r, CompareFunction comparator) {
 		validateRange(l, r, comparator);
-		return (int) binarySearch(l, r - 1, SearchType.NORMAL, comparator);
+		return (int) binarySearchNormal(l, r - 1, comparator);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public final class BinarySearch {
 	 */
 	public static long normalSearch(long l, long r, CompareFunction comparator) {
 		validateRange(l, r, comparator);
-		return binarySearch(l, r - 1, SearchType.NORMAL, comparator);
+		return binarySearchNormal(l, r - 1, comparator);
 	}
 
 	/* -------------------------- 上限探索 (Upper Bound) メソッド -------------------------- */
@@ -58,7 +58,7 @@ public final class BinarySearch {
 	 */
 	public static int upperBoundSearch(int l, int r, CompareFunction comparator) {
 		validateRange(l, r, comparator);
-		return (int) binarySearch(l, r - 1, SearchType.UPPER_BOUND, comparator);
+		return (int) binarySearchUpperBound(l, r - 1, comparator);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public final class BinarySearch {
 	 */
 	public static long upperBoundSearch(long l, long r, CompareFunction comparator) {
 		validateRange(l, r, comparator);
-		return binarySearch(l, r - 1, SearchType.UPPER_BOUND, comparator);
+		return binarySearchUpperBound(l, r - 1, comparator);
 	}
 
 	/* -------------------------- 下限探索 (Lower Bound) メソッド -------------------------- */
@@ -90,7 +90,7 @@ public final class BinarySearch {
 	 */
 	public static int lowerBoundSearch(int l, int r, CompareFunction comparator) {
 		validateRange(l, r, comparator);
-		return (int) binarySearch(l, r - 1, SearchType.LOWER_BOUND, comparator);
+		return (int) binarySearchLowerBound(l, r - 1, comparator);
 	}
 
 	/**
@@ -105,29 +105,26 @@ public final class BinarySearch {
 	 */
 	public static long lowerBoundSearch(long l, long r, CompareFunction comparator) {
 		validateRange(l, r, comparator);
-		return binarySearch(l, r - 1, SearchType.LOWER_BOUND, comparator);
+		return binarySearchLowerBound(l, r - 1, comparator);
 	}
 
 	/* -------------------------- 内部コア処理メソッド -------------------------- */
 
 	/**
-	 * 実際の二分探索アルゴリズムを実行する内部メソッドです。
+	 * 通常の二分探索アルゴリズムを実行する内部メソッドです。
 	 *
 	 * @param l          下限値（この数を含む）
 	 * @param r          上限値（この数を含む）
-	 * @param type       二分探索の種類 (標準、上限、下限)
 	 * @param comparator 比較ロジックを提供する関数インターフェース
 	 * @return 探索結果のインデックス。または -(挿入位置 + 1) を返します。
 	 */
-	private static long binarySearch(long l, long r, SearchType type, CompareFunction comparator) {
-		Long ans = null;
+	private static long binarySearchNormal(long l, long r, CompareFunction comparator) {
 		while (l <= r) {
 			long m = l + ((r - l) >>> 1);
 			long c;
 			try {
 				c = comparator.compare(m);
 			} catch (Exception e) {
-				// 比較関数内での例外は上位に伝播
 				throw new BSException(BSException.ErrorType.COMPARATOR_ERROR, e);
 			}
 
@@ -136,21 +133,74 @@ public final class BinarySearch {
 			} else if (c < 0) {
 				l = m + 1;
 			} else {
-				switch (type) {
-					case UPPER_BOUND:
-						l = m + 1;
-						break;
-					case LOWER_BOUND:
-						r = m - 1;
-						break;
-					case NORMAL:
-						return m;
+				return m;
+			}
+		}
+		return ~l;
+	}
+
+	/**
+	 * 上限探索(Upper Bound)の二分探索アルゴリズムを実行する内部メソッドです。
+	 *
+	 * @param l          下限値（この数を含む）
+	 * @param r          上限値（この数を含む）
+	 * @param comparator 比較ロジックを提供する関数インターフェース
+	 * @return 探索結果のインデックス。または -(挿入位置 + 1) を返します。
+	 */
+	private static long binarySearchUpperBound(long l, long r, CompareFunction comparator) {
+		Long ans = null;
+		while (l <= r) {
+			long m = l + ((r - l) >>> 1);
+			long c;
+			try {
+				c = comparator.compare(m);
+			} catch (Exception e) {
+				throw new BSException(BSException.ErrorType.COMPARATOR_ERROR, e);
+			}
+
+			if (c > 0) {
+				r = m - 1;
+			} else {
+				if (c == 0) {
+					ans = m;
 				}
-				ans = m;
+				l = m + 1;
 			}
 		}
 		return ans != null ? ans : ~l;
 	}
+
+	/**
+	 * 下限探索(Lower Bound)の二分探索アルゴリズムを実行する内部メソッドです。
+	 *
+	 * @param l          下限値（この数を含む）
+	 * @param r          上限値（この数を含む）
+	 * @param comparator 比較ロジックを提供する関数インターフェース
+	 * @return 探索結果のインデックス。または -(挿入位置 + 1) を返します。
+	 */
+	private static long binarySearchLowerBound(long l, long r, CompareFunction comparator) {
+		Long ans = null;
+		while (l <= r) {
+			long m = l + ((r - l) >>> 1);
+			long c;
+			try {
+				c = comparator.compare(m);
+			} catch (Exception e) {
+				throw new BSException(BSException.ErrorType.COMPARATOR_ERROR, e);
+			}
+
+			if (c < 0) {
+				l = m + 1;
+			} else {
+				if (c == 0) {
+					ans = m;
+				}
+				r = m - 1;
+			}
+		}
+		return ans != null ? ans : ~l;
+	}
+
 
 	/* -------------------------- 内部エラーハンドリング処理 -------------------------- */
 
@@ -169,15 +219,6 @@ public final class BinarySearch {
 		if (l >= r) {
 			throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 		}
-	}
-
-	/* -------------------------- 探索種別 (内部用 Enum 定義) -------------------------- */
-
-	/**
-	 * 内部的に利用される探索種別を示す列挙型
-	 */
-	private enum SearchType {
-		NORMAL, UPPER_BOUND, LOWER_BOUND
 	}
 
 	/* -------------------------- 比較用関数型インターフェース CompareFunction -------------------------- */
@@ -233,7 +274,7 @@ public final class BinarySearch {
 		/**
 		 * 指定されたエラーの種類と原因例外から例外を構築します。
 		 *
-		 * @param type エラーの種類
+		 * @param type  エラーの種類
 		 * @param cause 原因となる例外
 		 */
 		private BSException(ErrorType type, Throwable cause) {
