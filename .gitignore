@@ -34,6 +34,7 @@ out/
 
 # ログファイル
 **/*.log               # ログファイル
+**/history.txt
 
 # 仮想環境や依存関係管理ファイル
 **/node_modules/       # Node.js の依存関係
