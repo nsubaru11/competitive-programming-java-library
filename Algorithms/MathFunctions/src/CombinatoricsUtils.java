@@ -13,16 +13,21 @@ public class CombinatoricsUtils {
 	 * @param r 二項係数を求めるのに用いる値
 	 * @return nCr
 	 */
-	public static long comb(long n, long r) {
-		if (n < 0 || r < 0) return 0;
-		long numer = 1;
-		long denom = 1;
+	public static long comb(int n, int r, long mod) {
+		if (n < r || n < 0 || r < 0) return 0;
 		r = min(n - r, r);
+		long ans = 1;
+		long[] x = new long[1], y = new long[1];
 		for (int i = 1; i <= r; i++) {
-			numer *= n - i;
-			denom *= i + 1;
+			ans = ans * (n - i + 1) % mod;
+			if (NumberTheoryUtils.GCD(i, mod) != 1) {
+				NumberTheoryUtils.exGCD(i, mod, x, y);
+				ans = ans * ((x[0] % mod + mod) % mod) % mod;
+			} else {
+				ans = ans * (PowerUtils.modPow(i, mod - 2, mod)) % mod;
+			}
 		}
-		return numer / denom;
+		return ans;
 	}
 
 	/**
@@ -33,8 +38,15 @@ public class CombinatoricsUtils {
 	 * @param mod 法とする整数
 	 * @return nCr % mod
 	 */
-	public static long modComb(long n, long r, long mod) {
-		return comb(n, r) % mod;
+	public static long modComb(int n, int r, long mod) {
+		if (n < r || n < 0 || r < 0) return 0;
+		r = min(n - r, r);
+		long numer = 1, denom = 1;
+		for (int i = 1; i <= r; i++) {
+			numer *= n - i + 1;
+			denom *= i;
+		}
+		return (numer / denom) % mod;
 	}
 
 	/**
@@ -45,7 +57,10 @@ public class CombinatoricsUtils {
 	 * @return nPr
 	 */
 	public static long perm(long n, long r) {
-		if (n < 0 || r < 0 || r > n) return 0;
+		if (n < 0 || r < 0) return 0;
+		if (r > n) return 0;
+		if (r > Integer.MAX_VALUE)
+			throw new ArithmeticException("数が膨大すぎます。");
 		long result = 1;
 		for (long i = 0; i < r; i++) {
 			result *= (n - i);
@@ -62,7 +77,10 @@ public class CombinatoricsUtils {
 	 * @return nPr % mod
 	 */
 	public static long modPerm(long n, long r, long mod) {
-		if (n < 0 || r < 0 || r > n) return 0;
+		if (n < 0 || r < 0) return 0;
+		if (r > n) return 0;
+		if (r > Integer.MAX_VALUE)
+			throw new ArithmeticException("数が膨大すぎます。");
 		long result = 1;
 		for (long i = 0; i < r; i++) {
 			result = (result * (n - i)) % mod;
@@ -77,8 +95,8 @@ public class CombinatoricsUtils {
 	 * @param r 重複組み合わせを求めるのに用いる値
 	 * @return nHr
 	 */
-	public static long multiComb(long n, long r) {
-		return comb(n + r - 1, r);
+	public static long multiComb(int n, int r, long mod) {
+		return comb(n + r - 1, r, mod);
 	}
 
 	/**
@@ -89,8 +107,8 @@ public class CombinatoricsUtils {
 	 * @param mod 法とする整数
 	 * @return nHr % mod
 	 */
-	public static long modMultiComb(long n, long r, long mod) {
-		return comb(n + r - 1, r) % mod;
+	public static long modMultiComb(int n, int r, long mod) {
+		return comb(n + r - 1, r, mod) % mod;
 	}
 
 	/**
@@ -132,6 +150,7 @@ public class CombinatoricsUtils {
 			}
 		}
 
-		return bell[n][0];
+//		return bell[n][0];
+		return (long) Math.pow(Math.E, Math.pow(Math.E, n) - 1);
 	}
 } 

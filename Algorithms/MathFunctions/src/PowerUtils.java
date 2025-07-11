@@ -12,15 +12,13 @@ public class PowerUtils {
 	 * @param mod 割る値(素数)
 	 * @return a ^ b % mod
 	 */
-	public static double modPow(long a, long b, long mod) {
+	public static long modPow(long a, long b, long mod) {
 		long ans = 1;
-		boolean f = b < 0;
-		if (f) b = -b;
 		b %= mod - 1;
 		for (; b > 0; a = a * a % mod, b >>= 1) {
 			if ((b & 1) == 1) ans = ans * a % mod;
 		}
-		return f ? (double) 1 / ans : ans;
+		return ans;
 	}
 
 	/**
@@ -30,14 +28,12 @@ public class PowerUtils {
 	 * @param b 指数
 	 * @return a ^ b
 	 */
-	public static double pow(double a, long b) {
-		double ans = 1;
-		boolean f = b < 0;
-		if (f) b = -b;
+	public static long pow(long a, int b) {
+		long ans = 1;
 		for (; b > 0; a *= a, b >>= 1) {
 			if ((b & 1) == 1) ans *= a;
 		}
-		return f ? (double) 1 / ans : ans;
+		return ans;
 	}
 
 	/**

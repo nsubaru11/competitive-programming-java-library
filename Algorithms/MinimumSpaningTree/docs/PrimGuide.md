@@ -15,47 +15,52 @@ Prim法を用いた最小/最大全域木（MST）問題のソルバーです。
 ## 依存関係
 
 - Java標準ライブラリ
-  - java.util.List
-  - java.util.ArrayList
-  - java.util.PriorityQueue
-  - java.util.Comparator
-  - java.util.BitSet
+	- java.util.List
+	- java.util.ArrayList
+	- java.util.PriorityQueue
+	- java.util.Comparator
+	- java.util.BitSet
 
 ## 主な機能
 
 ### コンストラクタ
+
 - `Prim(int v)` - 最小全域木を求めるソルバーを初期化
 - `Prim(int v, boolean isMinimum)` - 最小/最大全域木を求めるソルバーを初期化
 
 ### メソッド
+
 - `void addEdge(int u, int v, long cost)` - グラフに無向辺を追加
 - `long solve()` - Prim法を実行し、全域木の総コストを計算
 
 ### メソッド詳細
 
 #### コンストラクタ
+
 - `Prim(int v)`
-  - 引数: v - 頂点数（0からv-1までの頂点番号が使用される）
-  - 説明: 最小全域木を求めるソルバーを初期化します
+	- 引数: v - 頂点数（0からv-1までの頂点番号が使用される）
+	- 説明: 最小全域木を求めるソルバーを初期化します
 
 - `Prim(int v, boolean isMinimum)`
-  - 引数: 
-    - v - 頂点数（0からv-1までの頂点番号が使用される）
-    - isMinimum - trueの場合は最小全域木、falseの場合は最大全域木を求めます
-  - 説明: 最小/最大全域木を求めるソルバーを初期化します
+	- 引数:
+		- v - 頂点数（0からv-1までの頂点番号が使用される）
+		- isMinimum - trueの場合は最小全域木、falseの場合は最大全域木を求めます
+	- 説明: 最小/最大全域木を求めるソルバーを初期化します
 
 #### addEdge
+
 - `void addEdge(int u, int v, long cost)`
-  - 引数:
-    - u - 辺の始点（0からv-1までの値）
-    - v - 辺の終点（0からv-1までの値）
-    - cost - 辺の重み
-  - 説明: グラフに無向辺を追加します
+	- 引数:
+		- u - 辺の始点（0からv-1までの値）
+		- v - 辺の終点（0からv-1までの値）
+		- cost - 辺の重み
+	- 説明: グラフに無向辺を追加します
 
 #### solve
+
 - `long solve()`
-  - 戻り値: 全域木の総コスト、または連結グラフでない場合は-1
-  - 説明: Prim法を実行し、全域木の総コストを計算します
+	- 戻り値: 全域木の総コスト、または連結グラフでない場合は-1
+	- 説明: Prim法を実行し、全域木の総コストを計算します
 
 ## 利用例
 

@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.IntFunction;
+import java.util.function.IntToLongFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -228,10 +228,10 @@ public class LongRingBuffer implements Iterable<Long>, Cloneable {
 	 * @param generator 要素を生成する関数。インデックス（0からsize-1まで）を引数として受け取り、初期化する値を返します。
 	 * @return このインスタンス自体を返します。
 	 */
-	public LongRingBuffer setAll(final IntFunction<Long> generator) {
+	public LongRingBuffer setAll(final IntToLongFunction generator) {
 		head = 0;
 		size = capacity;
-		Arrays.setAll(buf, generator::apply);
+		Arrays.setAll(buf, generator);
 		return this;
 	}
 

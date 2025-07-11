@@ -182,15 +182,15 @@ public class PatriciaTrie {
 		/**
 		 * このノードを単語の終端としてマークする。
 		 */
-		public void setEnd() {
-			this.end = true;
+		public void setEnd(boolean isEnd) {
+			end = isEnd;
 		}
 
 		/**
 		 * このノードを単語の終端としてマークする。
 		 */
-		public void setEnd(boolean isEnd) {
-			end = isEnd;
+		public void setEnd() {
+			this.end = true;
 		}
 
 		public void setLabel(String label) {

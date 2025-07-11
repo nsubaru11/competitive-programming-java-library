@@ -9,6 +9,7 @@ public class Example {
 		// 両方のBinarySearchクラスの機能をテスト
 		testArrayBinarySearch();
 		testBinarySearch();
+
 	}
 
 	/**

@@ -1,86 +1,146 @@
 import java.util.*;
+import java.util.stream.LongStream;
+
+import static java.util.Arrays.binarySearch;
+import static java.util.Arrays.copyOf;
 
 /**
- * 素数に関するクラス
+ * エラトステネスの篩を用いて最大Integer.MAXVALUEの値
  */
 @SuppressWarnings("unused")
-public class PrecomputedPrimes implements Iterable<Integer> {
-	private final int MAX_VALUE;
-	private final BitSet table;
-	private final ArrayList<Integer> primes;
+public final class PrecomputedPrimes implements Iterable<Long> {
+	private final long MAX_VALUE;
+	private final long[] oddBits;
+	private long[] primes;
+	private int cnt;
 
-	public PrecomputedPrimes(int n) {
+	public PrecomputedPrimes(long n) {
+		cnt = 0;
 		MAX_VALUE = n;
-		primes = new ArrayList<>();
-		table = new BitSet(n + 1);
-		int index = 1;
-		if (2 <= n) primes.add(2);
-		if (3 <= n) primes.add(3);
-		for (int i = 4; i <= n; i += 2) table.set(i);
-		for (int i = 9; i <= n; i += 6) table.set(i);
-		for (int i = 5; i <= n; i += 6) {
-			for (int j = i; j <= i + 2 && j <= n; j += 2) {
-				if (!table.get(j)) {
-					primes.add(j);
-					for (long k = (long) j * j; k <= n; k += (long) j + j) {
-						table.set((int) k);
-					}
-				}
-			}
-		}
+		oddBits = new long[(int) (((n >>> 1) + 63) >>> 6) + 1];
+		sieve(n);
 	}
 
-	public boolean isPrime(int n) {
+	public boolean isPrime(long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
-		return !table.get(n);
+		if ((n & 1) == 0) return n == 2;
+		return !isCompositeOdd(n);
 	}
 
-	public int countPrimesUpTo(int n) {
+	public int countPrimesUpTo(long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
-		int index = Collections.binarySearch(primes, n);
+		int index = binarySearch(primes, n);
 		return index < 0 ? ~index : index + 1;
 	}
 
-	public int ceilingPrime(int n) {
+	public long ceilingPrime(long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
-		int index = Collections.binarySearch(primes, n);
-		return primes.get(index < 0 ? ~index : index);
+		int index = binarySearch(primes, n);
+		index = index < 0 ? ~index : index;
+		return index >= cnt ? -1 : primes[index];
 	}
 
-
-	public int higherPrime(int n) {
+	public long higherPrime(long n) {
 		return ceilingPrime(n + 1);
 	}
 
-	public int floorPrime(int n) {
+	public long floorPrime(long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
-		int index = Collections.binarySearch(primes, n);
-		return primes.get(index < 0 ? ~index - 1 : index);
+		int index = binarySearch(primes, n);
+		index = index < 0 ? ~index - 1 : index;
+		return index < 0 ? -1 : primes[index];
 	}
 
-	public int lowerPrime(int n) {
+	public long lowerPrime(long n) {
 		return floorPrime(n - 1);
 	}
 
-	public int kthPrime(int i) {
-		if (primes.size() < i) throw new IllegalArgumentException();
-		return primes.get(i);
+	public long kthPrime(int i) {
+		if (i < 0 || cnt <= i) throw new IllegalArgumentException();
+		return primes[i];
 	}
 
-	public Iterator<Integer> iterator() {
+	public Map<Long, Integer> primeFactorize(long n) {
+		if (n < 0) throw new IllegalArgumentException();
+		Map<Long, Integer> factors = new HashMap<>();
+		int i = 0;
+		while (n > 1) {
+			if (i >= cnt) throw new IllegalArgumentException();
+			long prime = primes[i++];
+			while (n % prime == 0) {
+				factors.put(prime, factors.getOrDefault(prime, 0) + 1);
+				n /= prime;
+			}
+		}
+		return factors;
+	}
+
+	@Override
+	public Iterator<Long> iterator() {
 		return new Iterator<>() {
 			private int index = 0;
 
+			@Override
 			public boolean hasNext() {
-				return index < primes.size();
+				return index < cnt;
 			}
 
-			public Integer next() {
+			@Override
+			public Long next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
-				return primes.get(index++);
+				return primes[index++];
 			}
 		};
 	}
 
+	public LongStream stream() {
+		return Arrays.stream(primes);
+	}
+
+	private void sieve(long n) {
+		int estimatedCapacity = n < 20 ? 10 : (int) (1.05 * n / (Math.log(n) - 1.0));
+		primes = new long[estimatedCapacity];
+		final long sqrtN = (long) Math.sqrt(n);
+
+		if (2 <= n) primes[cnt++] = 2;
+		if (3 <= n) primes[cnt++] = 3;
+
+		for (long i = 9; i <= n; i += 6) setCompositeOdd(i);
+		for (long i = 5; i <= n; i += 6) {
+			for (long j = i; j <= i + 2 && j <= n; j += 2) {
+				if (isCompositeOdd(j)) continue;
+				primes[cnt++] = j;
+				if (j > sqrtN) continue;
+				final long step = j * 6;
+				final long delta2 = j * 2;
+				for (long k = j * j; k <= n; k += step) {
+					setCompositeOdd(k);
+					long k2 = k + delta2;
+					if (k2 > n) break;
+					setCompositeOdd(k2);
+					long k4 = k2 + delta2;
+					if (k4 > n) break;
+					setCompositeOdd(k4);
+				}
+			}
+		}
+		primes = copyOf(primes, cnt);
+	}
+
+	private int bitIndex(long n) {
+		return (int) (n >>> 7);
+	}
+
+	private long bitMask(long n) {
+		return 1L << ((n >>> 1) & 63);
+	}
+
+	private void setCompositeOdd(long n) {
+		oddBits[bitIndex(n)] |= bitMask(n);
+	}
+
+	private boolean isCompositeOdd(long n) {
+		return (oddBits[bitIndex(n)] & bitMask(n)) != 0;
+	}
 }

@@ -17,16 +17,19 @@
 
 ### 組み合わせ（二項係数）
 
+- n 種類のものから r 個選ぶ場合の数。
 - `comb(long n, long r)`: nCr を計算します。
 - `modComb(long n, long r, long mod)`: nCr を指定した法（mod）で割った余りを計算します。
 
 ### 順列
 
+- n 種類のものから r 個選んで並べる場合の数。
 - `perm(long n, long r)`: nPr を計算します。
 - `modPerm(long n, long r, long mod)`: nPr を指定した法で割った余りを計算します。
 
 ### 重複組み合わせ
 
+- n 種類のものから重複を許して r 個選ぶ場合の数。
 - `multiComb(long n, long r)`: nHr を計算します。
 - `modMultiComb(long n, long r, long mod)`: nHr を指定した法で割った余りを計算します（注意:現在の実装はモジュロが適用されていません。改善が必要です）。
 
@@ -145,18 +148,18 @@ long bellNum = CombinatoricsUtils.bellNumber(5);
 ## 注意事項
 
 - 現在の実装では、値が大きくなるとlong型の範囲（2^63-1）を超える可能性があるため、適切な範囲のチェックや BigInteger
-  を使った高精度計算への切り替えなどを検討してください。
+	を使った高精度計算への切り替えなどを検討してください。
 - `modMultiComb`は現在モジュロ処理が行われていません。実際にモジュロ演算を行う必要がある場合は、正しく修正を行ってください。
 
 ## パフォーマンス特性
 
 - 各関数の時間計算量:
-    - comb / perm / multiComb：O(r)
-    - stirlingNumber2：O(nk)
-    - bellNumber：O(n^2)
+	- comb / perm / multiComb：O(r)
+	- stirlingNumber2：O(nk)
+	- bellNumber：O(n^2)
 - 各関数の空間計算量:
-    - stirlingNumber2：O(n^2)
-    - bellNumber：O(n^2)（二次元配列使用のため）
+	- stirlingNumber2：O(n^2)
+	- bellNumber：O(n^2)（二次元配列使用のため）
 
 ## バージョン情報
 

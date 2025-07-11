@@ -43,7 +43,9 @@
 | `FastPrinter(OutputStream out, int bufferSize, boolean autoFlush)` | 出力ストリーム、バッファサイズ、autoFlush設定をすべて指定して初期化します。                      |
 
 ## 利用例
-`try-with-resources` 構文を使用することで、処理の最後に自動的に `close()` (内部で `flush()` を呼び出し) が実行され、確実なリソース解放が保証されます。
+
+`try-with-resources` 構文を使用することで、処理の最後に自動的に `close()` (内部で `flush()` を呼び出し)
+が実行され、確実なリソース解放が保証されます。
 
 ```java
 try (FastPrinter fp = new FastPrinter()) {
@@ -58,7 +60,8 @@ try (FastPrinter fp = new FastPrinter()) {
 
 - `ASCII` 範囲外の文字はサポートされていません。
 - 出力先 `OutputStream` を未指定の場合、`System.out` が使用されます。
-- `autoFlush` が `false` の場合、処理の最後に明示的に `flush()` を呼び出すか、`try-with-resources` 構文を使用する必要があります 。
+- `autoFlush` が `false` の場合、処理の最後に明示的に `flush()` を呼び出すか、`try-with-resources`
+	構文を使用する必要があります 。
 
 ## パフォーマンス特性
 
@@ -76,5 +79,6 @@ try (FastPrinter fp = new FastPrinter()) {
 ### バージョン管理について
 
 バージョン番号は2桁で管理します：
+
 - 1桁目（メジャーバージョン）: メソッドの追加や機能拡張があった場合に更新
 - 2桁目（マイナーバージョン）: 誤字修正、バグ修正、マイクロ高速化などの小さな更新があった場合に更新

@@ -34,16 +34,16 @@ public class NumberTheoryUtils {
 	 * @param xy long[]
 	 * @return |x| + |y|の最小値
 	 */
-	public static long exGCD(long a, long b, long[] xy) {
+	public static long exGCD(long a, long b, long[] x, long[] y) {
 		if (b == 0) {
-			xy[0] = 1;
-			xy[1] = 0;
+			x[0] = 1;
+			y[0] = 0;
 			return a;
 		}
-		long[] tmp = new long[2];
-		long d = exGCD(b, a % b, tmp);
-		xy[0] = tmp[0];
-		xy[1] = tmp[1] - (a / b) * tmp[0];
+		long[] xx = new long[1], yy = new long[1];
+		long d = exGCD(b, a % b, yy, xx);
+		x[0] = xx[0];
+		y[0] = yy[0] - (a / b) * xx[0];
 		return d;
 	}
 
@@ -134,9 +134,9 @@ public class NumberTheoryUtils {
 	 * @return a^(-1) mod m
 	 */
 	public static long modInverse(long a, long m) {
-		long[] xy = new long[2];
-		long gcd = exGCD(a, m, xy);
+		long[] x = new long[1], y = new long[1];
+		long gcd = exGCD(a, m, x, y);
 		if (gcd != 1) return -1; // 逆数が存在しない
-		return (xy[0] % m + m) % m;
+		return (x[0] % m + m) % m;
 	}
 } 
