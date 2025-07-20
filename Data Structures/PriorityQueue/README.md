@@ -1,8 +1,10 @@
-# 優先度キュー (Priority Queue)
+# Priority Queue
 
 ## 概要
 
-優先度キューは、要素に優先度を付けて管理するデータ構造で、常に最高（または最低）優先度の要素を効率的に取り出すことができます。このライブラリでは、汎用的な優先度キューと、int型およびlong型に特化した高効率な実装を提供しています。いずれもバイナリヒープを使用して実装されており、効率的な挿入と削除操作を実現しています。
+優先度キューは、要素に優先度を付けて管理するデータ構造で、常に最高（または最低）優先度の要素を効率的に取り出すことができます。
+このライブラリでは、汎用的な優先度キューと、int型およびlong型に特化した高効率な実装を提供しています。
+いずれもバイナリヒープを使用して実装されており、効率的な挿入と削除操作を実現しています。
 
 ## 実装クラス
 
@@ -66,49 +68,6 @@
 	- 挿入/削除: O(log n)
 	- 参照: O(1)
 - **空間計算量**：O(n)
-
-## 使用例
-
-```java
-public class Example {
-	public static void main(String[] args) {
-		// 昇順の優先度キューを作成（最小値が最高優先度）
-		IntPriorityQueue ipq = new IntPriorityQueue();
-		LongPriorityQueue lpq = new LongPriorityQueue();
-		PriorityQueue<Integer> pq = new PriorityQueue<>();
-
-		// 降順の優先度キューを作成（最大値が最高優先度）
-		IntPriorityQueue ipqDesc = new IntPriorityQueue(true);
-		LongPriorityQueue lpqDesc = new LongPriorityQueue(true);
-		PriorityQueue<Integer> pqDesc = new PriorityQueue<>(true);
-
-		// 要素を追加
-		for (int i = 0; i < 10; i++) {
-			int r = (int) (Math.random() * 100);
-			ipq.push(r);
-			lpq.push(r);
-			pq.push(r);
-			ipqDesc.push(r);
-			lpqDesc.push(r);
-			pqDesc.push(r);
-		}
-
-		// 昇順キューから要素を取り出し（小さい順）
-		System.out.print("Ascending order: ");
-		while (!pq.isEmpty()) {
-			System.out.print(pq.poll() + " ");
-		}
-		System.out.println();
-
-		// 降順キューから要素を取り出し（大きい順）
-		System.out.print("Descending order: ");
-		while (!pqDesc.isEmpty()) {
-			System.out.print(pqDesc.poll() + " ");
-		}
-		System.out.println();
-	}
-}
-```
 
 ## 選択ガイド
 

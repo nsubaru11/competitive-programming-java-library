@@ -1,4 +1,4 @@
-# 最小全域木 (Minimum Spanning Tree)
+# Minimum (Maximum) Spanning Tree
 
 ## 概要
 

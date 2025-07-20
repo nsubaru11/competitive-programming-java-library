@@ -1,4 +1,4 @@
-# 編集距離 (Edit Distance) アルゴリズム
+# Edit Distance
 
 ## 概要
 

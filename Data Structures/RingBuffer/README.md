@@ -1,4 +1,4 @@
-# リングバッファ (Ring Buffer)
+# Ring Buffer
 
 ## 概要
 
@@ -80,59 +80,6 @@
 	- インデックスによるアクセス/設定: O(1)
 	- 要素の検索: O(n)
 - **空間計算量**：O(n)
-
-## 使用例
-
-```java
-// 汎用リングバッファの使用例
-RingBuffer<String> buffer = new RingBuffer<>(5);  // 容量5のリングバッファを作成
-
-// 末尾に要素を追加
-buffer.
-
-addLast("A");
-buffer.
-
-addLast("B");
-buffer.
-
-addLast("C");
-
-// 先頭に要素を追加
-buffer.
-
-addFirst("Z");
-
-// インデックスによるアクセス
-String element = buffer.get(1);  // "A"を取得
-
-// 先頭の要素を取り出し
-String first = buffer.pollFirst();  // "Z"を取得して削除
-
-// 末尾の要素を参照
-String last = buffer.peekLast();  // "C"を参照（削除しない）
-
-// 要素の列挙
-for(
-String s :buffer){
-		System.out.
-
-println(s);  // "A", "B", "C"の順に出力
-}
-
-// int型特化リングバッファの使用例
-IntegerRingBuffer intBuffer = new IntegerRingBuffer(10);
-for(
-int i = 0;
-i< 5;i++){
-		intBuffer.
-
-addLast(i *10);
-}
-
-// ストリームAPIの使用
-int sum = intBuffer.stream().sum();  // 0 + 10 + 20 + 30 + 40 = 100
-```
 
 ## 選択ガイド
 

@@ -1,4 +1,4 @@
-# 二分探索 (Binary Search) アルゴリズム
+# Binary Search
 
 ## 概要
 

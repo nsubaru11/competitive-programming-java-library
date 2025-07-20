@@ -1,4 +1,4 @@
-# 階乗 (Factorial) アルゴリズム
+# Factorial
 
 ## 概要
 

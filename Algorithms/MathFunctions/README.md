@@ -1,4 +1,4 @@
-# 数学関数 (Mathematical Functions)
+# Mathematical Functions
 
 ## 概要
 

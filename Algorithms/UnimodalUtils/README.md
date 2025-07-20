@@ -1,4 +1,4 @@
-# 三分探索 (Ternary Search) アルゴリズム
+# Unimodal Utilities
 
 ## 概要
 
