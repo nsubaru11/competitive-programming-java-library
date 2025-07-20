@@ -2,8 +2,8 @@ import java.util.HashSet;
 import java.util.TreeSet;
 
 import static java.lang.Math.sqrt;
-//import static java.lang.System.out;
 
+@SuppressWarnings("unused")
 public final class Advance {
 
 	/* -------------- pow -------------- */
@@ -12,11 +12,11 @@ public final class Advance {
 	 * long値で返します。
 	 */
 	public static long pow(long n, int k) {
-		long res = 1;
+		long pow = 1;
 		for (; k > 0; k >>= 1, n *= n) {
-			if ((k & 1) == 1) res *= n;
+			if ((k & 1) == 1) pow *= n;
 		}
-		return res;
+		return pow;
 	}
 
 	/* -------------- modPow -------------- */
@@ -25,13 +25,11 @@ public final class Advance {
 	 * n ^ k % mod
 	 */
 	public static long modPow(long n, long k, long mod) {
-		long res = 1;
-		n %= mod;
-		k %= mod;
-		for (; k > 0; k >>= 1, n = n * n % mod) {
-			if ((k & 1) == 1) res = res * n % mod;
+		long modPow = 1;
+		for (n %= mod, k %= mod; k > 0; k >>= 1, n = n * n % mod) {
+			if ((k & 1) == 1) modPow = modPow * n % mod;
 		}
-		return res;
+		return modPow;
 	}
 
 	/* -------------- gcd -------------- */
@@ -54,24 +52,24 @@ public final class Advance {
 	 * 最大公約数
 	 */
 	public static int gcd(int[] arr) {
-		int ans = arr[0];
+		int iGcd = arr[0];
 		int len = arr.length;
 		for (int i = 1; i < len; i++) {
-			ans = gcd(ans, arr[i]);
+			iGcd = gcd(iGcd, arr[i]);
 		}
-		return ans;
+		return iGcd;
 	}
 
 	/**
 	 * 最大公約数
 	 */
 	public static long gcd(long[] arr) {
-		long ans = arr[0];
+		long lGcd = arr[0];
 		int len = arr.length;
 		for (int i = 1; i < len; i++) {
-			ans = gcd(ans, arr[i]);
+			lGcd = gcd(lGcd, arr[i]);
 		}
-		return ans;
+		return lGcd;
 	}
 
 	/* -------------- lcm -------------- */
@@ -94,24 +92,24 @@ public final class Advance {
 	 * 最小公倍数
 	 */
 	public static long lcm(int[] arr) {
-		long ans = arr[0];
+		long lcm = arr[0];
 		int len = arr.length;
 		for (int i = 1; i < len; i++) {
-			ans = lcm(ans, arr[i]);
+			lcm = lcm(lcm, arr[i]);
 		}
-		return ans;
+		return lcm;
 	}
 
 	/**
 	 * 最小公倍数
 	 */
 	public static long lcm(long[] arr) {
-		long ans = arr[0];
+		long lcm = arr[0];
 		int len = arr.length;
 		for (int i = 1; i < len; i++) {
-			ans = lcm(ans, arr[i]);
+			lcm = lcm(lcm, arr[i]);
 		}
-		return ans;
+		return lcm;
 	}
 
 	/* -------------- sum, min, max -------------- */

@@ -1,5 +1,7 @@
 import java.util.Arrays;
+import java.util.StringJoiner;
 
+@SuppressWarnings("unused")
 public final class Master {
 
 	/* -------------- toInt -------------- */
@@ -8,20 +10,20 @@ public final class Master {
 	 * char[] -> int 変換
 	 */
 	public static int toInt(char[] arr) {
-		int d = 0;
+		int intVal = 0;
 		for (char c : arr)
-			d = d * 10 + c - '0';
-		return d;
+			intVal = intVal * 10 + c - '0';
+		return intVal;
 	}
 
 	/**
 	 * String -> int 変換
 	 */
 	public static int toInt(String s) {
-		int d = 0;
-		for (int i = 0; i < s.length(); i++)
-			d = d * 10 + s.charAt(i) - '0';
-		return d;
+		int intVal = 0;
+		for (int i = 0, len = s.length(); i < len; i++)
+			intVal = intVal * 10 + s.charAt(i) - '0';
+		return intVal;
 	}
 
 	/* -------------- toLong -------------- */
@@ -30,20 +32,20 @@ public final class Master {
 	 * char[] -> long 変換
 	 */
 	public static long toLong(char[] arr) {
-		long d = 0;
+		long longVal = 0;
 		for (char c : arr)
-			d = d * 10 + c - '0';
-		return d;
+			longVal = longVal * 10 + c - '0';
+		return longVal;
 	}
 
 	/**
 	 * String -> long 変換
 	 */
 	public static long toLong(String s) {
-		long d = 0;
-		for (int i = 0; i < s.length(); i++)
-			d = d * 10 + s.charAt(i) - '0';
-		return d;
+		long longVal = 0;
+		for (int i = 0, len = s.length(); i < len; i++)
+			longVal = longVal * 10 + s.charAt(i) - '0';
+		return longVal;
 	}
 
 	/* -------------- toCharArray -------------- */
@@ -58,6 +60,7 @@ public final class Master {
 	/**
 	 * int -> char[] 変換（桁数指定）
 	 * 指定した桁数に満たない場合0で埋める
+	 * (ビッグエンディアン)
 	 */
 	public static char[] toCharArray(int n, int l) {
 		char[] c = new char[l];
@@ -78,6 +81,7 @@ public final class Master {
 	/**
 	 * long -> char[] 変換（桁数指定）
 	 * 指定した桁数に満たない場合0で埋める
+	 * (ビッグエンディアン)
 	 */
 	public static char[] toCharArray(long n, int l) {
 		char[] c = new char[l];
@@ -127,26 +131,18 @@ public final class Master {
 	 * int[] -> String 変換（半角スペース区切り）
 	 */
 	public static String toString(int[] arr) {
-		int len = arr.length;
-		StringBuilder sb = new StringBuilder(len * 10);
-		sb.append(arr[0]);
-		for (int i = 1; i < len; i++) {
-			sb.append(' ').append(arr[i]);
-		}
-		return sb.toString();
+		StringJoiner sj = new StringJoiner(" ");
+		for (int a : arr) sj.add(Integer.toString(a));
+		return sj.toString();
 	}
 
 	/**
 	 * long[] -> String 変換（半角スペース区切り）
 	 */
 	public static String toString(long[] arr) {
-		int len = arr.length;
-		StringBuilder sb = new StringBuilder(len * 20);
-		sb.append(arr[0]);
-		for (int i = 1; i < len; i++) {
-			sb.append(' ').append(arr[i]);
-		}
-		return sb.toString();
+		StringJoiner sj = new StringJoiner(" ");
+		for (long a : arr) sj.add(Long.toString(a));
+		return sj.toString();
 	}
 
 	/**
@@ -156,8 +152,7 @@ public final class Master {
 		StringBuilder sb = new StringBuilder();
 		for (int[] a : arr) {
 			sb.append(a[0]);
-			int len = a.length;
-			for (int i = 1; i < len; i++) {
+			for (int i = 1, len = a.length; i < len; i++) {
 				sb.append(' ').append(a[i]);
 			}
 			sb.append('\n');
@@ -172,8 +167,7 @@ public final class Master {
 		StringBuilder sb = new StringBuilder();
 		for (long[] a : arr) {
 			sb.append(a[0]);
-			int len = a.length;
-			for (int i = 1; i < len; i++) {
+			for (int i = 1, len = a.length; i < len; i++) {
 				sb.append(' ').append(a[i]);
 			}
 			sb.append('\n');
@@ -189,9 +183,8 @@ public final class Master {
 	public static int[] toIntArray(char[] arr) {
 		int len = arr.length;
 		int[] res = new int[len];
-		for (int i = 0; i < len; i++) {
+		for (int i = 0; i < len; i++)
 			res[i] = arr[i] - '0';
-		}
 		return res;
 	}
 
@@ -201,9 +194,8 @@ public final class Master {
 	public static int[] toIntArray(String s) {
 		int len = s.length();
 		int[] res = new int[len];
-		for (int i = 0; i < len; i++) {
+		for (int i = 0; i < len; i++)
 			res[i] = s.charAt(i) - '0';
-		}
 		return res;
 	}
 
@@ -213,32 +205,31 @@ public final class Master {
 	 * int値の反転
 	 */
 	public static int reverse(int n) {
-		int d = 0;
+		int iReverse = 0;
 		while (n > 0) {
-			d = d * 10 + n % 10;
+			iReverse = iReverse * 10 + n % 10;
 			n /= 10;
 		}
-		return d;
+		return iReverse;
 	}
 
 	/**
 	 * long値の反転
 	 */
 	public static long reverse(long n) {
-		long d = 0;
+		long lReverse = 0;
 		while (n > 0) {
-			d = d * 10 + n % 10;
+			lReverse = lReverse * 10 + n % 10;
 			n /= 10;
 		}
-		return d;
+		return lReverse;
 	}
 
 	/**
 	 * 配列の反転（int[]）
 	 */
 	public static void reverse(int[] arr) {
-		int len = arr.length;
-		for (int i = 0; i < len / 2; i++) {
+		for (int i = 0, len = arr.length; i < len / 2; i++) {
 			int tmp = arr[i];
 			arr[i] = arr[len - i - 1];
 			arr[len - i - 1] = tmp;
@@ -249,8 +240,7 @@ public final class Master {
 	 * 配列の反転（char[]）
 	 */
 	public static void reverse(char[] arr) {
-		int len = arr.length;
-		for (int i = 0; i < len / 2; i++) {
+		for (int i = 0, len = arr.length; i < len / 2; i++) {
 			char tmp = arr[i];
 			arr[i] = arr[len - i - 1];
 			arr[len - i - 1] = tmp;
@@ -261,8 +251,7 @@ public final class Master {
 	 * 配列の反転（long[]）
 	 */
 	public static void reverse(long[] arr) {
-		int len = arr.length;
-		for (int i = 0; i < len / 2; i++) {
+		for (int i = 0, len = arr.length; i < len / 2; i++) {
 			long tmp = arr[i];
 			arr[i] = arr[len - i - 1];
 			arr[len - i - 1] = tmp;
