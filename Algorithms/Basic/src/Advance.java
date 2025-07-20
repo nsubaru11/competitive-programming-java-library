@@ -13,10 +13,8 @@ public final class Advance {
 	 */
 	public static long pow(long n, int k) {
 		long res = 1;
-		while (k > 0) {
+		for (; k > 0; k >>= 1, n *= n) {
 			if ((k & 1) == 1) res *= n;
-			n *= n;
-			k >>= 1;
 		}
 		return res;
 	}
@@ -29,10 +27,9 @@ public final class Advance {
 	public static long modPow(long n, long k, long mod) {
 		long res = 1;
 		n %= mod;
-		while (k > 0) {
+		k %= mod;
+		for (; k > 0; k >>= 1, n = n * n % mod) {
 			if ((k & 1) == 1) res = res * n % mod;
-			n = n * n % mod;
-			k >>= 1;
 		}
 		return res;
 	}
@@ -43,14 +40,14 @@ public final class Advance {
 	 * 最大公約数
 	 */
 	public static int gcd(int a, int b) {
-		return b == 0 ? a : gcd(b, a % b);
+		return b > 0 ? gcd(b, a % b) : a;
 	}
 
 	/**
 	 * 最大公約数
 	 */
 	public static long gcd(long a, long b) {
-		return b == 0 ? a : gcd(b, a % b);
+		return b > 0 ? gcd(b, a % b) : a;
 	}
 
 	/**
@@ -143,7 +140,9 @@ public final class Advance {
 	public static int min(int[] arr) {
 		int min = arr[0];
 		int len = arr.length;
-		for (int i = 1; i < len; i++) min = Math.min(min, arr[i]);
+		for (int i = 1; i < len; i++) {
+			min = Math.min(min, arr[i]);
+		}
 		return min;
 	}
 
@@ -153,7 +152,9 @@ public final class Advance {
 	public static long min(long[] arr) {
 		long min = arr[0];
 		int len = arr.length;
-		for (int i = 1; i < len; i++) min = Math.min(min, arr[i]);
+		for (int i = 1; i < len; i++) {
+			min = Math.min(min, arr[i]);
+		}
 		return min;
 	}
 
@@ -163,7 +164,9 @@ public final class Advance {
 	public static int max(int[] arr) {
 		int max = arr[0];
 		int len = arr.length;
-		for (int i = 1; i < len; i++) max = Math.max(max, arr[i]);
+		for (int i = 1; i < len; i++) {
+			max = Math.max(max, arr[i]);
+		}
 		return max;
 	}
 
@@ -173,7 +176,9 @@ public final class Advance {
 	public static long max(long[] arr) {
 		long max = arr[0];
 		int len = arr.length;
-		for (int i = 1; i < len; i++) max = Math.max(max, arr[i]);
+		for (int i = 1; i < len; i++) {
+			max = Math.max(max, arr[i]);
+		}
 		return max;
 	}
 

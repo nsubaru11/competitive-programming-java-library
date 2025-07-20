@@ -1,34 +1,31 @@
 import java.util.*;
 import java.util.function.Predicate;
 
-public class BinarySearchTree<T extends Comparable<T>> {
+public class BinarySearchTreeTemp<T> {
 	private final Comparator<? super T> comparator;
 	private int size;
-	private Node root;
+	private T label;
+	private BinarySearchTreeTemp<T> parent, left, right;
 
-	public BinarySearchTree() {
-		this(Comparator.naturalOrder());
+	@SuppressWarnings("unchecked")
+	public BinarySearchTreeTemp() {
+		this((Comparator<? super T>) Comparator.naturalOrder());
 	}
 
-	public BinarySearchTree(Comparator<? super T> comparator) {
+	public BinarySearchTreeTemp(Comparator<? super T> comparator) {
 		size = 0;
-		root = null;
+		label = null;
+		left = right = null;
+		this.comparator = comparator;
+	}
+
+	private BinarySearchTreeTemp(T label, Comparator<? super T> comparator) {
+		size = 1;
+		this.label = label;
 		this.comparator = comparator;
 	}
 
 	public boolean add(T n) {
-		if (size == 0) {
-			root = new Node(n);
-			return true;
-		}
-		return root.add(n);
-	}
-
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-/*	public boolean add(T n) {
 		if (label == null) {
 			label = n;
 			size++;
@@ -37,7 +34,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		int cmp = comparator.compare(label, n);
 		if (cmp > 0) {
 			if (left == null) {
-				left = new BinarySearchTree<T>(n, comparator);
+				left = new BinarySearchTreeTemp<T>(n, comparator);
 				size++;
 				return true;
 			} else {
@@ -47,7 +44,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 			}
 		} else if (cmp < 0) {
 			if (right == null) {
-				right = new BinarySearchTree<T>(n, comparator);
+				right = new BinarySearchTreeTemp<T>(n, comparator);
 				size++;
 				return true;
 			} else {
@@ -59,7 +56,6 @@ public class BinarySearchTree<T extends Comparable<T>> {
 			return false;
 		}
 	}
- */
 
 	public boolean addAll(Collection<? extends T> c) {
 		return c.parallelStream().map(this::add).reduce(false, (a, b) -> a || b);
@@ -154,7 +150,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	public boolean remove(T n) {
 		if (label == null) return false;
 		int prevSize = size;
-		BinarySearchTree<T> removed = removeAndReplace(n);
+		BinarySearchTreeTemp<T> removed = removeAndReplace(n);
 		if (removed == null) {
 			label = null;
 			return true;
@@ -166,7 +162,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return size != prevSize;
 	}
 
-	private BinarySearchTree<T> removeAndReplace(T n) {
+	private BinarySearchTreeTemp<T> removeAndReplace(T n) {
 		if (label == null) return null;
 		int cmp = comparator.compare(label, n);
 		if (cmp > 0) {
@@ -197,12 +193,12 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		}
 	}
 
-	private BinarySearchTree<T> replace(BinarySearchTree<T> prev, BinarySearchTree<T> next) {
+	private BinarySearchTreeTemp<T> replace(BinarySearchTreeTemp<T> prev, BinarySearchTreeTemp<T> next) {
 		if (next == null || prev.size != next.size) size--;
 		return next;
 	}
 
-	private BinarySearchTree<T> findMax(BinarySearchTree<T> ts) {
+	private BinarySearchTreeTemp<T> findMax(BinarySearchTreeTemp<T> ts) {
 		if (ts == null) return null;
 		if (ts.right == null) {
 			label = ts.label;
@@ -213,7 +209,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		}
 	}
 
-	private BinarySearchTree<T> findMin(BinarySearchTree<T> ts) {
+	private BinarySearchTreeTemp<T> findMin(BinarySearchTreeTemp<T> ts) {
 		if (ts == null) return null;
 		if (ts.left == null) {
 			label = ts.label;
@@ -250,7 +246,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return al;
 	}
 
-	private void toList(BinarySearchTree<T> ts, List<T> l) {
+	private void toList(BinarySearchTreeTemp<T> ts, List<T> l) {
 		if (ts == null || ts.label == null) return;
 		toList(ts.left, l);
 		l.add(ts.label);
@@ -273,39 +269,11 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return s;
 	}
 
-	private class Node implements Comparable<Node> {
-		private final T label;
-		private final int size;
-		private final Node left, right;
-
-		public Node(T label) {
-			this.label = label;
-			this.size = 1;
-			this.left = this.right = null;
-		}
-
-		public boolean add(T n) {
-			int cmp = comparator.compare(label, n);
-			if (cmp > 0) {
-				left.add(n);
-			} else if (cmp < 0) {
-
-			} else {
-
-			}
-		}
-
-		@Override
-		public int compareTo(Node o) {
-			return comparator.compare(label, o.label);
-		}
-	}
-
 	private class Itr implements Iterator<T> {
-		private final Predicate<BinarySearchTree<T>> isNull = (ts) -> ts == null || ts.label == null;
-		private final Deque<BinarySearchTree<T>> dq;
+		private final Predicate<BinarySearchTreeTemp<T>> isNull = (ts) -> ts == null || ts.label == null;
+		private final Deque<BinarySearchTreeTemp<T>> dq;
 
-		public Itr(BinarySearchTree<T> ts) {
+		public Itr(BinarySearchTreeTemp<T> ts) {
 			dq = new ArrayDeque<>(ts.size());
 			if (!isNull.test(ts)) dq.add(ts);
 		}
@@ -315,7 +283,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		}
 
 		public T next() {
-			BinarySearchTree<T> ts = dq.poll();
+			BinarySearchTreeTemp<T> ts = dq.poll();
 			if (!isNull.test(ts.left)) dq.add(ts.left);
 			if (!isNull.test(ts.right)) dq.add(ts.right);
 			return ts.label;

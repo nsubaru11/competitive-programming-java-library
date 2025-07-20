@@ -1,0 +1,124 @@
+# 優先度キュー (Priority Queue)
+
+## 概要
+
+優先度キューは、要素に優先度を付けて管理するデータ構造で、常に最高（または最低）優先度の要素を効率的に取り出すことができます。このライブラリでは、汎用的な優先度キューと、int型およびlong型に特化した高効率な実装を提供しています。いずれもバイナリヒープを使用して実装されており、効率的な挿入と削除操作を実現しています。
+
+## 実装クラス
+
+### [PriorityQueue](./src/PriorityQueue.java)
+
+- **用途**：任意の型の要素を扱う汎用的な優先度キュー
+- **特徴**：
+	- ジェネリック型をサポート（Comparable<T>を実装する任意の型）
+	- カスタムComparatorによる比較をサポート
+	- 昇順/降順の指定が可能
+	- 動的なサイズ調整（容量が不足すると自動的に拡張）
+	- Iterableインターフェースの実装によるfor-each構文のサポート
+- **主な操作**:
+	- `push(T v)`: 要素を追加
+	- `poll()`: 最高優先度の要素を取り出して削除
+	- `peek()`: 最高優先度の要素を参照（削除しない）
+	- `size()`: 要素数を取得
+	- `isEmpty()`: 空かどうかを判定
+	- `clear()`: すべての要素を削除
+- **時間計算量**：
+	- 挿入/削除: O(log n)
+	- 参照: O(1)
+- **空間計算量**：O(n)、ここでnは要素数
+
+### [IntPriorityQueue](./src/IntPriorityQueue.java)
+
+- **用途**：int型の要素に特化した優先度キュー
+- **特徴**：
+	- プリミティブ型の配列を使用し、ボクシング/アンボクシングのオーバーヘッドを回避
+	- 昇順/降順の指定が可能
+	- 動的なサイズ調整
+	- Iterableインターフェースの実装
+- **主な操作**:
+	- `push(int v)`: 要素を追加
+	- `poll()`: 最高優先度の要素を取り出して削除
+	- `peek()`: 最高優先度の要素を参照
+	- `size()`: 要素数を取得
+	- `isEmpty()`: 空かどうかを判定
+	- `clear()`: すべての要素を削除
+- **時間計算量**：
+	- 挿入/削除: O(log n)
+	- 参照: O(1)
+- **空間計算量**：O(n)
+
+### [LongPriorityQueue](./src/LongPriorityQueue.java)
+
+- **用途**：long型の要素に特化した優先度キュー
+- **特徴**：
+	- プリミティブ型の配列を使用し、ボクシング/アンボクシングのオーバーヘッドを回避
+	- 昇順/降順の指定が可能
+	- 動的なサイズ調整
+	- Iterableインターフェースの実装
+- **主な操作**:
+	- `push(long v)`: 要素を追加
+	- `poll()`: 最高優先度の要素を取り出して削除
+	- `peek()`: 最高優先度の要素を参照
+	- `size()`: 要素数を取得
+	- `isEmpty()`: 空かどうかを判定
+	- `clear()`: すべての要素を削除
+- **時間計算量**：
+	- 挿入/削除: O(log n)
+	- 参照: O(1)
+- **空間計算量**：O(n)
+
+## 使用例
+
+```java
+public class Example {
+	public static void main(String[] args) {
+		// 昇順の優先度キューを作成（最小値が最高優先度）
+		IntPriorityQueue ipq = new IntPriorityQueue();
+		LongPriorityQueue lpq = new LongPriorityQueue();
+		PriorityQueue<Integer> pq = new PriorityQueue<>();
+
+		// 降順の優先度キューを作成（最大値が最高優先度）
+		IntPriorityQueue ipqDesc = new IntPriorityQueue(true);
+		LongPriorityQueue lpqDesc = new LongPriorityQueue(true);
+		PriorityQueue<Integer> pqDesc = new PriorityQueue<>(true);
+
+		// 要素を追加
+		for (int i = 0; i < 10; i++) {
+			int r = (int) (Math.random() * 100);
+			ipq.push(r);
+			lpq.push(r);
+			pq.push(r);
+			ipqDesc.push(r);
+			lpqDesc.push(r);
+			pqDesc.push(r);
+		}
+
+		// 昇順キューから要素を取り出し（小さい順）
+		System.out.print("Ascending order: ");
+		while (!pq.isEmpty()) {
+			System.out.print(pq.poll() + " ");
+		}
+		System.out.println();
+
+		// 降順キューから要素を取り出し（大きい順）
+		System.out.print("Descending order: ");
+		while (!pqDesc.isEmpty()) {
+			System.out.print(pqDesc.poll() + " ");
+		}
+		System.out.println();
+	}
+}
+```
+
+## 選択ガイド
+
+- **PriorityQueue<T>**: 整数以外の型（文字列、カスタムオブジェクトなど）を扱う場合や、カスタムの比較ロジックが必要な場合に使用します。
+- **IntPriorityQueue**: int型の値のみを扱う場合に使用します。ボクシング/アンボクシングのオーバーヘッドがないため、整数値を扱う場合はこちらの方が高速です。
+- **LongPriorityQueue**: long型の値を扱う場合や、int型の範囲を超える可能性がある場合に使用します。IntPriorityQueueと同様に、プリミティブ型に特化しているため高速です。
+
+## 注意事項
+
+- 優先度キューは要素の順序を完全に保持するわけではなく、最高優先度の要素のみを効率的に取り出せることを保証します。
+- イテレータを使用して要素を走査する場合、優先度順ではなく内部配列の順序で走査されることに注意してください。
+- 動的なサイズ調整により、容量が不足すると自動的に拡張されますが、初期容量を適切に設定することで、不要なメモリ再割り当てを避けることができます。
+- 要素の優先度を変更する場合は、一度取り出して再度追加する必要があります。

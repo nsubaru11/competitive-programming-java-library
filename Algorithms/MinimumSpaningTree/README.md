@@ -2,7 +2,8 @@
 
 ## 概要
 
-最小全域木（MST）は、グラフの全ての頂点を含み、辺の重みの合計が最小となる木です。このライブラリでは、最小全域木を求めるための複数のアルゴリズムを提供しています。
+最小全域木（MST）は、グラフの全ての頂点を含み、辺の重みの合計が最小となる木です。
+このライブラリでは、最小全域木を求めるための複数のアルゴリズムを提供しています。
 
 ## 実装クラス
 
@@ -32,54 +33,6 @@
 - **用途**: 有向グラフの最小全域木（最小全域有向木）を求めるアルゴリズム
 - **特徴**:
 	- 実装予定（coming soon）
-
-## 主なメソッド
-
-### Kruskal
-
-| メソッド                                | 説明                        |
-|-------------------------------------|---------------------------|
-| `Kruskal(int v)`                    | 頂点数vの最小全域木を求めるソルバーを初期化    |
-| `Kruskal(int v, boolean isMinimum)` | 頂点数vの最小/最大全域木を求めるソルバーを初期化 |
-| `addEdge(int u, int v, long cost)`  | グラフに辺を追加                  |
-| `solve()`                           | Kruskal法を実行し、全域木の総コストを計算  |
-
-### Prim
-
-| メソッド                               | 説明                        |
-|------------------------------------|---------------------------|
-| `Prim(int v)`                      | 頂点数vの最小全域木を求めるソルバーを初期化    |
-| `Prim(int v, boolean isMinimum)`   | 頂点数vの最小/最大全域木を求めるソルバーを初期化 |
-| `addEdge(int u, int v, long cost)` | グラフに無向辺を追加                |
-| `solve()`                          | Prim法を実行し、全域木の総コストを計算     |
-
-## 使用例
-
-    // Kruskalアルゴリズムの使用例
-    Kruskal k = new Kruskal(5);
-    k.addEdge(0, 1, 3);
-    k.addEdge(0, 4, 1);
-    k.addEdge(1, 4, 4);
-    k.addEdge(2, 3, 2);
-    k.addEdge(3, 4, 7);
-    k.addEdge(1, 2, 5);
-    k.addEdge(2, 4, 6);
-    k.addEdge(3, 1, 2);
-    long kruskalCost = k.solve();
-    System.out.println(kruskalCost);  // 最小全域木のコスト
-
-    // Primアルゴリズムの使用例
-    Prim p = new Prim(5);
-    p.addEdge(0, 1, 3);
-    p.addEdge(0, 4, 1);
-    p.addEdge(1, 4, 4);
-    p.addEdge(2, 3, 2);
-    p.addEdge(3, 4, 7);
-    p.addEdge(1, 2, 5);
-    p.addEdge(2, 4, 6);
-    p.addEdge(3, 1, 2);
-    long primCost = p.solve();
-    System.out.println(primCost);  // 最小全域木のコスト
 
 ## 注意事項
 

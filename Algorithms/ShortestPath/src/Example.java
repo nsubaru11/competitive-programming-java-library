@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
@@ -38,11 +39,11 @@ public class Example {
 			edges[i][1] = sc.nextInt() - 1;
 			edges[i][2] = sc.nextInt();
 		}
-		solveDijkstra(v, edges);
+//		solveDijkstra(v, edges);
 		System.out.println();
 		solveBellmanFord(v, e, edges);
 		System.out.println();
-		solveWarshallfroyd(v, edges);
+//		solveWarshallfroyd(v, edges);
 	}
 
 	private static void solveDijkstra(int v, int[][] edges) {
@@ -60,7 +61,7 @@ public class Example {
 			}
 			sj.add(sj2.toString());
 		}
-		System.out.println(sj.toString());
+		System.out.println(sj);
 	}
 
 	private static void solveBellmanFord(int v, int e, int[][] edges) {
@@ -78,7 +79,7 @@ public class Example {
 			}
 			sj.add(sj2.toString());
 		}
-		System.out.println(sj.toString());
+		System.out.println(sj);
 	}
 
 	private static void solveWarshallfroyd(int v, int[][] edges) {

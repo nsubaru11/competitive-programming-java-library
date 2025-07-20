@@ -50,32 +50,6 @@
 - **空間計算量**: O(n)
 - **注**: 現在の実装は不完全です
 
-## 将来の実装予定
-
-以下のアルゴリズムも将来的に実装される可能性があります：
-
-- **Aho-Corasick**: 複数のパターンを同時に検索するためのオートマトンベースのアルゴリズム
-- **Rabin-Karp**: ハッシュ関数を使用した文字列検索アルゴリズム
-- **Suffix Array**: 文字列の全ての接尾辞をソートしたデータ構造
-- **Suffix Tree**: 文字列の全ての接尾辞を表現する木構造
-
-## 使用例（将来的な実装）
-
-```java
-// KMPアルゴリズムを使用した文字列検索
-String text = "ABABDABACDABABCABAB";
-String pattern = "ABABCABAB";
-int index = KMP.solve(text, pattern);  // 10を返す（パターンが見つかった位置）
-
-// ローリングハッシュを使用した文字列検索
-RollingHash rh = new RollingHash(text);
-boolean found = rh.contains(pattern);  // trueを返す
-
-// Z-アルゴリズムを使用した接頭辞一致の計算
-int[] zArray = ZAlgorithm.compute(text);
-// zArray[i]は文字列とi番目の位置から始まる部分文字列の最長共通接頭辞の長さ
-```
-
 ## アルゴリズムの選択ガイド
 
 | アルゴリズム       | 前処理時間  | 検索時間          | 空間   | 適した用途                |

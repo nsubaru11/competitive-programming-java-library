@@ -116,45 +116,6 @@
 - **時間計算量**: O(n²)
 - **空間計算量**: O(1)
 
-## 使用例
-
-```java
-// ランダムな配列を生成
-int[] arr = new int[10];
-Arrays.
-
-setAll(arr, x ->(int)(Math.
-
-random() *10));
-		System.out.
-
-println("ソート前: "+Arrays.toString(arr));
-
-// ヒープソートを使用して配列をソート
-		HeapSort.
-
-heapSort(arr);
-System.out.
-
-println("ソート後: "+Arrays.toString(arr));
-
-// 別の配列でクイックソートを使用
-int[] arr2 = {9, 5, 1, 8, 3, 7, 4, 6, 2};
-QuickSort.
-
-quickSort(arr2, 0,arr2.length -1);
-System.out.
-
-println("クイックソート後: "+Arrays.toString(arr2));
-
-// マージソートを使用
-int[] arr3 = {9, 5, 1, 8, 3, 7, 4, 6, 2};
-int[] sorted = MergeSort.mergeSort(arr3, arr3.length);
-System.out.
-
-println("マージソート後: "+Arrays.toString(sorted));
-```
-
 ## アルゴリズムの選択ガイド
 
 | アルゴリズム   | 安定性 | 最良時間       | 平均時間        | 最悪時間       | 空間       | 適した用途             |

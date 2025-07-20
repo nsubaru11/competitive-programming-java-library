@@ -1,3 +1,5 @@
+import static java.lang.Math.*;
+
 /**
  * 数論関連のユーティリティクラス
  */
@@ -23,15 +25,40 @@ public class NumberTheoryUtils {
 	 * @return GCD(x, y)
 	 */
 	public static long GCD(long x, long y) {
-		return y > 0 ? GCD(y, x % y) : x;
+		while (y != 0) {
+			long tmp = y;
+			y = x % y;
+			x = tmp;
+		}
+		return x;
+	}
+
+	public static long fastGCD(long a, long b) {
+		a = abs(a);
+		b = abs(b);
+		if (a == 0) return b;
+		if (b == 0) return a;
+		int commonShift = Long.numberOfTrailingZeros(a | b);
+		a >>= Long.numberOfTrailingZeros(a);
+		while (b != 0) {
+			b >>= Long.numberOfTrailingZeros(b);
+			if (a > b) {
+				long tmp = a;
+				a = b;
+				b = tmp;
+			}
+			b -= a;
+		}
+		return a << commonShift;
 	}
 
 	/**
 	 * ax + by = GCD(x, y)となるx, yの組を見つけます。
 	 *
-	 * @param a  long
-	 * @param b  long
-	 * @param xy long[]
+	 * @param a long
+	 * @param b long
+	 * @param x long[]
+	 * @param y long[]
 	 * @return |x| + |y|の最小値
 	 */
 	public static long exGCD(long a, long b, long[] x, long[] y) {

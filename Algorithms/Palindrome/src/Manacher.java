@@ -223,7 +223,6 @@ public final class Manacher {
 		return slice(start, start + length);
 	}
 
-
 	/**
 	 * 文字配列の指定範囲を文字列として効率的に取得します。
 	 *
