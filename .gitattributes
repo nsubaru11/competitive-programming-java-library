@@ -1,0 +1,45 @@
+# すべてテキストファイルとして扱い、常に LF で保存
+* text=auto eol=lf
+
+# Windows特有のファイルはCRLFを使用
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# テキストファイルの設定
+*.java text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
+*.properties text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+
+# バイナリファイルの設定（改行コード変換をしない）
+*.jar binary
+*.war binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+# 特定のファイルの属性を設定
+.gitignore text eol=lf
+.gitattributes text eol=lf
+Makefile text eol=lf
+LICENSE text eol=lf
+README.md text eol=lf
+
+# 差分表示の設定
+*.java diff=java
+*.html diff=html
+*.css diff=css
+*.js diff=javascript
