@@ -81,38 +81,6 @@
 - **時間計算量**：ContestScanner/ContestPrinterと同等
 - **空間計算量**：ContestScanner/ContestPrinterと同等
 
-## 使用例
-
-```java
-import java.util.List;
-
-public class Example {
-	private static void solve(final ContestScanner sc, final ContestPrinter out) {
-		// 様々な型のデータを出力
-		Object[] arr = {1, "21231", 3.14159265358979323846, new int[]{1, 2, 3, 4, 5},
-				new String[]{"a", "b", "c", "d", "e"}, null};
-		out.print(arr);
-		out.println();
-
-		// 複数の引数を一度に出力
-		out.println(1, "232", new int[]{1, 2, 3, 4}, null);
-
-		// コレクションに変換関数を適用して出力
-		List<Integer> list = List.of(1, 2, 3, 4, 5);
-		out.print(list, i -> i * i);  // 1, 4, 9, 16, 25 を出力
-	}
-
-	public static void main(String[] args) {
-		try (final ContestScanner sc = new ContestScanner();
-			 final ContestPrinter out = new ContestPrinter()) {
-			solve(sc, out);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-}
-```
-
 ## 選択ガイド
 
 - **FastScanner/FastPrinter**: 基本的な高速入出力が必要な場合に使用。シンプルで理解しやすい。

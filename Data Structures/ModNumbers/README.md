@@ -29,28 +29,6 @@
 	- べき乗: O(log exp)（繰り返し二乗法を使用）
 - **空間計算量**：O(1)
 
-## 使用例
-
-```java
-// デフォルトのモジュロ（998244353）を使用
-ModInt a = new ModInt(10);
-ModInt b = new ModInt(20);
-
-// 基本的な算術演算
-ModInt sum = a.add(b);      // (10 + 20) % 998244353 = 30
-ModInt diff = a.sub(b);     // (10 - 20 + 998244353) % 998244353 = 998244343
-ModInt product = a.mul(b);  // (10 * 20) % 998244353 = 200
-ModInt quotient = a.div(b); // (10 * 20^(998244353-2)) % 998244353
-
-// べき乗
-ModInt powered = a.pow(3);  // (10^3) % 998244353 = 1000
-
-// カスタムモジュロを使用
-ModInt c = new ModInt(10, 1000000007);
-ModInt d = new ModInt(20, 1000000007);
-ModInt customSum = c.add(d); // (10 + 20) % 1000000007 = 30
-```
-
 ## 選択ガイド
 
 ModIntクラスは以下のような場合に特に有用です：
