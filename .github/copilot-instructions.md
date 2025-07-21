@@ -33,7 +33,7 @@
 	│ │ ├───.idea
 	│ │ ├───out
 	│ │ │ └───production
-	│ │ │ └───Levenshtein
+	│ │ │ └───LevenshteinDP
 	│ │ └───src
 	│ ├───Factorial
 	│ │ ├───.idea
@@ -137,7 +137,7 @@
 	├───BinarySearchTree
 	├───EditDistance
 	├───FastIO
-	├───Levenshtein
+	├───LevenshteinDP
 	├───MathFunctions
 	├───Palindrome
 	├───PrimeNumber
@@ -221,13 +221,13 @@
 	│ │ │
 	│ │ ├───out
 	│ │ │ └───production
-	│ │ │ └───Levenshtein
+	│ │ │ └───LevenshteinDP
 	│ │ │ Example.class
-	│ │ │ Levenshtein.class
+	│ │ │ LevenshteinDP.class
 	│ │ │
 	│ │ └───src
 	│ │ Example.java
-	│ │ Levenshtein.java
+	│ │ LevenshteinDP.java
 	│ │
 	│ ├───Factorial
 	│ │ │ Factorial.iml
@@ -721,7 +721,7 @@
 	│
 	├───EditDistance
 	│ Example.class
-	│ Levenshtein.class
+	│ LevenshteinDP.class
 	│
 	├───Factorial
 	│ Example.class
@@ -739,9 +739,9 @@
 	│ FastPrinter.class
 	│ FastScanner.class
 	│
-	├───Levenshtein
+	├───LevenshteinDP
 	│ Example.class
-	│ Levenshtein.class
+	│ LevenshteinDP.class
 	│
 	├───MathFunctions
 	│ CombinatoricsUtils.class
