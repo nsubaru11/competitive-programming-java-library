@@ -24,6 +24,15 @@ out/
 **/.project            # Eclipse のプロジェクト設定ファイル
 **/.settings/          # Eclipse の設定ディレクトリ
 
+# VS Code & Cursor エディタの設定ファイル
+**/.vscode/            # VS Code の設定ディレクトリ
+**/.cursor/            # Cursor エディタの設定ディレクトリ
+**/*.code-workspace    # VS Code のワークスペースファイル
+
+# その他のエディタ設定ファイル
+**/.vscode-test/       # VS Code テスト設定
+**/qodana.yml          # JetBrains Qodana 設定ファイル
+
 # ビルドディレクトリ
 **/bin/                # Eclipse のビルドディレクトリ
 **/out/                # IntelliJ のビルドディレクトリ
