@@ -3,19 +3,15 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+
 @SuppressWarnings({"unused", "unchecked"})
-public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> {
-	private final Comparator<? super T> comparator;
+public final class AVLSet<T extends Comparable<T>> implements Collection<T> {
 	private int size;
 	private Node<T> root;
 
-	public BinarySearchTree() {
-		this(Comparator.naturalOrder());
-	}
-
-	public BinarySearchTree(Comparator<? super T> comparator) {
-		if (comparator == null) throw new NullPointerException();
-		this.comparator = comparator;
+	public AVLSet() {
 		size = 0;
 		root = null;
 	}
@@ -32,14 +28,15 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 	public boolean contains(Object o) {
 		if (o == null) return false;
 		try {
-			return root != null && root.findNode((T) o) != null;
+			T t = (T) o;
+			return count(t) > 0;
 		} catch (ClassCastException e) {
 			return false;
 		}
 	}
 
 	public Iterator<T> iterator() {
-		return new BstIterator(root);
+		return new AvlIterator(root);
 	}
 
 	public Object[] toArray() {
@@ -64,29 +61,30 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 		return a;
 	}
 
-	public boolean add(T t) {
-		if (t == null) return false;
+	public boolean add(T value) {
 		if (size == 0) {
-			root = new Node<>(t, null);
+			root = new Node<>(value, null);
 			size = 1;
 			return true;
 		}
-		root.add(t, comparator);
+		root = root.add(value);
 		boolean isContain = size != root.size;
 		size = root.size;
+		root.parent = null;
 		return isContain;
 	}
 
-	public boolean remove(Object o) {
-		if (o == null || size == 0) return false;
+	public boolean remove(Object value) {
+		if (value == null) return false;
 		final T t;
 		try {
-			t = (T) o;
+			t = (T) value;
 		} catch (ClassCastException e) {
 			return false;
 		}
+		if (size == 0) return false;
 		int oldSize = size;
-		Node<T> newRoot = root.remove(t, comparator);
+		Node<T> newRoot = root.remove(t);
 		if (newRoot == null) {
 			clear();
 		} else {
@@ -141,121 +139,104 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 	}
 
 	// Additional public API
+	public int count(T t) {
+		if (t == null || size == 0) return 0;
+		Node<T> temp = root.findNode(t);
+		return temp == null ? 0 : temp.cnt;
+	}
+
 	public Stream<T> stream() {
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.SORTED;
 		Iterator<T> it = iterator();
 		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
-	public T higher(T key) {
-		return boundary(key, false, true);
-	}
-
-	public T ceiling(T key) {
-		return boundary(key, true, true);
-	}
-
-	public T lower(T key) {
-		return boundary(key, false, false);
-	}
-
-	public T floor(T key) {
-		return boundary(key, true, false);
-	}
-
-	private T boundary(T key, boolean inclusive, boolean higher) {
-		if (key == null) return null;
-		T t = null;
-		Node<T> cur = root;
-		while (cur != null) {
-			int c = comparator.compare(cur.label, key);
-			if (higher) {
-				if (c > 0 || (inclusive && c == 0)) {
-					t = cur.label;
-					cur = cur.left;
-				} else {
-					cur = cur.right;
-				}
-			} else {
-				if (c < 0 || (inclusive && c == 0)) {
-					t = cur.label;
-					cur = cur.right;
-				} else {
-					cur = cur.left;
-				}
-			}
-		}
-		return t;
-	}
-
 	// Private helpers
-	private Node<T> leftmost(Node<T> cur) {
-		if (cur == null) return null;
-		while (cur.left != null) cur = cur.left;
-		return cur;
+	private Node<T> leftmost(Node<T> n) {
+		if (n == null) return null;
+		while (n.left != null) n = n.left;
+		return n;
 	}
 
-	private Node<T> successor(Node<T> cur) {
-		if (cur == null) return null;
-		if (cur.right != null) {
-			return leftmost(cur.right);
+	private Node<T> successor(Node<T> n) {
+		if (n == null) return null;
+		if (n.right != null) {
+			return leftmost(n.right);
 		}
-		while (cur.parent != null && cur.parent.right == cur) {
-			cur = cur.parent;
+		Node<T> p = n.parent, ch = n;
+		while (p != null && p.right == ch) {
+			ch = p;
+			p = p.parent;
 		}
-		return cur;
+		return p;
 	}
 
 	// Nested classes
 	private static final class Node<T extends Comparable<T>> {
 		private final T label;
-		private int size;
+		private int cnt, size, height;
 		private Node<T> left, right, parent;
 
 		public Node(T label, Node<T> parent) {
 			this.parent = parent;
 			this.label = label;
-			size = 1;
+			cnt = size = height = 1;
 		}
 
-		private Node<T> add(T t, Comparator<? super T> comparator) {
-			int cmp = comparator.compare(t, label);
+		private Node<T> add(T t) {
+			int cmp = label.compareTo(t);
 			if (cmp < 0) {
-				setLeft(left == null ? new Node<>(t, this) : left.add(t, comparator));
+				setRight(right == null ? new Node<>(t, this) : right.add(t));
 			} else if (cmp > 0) {
-				setRight(right == null ? new Node<>(t, this) : right.add(t, comparator));
+				setLeft(left == null ? new Node<>(t, this) : left.add(t));
 			} else {
-				return this;
+				cnt++;
 			}
 			updateNode();
-			return this;
+			int bf = leftHeight() - rightHeight();
+			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		public Node<T> remove(T t, Comparator<? super T> comparator) {
-			int cmp = comparator.compare(t, label);
+		public Node<T> remove(T t) {
+			int cmp = label.compareTo(t);
 			if (cmp < 0) {
-				if (left == null) return this;
-				setLeft(left.remove(t, comparator));
-			} else if (cmp > 0) {
 				if (right == null) return this;
-				setRight(right.remove(t, comparator));
+				setRight(right.remove(t));
+			} else if (cmp > 0) {
+				if (left == null) return this;
+				setLeft(left.remove(t));
 			} else {
 				if (left == null) return right;
 				if (right == null) return left;
-				Node<T> temp = left.findMax();
+				Node<T> temp;
+				if (leftHeight() >= rightHeight()) {
+					temp = left.findMax();
+					int bf = left.leftHeight() - left.rightHeight();
+					left = abs(bf) <= 1 ? left : left.rotate(bf);
+				} else {
+					temp = right.findMin();
+					int bf = right.leftHeight() - right.rightHeight();
+					right = abs(bf) <= 1 ? right : right.rotate(bf);
+				}
 				temp.left = left;
 				temp.right = right;
 				temp.updateNode();
-				return temp;
+				int bf = temp.leftHeight() - temp.rightHeight();
+				return abs(bf) <= 1 ? temp : temp.rotate(bf);
 			}
 			updateNode();
-			return this;
+			int bf = leftHeight() - rightHeight();
+			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
 		private Node<T> findMin() {
 			if (left == null) return this;
 			Node<T> min = left.findMin();
 			if (left == min) setLeft(left.right);
+			if (left != null) {
+				int bf = left.leftHeight() - left.rightHeight();
+				if (abs(bf) > 1) setLeft(left.rotate(bf));
+			}
 			updateNode();
 			return min;
 		}
@@ -264,19 +245,12 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 			if (right == null) return this;
 			Node<T> max = right.findMax();
 			if (right == max) setRight(right.left);
+			if (right != null) {
+				int bf = right.leftHeight() - right.rightHeight();
+				if (abs(bf) > 1) setRight(right.rotate(bf));
+			}
 			updateNode();
 			return max;
-		}
-
-		private Node<T> findNode(T t, Comparator<? super T> comparator) {
-			int cmp = comparator.compare(t, label);
-			if (cmp < 0) {
-				return left == null ? null : left.findNode(t, comparator);
-			} else if (cmp > 0) {
-				return right == null ? null : right.findNode(t, comparator);
-			} else {
-				return this;
-			}
 		}
 
 		private Node<T> findNode(T t) {
@@ -288,6 +262,72 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 			} else {
 				return this;
 			}
+		}
+
+		private Node<T> rotate(int bf) {
+			Node<T> newRoot;
+			if (bf > 0) {
+				int bfl = left.leftHeight() - left.rightHeight();
+				newRoot = bfl >= 0 ? rotateLL() : rotateLR();
+				newRoot.right.updateNode();
+			} else {
+				int bfr = right.leftHeight() - right.rightHeight();
+				newRoot = bfr > 0 ? rotateRL() : rotateRR();
+				newRoot.left.updateNode();
+			}
+			newRoot.updateNode();
+			newRoot.parent = this.parent;
+			if (newRoot.left != null) {
+				newRoot.left.parent = newRoot;
+				if (newRoot.left.right != null) {
+					newRoot.left.right.parent = newRoot.left;
+				}
+			}
+			if (newRoot.right != null) {
+				newRoot.right.parent = newRoot;
+				if (newRoot.right.left != null) {
+					newRoot.right.left.parent = newRoot.right;
+				}
+			}
+			return newRoot;
+		}
+
+		private Node<T> rotateLR() {
+			Node<T> newRoot = this.left.right;
+			Node<T> tempLeft = newRoot.left;
+			Node<T> tempRight = newRoot.right;
+			newRoot.right = this;
+			newRoot.left = this.left;
+			newRoot.right.left = tempRight;
+			newRoot.left.right = tempLeft;
+			newRoot.left.updateNode();
+			return newRoot;
+		}
+
+		private Node<T> rotateLL() {
+			Node<T> newRoot = this.left;
+			this.left = newRoot.right;
+			newRoot.right = this;
+			return newRoot;
+		}
+
+		private Node<T> rotateRR() {
+			Node<T> newRoot = this.right;
+			this.right = newRoot.left;
+			newRoot.left = this;
+			return newRoot;
+		}
+
+		private Node<T> rotateRL() {
+			Node<T> newRoot = this.right.left;
+			Node<T> tempLeft = newRoot.left;
+			Node<T> tempRight = newRoot.right;
+			newRoot.left = this;
+			newRoot.right = this.right;
+			newRoot.left.right = tempLeft;
+			newRoot.right.left = tempRight;
+			newRoot.right.updateNode();
+			return newRoot;
 		}
 
 		private void setLeft(Node<T> child) {
@@ -302,14 +342,23 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 
 		private void updateNode() {
 			size = (left == null ? 0 : left.size) + (right == null ? 0 : right.size) + 1;
+			height = 1 + max(leftHeight(), rightHeight());
+		}
+
+		private int leftHeight() {
+			return left == null ? 0 : left.height;
+		}
+
+		private int rightHeight() {
+			return right == null ? 0 : right.height;
 		}
 	}
 
-	private final class BstIterator implements Iterator<T> {
+	private final class AvlIterator implements Iterator<T> {
 		private Node<T> cur;
 		private boolean first = true;
 
-		BstIterator(Node<T> root) {
+		AvlIterator(Node<T> root) {
 			this.cur = root;
 		}
 
