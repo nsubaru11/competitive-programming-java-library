@@ -69,10 +69,11 @@ public class Example {
 		out.println("===== 文字配列の編集距離計算 =====");
 
 		// 基本的な編集距離の計算
-		char[] c1 = {'h', 'e', 'l', 'l', 'o'};
-		char[] c2 = {'h', 'a', 'l', 'l', 'o'};
+		char[] c1 = {'a', 'c', 'e', 'b', 'd', 'a', 'b', 'e', 'd'};
+		char[] c2 = {'a', 'c', 'b', 'd', 'e', 'a', 'c', 'b', 'e', 'd'};
 		int distance = LevenshteinDP.computeEditDistance(c1, c2);
-		out.println("文字配列1と文字配列2の編集距離: " + distance);
+		int distance2 = Wu.computeEditDistance(c2, c1);
+		out.println("文字配列1と文字配列2の編集距離: " + distance + " " + distance2);
 
 		// 複数の編集操作が必要な場合
 		char[] c3 = {'w', 'o', 'r', 'l', 'd'};

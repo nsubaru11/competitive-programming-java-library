@@ -29,10 +29,10 @@ public final class LevenshteinDP {
 			dp2[0] = i + 1;
 			char ti = t.charAt(i);
 			for (int j = 0; j < sLen; j++) {
-				if (ti != s.charAt(j)) {
-					dp2[j + 1] = min(dp1[j], min(dp2[j], dp1[j + 1])) + 1;
-				} else {
+				if (ti == s.charAt(j)) {
 					dp2[j + 1] = dp1[j];
+				} else {
+					dp2[j + 1] = min(dp1[j], min(dp2[j], dp1[j + 1])) + 1;
 				}
 			}
 			int[] temp = dp1;
@@ -43,6 +43,7 @@ public final class LevenshteinDP {
 	}
 
 	/**
+	 * 2つの文字列の編集距離がk以下となるか判定します。編集距離がk以下の場合その編集距離を、そうでない場合は-1を返します。
 	 * このメソッドはbandedDPアルゴリズムを使用し、O(|S|K)の時間計算量で高速に評価します。
 	 *
 	 * @param s 1つ目の文字列
@@ -58,8 +59,8 @@ public final class LevenshteinDP {
 			t = temp;
 		}
 		int sLen = s.length(), tLen = t.length();
-		int band = k << 1 | 1; // 2k+1の幅のバンド
-		int inf = k + 1;       // k+1は到達不可能な値として使用
+		int band = k << 1 | 1;
+		int inf = k + 1;
 		int[] dp1 = new int[band], dp2 = new int[band];
 		for (int i = 0; i < band; i++) dp1[i] = abs(i - k);
 		for (int i = 0; i < sLen; i++) {
@@ -104,10 +105,10 @@ public final class LevenshteinDP {
 			dp2[0] = i + 1;
 			char ti = t[i];
 			for (int j = 0; j < sLen; j++) {
-				if (ti != s[j]) {
-					dp2[j + 1] = min(dp1[j], min(dp2[j], dp1[j + 1])) + 1;
-				} else {
+				if (ti == s[j]) {
 					dp2[j + 1] = dp1[j];
+				} else {
+					dp2[j + 1] = min(dp1[j], min(dp2[j], dp1[j + 1])) + 1;
 				}
 			}
 			int[] temp = dp1;
@@ -118,6 +119,7 @@ public final class LevenshteinDP {
 	}
 
 	/**
+	 * 2つの文字配列の編集距離がk以下となるか判定します。編集距離がk以下の場合その編集距離を、そうでない場合は-1を返します。
 	 * このメソッドはbandedDPアルゴリズムを使用し、O(|S|K)の時間計算量で高速に評価します。
 	 *
 	 * @param s 1つ目の文字配列
@@ -133,8 +135,8 @@ public final class LevenshteinDP {
 			t = temp;
 		}
 		int sLen = s.length, tLen = t.length;
-		int band = k << 1 | 1; // 2k+1の幅のバンド
-		int inf = k + 1;       // k+1は到達不可能な値として使用
+		int band = k << 1 | 1;
+		int inf = k + 1;
 		int[] dp1 = new int[band], dp2 = new int[band];
 		for (int i = 0; i < band; i++) dp1[i] = abs(i - k);
 		for (int i = 0; i < sLen; i++) {
@@ -179,10 +181,10 @@ public final class LevenshteinDP {
 			dp2[0] = i + 1;
 			int si = s[i];
 			for (int j = 0; j < tLen; j++) {
-				if (si != t[j]) {
-					dp2[j + 1] = min(dp1[j], min(dp2[j], dp1[j + 1])) + 1;
-				} else {
+				if (si == t[j]) {
 					dp2[j + 1] = dp1[j];
+				} else {
+					dp2[j + 1] = min(dp1[j], min(dp2[j], dp1[j + 1])) + 1;
 				}
 			}
 			int[] temp = dp1;
@@ -193,6 +195,7 @@ public final class LevenshteinDP {
 	}
 
 	/**
+	 * 2つの整数配列の編集距離がk以下となるか判定します。編集距離がk以下の場合その編集距離を、そうでない場合は-1を返します。
 	 * このメソッドはbandedDPアルゴリズムを使用し、O(|S|K)の時間計算量で高速に評価します。
 	 *
 	 * @param s 1つ目の整数配列
@@ -208,8 +211,8 @@ public final class LevenshteinDP {
 			t = temp;
 		}
 		int sLen = s.length, tLen = t.length;
-		int band = k << 1 | 1; // 2k+1の幅のバンド
-		int inf = k + 1;       // k+1は到達不可能な値として使用
+		int band = k << 1 | 1;
+		int inf = k + 1;
 		int[] dp1 = new int[band], dp2 = new int[band];
 		for (int i = 0; i < band; i++) dp1[i] = abs(i - k);
 		for (int i = 0; i < sLen; i++) {
