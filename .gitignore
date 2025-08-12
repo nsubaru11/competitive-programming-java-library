@@ -32,6 +32,7 @@ out/
 # その他のエディタ設定ファイル
 **/.vscode-test/       # VS Code テスト設定
 **/qodana.yml          # JetBrains Qodana 設定ファイル
+qodana.yml             # JetBrains Qodana 設定ファイル
 
 # ビルドディレクトリ
 **/bin/                # Eclipse のビルドディレクトリ
