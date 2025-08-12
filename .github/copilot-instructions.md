@@ -557,7 +557,7 @@
 	│ │ │ RedBlackTreeGuide.md
 	│ │ │
 	│ │ └───src
-	│ │ AVL.java
+	│ │ AVLSet.java
 	│ │ BinarySearchTree.java
 	│ │ BTree.java
 	│ │ Example.java
@@ -712,8 +712,8 @@
 	│ Example.class
 	│
 	├───BinarySearchTree
-	│ AVL$Node.class
-	│ AVL.class
+	│ AVLSet$Node.class
+	│ AVLSet.class
 	│ BinarySearchTree.class
 	│ BTree.class
 	│ Example.class
