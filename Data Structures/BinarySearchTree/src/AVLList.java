@@ -23,10 +23,6 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 		size = 0;
 	}
 
-	private int compare(T a, T b) {
-		return comparator.compare(a, b);
-	}
-
 	// Collection<T> API
 	public int size() {
 		return (int) Math.min(size, Integer.MAX_VALUE);
@@ -78,7 +74,7 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 	public boolean add(T t, int occurrences) {
 		if (t == null) return false;
 		if (size == 0) {
-			root = new Node<>(t, null, occurrences);
+			root = new Node<>(t, null, occurrences, comparator);
 			distinctSize = 1;
 			size = occurrences;
 			return true;
@@ -161,6 +157,38 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 	}
 
 	// Additional public API
+	public T getByIndex(long index) {
+		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
+		Node<T> cur = root;
+		long i = root.leftSize();
+		while (index < i || i + cur.cnt <= index) {
+			if (index < i) {
+				cur = cur.left;
+				i = i - cur.rightSize() - 1;
+			} else {
+				cur = cur.right;
+				i = i + cur.leftSize() + 1;
+			}
+		}
+		return cur.label;
+	}
+
+	public T getByDistinctIndex(int index) {
+		if (index < 0 || distinctSize <= index) throw new IndexOutOfBoundsException();
+		Node<T> cur = root;
+		int i = root.leftDistinctSize();
+		while (index != i) {
+			if (index < i) {
+				cur = cur.left;
+				i = i - cur.rightDistinctSize() - 1;
+			} else {
+				cur = cur.right;
+				i = i + cur.leftDistinctSize() + 1;
+			}
+		}
+		return cur.label;
+	}
+
 	public Iterator<T> distinctIterator() {
 		return new AvlIterator(root, true);
 	}
@@ -275,25 +303,27 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 	}
 
 	// Nested classes
-	private static final class Node<T extends Comparable<T>> {
+	private static final class Node<T> {
 		private final T label;
-		private int distinctSize, height;
+		private final Comparator<? super T> comparator;
+		private int height, distinctSize;
 		private long cnt, size;
 		private Node<T> left, right, parent;
 
-		public Node(T label, Node<T> parent, long occurrences) {
-			this.parent = parent;
+		public Node(T label, Node<T> parent, long occurrences, Comparator<? super T> comparator) {
 			this.label = label;
-			distinctSize = height = 1;
+			this.comparator = comparator;
+			height = distinctSize = 1;
 			cnt = size = occurrences;
+			this.parent = parent;
 		}
 
 		public Node<T> applyDelta(T t, long delta, boolean all) {
-			int cmp = label.compareTo(t);
+			int cmp = comparator.compare(label, t);
 			if (cmp < 0) {
 				if (right == null) {
 					if (delta > 0) {
-						setRight(new Node<>(t, this, delta));
+						setRight(new Node<>(t, this, delta, comparator));
 					} else {
 						return this;
 					}
@@ -303,7 +333,7 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 			} else if (cmp > 0) {
 				if (left == null) {
 					if (delta > 0) {
-						setLeft(new Node<>(t, this, delta));
+						setLeft(new Node<>(t, this, delta, comparator));
 					} else {
 						return this;
 					}
@@ -369,7 +399,7 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 		}
 
 		private Node<T> findNode(T t) {
-			int cmp = label.compareTo(t);
+			int cmp = comparator.compare(label, t);
 			if (cmp < 0) {
 				return right == null ? null : right.findNode(t);
 			} else if (cmp > 0) {
@@ -456,9 +486,9 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 		}
 
 		private void updateNode() {
-			distinctSize = (left == null ? 0 : left.distinctSize) + (right == null ? 0 : right.distinctSize) + 1;
-			size = (left == null ? 0 : left.size) + (right == null ? 0 : right.size) + cnt;
 			height = 1 + max(leftHeight(), rightHeight());
+			distinctSize = leftDistinctSize() + rightDistinctSize() + 1;
+			size = leftSize() + rightSize() + cnt;
 		}
 
 		private int leftHeight() {
@@ -467,6 +497,22 @@ public final class AVLList<T extends Comparable<T>> implements Collection<T> {
 
 		private int rightHeight() {
 			return right == null ? 0 : right.height;
+		}
+
+		private long leftSize() {
+			return left == null ? 0 : left.size;
+		}
+
+		private long rightSize() {
+			return right == null ? 0 : right.size;
+		}
+
+		private int leftDistinctSize() {
+			return left == null ? 0 : left.distinctSize;
+		}
+
+		private int rightDistinctSize() {
+			return right == null ? 0 : right.distinctSize;
 		}
 	}
 
