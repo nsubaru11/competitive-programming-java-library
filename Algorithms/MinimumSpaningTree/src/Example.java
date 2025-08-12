@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Example {
 
 	public static void main(String[] args) {
@@ -22,6 +24,17 @@ public class Example {
 		p.addEdge(2, 4, 6);
 		p.addEdge(3, 1, 2);
 		System.out.println(p.solve());
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		int m = sc.nextInt();
+		Kruskal k2 = new Kruskal(n);
+		while (m-- > 0) {
+			int u = sc.nextInt();
+			int v = sc.nextInt();
+			long w = sc.nextLong();
+			k2.addEdge(u, v, w);
+		}
+		System.out.println(k2.solve());
 	}
 
 }
