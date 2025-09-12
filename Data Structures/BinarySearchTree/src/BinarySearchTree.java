@@ -206,6 +206,31 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 		return cur;
 	}
 
+	private final class BstIterator implements Iterator<T> {
+		private Node<T> cur;
+		private boolean first = true;
+
+		BstIterator(Node<T> root) {
+			this.cur = root;
+		}
+
+		public boolean hasNext() {
+			return cur != null;
+		}
+
+		public T next() {
+			if (cur == null) throw new NoSuchElementException();
+			if (first) {
+				cur = leftmost(cur);
+				first = false;
+				if (cur == null) throw new NoSuchElementException();
+			}
+			T val = cur.label;
+			cur = successor(cur);
+			return val;
+		}
+	}
+
 	// Nested classes
 	private static final class Node<T extends Comparable<T>> {
 		private final T label;
@@ -302,31 +327,6 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 
 		private void updateNode() {
 			size = (left == null ? 0 : left.size) + (right == null ? 0 : right.size) + 1;
-		}
-	}
-
-	private final class BstIterator implements Iterator<T> {
-		private Node<T> cur;
-		private boolean first = true;
-
-		BstIterator(Node<T> root) {
-			this.cur = root;
-		}
-
-		public boolean hasNext() {
-			return cur != null;
-		}
-
-		public T next() {
-			if (cur == null) throw new NoSuchElementException();
-			if (first) {
-				cur = leftmost(cur);
-				first = false;
-				if (cur == null) throw new NoSuchElementException();
-			}
-			T val = cur.label;
-			cur = successor(cur);
-			return val;
 		}
 	}
 }
