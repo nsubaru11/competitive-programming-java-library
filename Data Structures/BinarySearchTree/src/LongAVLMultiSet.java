@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -6,21 +5,15 @@ import java.util.stream.StreamSupport;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
-@SuppressWarnings({"unused", "unchecked"})
-public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
-	private final Comparator<? super T> comparator;
+@SuppressWarnings("unused")
+public final class LongAVLMultiSet implements Iterable<Long> {
 	private Node root;
-	private T first, last;
+	private long first, last;
 	private long size;
 	private int distinctSize;
 
 	// -------------- Constructors --------------
-	public AVLList() {
-		this(Comparator.naturalOrder());
-	}
-
-	public AVLList(Comparator<? super T> comparator) {
-		this.comparator = comparator;
+	public LongAVLMultiSet() {
 		clear();
 	}
 
@@ -39,16 +32,17 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 
 	public void clear() {
 		root = null;
-		first = last = null;
+		first = last = 0;
 		size = distinctSize = 0;
 	}
 
 	// -------------- Add --------------
-	public boolean add(T t) {
+	public boolean add(long t) {
 		return add(t, 1);
 	}
 
-	public boolean add(T t, int occurrences) {
+	public boolean add(long t, int occurrences) {
+		if (occurrences <= 0) throw new IllegalArgumentException("occurrences must be > 0");
 		if (size == 0) {
 			first = last = t;
 			root = new Node(t, null, occurrences);
@@ -56,8 +50,8 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 			size = occurrences;
 			return true;
 		}
-		if (comparator.compare(t, first) < 0) first = t;
-		if (comparator.compare(t, last) > 0) last = t;
+		if (t < first) first = t;
+		if (t > last) last = t;
 		root = root.applyDelta(t, occurrences, false);
 		boolean isNotContain = size != root.size;
 		size = root.size;
@@ -66,18 +60,19 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 		return isNotContain;
 	}
 
-	public boolean addAll(Collection<T> c) {
+	public boolean addAll(Collection<Long> c) {
 		long oldSize = size;
-		for (T a : c) add(a);
+		for (long a : c) add(a);
 		return size != oldSize;
 	}
 
 	// -------------- Remove --------------
-	public boolean remove(T t) {
+	public boolean remove(long t) {
 		return remove(t, 1);
 	}
 
-	public boolean remove(T t, int occurrences) {
+	public boolean remove(long t, int occurrences) {
+		if (occurrences <= 0) throw new IllegalArgumentException("occurrences must be > 0");
 		if (size == 0) return false;
 		long oldSize = size;
 		Node newRoot = root.applyDelta(t, -occurrences, false);
@@ -88,15 +83,15 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 			root.parent = null;
 			size = root.size;
 			if (distinctSize != root.distinctSize) {
-				if (comparator.compare(t, first) == 0) first = leftmost(root).label;
-				if (comparator.compare(t, last) == 0) last = rightmost(root).label;
+				if (t == first) first = leftmost(root).label;
+				if (t == last) last = rightmost(root).label;
 			}
 			distinctSize = root.distinctSize;
 		}
 		return size != oldSize;
 	}
 
-	public boolean removeAllOccurrences(T t) {
+	public boolean removeAllOccurrences(long t) {
 		if (size == 0) return false;
 		long oldSize = size;
 		Node newRoot = root.applyDelta(t, 0, true);
@@ -107,24 +102,19 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 			root.parent = null;
 			size = root.size;
 			if (distinctSize != root.distinctSize) {
-				if (comparator.compare(t, first) == 0) first = leftmost(root).label;
-				if (comparator.compare(t, last) == 0) last = rightmost(root).label;
+				if (t == first) first = leftmost(root).label;
+				if (t == last) last = rightmost(root).label;
 			}
 			distinctSize = root.distinctSize;
 		}
 		return oldSize != size;
 	}
 
-	public boolean removeAll(Collection<T> c) {
+	public boolean removeAll(Collection<Long> c) {
 		if (isEmpty()) return false;
 		long oldSize = size;
-		HashSet<?> hs = new HashSet<>(c);
-		for (Iterator<T> it = distinctIterator(); it.hasNext(); ) {
-			T v = it.next();
-			if (hs.contains(v)) {
-				removeAllOccurrences(v);
-			}
-		}
+		HashSet<Long> hs = new HashSet<>(c);
+		for (long v : hs) removeAllOccurrences(v);
 		return size != oldSize;
 	}
 
@@ -167,51 +157,51 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Arrays --------------
-	public T[] toArray() {
-		if (size == 0) return (T[]) new Object[0];
+	public long[] toArray() {
+		if (size == 0) return new long[0];
 		if (size > Integer.MAX_VALUE)
 			throw new IllegalStateException("Array too large: " + size + " elements (exceeds single-array limit)");
-		T[] arr = (T[]) Array.newInstance(first.getClass(), (int) size);
+		long[] arr = new long[(int) size];
 		int i = 0;
-		for (T t : this) arr[i++] = t;
+		for (long t : this) arr[i++] = t;
 		return arr;
 	}
 
-	public T[] toDistinctArray() {
-		if (distinctSize == 0) return (T[]) new Object[0];
-		Iterator<T> it = distinctIterator();
-		T[] arr = (T[]) Array.newInstance(first.getClass(), distinctSize);
+	public long[] toDistinctArray() {
+		if (distinctSize == 0) return new long[0];
+		Iterator<Long> it = distinctIterator();
+		long[] arr = new long[distinctSize];
 		for (int i = 0; it.hasNext(); i++) arr[i] = it.next();
 		return arr;
 	}
 
 	// -------------- Streams --------------
-	public Stream<T> stream() {
+	public Stream<Long> stream() {
 		return toStream(false);
 	}
 
-	public Stream<T> distinctStream() {
+	public Stream<Long> distinctStream() {
 		return toStream(true);
 	}
 
-	private Stream<T> toStream(boolean distinct) {
+	private Stream<Long> toStream(boolean distinct) {
 		long size = distinct ? distinctSize : this.size;
-		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.SORTED;
+		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (distinct) characteristics |= Spliterator.DISTINCT;
-		Iterator<T> it = distinct ? distinctIterator() : iterator();
+		Iterator<Long> it = distinct ? distinctIterator() : iterator();
 		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
 	// -------------- Iteration --------------
-	public Iterator<T> iterator() {
+	public Iterator<Long> iterator() {
 		return new AvlIterator(root, false);
 	}
 
-	public Iterator<T> distinctIterator() {
+	public Iterator<Long> distinctIterator() {
 		return new AvlIterator(root, true);
 	}
 
-	private final class AvlIterator implements Iterator<T> {
+	private final class AvlIterator implements Iterator<Long> {
 		private final boolean distinct;
 		private Node cur;
 		private long remainingCnt;
@@ -226,14 +216,14 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 			return cur != null;
 		}
 
-		public T next() {
+		public Long next() {
 			if (cur == null) throw new NoSuchElementException();
 			if (first) {
 				cur = leftmost(cur);
 				remainingCnt = cur == null ? 0 : cur.cnt;
 				first = false;
 			}
-			T val = cur.label;
+			long val = cur.label;
 			if (!distinct && remainingCnt > 1) {
 				remainingCnt--;
 				return val;
@@ -247,20 +237,20 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 	// -------------- String --------------
 	public String toString() {
 		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for (T t : this) sj.add(t.toString());
+		for (long t : this) sj.add(Long.toString(t));
 		return sj.toString();
 	}
 
 	// -------------- Contains --------------
-	public boolean contains(T t) {
+	public boolean contains(long t) {
 		if (size == 0) return false;
 		return count(t) > 0;
 	}
 
-	public boolean containsAll(Collection<T> c) {
+	public boolean containsAll(Collection<Long> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
-		for (T t : c) {
+		for (long t : c) {
 			if (!contains(t)) {
 				contains = false;
 				break;
@@ -270,7 +260,7 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Access by Index --------------
-	public T getByIndex(long index) {
+	public long getByIndex(long index) {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
@@ -281,13 +271,13 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 				index -= leftSize + cur.cnt;
 				cur = cur.right;
 			} else {
-				return cur.label;
+				break;
 			}
 		}
-		throw new IllegalStateException("Invalid tree state");
+		return cur.label;
 	}
 
-	public T getByDistinctIndex(int index) {
+	public long getByDistinctIndex(int index) {
 		if (index < 0 || distinctSize <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
@@ -298,107 +288,95 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 				index -= leftSize + 1;
 				cur = cur.right;
 			} else {
-				return cur.label;
+				break;
 			}
 		}
-		throw new IllegalStateException("Invalid tree state");
+		return cur.label;
 	}
 
 	// -------------- Search & Rank --------------
-	public long indexOf(T t) {
+	public long indexOf(long t) {
 		if (size == 0) return -1;
 		long index = index(t, false);
 		return index >= 0 ? index : -1;
 	}
 
-	public int distinctIndexOf(T t) {
+	public int distinctIndexOf(long t) {
 		if (size == 0) return -1;
 		int index = (int) index(t, true);
 		return index >= 0 ? index : -1;
 	}
 
-	public long rank(T t) {
+	public long rank(long t) {
 		long index = index(t, false);
 		return index < 0 ? ~index : index;
 	}
 
-	public long distinctRank(T t) {
+	public long distinctRank(long t) {
 		long index = index(t, true);
 		return index < 0 ? ~index : index;
 	}
 
-	private long index(T t, boolean distinct) {
+	private long index(long t, boolean distinct) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				index += distinct ? cur.leftDistinctSize() + 1 : cur.leftSize() + cur.cnt;
-				if (cur.right == null) return ~index;
 				cur = cur.right;
-			} else if (cmp > 0) {
-				if (cur.left == null) return ~index;
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				index += distinct ? cur.leftDistinctSize() : cur.leftSize();
-				return index;
+				break;
 			}
 		}
-		throw new IllegalStateException("Invalid tree state");
+		return cur == null ? ~index : index;
 	}
 
 	// -------------- Bounds --------------
-	public long upperBound(T t) {
-		if (size == 0) return -1;
+	public long upperBound(long t) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				index += cur.leftSize() + cur.cnt;
-				if (cur.right == null) return ~index;
 				cur = cur.right;
-			} else if (cmp > 0) {
-				if (cur.left == null) return ~index;
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize() + cur.cnt - 1;
-				return index;
+				break;
 			}
 		}
-		throw new IllegalStateException("Invalid tree state");
+		return cur == null ? ~index : index;
 	}
 
-	public long lowerBound(T t) {
-		if (size == 0) return -1;
+	public long lowerBound(long t) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				index += cur.leftSize() + cur.cnt;
-				if (cur.right == null) return ~index;
 				cur = cur.right;
-			} else if (cmp > 0) {
-				if (cur.left == null) return ~index;
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize();
-				return index;
+				break;
 			}
 		}
-		throw new IllegalStateException("Invalid tree state");
+		return cur == null ? ~index : index;
 	}
 
 	// -------------- Counts --------------
-	public long count(T t) {
+	public long count(long t) {
 		if (size == 0) return 0;
 		Node cur = root;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				cur = cur.right;
-			} else if (cmp > 0) {
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				break;
@@ -408,36 +386,42 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Navigation --------------
-	public T higher(T key) {
+	public Long higher(long key) {
 		return boundary(key, false, true);
 	}
 
-	public T ceiling(T key) {
+	public Long ceiling(long key) {
 		return boundary(key, true, true);
 	}
 
-	public T lower(T key) {
+	public Long lower(long key) {
 		return boundary(key, false, false);
 	}
 
-	public T floor(T key) {
+	public Long floor(long key) {
 		return boundary(key, true, false);
 	}
 
-	private T boundary(T key, boolean inclusive, boolean higher) {
-		T t = null;
+	private Long boundary(long key, boolean inclusive, boolean higher) {
+		if (size == 0) return null;
+		long c1 = first - key;
+		if (c1 == 0 && inclusive) return first;
+		if (c1 > 0) return higher ? first : null;
+		long c2 = last - key;
+		if (c2 == 0 && inclusive) return last;
+		if (c2 < 0) return higher ? null : last;
+		Long t = null;
 		Node cur = root;
 		while (cur != null) {
-			int c = comparator.compare(cur.label, key);
 			if (higher) {
-				if (c > 0 || (inclusive && c == 0)) {
+				if (cur.label > key || (inclusive && cur.label == key)) {
 					t = cur.label;
 					cur = cur.left;
 				} else {
 					cur = cur.right;
 				}
 			} else {
-				if (c < 0 || (inclusive && c == 0)) {
+				if (cur.label < key || (inclusive && cur.label == key)) {
 					t = cur.label;
 					cur = cur.right;
 				} else {
@@ -449,23 +433,25 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Endpoints --------------
-	public T first() {
+	public long first() {
 		return first;
 	}
 
-	public T last() {
+	public long last() {
 		return last;
 	}
 
-	public T pollFirst() {
-		T temp = first;
-		if (first != null) remove(first);
+	public long pollFirst() {
+		if (size == 0) throw new NoSuchElementException();
+		long temp = first;
+		remove(first);
 		return temp;
 	}
 
-	public T pollLast() {
-		T temp = last;
-		if (last != null) remove(last);
+	public long pollLast() {
+		if (size == 0) throw new NoSuchElementException();
+		long temp = last;
+		remove(last);
 		return temp;
 	}
 
@@ -476,7 +462,6 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 		return cur;
 	}
 
-	// keep position
 	private Node rightmost(Node cur) {
 		if (cur == null) return null;
 		while (cur.right != null) cur = cur.right;
@@ -493,13 +478,13 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Nested classes --------------
-	private final class Node {
-		private final T label;
+	private static final class Node {
+		private final long label;
 		private long cnt, size;
 		private int height, distinctSize;
 		private Node left, right, parent;
 
-		public Node(T label, Node parent, long occurrences) {
+		public Node(long label, Node parent, long occurrences) {
 			this.label = label;
 			this.parent = parent;
 			cnt = size = occurrences;
@@ -523,16 +508,15 @@ public final class AVLList<T extends Comparable<T>> implements Iterable<T> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node applyDelta(T t, long delta, boolean all) {
-			int cmp = AVLList.this.comparator.compare(label, t);
-			if (cmp < 0) {
+		private Node applyDelta(long t, long delta, boolean all) {
+			if (label < t) {
 				if (right == null) {
 					if (delta <= 0) return this;
 					setRight(new Node(t, this, delta));
 				} else {
 					setRight(right.applyDelta(t, delta, all));
 				}
-			} else if (cmp > 0) {
+			} else if (label > t) {
 				if (left == null) {
 					if (delta <= 0) return this;
 					setLeft(new Node(t, this, delta));

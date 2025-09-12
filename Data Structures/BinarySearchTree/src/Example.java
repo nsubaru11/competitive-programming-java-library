@@ -4,7 +4,7 @@ public class Example {
 
 	public static void main(String[] args) {
 		int n = 10;
-		AVLList<Integer> list = new AVLList<>();
+		AVLMultiSet<Integer> list = new AVLMultiSet<>();
 		AVLSet<Integer> set = new AVLSet<>();
 		for (int i = 0; i < n; i++) {
 			int random = (int) (Math.random() * n);

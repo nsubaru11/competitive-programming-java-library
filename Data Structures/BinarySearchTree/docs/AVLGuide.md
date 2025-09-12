@@ -1,9 +1,9 @@
-# AVLSet と AVLList
+# AVLSet と AVLMultiSet
 
 ## 🎯 設計の狙い
 
 - **AVLSet**: 重複を許可しない順序付きセット（Set）
-- **AVLList**: 重複を許可する順序付きリスト（Multiset）
+- **AVLMultiSet**: 重複を許可する順序付きリスト（Multiset）
 - 競技プログラミングで使いやすい高速な平衡二分探索木を提供
 - Collection インターフェースを実装し、標準的な操作をサポート
 
