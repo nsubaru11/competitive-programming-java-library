@@ -58,7 +58,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 	public boolean remove(int t) {
 		if (size == 0) return false;
 		int oldSize = size;
-		Node newRoot = root.allRemove(t);
+		Node newRoot = root.remove(t);
 		if (newRoot == null) {
 			clear();
 		} else {
@@ -182,7 +182,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 			int leftSize = cur.left == null ? 0 : cur.left.size;
 			if (index < leftSize) {
 				cur = cur.left;
-			} else if (index >= leftSize + 1) {
+			} else if (index > leftSize) {
 				index -= leftSize + 1;
 				cur = cur.right;
 			} else {
@@ -298,9 +298,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 
 	private Node successor(Node n) {
 		if (n == null) return null;
-		if (n.right != null) {
-			return leftmost(n.right);
-		}
+		if (n.right != null) return leftmost(n.right);
 		Node p = n.parent, ch = n;
 		while (p != null && p.right == ch) {
 			ch = p;
@@ -323,14 +321,13 @@ public final class IntAVLSet implements Iterable<Integer> {
 
 		public Node removeAt(int index) {
 			int lIdx = leftSize();
-			int rIdx = lIdx + 1;
-			if (rIdx <= index) {
-				index -= rIdx;
+			if (lIdx < index) {
+				index -= lIdx + 1;
 				setRight(right.removeAt(index));
 			} else if (index < lIdx) {
 				setLeft(left.removeAt(index));
 			} else {
-				return allRemove();
+				return removeInternal();
 			}
 			updateNode();
 			int bf = leftHeight() - rightHeight();
@@ -350,33 +347,33 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node allRemove(int t) {
+		private Node remove(int t) {
 			if (label < t) {
 				if (right == null) {
 					return this;
 				} else {
-					setRight(right.allRemove(t));
+					setRight(right.remove(t));
 				}
 			} else if (label > t) {
 				if (left == null) {
 					return this;
 				} else {
-					setLeft(left.allRemove(t));
+					setLeft(left.remove(t));
 				}
 			} else {
-				return allRemove();
+				return removeInternal();
 			}
 			updateNode();
 			int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node allRemove() {
+		private Node removeInternal() {
 			if (left == null) return right;
 			if (right == null) return left;
 			Node temp;
 			if (leftHeight() >= rightHeight()) {
-				temp = left.findMax();
+				temp = left.extractMax();
 				if (temp == left) {
 					setLeft(temp.left);
 				} else {
@@ -384,7 +381,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 					setLeft(abs(bf) <= 1 ? left : left.rotate(bf));
 				}
 			} else {
-				temp = right.findMin();
+				temp = right.extractMin();
 				if (temp == right) {
 					setRight(temp.right);
 				} else {
@@ -400,9 +397,9 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return abs(bf) <= 1 ? temp : temp.rotate(bf);
 		}
 
-		private Node findMin() {
+		private Node extractMin() {
 			if (left == null) return this;
-			Node min = left.findMin();
+			Node min = left.extractMin();
 			if (left == min) setLeft(left.right);
 			if (left != null) {
 				int bf = left.leftHeight() - left.rightHeight();
@@ -412,9 +409,9 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return min;
 		}
 
-		private Node findMax() {
+		private Node extractMax() {
 			if (right == null) return this;
-			Node max = right.findMax();
+			Node max = right.extractMax();
 			if (right == max) setRight(right.left);
 			if (right != null) {
 				int bf = right.leftHeight() - right.rightHeight();
