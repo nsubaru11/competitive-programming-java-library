@@ -14,9 +14,7 @@
 # ビルド成果物
 out/
 *.class
-gc.log
-gc.log.*
-run.jfr
+logs/
 
 # Eclipse & IntelliJ project files
 **/.idea/           # IntelliJ の設定ディレクトリ（全てのディレクトリに適用）
