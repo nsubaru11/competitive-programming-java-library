@@ -1,3 +1,4 @@
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -92,14 +93,15 @@ public class FastScanner implements AutoCloseable {
 	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
 
 	/**
-	 * 指定した文字コードが空白文字かどうか判定します。
-	 * このメソッドでは、半角スペース、改行（'\n'）、復帰（'\r'）、およびタブ（'\t'）を空白文字として扱います。
+	 * 空白文字を読み飛ばし次の有効文字を返します。
+	 * このメソッドでは、Asciiコード32以下を空白文字として扱います。
 	 *
-	 * @param c 判定対象の文字コード
-	 * @return 空白文字の場合 {@code true}、それ以外の場合 {@code false}
+	 * @return 有効文字のint値
 	 */
-	private static boolean isWhitespace(final int c) {
-		return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+	private int skipSpaces() {
+		int b = read();
+		while (b <= 32) b = read();
+		return b;
 	}
 
 	/* ------------------------ オーバーライドメソッド ------------------------ */
@@ -112,8 +114,7 @@ public class FastScanner implements AutoCloseable {
 	 */
 	@Override
 	public void close() throws IOException {
-		if (in != System.in)
-			in.close();
+		if (in != System.in) in.close();
 	}
 
 	/**
@@ -123,17 +124,22 @@ public class FastScanner implements AutoCloseable {
 	 * @return 読み込んだバイト
 	 * @throws RuntimeException 入力終了または I/O エラー時
 	 */
-	private byte read() {
-		if (pos >= bufferLength) {
-			try {
-				bufferLength = in.read(buffer, pos = 0, buffer.length);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			if (bufferLength < 0)
-				throw new RuntimeException(new IOException("End of input reached"));
+	private int read() {
+		int p = pos;
+		int len = bufferLength;
+		if (p < len) {
+			pos = p + 1;
+			return buffer[p] & 0xFF;
 		}
-		return buffer[pos++];
+		pos = 0;
+		try {
+			len = in.read(buffer, 0, buffer.length);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		if (len <= 0) throw new RuntimeException(new EOFException());
+		bufferLength = len;
+		return buffer[pos++] & 0xFF;
 	}
 
 	/* ------------------------ 基本入力メソッド ------------------------ */
@@ -144,13 +150,16 @@ public class FastScanner implements AutoCloseable {
 	 * @return 読み込んだ int 値
 	 */
 	public final int nextInt() {
-		int b = read();
-		while (isWhitespace(b)) b = read();
-		boolean negative = b == '-';
-		if (negative) b = read();
+		int b = skipSpaces();
+		boolean negative = false;
+		if (b != 45) {
+		} else {
+			negative = true;
+			b = read();
+		}
 		int result = 0;
-		while ('0' <= b && b <= '9') {
-			result = result * 10 + b - '0';
+		while (48 <= b && b <= 57) {
+			result = (result << 3) + (result << 1) + (b & 15);
 			b = read();
 		}
 		return negative ? -result : result;
@@ -162,13 +171,16 @@ public class FastScanner implements AutoCloseable {
 	 * @return 読み込んだ long 値
 	 */
 	public final long nextLong() {
-		int b = read();
-		while (isWhitespace(b)) b = read();
-		boolean negative = b == '-';
-		if (negative) b = read();
+		int b = skipSpaces();
+		boolean negative = false;
+		if (b != 45) {
+		} else {
+			negative = true;
+			b = read();
+		}
 		long result = 0;
-		while ('0' <= b && b <= '9') {
-			result = result * 10 + b - '0';
+		while (48 <= b && b <= 57) {
+			result = (result << 3) + (result << 1) + (b & 15);
 			b = read();
 		}
 		return negative ? -result : result;
@@ -180,24 +192,26 @@ public class FastScanner implements AutoCloseable {
 	 * @return 読み込んだ double 値
 	 */
 	public final double nextDouble() {
-		int b = read();
-		while (isWhitespace(b)) b = read();
-		boolean negative = b == '-';
-		if (negative) b = read();
-		double result = 0;
-		while ('0' <= b && b <= '9') {
-			result = result * 10 + b - '0';
+		int b = skipSpaces();
+		boolean negative = false;
+		if (b != 45) {
+		} else {
+			negative = true;
 			b = read();
 		}
-		if (b == '.') {
+		double result = 0;
+		while (48 <= b && b <= 57) {
+			result = result * 10 + (b & 15);
 			b = read();
-			long f = 0, d = 1;
-			while ('0' <= b && b <= '9') {
-				f = f * 10 + b - '0';
-				d *= 10;
+		}
+		if (b == 46) {
+			b = read();
+			double scale = 0.1;
+			while (48 <= b && b <= 57) {
+				result += (b & 15) * scale;
+				scale *= 0.1;
 				b = read();
 			}
-			result += (double) f / d;
 		}
 		return negative ? -result : result;
 	}
@@ -208,8 +222,7 @@ public class FastScanner implements AutoCloseable {
 	 * @return 読み込んだ char 値
 	 */
 	public final char nextChar() {
-		byte b = read();
-		while (isWhitespace(b)) b = read();
+		int b = skipSpaces();
 		return (char) b;
 	}
 
@@ -229,10 +242,9 @@ public class FastScanner implements AutoCloseable {
 	 */
 	public final StringBuilder nextStringBuilder() {
 		final StringBuilder sb = new StringBuilder();
-		byte b = read();
-		while (isWhitespace(b)) b = read();
-		while (!isWhitespace(b)) {
-			sb.appendCodePoint(b);
+		int b = skipSpaces();
+		while (b > 32) {
+			sb.append((char) b);
 			b = read();
 		}
 		return sb;
@@ -246,11 +258,15 @@ public class FastScanner implements AutoCloseable {
 	public final String nextLine() {
 		final StringBuilder sb = new StringBuilder();
 		int b = read();
-		while (b != 0 && b != '\r' && b != '\n') {
-			sb.appendCodePoint(b);
+		while (b != 0 && b != 10 && b != 13) {
+			sb.append((char) b);
 			b = read();
 		}
-		read(); // 改行文字を読み飛ばす
+		// 改行文字を読み飛ばす
+		if (b == 13) {
+			int c = read();
+			if (c != 10) pos--;
+		}
 		return sb.toString();
 	}
 

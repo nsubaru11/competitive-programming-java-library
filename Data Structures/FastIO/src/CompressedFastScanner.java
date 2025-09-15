@@ -1,3 +1,4 @@
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -36,81 +37,94 @@ public class CompressedFastScanner {
 			this.buffer = new byte[bufferSize];
 		}
 
-		private static boolean isWhitespace(final int c) {
-			return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+		private int skipSpaces() {
+			int b = read();
+			while (b <= 32) b = read();
+			return b;
 		}
 
 		@Override
 		public void close() throws IOException {
-			if (in != System.in)
-				in.close();
+			if (in != System.in) in.close();
 		}
 
-		public byte read() {
-			if (pos >= bufferLength) {
-				try {
-					bufferLength = in.read(buffer, pos = 0, buffer.length);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				if (bufferLength < 0)
-					throw new RuntimeException(new IOException("End of input reached"));
+		private int read() {
+			int p = pos;
+			int len = bufferLength;
+			if (p < len) {
+				pos = p + 1;
+				return buffer[p] & 0xFF;
 			}
-			return buffer[pos++];
+			pos = 0;
+			try {
+				len = in.read(buffer, 0, buffer.length);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			if (len <= 0) throw new RuntimeException(new EOFException());
+			bufferLength = len;
+			return buffer[pos++] & 0xFF;
 		}
 
 		public int nextInt() {
-			int b = read();
-			while (isWhitespace(b)) b = read();
-			boolean negative = b == '-';
-			if (negative) b = read();
+			int b = skipSpaces();
+			boolean negative = false;
+			if (b != 45) {
+			} else {
+				negative = true;
+				b = read();
+			}
 			int result = 0;
-			while ('0' <= b && b <= '9') {
-				result = result * 10 + b - '0';
+			while (48 <= b && b <= 57) {
+				result = (result << 3) + (result << 1) + (b & 15);
 				b = read();
 			}
 			return negative ? -result : result;
 		}
 
 		public long nextLong() {
-			int b = read();
-			while (isWhitespace(b)) b = read();
-			boolean negative = b == '-';
-			if (negative) b = read();
+			int b = skipSpaces();
+			boolean negative = false;
+			if (b != 45) {
+			} else {
+				negative = true;
+				b = read();
+			}
 			long result = 0;
-			while ('0' <= b && b <= '9') {
-				result = result * 10 + b - '0';
+			while (48 <= b && b <= 57) {
+				result = (result << 3) + (result << 1) + (b & 15);
 				b = read();
 			}
 			return negative ? -result : result;
 		}
 
 		public double nextDouble() {
-			int b = read();
-			while (isWhitespace(b)) b = read();
-			boolean negative = b == '-';
-			if (negative) b = read();
-			double result = 0;
-			while ('0' <= b && b <= '9') {
-				result = result * 10 + b - '0';
+			int b = skipSpaces();
+			boolean negative = false;
+			if (b != 45) {
+			} else {
+				negative = true;
 				b = read();
 			}
-			if (b == '.') {
+			double result = 0;
+			while (48 <= b && b <= 57) {
+				result = result * 10 + (b & 15);
 				b = read();
-				long f = 0, d = 1;
-				while ('0' <= b && b <= '9') {
-					f = f * 10 + b - '0';
-					d *= 10;
+			}
+			if (b == 46) {
+				b = read();
+				double scale = 0.1;
+				while (48 <= b && b <= 57) {
+					result += (b & 15) * scale;
+					scale *= 0.1;
 					b = read();
 				}
-				result += (double) f / d;
 			}
 			return negative ? -result : result;
 		}
 
 		public char nextChar() {
-			byte b = read();
-			while (isWhitespace(b)) b = read();
+			int b = skipSpaces();
 			return (char) b;
 		}
 
@@ -120,10 +134,9 @@ public class CompressedFastScanner {
 
 		public StringBuilder nextStringBuilder() {
 			final StringBuilder sb = new StringBuilder();
-			byte b = read();
-			while (isWhitespace(b)) b = read();
-			while (!isWhitespace(b)) {
-				sb.appendCodePoint(b);
+			int b = skipSpaces();
+			while (b > 32) {
+				sb.append((char) b);
 				b = read();
 			}
 			return sb;
@@ -132,11 +145,14 @@ public class CompressedFastScanner {
 		public String nextLine() {
 			final StringBuilder sb = new StringBuilder();
 			int b = read();
-			while (b != 0 && b != '\r' && b != '\n') {
-				sb.appendCodePoint(b);
+			while (b != 0 && b != 10 && b != 13) {
+				sb.append((char) b);
 				b = read();
 			}
-			read();
+			if (b == 13) {
+				int c = read();
+				if (c != 10) pos--;
+			}
 			return sb.toString();
 		}
 
@@ -172,8 +188,7 @@ public class CompressedFastScanner {
 
 		public char[] nextChars(final int n) {
 			final char[] c = new char[n];
-			for (int i = 0; i < n; i++)
-				c[i] = nextChar();
+			for (int i = 0; i < n; i++) c[i] = nextChar();
 			return c;
 		}
 
@@ -185,22 +200,19 @@ public class CompressedFastScanner {
 
 		public int[][] nextIntMat(final int h, final int w) {
 			final int[][] a = new int[h][w];
-			for (int i = 0; i < h; i++)
-				setAll(a[i], j -> nextInt());
+			for (int i = 0; i < h; i++) setAll(a[i], j -> nextInt());
 			return a;
 		}
 
 		public long[][] nextLongMat(final int h, final int w) {
 			final long[][] a = new long[h][w];
-			for (int i = 0; i < h; i++)
-				setAll(a[i], j -> nextLong());
+			for (int i = 0; i < h; i++) setAll(a[i], j -> nextLong());
 			return a;
 		}
 
 		public double[][] nextDoubleMat(final int h, final int w) {
 			final double[][] a = new double[h][w];
-			for (int i = 0; i < h; i++)
-				setAll(a[i], j -> nextDouble());
+			for (int i = 0; i < h; i++) setAll(a[i], j -> nextDouble());
 			return a;
 		}
 
@@ -220,8 +232,7 @@ public class CompressedFastScanner {
 
 		public String[][] nextStringMat(final int h, final int w) {
 			final String[][] s = new String[h][w];
-			for (int i = 0; i < h; i++)
-				setAll(s[i], j -> next());
+			for (int i = 0; i < h; i++) setAll(s[i], j -> next());
 			return s;
 		}
 
@@ -323,24 +334,23 @@ public class CompressedFastScanner {
 		public long[][][] nextLongPrefixSum(final int x, final int y, final int z) {
 			final long[][][] ps = new long[x + 1][y + 1][z + 1];
 			for (int a = 1; a <= x; a++)
-				for (int b = 1, A = a, B = b; b <= y; b++)
+				for (int b = 1; b <= y; b++) {
+					final int A = a, B = b;
 					setAll(ps[A][B], c -> c > 0 ? nextLong() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
 							- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
+				}
 			return ps;
 		}
 
 		public int[] nextIntInverseMapping(final int n) {
 			final int[] inv = new int[n];
-			for (int i = 0; i < n; i++)
-				inv[nextInt() - 1] = i;
+			for (int i = 0; i < n; i++) inv[nextInt() - 1] = i;
 			return inv;
 		}
 
 		private <T extends Collection<Integer>> T nextIntCollection(int n, final Supplier<T> supplier) {
 			final T collection = supplier.get();
-			while (n-- > 0) {
-				collection.add(nextInt());
-			}
+			while (n-- > 0) collection.add(nextInt());
 			return collection;
 		}
 
@@ -358,9 +368,7 @@ public class CompressedFastScanner {
 
 		private <T extends Collection<Long>> T nextLongCollection(int n, final Supplier<T> supplier) {
 			final T collection = supplier.get();
-			while (n-- > 0) {
-				collection.add(nextLong());
-			}
+			while (n-- > 0) collection.add(nextLong());
 			return collection;
 		}
 
@@ -378,9 +386,7 @@ public class CompressedFastScanner {
 
 		private <T extends Collection<Character>> T nextCharacterCollection(int n, final Supplier<T> supplier) {
 			final T collection = supplier.get();
-			while (n-- > 0) {
-				collection.add(nextChar());
-			}
+			while (n-- > 0) collection.add(nextChar());
 			return collection;
 		}
 
@@ -398,9 +404,7 @@ public class CompressedFastScanner {
 
 		private <T extends Collection<String>> T nextStringCollection(int n, final Supplier<T> supplier) {
 			final T collection = supplier.get();
-			while (n-- > 0) {
-				collection.add(next());
-			}
+			while (n-- > 0) collection.add(next());
 			return collection;
 		}
 
@@ -486,9 +490,7 @@ public class CompressedFastScanner {
 
 		public int[] nextIntMultiset(final int n, final int m) {
 			final int[] multiset = new int[m];
-			for (int i = 0; i < n; i++) {
-				multiset[nextInt() - 1]++;
-			}
+			for (int i = 0; i < n; i++) multiset[nextInt() - 1]++;
 			return multiset;
 		}
 

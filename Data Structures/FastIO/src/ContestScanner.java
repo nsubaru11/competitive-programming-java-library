@@ -114,8 +114,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public char[] nextChars(final int n) {
 		final char[] c = new char[n];
-		for (int i = 0; i < n; i++)
-			c[i] = nextChar();
+		for (int i = 0; i < n; i++) c[i] = nextChar();
 		return c;
 	}
 
@@ -142,8 +141,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public int[][] nextIntMat(final int h, final int w) {
 		final int[][] a = new int[h][w];
-		for (int i = 0; i < h; i++)
-			setAll(a[i], j -> nextInt());
+		for (int i = 0; i < h; i++) setAll(a[i], j -> nextInt());
 		return a;
 	}
 
@@ -156,8 +154,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public long[][] nextLongMat(final int h, final int w) {
 		final long[][] a = new long[h][w];
-		for (int i = 0; i < h; i++)
-			setAll(a[i], j -> nextLong());
+		for (int i = 0; i < h; i++) setAll(a[i], j -> nextLong());
 		return a;
 	}
 
@@ -170,8 +167,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public double[][] nextDoubleMat(final int h, final int w) {
 		final double[][] a = new double[h][w];
-		for (int i = 0; i < h; i++)
-			setAll(a[i], j -> nextDouble());
+		for (int i = 0; i < h; i++) setAll(a[i], j -> nextDouble());
 		return a;
 	}
 
@@ -211,8 +207,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public String[][] nextStringMat(final int h, final int w) {
 		final String[][] s = new String[h][w];
-		for (int i = 0; i < h; i++)
-			setAll(s[i], j -> next());
+		for (int i = 0; i < h; i++) setAll(s[i], j -> next());
 		return s;
 	}
 
@@ -417,9 +412,11 @@ public final class ContestScanner extends FastScanner {
 	public long[][][] nextLongPrefixSum(final int x, final int y, final int z) {
 		final long[][][] ps = new long[x + 1][y + 1][z + 1];
 		for (int a = 1; a <= x; a++)
-			for (int b = 1, A = a, B = b; b <= y; b++)
+			for (int b = 1; b <= y; b++) {
+				final int A = a, B = b;
 				setAll(ps[A][B], c -> c > 0 ? nextLong() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
 						- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
+			}
 		return ps;
 	}
 
@@ -434,8 +431,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public int[] nextIntInverseMapping(final int n) {
 		final int[] inv = new int[n];
-		for (int i = 0; i < n; i++)
-			inv[nextInt() - 1] = i;
+		for (int i = 0; i < n; i++) inv[nextInt() - 1] = i;
 		return inv;
 	}
 
@@ -451,9 +447,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	private <T extends Collection<Integer>> T nextIntCollection(int n, final Supplier<T> supplier) {
 		final T collection = supplier.get();
-		while (n-- > 0) {
-			collection.add(nextInt());
-		}
+		while (n-- > 0) collection.add(nextInt());
 		return collection;
 	}
 
@@ -499,9 +493,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	private <T extends Collection<Long>> T nextLongCollection(int n, final Supplier<T> supplier) {
 		final T collection = supplier.get();
-		while (n-- > 0) {
-			collection.add(nextLong());
-		}
+		while (n-- > 0) collection.add(nextLong());
 		return collection;
 	}
 
@@ -547,9 +539,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	private <T extends Collection<Character>> T nextCharacterCollection(int n, final Supplier<T> supplier) {
 		final T collection = supplier.get();
-		while (n-- > 0) {
-			collection.add(nextChar());
-		}
+		while (n-- > 0) collection.add(nextChar());
 		return collection;
 	}
 
@@ -595,9 +585,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	private <T extends Collection<String>> T nextStringCollection(int n, final Supplier<T> supplier) {
 		final T collection = supplier.get();
-		while (n-- > 0) {
-			collection.add(next());
-		}
+		while (n-- > 0) collection.add(next());
 		return collection;
 	}
 
@@ -796,9 +784,7 @@ public final class ContestScanner extends FastScanner {
 	 */
 	public int[] nextIntMultiset(final int n, final int m) {
 		final int[] multiset = new int[m];
-		for (int i = 0; i < n; i++) {
-			multiset[nextInt() - 1]++;
-		}
+		for (int i = 0; i < n; i++) multiset[nextInt() - 1]++;
 		return multiset;
 	}
 
