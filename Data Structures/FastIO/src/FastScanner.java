@@ -125,21 +125,45 @@ public class FastScanner implements AutoCloseable {
 	 * @throws RuntimeException 入力終了または I/O エラー時
 	 */
 	private int read() {
-		int p = pos;
-		int len = bufferLength;
-		if (p < len) {
-			pos = p + 1;
-			return buffer[p] & 0xFF;
+		if (pos >= bufferLength) {
+			try {
+				bufferLength = in.read(buffer, pos = 0, buffer.length);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			if (bufferLength <= 0) return 0;
 		}
-		pos = 0;
-		try {
-			len = in.read(buffer, 0, buffer.length);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		if (len <= 0) throw new RuntimeException(new EOFException());
-		bufferLength = len;
 		return buffer[pos++] & 0xFF;
+	}
+
+	/**
+	 * 内部バッファから 1 バイトを確認します。
+	 * バッファが空の場合は新たにデータを読み込みます。
+	 *
+	 * @return 読み込んだバイト
+	 */
+	public int peek() {
+		if (pos < bufferLength) {
+			return buffer[pos] & 0xFF;
+		} else {
+			int b = read();
+			if (b != 0) pos--;
+			return b;
+		}
+	}
+
+	/**
+	 * バッファにデータが残っているかどうかを確認します。
+	 *
+	 * @return true: EOFではない, false: EOF
+	 */
+	public boolean hasNext() {
+		while (true) {
+			int b = peek();
+			if (b == 0) return false;
+			if (b <= 32) read();
+			else return true;
+		}
 	}
 
 	/* ------------------------ 基本入力メソッド ------------------------ */

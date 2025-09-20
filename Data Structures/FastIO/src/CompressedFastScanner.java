@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static java.util.Arrays.setAll;
 import static java.util.Arrays.sort;
 
 @SuppressWarnings("unused")
@@ -49,33 +48,28 @@ public class CompressedFastScanner {
 		}
 
 		private int read() {
-			int p = pos;
-			int len = bufferLength;
-			if (p < len) {
-				pos = p + 1;
-				return buffer[p] & 0xFF;
+			if (pos >= bufferLength) {
+				try {
+					bufferLength = in.read(buffer, pos = 0, buffer.length);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				if (bufferLength <= 0) throw new RuntimeException(new EOFException());
 			}
-			pos = 0;
-			try {
-				len = in.read(buffer, 0, buffer.length);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			if (len <= 0) throw new RuntimeException(new EOFException());
-			bufferLength = len;
-			return buffer[pos++] & 0xFF;
+			return buffer[pos++];
 		}
 
 		public int nextInt() {
 			int b = skipSpaces();
 			boolean negative = false;
-			if (b != 45) {
+			if (b != '-') {
+				// fall through
 			} else {
 				negative = true;
 				b = read();
 			}
 			int result = 0;
-			while (48 <= b && b <= 57) {
+			while ('0' <= b && b <= '9') {
 				result = (result << 3) + (result << 1) + (b & 15);
 				b = read();
 			}
@@ -85,13 +79,14 @@ public class CompressedFastScanner {
 		public long nextLong() {
 			int b = skipSpaces();
 			boolean negative = false;
-			if (b != 45) {
+			if (b != '-') {
+				// fall through
 			} else {
 				negative = true;
 				b = read();
 			}
 			long result = 0;
-			while (48 <= b && b <= 57) {
+			while ('0' <= b && b <= '9') {
 				result = (result << 3) + (result << 1) + (b & 15);
 				b = read();
 			}
@@ -101,20 +96,20 @@ public class CompressedFastScanner {
 		public double nextDouble() {
 			int b = skipSpaces();
 			boolean negative = false;
-			if (b != 45) {
+			if (b != '-') {
 			} else {
 				negative = true;
 				b = read();
 			}
 			double result = 0;
-			while (48 <= b && b <= 57) {
-				result = result * 10 + (b & 15);
+			while ('0' <= b && b <= '9') {
+				result = ((long) result << 3) + ((long) result << 1) + (b & 15);
 				b = read();
 			}
-			if (b == 46) {
+			if (b == '.') {
 				b = read();
 				double scale = 0.1;
-				while (48 <= b && b <= 57) {
+				while ('0' <= b && b <= '9') {
 					result += (b & 15) * scale;
 					scale *= 0.1;
 					b = read();
@@ -145,13 +140,13 @@ public class CompressedFastScanner {
 		public String nextLine() {
 			final StringBuilder sb = new StringBuilder();
 			int b = read();
-			while (b != 0 && b != 10 && b != 13) {
+			while (b != 0 && b != '\n' && b != '\r') {
 				sb.append((char) b);
 				b = read();
 			}
-			if (b == 13) {
+			if (b == '\r') {
 				int c = read();
-				if (c != 10) pos--;
+				if (c != '\n') pos--;
 			}
 			return sb.toString();
 		}
@@ -166,19 +161,19 @@ public class CompressedFastScanner {
 
 		public int[] nextInt(final int n) {
 			final int[] a = new int[n];
-			setAll(a, i -> nextInt());
+			for (int i = 0; i < n; i++) a[i] = nextInt();
 			return a;
 		}
 
 		public long[] nextLong(final int n) {
 			final long[] a = new long[n];
-			setAll(a, i -> nextLong());
+			for (int i = 0; i < n; i++) a[i] = nextLong();
 			return a;
 		}
 
 		public double[] nextDouble(final int n) {
 			final double[] a = new double[n];
-			setAll(a, i -> nextDouble());
+			for (int i = 0; i < n; i++) a[i] = nextDouble();
 			return a;
 		}
 
@@ -194,31 +189,37 @@ public class CompressedFastScanner {
 
 		public String[] nextStrings(final int n) {
 			final String[] s = new String[n];
-			setAll(s, i -> next());
+			for (int i = 0; i < n; i++) s[i] = next();
 			return s;
 		}
 
 		public int[][] nextIntMat(final int h, final int w) {
 			final int[][] a = new int[h][w];
-			for (int i = 0; i < h; i++) setAll(a[i], j -> nextInt());
+			for (int i = 0; i < h; i++)
+				for (int j = 0; j < w; j++)
+					a[i][j] = nextInt();
 			return a;
 		}
 
 		public long[][] nextLongMat(final int h, final int w) {
 			final long[][] a = new long[h][w];
-			for (int i = 0; i < h; i++) setAll(a[i], j -> nextLong());
+			for (int i = 0; i < h; i++)
+				for (int j = 0; j < w; j++)
+					a[i][j] = nextLong();
 			return a;
 		}
 
 		public double[][] nextDoubleMat(final int h, final int w) {
 			final double[][] a = new double[h][w];
-			for (int i = 0; i < h; i++) setAll(a[i], j -> nextDouble());
+			for (int i = 0; i < h; i++)
+				for (int j = 0; j < w; j++)
+					a[i][j] = nextDouble();
 			return a;
 		}
 
 		public char[][] nextCharMat(final int n) {
 			final char[][] c = new char[n][];
-			setAll(c, j -> nextChars());
+			for (int i = 0; i < n; i++) c[i] = nextChars(nextInt());
 			return c;
 		}
 
@@ -232,7 +233,9 @@ public class CompressedFastScanner {
 
 		public String[][] nextStringMat(final int h, final int w) {
 			final String[][] s = new String[h][w];
-			for (int i = 0; i < h; i++) setAll(s[i], j -> next());
+			for (int i = 0; i < h; i++)
+				for (int j = 0; j < w; j++)
+					s[i][j] = next();
 			return s;
 		}
 
@@ -292,53 +295,51 @@ public class CompressedFastScanner {
 
 		public int[] nextIntPrefixSum(final int n) {
 			final int[] ps = new int[n];
-			setAll(ps, i -> i > 0 ? nextInt() + ps[i - 1] : nextInt());
+			ps[0] = nextInt();
+			for (int i = 1; i < n; i++) ps[i] = nextInt() + ps[i - 1];
 			return ps;
 		}
 
 		public long[] nextLongPrefixSum(final int n) {
 			final long[] ps = new long[n];
-			setAll(ps, i -> i > 0 ? nextLong() + ps[i - 1] : nextLong());
+			ps[0] = nextLong();
+			for (int i = 1; i < n; i++) ps[i] = nextLong() + ps[i - 1];
 			return ps;
 		}
 
 		public int[][] nextIntPrefixSum(final int h, final int w) {
 			final int[][] ps = new int[h + 1][w + 1];
-			for (int i = 1; i <= h; i++) {
-				final int j = i;
-				setAll(ps[i], k -> k > 0 ? nextInt() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
-			}
+			for (int i = 1; i <= h; i++)
+				for (int j = 1; j <= w; j++)
+					ps[i][j] = nextInt() + ps[i - 1][j] + ps[i][j - 1] - ps[i - 1][j - 1];
 			return ps;
 		}
 
 		public long[][] nextLongPrefixSum(final int h, final int w) {
 			final long[][] ps = new long[h + 1][w + 1];
-			for (int i = 1; i <= h; i++) {
-				final int j = i;
-				setAll(ps[i], k -> k > 0 ? nextLong() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
-			}
+			for (int i = 1; i <= h; i++)
+				for (int j = 1; j <= w; j++)
+					ps[i][j] = nextLong() + ps[i - 1][j] + ps[i][j - 1] - ps[i - 1][j - 1];
 			return ps;
 		}
 
 		public int[][][] nextIntPrefixSum(final int x, final int y, final int z) {
 			final int[][][] ps = new int[x + 1][y + 1][z + 1];
 			for (int a = 1; a <= x; a++)
-				for (int b = 1; b <= y; b++) {
-					final int A = a, B = b;
-					setAll(ps[A][B], c -> c > 0 ? nextInt() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
-							- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
-				}
+				for (int b = 1; b <= y; b++)
+					for (int c = 1; c <= z; c++)
+						ps[a][b][c] = nextInt() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c]
+								- ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
 			return ps;
 		}
 
 		public long[][][] nextLongPrefixSum(final int x, final int y, final int z) {
 			final long[][][] ps = new long[x + 1][y + 1][z + 1];
 			for (int a = 1; a <= x; a++)
-				for (int b = 1; b <= y; b++) {
-					final int A = a, B = b;
-					setAll(ps[A][B], c -> c > 0 ? nextLong() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
-							- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
-				}
+				for (int b = 1; b <= y; b++)
+					for (int c = 1; c <= z; c++)
+						ps[a][b][c] = nextLong() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c]
+								- ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
 			return ps;
 		}
 
