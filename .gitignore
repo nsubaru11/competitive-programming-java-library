@@ -15,6 +15,7 @@
 out/
 *.class
 logs/
+**/TestCases/
 
 # Eclipse & IntelliJ project files
 **/.idea/           # IntelliJ の設定ディレクトリ（全てのディレクトリに適用）
