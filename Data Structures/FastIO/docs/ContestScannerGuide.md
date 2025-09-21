@@ -9,11 +9,12 @@
 - **コードの簡略化**: `for`ループを使わずに、配列やコレクションを一行で読み込めます。
 - **多機能**: 1次元から3次元までの配列、ソート済み配列、累積和配列、各種コレクション、マルチセットなど、多彩な入力パターンに対応します。
 - **高速性**: `FastScanner`の高速な入力処理を継承しています。
+- **高い汎用性**: `nextCollection`や`nextMultiset`メソッドにより、任意のコレクションやマップを柔軟に生成できます。
 
 ## 依存関係
 
 - `FastScanner`クラス
-- `java.util.Arrays`, `java.util.function.Supplier`, および各種コレクションクラス
+- `java.util.Arrays`, `java.util.function.Supplier`, `java.util.function.Function`, および各種コレクションクラス
 
 ## 主な機能
 
@@ -127,32 +128,32 @@
 ```java
 // 基本的な使用例
 try (ContestScanner sc = new ContestScanner()) {
-// 1次元配列の読み込み
-int n = sc.nextInt();
-int[] a = sc.nextInt(n);
+    // 1次元配列の読み込み
+    int n = sc.nextInt();
+    int[] a = sc.nextInt(n);
 
-// 2次元配列の読み込み
-int h = sc.nextInt();
-int w = sc.nextInt();
-int[][] mat = sc.nextIntMat(h, w);
+    // 2次元配列の読み込み
+    int h = sc.nextInt();
+    int w = sc.nextInt();
+    int[][] mat = sc.nextIntMat(h, w);
 
-// ソート済み配列の読み込み
-int[] sorted = sc.nextSortedInt(n);
+    // ソート済み配列の読み込み
+    int[] sorted = sc.nextSortedInt(n);
 
-// 累積和配列の読み込み
-int[] prefixSum = sc.nextIntPrefixSum(n);
+    // 累積和配列の読み込み
+    int[] prefixSum = sc.nextIntPrefixSum(n);
 
-// 逆写像配列の読み込み
-int[] inv = sc.nextIntInverseMapping(n);
+    // 逆写像配列の読み込み
+    int[] inv = sc.nextIntInverseMapping(n);
 
-// コレクションの読み込み
-ArrayList<Integer> list = sc.nextIntAL(n);
-HashSet<Integer> set = sc.nextIntHS(n);
+    // コレクションの読み込み
+    ArrayList<Integer> list = sc.nextIntAL(n);
+    HashSet<Integer> set = sc.nextIntHS(n);
 
-// マルチセットの読み込み
-HashMap<Integer, Integer> multiset = sc.nextIntMultisetHM(n);
+    // マルチセットの読み込み
+    HashMap<Integer, Integer> multiset = sc.nextIntMultisetHM(n);
 
-// 処理
+    // 処理
 } 
 ```
 
@@ -168,10 +169,11 @@ HashMap<Integer, Integer> multiset = sc.nextIntMultisetHM(n);
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                     |
-|:--------------|:-----------|:-----------------------------------------------------------------------|
-| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。                                               |
-| **バージョン 1.1** | 2025-06-09 | nextStringMultiset メソッドのバグを修正し、nextIntMultisetのインクリメント処理をリファクタリングしました。 |
+| バージョン番号       | 年月日        | 詳細                                                                                                    |
+|:--------------|:-----------|:------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。                                                                              |
+| **バージョン 1.1** | 2025-06-09 | nextStringMultiset メソッドのバグを修正し、nextIntMultisetのインクリメント処理をリファクタリングしました。                                |
+| **バージョン 2.0** | 2025-09-22 | 汎用的な`nextCollection`, `nextMultiset`メソッドを追加し、コードの再利用性を向上。数値解析ロジックの最適化、setAllからforループへの変更、コメント統一などを実施。 |
 
 ### バージョン管理について
 

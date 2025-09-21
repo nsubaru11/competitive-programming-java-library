@@ -9,6 +9,7 @@
 
 - **効率的な入力**: 内部バッファを利用して効率的に入力処理を行います。
 - **高速性の重視**: 不要なオブジェクト生成を避け、パフォーマンスを重視しています。
+- **EOF/状態確認**: `hasNext()` や `peek()` を利用して、入力の終端（EOF）や次の文字を安全に確認できます。
 - **文字コード**: `ASCII` 範囲内の文字入力のみをサポートします。
 - **リソース管理**: `AutoCloseable` インターフェースを実装し、`try-with-resources`構文に対応しています。
 
@@ -38,6 +39,13 @@
 | `nextBigInteger()` | `BigInteger` | 次のトークンを`BigInteger`として読み込む |
 | `nextBigDecimal()` | `BigDecimal` | 次のトークンを`BigDecimal`として読み込む |
 
+### ユーティリティ/状態確認メソッド
+
+| メソッド        | 戻り値の型     | 説明                                            |
+|-------------|-----------|-----------------------------------------------|
+| `hasNext()` | `boolean` | 入力ストリームに読み取り可能なトークンが残っているかを確認します。             |
+| `peek()`    | `char`    | 次の非空白文字を読み込まずに返します。ストリームの終端に達した場合は `0` を返します。 |
+
 ### コンストラクタ
 
 | コンストラクタ                                       | 説明                                   |
@@ -51,18 +59,35 @@
 
 ```java
 // 基本的な使用例
-try(FastScanner sc = new FastScanner()){
-int n = sc.nextInt();
-long m = sc.nextLong();
-double d = sc.nextDouble();
-String s = sc.next();
-String line = sc.nextLine();
-// 処理
+try (FastScanner sc = new FastScanner()) {
+    int n = sc.nextInt();
+    long m = sc.nextLong();
+    double d = sc.nextDouble();
+    String s = sc.next();
+    String line = sc.nextLine();
+    // 処理
 } 
+
+// hasNext を用いたEOFまでの読み取り
+try (FastScanner sc = new FastScanner()) {
+    while (sc.hasNext()) {
+        int val = sc.nextInt();
+        // val を使った処理
+    }
+}
+
+// peek を用いた次の文字の確認
+try (FastScanner sc = new FastScanner()) {
+    char nextChar = sc.peek();
+    if (Character.isDigit(nextChar)) {
+        int num = sc.nextInt();
+        // ...
+    }
+}
 
 // カスタムストリームとバッファサイズの指定
 try(FastScanner sc = new FastScanner(new FileInputStream("input.txt"), 8192)) {
-	// ファイルからの入力処理
+    // ファイルからの入力処理
 }
 ```
 
@@ -70,6 +95,7 @@ try(FastScanner sc = new FastScanner(new FileInputStream("input.txt"), 8192)) {
 
 - `ASCII` 範囲外の文字は正しく処理できません。
 - 入力は半角スペースまたは改行で区切られていることを前提としています。
+- `hasNext()` や `peek()` は、次のトークンを見つけるために先行して空白文字を読み飛ばすことがあります。
 - 入力元が `System.in` の場合、`close()` メソッドはストリームを閉じません。
 
 ## パフォーマンス特性
@@ -79,12 +105,13 @@ try(FastScanner sc = new FastScanner(new FileInputStream("input.txt"), 8192)) {
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                 |
-|:--------------|:-----------|:-------------------------------------------------------------------|
-| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。                                           |
-| **バージョン 1.1** | 2025-06-09 | nextStringBuilder や nextLine 内の変数宣言を final に統一するなどのリファクタリングを行いました。 |
-| **バージョン 1.2** | 2025-06-09 | nextLine メソッドの改行文字処理を改善しました。                                       |
-| **バージョン 1.3** | 2025-06-25 | nextDouble メソッドの小数の構築処理を、ループ内の浮動小数点演算を削減する方式に変更。                   |
+| バージョン番号       | 年月日        | 詳細                                                                                                   |
+|:--------------|:-----------|:-----------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。                                                                             |
+| **バージョン 1.1** | 2025-06-09 | nextStringBuilder や nextLine 内の変数宣言を final に統一するなどのリファクタリングを行いました。                                   |
+| **バージョン 1.2** | 2025-06-09 | nextLine メソッドの改行文字処理を改善しました。                                                                         |
+| **バージョン 1.3** | 2025-06-25 | nextDouble メソッドの小数の構築処理を、ループ内の浮動小数点演算を削減する方式に変更。                                                     |
+| **バージョン 2.0** | 2025-09-22 | `hasNext` および `peek` メソッドを追加し、EOFハンドリングを改善。数値解析ロジックやバッファ操作を最適化し、パフォーマンスを向上。コメントフォーマットを統一し、可読性を高めました。 |
 
 ### バージョン管理について
 

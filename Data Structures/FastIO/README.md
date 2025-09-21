@@ -1,35 +1,37 @@
-# Fast Input/Output
+# Fast Input/Output (FastIO)
 
 ## 概要
 
 競技プログラミングにおいて、入出力処理の速度は重要な要素です。
 このライブラリでは、Javaの標準入出力よりも高速な入出力処理を提供する複数のクラスを実装しています。
 基本的な高速入出力から、競技プログラミングコンテスト向けの拡張機能、さらにコードサイズを最小化した圧縮版まで、様々なニーズに対応しています。
+**2025年9月のメジャーアップデート（v3.0）**
+では、最新のベンチマーク結果に基づき、パフォーマンスの向上とAPIの全面的な刷新が行われました。基本的な高速化はもちろん、より直感的で強力なAPIを提供します。
 
 ## 実装クラス
 
 ### [FastScanner](./src/FastScanner.java)
 
-- **用途**：標準入力からの高速な読み込みを提供する基本クラス
-- **特徴**：
-	- バッファリングによる高速な入力処理
-	- 様々なデータ型（int, long, double, char, String, BigInteger, BigDecimal）の読み込みをサポート
-	- AutoCloseableインターフェースの実装によるリソース管理
+- **用途**: 標準入力からの高速な読み込みを提供する基本クラス。
+- **特徴**:
+	- バッファリングによる高速な入力処理。
+	- 入力の終端（EOF）を安全に扱う `hasNext()` / `peek()` を提供。
+	- `AutoCloseable`対応による確実なリソース管理。
 - **主な操作**:
-	- `nextInt()`: 整数を読み込む
-	- `nextLong()`: 長整数を読み込む
-	- `nextDouble()`: 浮動小数点数を読み込む
-	- `next()`: 文字列を読み込む
-	- `nextLine()`: 1行を読み込む
+	- `nextInt()`, `nextLong()`, `nextDouble()`: 各種数値型を読み込む。
+	- `next()`: 文字列トークンを読み込む。
+	- `hasNext()`: 次に読み込むべきトークンが存在するか判定する。
+	- `peek()`: 次の非空白文字を消費せずに確認する。
 - **時間計算量**：
 	- 各読み込み操作: 平均 O(1)（バッファリングによる）
 - **空間計算量**：O(B)、ここでBはバッファサイズ
 
 ### [FastPrinter](./src/FastPrinter.java)
 
-- **用途**：標準出力への高速な書き込みを提供する基本クラス
-- **特徴**：
-	- バッファリングによる高速な出力処理
+- **用途**: 標準出力への高速な書き込みを提供する基本クラス。
+- **特徴**:
+	- **メソッドチェーン**による流れるような記述 (`fp.print(a).println(b)`) に対応。
+	- バッファリングによる高速な出力処理。
 	- 様々なデータ型（int, long, double, char, String, Object, BigInteger, BigDecimal）の出力をサポート
 	- AutoCloseableインターフェースの実装によるリソース管理
 - **主な操作**:
@@ -50,8 +52,8 @@
 - **主な操作**:
 	- `nextInt(n)`: n個の整数を配列として読み込む
 	- `nextIntMat(h, w)`: h×wの整数行列を読み込む
-	- `nextIntCollection(n, supplier)`: n個の整数をコレクションとして読み込む
-	- `nextIntMultiset(n, supplier)`: n個の整数をマルチセットとして読み込む
+	- `nextCollection(n, element, coolection)`: n個の要素をコレクションとして読み込む
+	- `nextMultiset(n, element, map)`: n個の要素をマルチセットとして読み込む
 - **時間計算量**：
 	- 各読み込み操作: O(n)、ここでnは読み込む要素数
 - **空間計算量**：O(n + B)、ここでnは読み込む要素数、Bはバッファサイズ
@@ -84,13 +86,14 @@
 ## 選択ガイド
 
 - **FastScanner/FastPrinter**: 基本的な高速入出力が必要な場合に使用。シンプルで理解しやすい。
+- v3.0でメソッドチェーンに対応し、`FastPrinter`の利便性が大幅に向上しました。
 - **ContestScanner/ContestPrinter**: 競技プログラミングコンテストで、配列や行列、コレクションなどの複雑なデータ構造を扱う場合に使用。多機能で便利。
 - **CompressedFastScanner/CompressedFastPrinter**:
 	コードサイズ制限が厳しいプラットフォームでの競技プログラミングに使用。機能はContestScanner/ContestPrinterと同等だが、コードサイズが小さい。
 
 ## 注意事項
 
-- すべてのスキャナーとプリンターはAutoCloseableを実装しているため、try-with-resources文での使用を推奨します。
-- バッファリングを使用しているため、プログラム終了時に`close()`
-	メソッドを呼び出すか、try-with-resources文を使用して、バッファ内のデータが確実に出力されるようにしてください。
+- すべてのクラスは`AutoCloseable`を実装しているため、`try-with-resources`文での使用を強く推奨します。
+- `autoFlush=false`（デフォルト）の場合、`try-with-resources`を抜けるか、明示的に`close()`/`flush()`
+	を呼び出さないとバッファの内容が出力されない点に注意してください。
 - CompressedFastScanner/CompressedFastPrinterは可読性よりもコードサイズを優先しているため、デバッグや保守が難しい場合があります。
