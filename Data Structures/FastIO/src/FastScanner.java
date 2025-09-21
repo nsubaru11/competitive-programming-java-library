@@ -113,7 +113,7 @@ public class FastScanner implements AutoCloseable {
 	 * @throws IOException {@code InputStream} のクローズ中にエラーが発生した場合
 	 */
 	@Override
-	public void close() throws IOException {
+	public final void close() throws IOException {
 		if (in != System.in) in.close();
 	}
 
@@ -121,8 +121,8 @@ public class FastScanner implements AutoCloseable {
 	 * 内部バッファから 1 バイトを読み込みます。
 	 * バッファが空の場合は新たにデータを読み込みます。
 	 *
-	 * @return 読み込んだバイト
-	 * @throws RuntimeException 入力終了または I/O エラー時
+	 * @return 読み込んだバイト (0-255)
+	 * @throws RuntimeException I/Oエラーが発生した場合、またはストリームの終端に達した場合 (内部で {@code IOException} または {@code EOFException} をラップします)
 	 */
 	private int read() {
 		if (pos >= bufferLength) {
@@ -131,24 +131,24 @@ public class FastScanner implements AutoCloseable {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			if (bufferLength <= 0) return 0;
+			if (bufferLength <= 0) throw new RuntimeException(new EOFException());
 		}
 		return buffer[pos++] & 0xFF;
 	}
 
 	/**
-	 * 内部バッファから 1 バイトを確認します。
+	 * 内部バッファから 次の空白でない 1 バイトを確認します。
 	 * バッファが空の場合は新たにデータを読み込みます。
 	 *
-	 * @return 読み込んだバイト
+	 * @return 次の非空白文字のバイト (0-255)、またはストリームの終端に達した場合は 0
 	 */
-	public int peek() {
-		if (pos < bufferLength) {
-			return buffer[pos] & 0xFF;
-		} else {
-			int b = read();
-			if (b != 0) pos--;
+	public final int peek() {
+		try {
+			int b = skipSpaces();
+			pos--;
 			return b;
+		} catch (RuntimeException e) {
+			return 0;
 		}
 	}
 
@@ -157,32 +157,29 @@ public class FastScanner implements AutoCloseable {
 	 *
 	 * @return true: EOFではない, false: EOF
 	 */
-	public boolean hasNext() {
-		while (true) {
-			int b = peek();
-			if (b == 0) return false;
-			if (b <= 32) read();
-			else return true;
-		}
+	public final boolean hasNext() {
+		return peek() != 0;
 	}
 
 	/* ------------------------ 基本入力メソッド ------------------------ */
 
 	/**
-	 * 次の int 値を読み込みます。
+	 * 次のトークンを {@code int} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ int 値
+	 * @return 読み込んだ {@code int} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final int nextInt() {
 		int b = skipSpaces();
 		boolean negative = false;
-		if (b != 45) {
+		if (b != '-') {
+			// fall through
 		} else {
 			negative = true;
 			b = read();
 		}
 		int result = 0;
-		while (48 <= b && b <= 57) {
+		while ('0' <= b && b <= '9') {
 			result = (result << 3) + (result << 1) + (b & 15);
 			b = read();
 		}
@@ -190,20 +187,22 @@ public class FastScanner implements AutoCloseable {
 	}
 
 	/**
-	 * 次の long 値を読み込みます。
+	 * 次のトークンを {@code long} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ long 値
+	 * @return 読み込んだ {@code long} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final long nextLong() {
 		int b = skipSpaces();
 		boolean negative = false;
-		if (b != 45) {
+		if (b != '-') {
+			// fall through
 		} else {
 			negative = true;
 			b = read();
 		}
 		long result = 0;
-		while (48 <= b && b <= 57) {
+		while ('0' <= b && b <= '9') {
 			result = (result << 3) + (result << 1) + (b & 15);
 			b = read();
 		}
@@ -211,27 +210,30 @@ public class FastScanner implements AutoCloseable {
 	}
 
 	/**
-	 * 次の double 値を読み込みます。
+	 * 次のトークンを {@code double} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ double 値
+	 * @return 読み込んだ {@code double} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final double nextDouble() {
 		int b = skipSpaces();
 		boolean negative = false;
-		if (b != 45) {
+		if (b != '-') {
+			// fall through
 		} else {
 			negative = true;
 			b = read();
 		}
-		double result = 0;
-		while (48 <= b && b <= 57) {
-			result = result * 10 + (b & 15);
+		long intPart = 0;
+		while ('0' <= b && b <= '9') {
+			intPart = (intPart << 3) + (intPart << 1) + (b & 15);
 			b = read();
 		}
-		if (b == 46) {
+		double result = intPart;
+		if (b == '.') {
 			b = read();
 			double scale = 0.1;
-			while (48 <= b && b <= 57) {
+			while ('0' <= b && b <= '9') {
 				result += (b & 15) * scale;
 				scale *= 0.1;
 				b = read();
@@ -241,9 +243,10 @@ public class FastScanner implements AutoCloseable {
 	}
 
 	/**
-	 * 次の char 値（非空白文字）を読み込みます。
+	 * 次の非空白文字を {@code char} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ char 値
+	 * @return 読み込んだ {@code char} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final char nextChar() {
 		int b = skipSpaces();
@@ -251,18 +254,20 @@ public class FastScanner implements AutoCloseable {
 	}
 
 	/**
-	 * 次の String（空白で区切られた文字列）を読み込みます。
+	 * 次のトークンを {@code String} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ String
+	 * @return 読み込んだ {@code String} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final String next() {
 		return nextStringBuilder().toString();
 	}
 
 	/**
-	 * 次の {@code StringBuilder}（空白で区切られた文字列）を読み込みます。
+	 * 次のトークンを {@code StringBuilder} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ {@code StringBuilder}
+	 * @return 読み込んだ {@code StringBuilder} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final StringBuilder nextStringBuilder() {
 		final StringBuilder sb = new StringBuilder();
@@ -275,38 +280,40 @@ public class FastScanner implements AutoCloseable {
 	}
 
 	/**
-	 * 次の1行を読み込みます。（改行文字は読み飛ばされます）
+	 * 次の改行コード ('\r', '\n') または、ストリームの終端に達するまでを {@code String} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ 1 行の String
+	 * @return 読み込んだ {@code String} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final String nextLine() {
 		final StringBuilder sb = new StringBuilder();
 		int b = read();
-		while (b != 0 && b != 10 && b != 13) {
+		while (b != 0 && b != '\n' && b != '\r') {
 			sb.append((char) b);
 			b = read();
 		}
-		// 改行文字を読み飛ばす
-		if (b == 13) {
+		if (b == '\r') {
 			int c = read();
-			if (c != 10) pos--;
+			if (c != '\n') pos--;
 		}
 		return sb.toString();
 	}
 
 	/**
-	 * 次のトークンを {@code BigInteger} として読み込みます。
+	 * 次のトークンを {@code BigInteger} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ {@code BigInteger}
+	 * @return 読み込んだ {@code BigInteger} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final BigInteger nextBigInteger() {
 		return new BigInteger(next());
 	}
 
 	/**
-	 * 次のトークンを {@code BigDecimal} として読み込みます。
+	 * 次のトークンを {@code BigDecimal} として解釈し、その値を返します。
 	 *
-	 * @return 読み込んだ {@code BigDecimal}
+	 * @return 読み込んだ {@code BigDecimal} 値
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public final BigDecimal nextBigDecimal() {
 		return new BigDecimal(next());

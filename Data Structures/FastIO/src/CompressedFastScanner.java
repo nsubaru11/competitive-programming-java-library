@@ -3,7 +3,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.sort;
@@ -56,14 +62,27 @@ public class CompressedFastScanner {
 				}
 				if (bufferLength <= 0) throw new RuntimeException(new EOFException());
 			}
-			return buffer[pos++];
+			return buffer[pos++] & 0xFF;
+		}
+
+		public int peek() {
+			try {
+				int b = skipSpaces();
+				pos--;
+				return b;
+			} catch (RuntimeException e) {
+				return 0;
+			}
+		}
+
+		public boolean hasNext() {
+			return peek() != 0;
 		}
 
 		public int nextInt() {
 			int b = skipSpaces();
 			boolean negative = false;
 			if (b != '-') {
-				// fall through
 			} else {
 				negative = true;
 				b = read();
@@ -80,7 +99,6 @@ public class CompressedFastScanner {
 			int b = skipSpaces();
 			boolean negative = false;
 			if (b != '-') {
-				// fall through
 			} else {
 				negative = true;
 				b = read();
@@ -101,11 +119,12 @@ public class CompressedFastScanner {
 				negative = true;
 				b = read();
 			}
-			double result = 0;
+			long intPart = 0;
 			while ('0' <= b && b <= '9') {
-				result = ((long) result << 3) + ((long) result << 1) + (b & 15);
+				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
 				b = read();
 			}
+			double result = intPart;
 			if (b == '.') {
 				b = read();
 				double scale = 0.1;
@@ -219,7 +238,7 @@ public class CompressedFastScanner {
 
 		public char[][] nextCharMat(final int n) {
 			final char[][] c = new char[n][];
-			for (int i = 0; i < n; i++) c[i] = nextChars(nextInt());
+			for (int i = 0; i < n; i++) c[i] = nextChars();
 			return c;
 		}
 
@@ -349,144 +368,99 @@ public class CompressedFastScanner {
 			return inv;
 		}
 
-		private <T extends Collection<Integer>> T nextIntCollection(int n, final Supplier<T> supplier) {
-			final T collection = supplier.get();
-			while (n-- > 0) collection.add(nextInt());
-			return collection;
-		}
-
 		public ArrayList<Integer> nextIntAL(final int n) {
-			return nextIntCollection(n, () -> new ArrayList<>(n));
+			return nextCollection(n, this::nextInt, () -> new ArrayList<>(n));
 		}
 
 		public HashSet<Integer> nextIntHS(final int n) {
-			return nextIntCollection(n, () -> new HashSet<>(n));
+			return nextCollection(n, this::nextInt, () -> new HashSet<>(n));
 		}
 
 		public TreeSet<Integer> nextIntTS(final int n) {
-			return nextIntCollection(n, TreeSet::new);
-		}
-
-		private <T extends Collection<Long>> T nextLongCollection(int n, final Supplier<T> supplier) {
-			final T collection = supplier.get();
-			while (n-- > 0) collection.add(nextLong());
-			return collection;
+			return nextCollection(n, this::nextInt, TreeSet::new);
 		}
 
 		public ArrayList<Long> nextLongAL(final int n) {
-			return nextLongCollection(n, () -> new ArrayList<>(n));
+			return nextCollection(n, this::nextLong, () -> new ArrayList<>(n));
 		}
 
 		public HashSet<Long> nextLongHS(final int n) {
-			return nextLongCollection(n, () -> new HashSet<>(n));
+			return nextCollection(n, this::nextLong, () -> new HashSet<>(n));
 		}
 
 		public TreeSet<Long> nextLongTS(final int n) {
-			return nextLongCollection(n, TreeSet::new);
-		}
-
-		private <T extends Collection<Character>> T nextCharacterCollection(int n, final Supplier<T> supplier) {
-			final T collection = supplier.get();
-			while (n-- > 0) collection.add(nextChar());
-			return collection;
+			return nextCollection(n, this::nextLong, TreeSet::new);
 		}
 
 		public ArrayList<Character> nextCharacterAL(final int n) {
-			return nextCharacterCollection(n, () -> new ArrayList<>(n));
+			return nextCollection(n, this::nextChar, () -> new ArrayList<>(n));
 		}
 
 		public HashSet<Character> nextCharacterHS(final int n) {
-			return nextCharacterCollection(n, () -> new HashSet<>(n));
+			return nextCollection(n, this::nextChar, () -> new HashSet<>(n));
 		}
 
 		public TreeSet<Character> nextCharacterTS(final int n) {
-			return nextCharacterCollection(n, TreeSet::new);
-		}
-
-		private <T extends Collection<String>> T nextStringCollection(int n, final Supplier<T> supplier) {
-			final T collection = supplier.get();
-			while (n-- > 0) collection.add(next());
-			return collection;
+			return nextCollection(n, this::nextChar, TreeSet::new);
 		}
 
 		public ArrayList<String> nextStringAL(final int n) {
-			return nextStringCollection(n, () -> new ArrayList<>(n));
+			return nextCollection(n, this::next, () -> new ArrayList<>(n));
 		}
 
 		public HashSet<String> nextStringHS(final int n) {
-			return nextStringCollection(n, () -> new HashSet<>(n));
+			return nextCollection(n, this::next, () -> new HashSet<>(n));
 		}
 
 		public TreeSet<String> nextStringTS(final int n) {
-			return nextStringCollection(n, TreeSet::new);
+			return nextCollection(n, this::next, TreeSet::new);
 		}
 
-		private <T extends Map<Integer, Integer>> T nextIntMultiset(int n, final Supplier<T> supplier) {
-			final T multiSet = supplier.get();
-			while (n-- > 0) {
-				final int i = nextInt();
-				multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
-			}
-			return multiSet;
+		private <E, C extends Collection<E>> C nextCollection(int n, final Supplier<E> input, final Supplier<C> collection) {
+			final C c = collection.get();
+			while (n-- > 0) c.add(input.get());
+			return c;
 		}
 
 		public HashMap<Integer, Integer> nextIntMultisetHM(final int n) {
-			return nextIntMultiset(n, () -> new HashMap<>(n));
+			return nextMultiset(n, this::nextInt, () -> new HashMap<>(n));
 		}
 
 		public TreeMap<Integer, Integer> nextIntMultisetTM(final int n) {
-			return nextIntMultiset(n, TreeMap::new);
-		}
-
-		private <T extends Map<Long, Integer>> T nextLongMultiset(int n, final Supplier<T> supplier) {
-			final T multiSet = supplier.get();
-			while (n-- > 0) {
-				final long l = nextLong();
-				multiSet.put(l, multiSet.getOrDefault(l, 0) + 1);
-			}
-			return multiSet;
+			return nextMultiset(n, this::nextInt, TreeMap::new);
 		}
 
 		public HashMap<Long, Integer> nextLongMultisetHM(final int n) {
-			return nextLongMultiset(n, () -> new HashMap<>(n));
+			return nextMultiset(n, this::nextLong, () -> new HashMap<>(n));
 		}
 
 		public TreeMap<Long, Integer> nextLongMultisetTM(final int n) {
-			return nextLongMultiset(n, TreeMap::new);
-		}
-
-		private <T extends Map<Character, Integer>> T nextCharMultiset(int n, final Supplier<T> supplier) {
-			final T multiSet = supplier.get();
-			while (n-- > 0) {
-				final char c = nextChar();
-				multiSet.put(c, multiSet.getOrDefault(c, 0) + 1);
-			}
-			return multiSet;
+			return nextMultiset(n, this::nextLong, TreeMap::new);
 		}
 
 		public HashMap<Character, Integer> nextCharMultisetHM(final int n) {
-			return nextCharMultiset(n, () -> new HashMap<>(n));
+			return nextMultiset(n, this::nextChar, () -> new HashMap<>(n));
 		}
 
 		public TreeMap<Character, Integer> nextCharMultisetTM(final int n) {
-			return nextCharMultiset(n, TreeMap::new);
-		}
-
-		private <T extends Map<String, Integer>> T nextStringMultiset(int n, final Supplier<T> supplier) {
-			final T multiSet = supplier.get();
-			while (n-- > 0) {
-				final String s = next();
-				multiSet.put(s, multiSet.getOrDefault(s, 0) + 1);
-			}
-			return multiSet;
+			return nextMultiset(n, this::nextChar, TreeMap::new);
 		}
 
 		public HashMap<String, Integer> nextStringMultisetHM(final int n) {
-			return nextStringMultiset(n, () -> new HashMap<>(n));
+			return nextMultiset(n, this::next, () -> new HashMap<>(n));
 		}
 
 		public TreeMap<String, Integer> nextStringMultisetTM(final int n) {
-			return nextStringMultiset(n, TreeMap::new);
+			return nextMultiset(n, this::next, TreeMap::new);
+		}
+
+		private <E, T extends Map<E, Integer>> T nextMultiset(int n, final Supplier<E> input, final Supplier<T> map) {
+			final T multiSet = map.get();
+			while (n-- > 0) {
+				final E i = input.get();
+				multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
+			}
+			return multiSet;
 		}
 
 		public int[] nextIntMultiset(final int n, final int m) {

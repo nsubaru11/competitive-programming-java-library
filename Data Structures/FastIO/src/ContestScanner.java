@@ -1,8 +1,13 @@
 import java.io.InputStream;
-import java.util.*;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Supplier;
 
-import static java.util.Arrays.setAll;
 import static java.util.Arrays.sort;
 
 /**
@@ -62,38 +67,41 @@ public final class ContestScanner extends FastScanner {
 	/* ------------------------ 1次元配列入力メソッド ------------------------ */
 
 	/**
-	 * 指定された長さの int 配列を読み込みます。
+	 * 指定された要素数の int 配列を読み込みます。
 	 *
-	 * @param n 配列の長さ
+	 * @param n 読み込む配列の要素数
 	 * @return 読み込んだ int 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextInt(final int n) {
 		final int[] a = new int[n];
-		setAll(a, i -> nextInt());
+		for (int i = 0; i < n; i++) a[i] = nextInt();
 		return a;
 	}
 
 	/**
-	 * 指定された長さの long 配列を読み込みます。
+	 * 指定された要素数の long 配列を読み込みます。
 	 *
-	 * @param n 配列の長さ
+	 * @param n 読み込む配列の要素数
 	 * @return 読み込んだ long 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[] nextLong(final int n) {
 		final long[] a = new long[n];
-		setAll(a, i -> nextLong());
+		for (int i = 0; i < n; i++) a[i] = nextLong();
 		return a;
 	}
 
 	/**
-	 * 指定された長さの double 配列を読み込みます。
+	 * 指定された要素数の double 配列を読み込みます。
 	 *
-	 * @param n 配列の長さ
+	 * @param n 読み込む配列の要素数
 	 * @return 読み込んだ double 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public double[] nextDouble(final int n) {
 		final double[] a = new double[n];
-		setAll(a, i -> nextDouble());
+		for (int i = 0; i < n; i++) a[i] = nextDouble();
 		return a;
 	}
 
@@ -101,16 +109,18 @@ public final class ContestScanner extends FastScanner {
 	 * 次の文字列を char 配列として読み込みます。
 	 *
 	 * @return 読み込んだ char 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[] nextChars() {
 		return next().toCharArray();
 	}
 
 	/**
-	 * 指定された長さの char 配列を読み込みます。
+	 * 指定された要素数の char 配列を読み込みます。
 	 *
-	 * @param n 配列の長さ
+	 * @param n 読み込む配列の要素数
 	 * @return 読み込んだ char 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[] nextChars(final int n) {
 		final char[] c = new char[n];
@@ -119,76 +129,87 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定された長さの String 配列を読み込みます。
+	 * 指定された要素数の String 配列を読み込みます。
 	 *
-	 * @param n 配列の長さ
+	 * @param n 読み込む配列の要素数
 	 * @return 読み込んだ String 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public String[] nextStrings(final int n) {
 		final String[] s = new String[n];
-		setAll(s, i -> next());
+		for (int i = 0; i < n; i++) s[i] = next();
 		return s;
 	}
 
 	/* ------------------------ 2次元配列入力メソッド ------------------------ */
 
 	/**
-	 * 指定された行数・列数の int の2次元配列を読み込みます。
+	 * 指定された行数・列数の int 2次元配列を読み込みます。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 読み込んだ2次元 int 配列
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ int 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[][] nextIntMat(final int h, final int w) {
 		final int[][] a = new int[h][w];
-		for (int i = 0; i < h; i++) setAll(a[i], j -> nextInt());
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextInt();
 		return a;
 	}
 
 	/**
-	 * 指定された行数・列数の long の2次元配列を読み込みます。
+	 * 指定された行数・列数の long 2次元配列を読み込みます。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 読み込んだ2次元 long 配列
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ long 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[][] nextLongMat(final int h, final int w) {
 		final long[][] a = new long[h][w];
-		for (int i = 0; i < h; i++) setAll(a[i], j -> nextLong());
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextLong();
 		return a;
 	}
 
 	/**
-	 * 指定された行数・列数の double の2次元配列を読み込みます。
+	 * 指定された行数・列数の double 2次元配列を読み込みます。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 読み込んだ2次元double 配列
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ double 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public double[][] nextDoubleMat(final int h, final int w) {
 		final double[][] a = new double[h][w];
-		for (int i = 0; i < h; i++) setAll(a[i], j -> nextDouble());
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextDouble();
 		return a;
 	}
 
 	/**
-	 * 複数の文字列を2次元の char 配列として読み込みます。
+	 * 指定された行数の文字列を char 2次元配列として読み込みます。
 	 *
-	 * @param n 行数（文字列の個数）
-	 * @return 読み込んだ2次元 char 配列
+	 * @param n 読み込む配列の行数
+	 * @return 読み込んだ char 2次元配列
 	 */
 	public char[][] nextCharMat(final int n) {
 		final char[][] c = new char[n][];
-		setAll(c, j -> nextChars());
+		for (int i = 0; i < n; i++) c[i] = nextChars();
 		return c;
 	}
 
 	/**
-	 * 指定された行数・列数の char 2次元文字配列を読み込みます。
+	 * 指定された行数・列数の char 2次元配列を読み込みます。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 読み込んだ2次元 char 配列
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ char 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[][] nextCharMat(final int h, final int w) {
 		final char[][] c = new char[h][w];
@@ -199,27 +220,31 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定された行数・列数の String の2次元配列を読み込みます。
+	 * 指定された行数・列数の String 2次元配列を読み込みます。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 読み込んだ2次元 String 配列
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ String 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public String[][] nextStringMat(final int h, final int w) {
 		final String[][] s = new String[h][w];
-		for (int i = 0; i < h; i++) setAll(s[i], j -> next());
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				s[i][j] = next();
 		return s;
 	}
 
 	/* ------------------------ 3次元配列入力メソッド ------------------------ */
 
 	/**
-	 * 指定されたサイズの3次元 int 配列を読み込みます。
+	 * 指定されたサイズの int 3次元配列を読み込みます。
 	 *
-	 * @param x サイズX
-	 * @param y サイズY
-	 * @param z サイズZ
-	 * @return 読み込んだ3次元 int 配列
+	 * @param x 読み込む配列の第1次元のサイズ
+	 * @param y 読み込む配列の第2次元のサイズ
+	 * @param z 読み込む配列の第3次元のサイズ
+	 * @return 読み込んだ int 3次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[][][] nextInt3D(final int x, final int y, final int z) {
 		final int[][][] a = new int[x][y][z];
@@ -231,12 +256,13 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定されたサイズの3次元 long 配列を読み込みます。
+	 * 指定されたサイズの long 3次元配列を読み込みます。
 	 *
-	 * @param x サイズX
-	 * @param y サイズY
-	 * @param z サイズZ
-	 * @return 読み込んだ3次元 long 配列
+	 * @param x 読み込む配列の第1次元のサイズ
+	 * @param y 読み込む配列の第2次元のサイズ
+	 * @param z 読み込む配列の第3次元のサイズ
+	 * @return 読み込んだ long 3次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[][][] nextLong3D(final int x, final int y, final int z) {
 		final long[][][] a = new long[x][y][z];
@@ -250,10 +276,11 @@ public final class ContestScanner extends FastScanner {
 	/* ------------------------ ソート済み1次元配列入力メソッド ------------------------ */
 
 	/**
-	 * 指定された長さの int 配列を読み込み、ソートして返します。
+	 * 指定された要素数の int 配列を読み込み、ソートして返します。
 	 *
-	 * @param n 配列の長さ
-	 * @return ソートされた int 配列
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだソート済み int 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextSortedInt(final int n) {
 		final int[] a = nextInt(n);
@@ -262,10 +289,11 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定された長さの long 配列を読み込み、ソートして返します。
+	 * 指定された要素数の long 配列を読み込み、ソートして返します。
 	 *
-	 * @param n 配列の長さ
-	 * @return ソートされた long 配列
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだソート済み long 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[] nextSortedLong(final int n) {
 		final long[] a = nextLong(n);
@@ -274,10 +302,11 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定された長さの double 配列を読み込み、ソートして返します。
+	 * 指定された要素数の double 配列を読み込み、ソートして返します。
 	 *
-	 * @param n 配列の長さ
-	 * @return ソートされた double 配列
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだソート済み double 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public double[] nextSortedDouble(final int n) {
 		final double[] a = nextDouble(n);
@@ -288,7 +317,8 @@ public final class ContestScanner extends FastScanner {
 	/**
 	 * 次の文字列を char 配列として読み込み、ソートして返します。
 	 *
-	 * @return ソートされた char 配列
+	 * @return 読み込んだソート済み char 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[] nextSortedChars() {
 		final char[] c = nextChars();
@@ -297,10 +327,11 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定された長さの char 配列を読み込み、ソートして返します。
+	 * 指定された要素数の char 配列を読み込み、ソートして返します。
 	 *
-	 * @param n 配列の長さ
-	 * @return ソートされた char 配列
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだソート済み char 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[] nextSortedChars(final int n) {
 		final char[] c = nextChars(n);
@@ -309,10 +340,11 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 指定された長さの String 配列を読み込み、ソートして返します。
+	 * 指定された要素数の String 配列を読み込み、ソートして返します。
 	 *
-	 * @param n 配列の長さ
-	 * @return ソートされた String 配列
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだソート済み String 配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public String[] nextSortedStrings(final int n) {
 		final String[] s = nextStrings(n);
@@ -323,111 +355,120 @@ public final class ContestScanner extends FastScanner {
 	/* ------------------------ 累積和配列入力メソッド ------------------------ */
 
 	/**
-	 * 整数の累積和配列を読み込みます。
+	 * 指定された要素数の int 累積和配列を読み込みます。
+	 * 戻り値の配列サイズは {@code n} となります。
 	 *
-	 * @param n 配列の長さ
-	 * @return 累積和配列(int[])
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだ int 累積和配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextIntPrefixSum(final int n) {
 		final int[] ps = new int[n];
-		setAll(ps, i -> i > 0 ? nextInt() + ps[i - 1] : nextInt());
+		ps[0] = nextInt();
+		for (int i = 1; i < n; i++) ps[i] = nextInt() + ps[i - 1];
 		return ps;
 	}
 
 	/**
-	 * 長整数の累積和配列を読み込みます。
+	 * 指定された要素数の long 累積和配列を読み込みます。
+	 * 戻り値の配列サイズは {@code n} となります。
 	 *
-	 * @param n 配列の長さ
-	 * @return 累積和配列(long[])
+	 * @param n 読み込む配列の要素数
+	 * @return 読み込んだ long 累積和配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[] nextLongPrefixSum(final int n) {
 		final long[] ps = new long[n];
-		setAll(ps, i -> i > 0 ? nextLong() + ps[i - 1] : nextLong());
+		ps[0] = nextLong();
+		for (int i = 1; i < n; i++) ps[i] = nextLong() + ps[i - 1];
 		return ps;
 	}
 
 	/**
-	 * 整数の2次元累積和配列を読み込みます。<br>
-	 * 戻り値の配列サイズは (h+1) x (w+1) となります。
+	 * 指定された行数・列数の int 2次元累積和配列を読み込みます。
+	 * 戻り値の配列サイズは {@code (h + 1) * (w + 1)} となります。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 2次元累積和配列(int[][])
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ int 2次元累積和配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[][] nextIntPrefixSum(final int h, final int w) {
 		final int[][] ps = new int[h + 1][w + 1];
-		for (int i = 1; i <= h; i++) {
-			int j = i;
-			setAll(ps[i], k -> k > 0 ? nextInt() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
-		}
+		for (int i = 1; i <= h; i++)
+			for (int j = 1; j <= w; j++)
+				ps[i][j] = nextInt() + ps[i - 1][j] + ps[i][j - 1] - ps[i - 1][j - 1];
 		return ps;
 	}
 
 	/**
-	 * 長整数の2次元累積和配列を読み込みます。<br>
-	 * 戻り値の配列サイズは (rows+1) x (cols+1) となります。
+	 * 指定された行数・列数の long 2次元累積和配列を読み込みます。
+	 * 戻り値の配列サイズは {@code (h + 1) * (w + 1)} となります。
 	 *
-	 * @param h 行数
-	 * @param w 列数
-	 * @return 2次元累積和配列(long[][])
+	 * @param h 読み込む配列の行数
+	 * @param w 読み込む配列の列数
+	 * @return 読み込んだ long 2次元累積和配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[][] nextLongPrefixSum(final int h, final int w) {
 		final long[][] ps = new long[h + 1][w + 1];
-		for (int i = 1; i <= h; i++) {
-			final int j = i;
-			setAll(ps[i], k -> k > 0 ? nextLong() + ps[j - 1][k] + ps[j][k - 1] - ps[j - 1][k - 1] : 0);
-		}
+		for (int i = 1; i <= h; i++)
+			for (int j = 1; j <= w; j++)
+				ps[i][j] = nextLong() + ps[i - 1][j] + ps[i][j - 1] - ps[i - 1][j - 1];
 		return ps;
 	}
 
 	/**
-	 * 整数の3次元累積和配列を読み込みます。<br>
-	 * 戻り値の配列サイズは (x+1) x (y+1) x (z+1) となります。
+	 * 指定されたサイズの int 3次元累積和配列を読み込みます。
+	 * 戻り値の配列サイズは {@code (x + 1) * (y + 1) * (z + 1)} となります。
 	 *
-	 * @param x サイズ X
-	 * @param y サイズ Y
-	 * @param z サイズ Z
-	 * @return 3次元累積和配列（int[][][]）
+	 * @param x 読み込む配列の第1次元のサイズ
+	 * @param y 読み込む配列の第2次元のサイズ
+	 * @param z 読み込む配列の第3次元のサイズ
+	 * @return 読み込んだ int 3次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[][][] nextIntPrefixSum(final int x, final int y, final int z) {
 		final int[][][] ps = new int[x + 1][y + 1][z + 1];
 		for (int a = 1; a <= x; a++)
-			for (int b = 1; b <= y; b++) {
-				final int A = a, B = b;
-				setAll(ps[A][B], c -> c > 0 ? nextInt() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
-						- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
-			}
+			for (int b = 1; b <= y; b++)
+				for (int c = 1; c <= z; c++)
+					ps[a][b][c] = nextInt() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c]
+							- ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
 		return ps;
 	}
 
 	/**
-	 * 長整数の3次元累積和配列を読み込みます。<br>
-	 * 戻り値の配列サイズは (x+1) x (y+1) x (z+1) となります。
+	 * 指定されたサイズの long 3次元累積和配列を読み込みます。
+	 * 戻り値の配列サイズは {@code (x + 1) * (y + 1) * (z + 1)} となります。
 	 *
-	 * @param x サイズ X
-	 * @param y サイズ Y
-	 * @param z サイズ Z
-	 * @return 3次元累積和配列（long[][][]）
+	 * @param x 読み込む配列の第1次元のサイズ
+	 * @param y 読み込む配列の第2次元のサイズ
+	 * @param z 読み込む配列の第3次元のサイズ
+	 * @return 読み込んだ long 3次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public long[][][] nextLongPrefixSum(final int x, final int y, final int z) {
 		final long[][][] ps = new long[x + 1][y + 1][z + 1];
 		for (int a = 1; a <= x; a++)
-			for (int b = 1; b <= y; b++) {
-				final int A = a, B = b;
-				setAll(ps[A][B], c -> c > 0 ? nextLong() + ps[A - 1][B][c] + ps[A][B - 1][c] + ps[A][B][c - 1]
-						- ps[A - 1][B - 1][c] - ps[A - 1][B][c - 1] - ps[A][B - 1][c - 1] + ps[A - 1][B - 1][c - 1] : 0);
-			}
+			for (int b = 1; b <= y; b++)
+				for (int c = 1; c <= z; c++)
+					ps[a][b][c] = nextLong() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c]
+							- ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
 		return ps;
 	}
 
 	/* ------------------------ 逆写像配列入力メソッド ------------------------ */
 
 	/**
-	 * 入力値が1-indexedの整数に対する逆写像を生成します。<br>
-	 * 例：入力が「3 1 2」の場合、返される配列は {1, 2, 0} となります。
+	 * 1 から n までの整数の順列に対する逆写像配列を生成します。<br>
+	 * （例）n=3 で入力が「3 1 2」の場合、返される配列は {1, 2, 0} となります。<br>
+	 * <strong>注意:</strong> このメソッドは入力が 1 から n までの整数を一度ずつ含む順列であることを前提とします。
 	 *
-	 * @param n 配列の長さ
-	 * @return 各入力値に対して、入力された順序（0-indexed）を格納した逆写像
+	 * @param n 順列の要素数
+	 * @return int 逆写像配列。配列の k-1 番目の要素は、値 k が入力の何番目 (0-indexed) に現れたかを示します。
+	 * @throws RuntimeException               ストリームの終端に達した場合など、読み込みに失敗した場合
+	 * @throws ArrayIndexOutOfBoundsException 入力値が [1, n] の範囲外の場合
 	 */
 	public int[] nextIntInverseMapping(final int n) {
 		final int[] inv = new int[n];
@@ -438,349 +479,281 @@ public final class ContestScanner extends FastScanner {
 	/* ------------------------ Collection<Integer>入力メソッド ------------------------ */
 
 	/**
-	 * 整数を読み込み、指定したコレクションに格納して返します。
+	 * 指定された要素数の {@code ArrayList<Integer>} を読み込みます。
 	 *
-	 * @param <T>      コレクションの型
-	 * @param n        要素数
-	 * @param supplier コレクションのインスタンスを生成するサプライヤ
-	 * @return 読み込んだ整数のコレクション
-	 */
-	private <T extends Collection<Integer>> T nextIntCollection(int n, final Supplier<T> supplier) {
-		final T collection = supplier.get();
-		while (n-- > 0) collection.add(nextInt());
-		return collection;
-	}
-
-	/**
-	 * 指定された長さの整数 ArrayList を読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 読み込んだ ArrayList&lt;Integer&gt;
+	 * @param n 読み込む {@code ArrayList<Integer>} の要素数
+	 * @return 読み込んだ  {@code ArrayList<Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public ArrayList<Integer> nextIntAL(final int n) {
-		return nextIntCollection(n, () -> new ArrayList<>(n));
+		return nextCollection(n, this::nextInt, () -> new ArrayList<>(n));
 	}
 
 	/**
-	 * 指定された長さの整数 HashSet を読み込みます。
+	 * 指定された要素数の {@code HashSet<Integer>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ HashSet&lt;Integer&gt;
+	 * @param n 読み込む {@code HashSet<Integer>} の要素数
+	 * @return 読み込んだ  {@code HashSet<Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public HashSet<Integer> nextIntHS(final int n) {
-		return nextIntCollection(n, () -> new HashSet<>(n));
+		return nextCollection(n, this::nextInt, () -> new HashSet<>(n));
 	}
 
 	/**
-	 * 指定された長さの整数 TreeSet を読み込みます。
+	 * 指定された要素数の {@code TreeSet<Integer>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ TreeSet&lt;Integer&gt;
+	 * @param n 読み込む {@code TreeSet<Integer>} の要素数
+	 * @return 読み込んだ  {@code TreeSet<Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public TreeSet<Integer> nextIntTS(final int n) {
-		return nextIntCollection(n, TreeSet::new);
+		return nextCollection(n, this::nextInt, TreeSet::new);
 	}
 
 	/* ------------------------ Collection<Long>入力メソッド ------------------------ */
 
 	/**
-	 * 長整数を読み込み、指定したコレクションに格納して返します。
+	 * 指定された要素数の {@code ArrayList<Long>} を読み込みます。
 	 *
-	 * @param <T>      コレクションの型
-	 * @param n        要素数
-	 * @param supplier コレクションのインスタンスを生成するサプライヤ
-	 * @return 読み込んだ長整数のコレクション
-	 */
-	private <T extends Collection<Long>> T nextLongCollection(int n, final Supplier<T> supplier) {
-		final T collection = supplier.get();
-		while (n-- > 0) collection.add(nextLong());
-		return collection;
-	}
-
-	/**
-	 * 指定された長さの長整数 ArrayList を読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 読み込んだ ArrayList&lt;Long&gt;
+	 * @param n 読み込む {@code ArrayList<Long>} の要素数
+	 * @return 読み込んだ  {@code ArrayList<Long>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public ArrayList<Long> nextLongAL(final int n) {
-		return nextLongCollection(n, () -> new ArrayList<>(n));
+		return nextCollection(n, this::nextLong, () -> new ArrayList<>(n));
 	}
 
 	/**
-	 * 指定された長さの長整数 HashSet を読み込みます。
+	 * 指定された要素数の {@code HashSet<Long>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ HashSet&lt;Long&gt;
+	 * @param n 読み込む {@code HashSet<Long>} の要素数
+	 * @return 読み込んだ  {@code HashSet<Long>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public HashSet<Long> nextLongHS(final int n) {
-		return nextLongCollection(n, () -> new HashSet<>(n));
+		return nextCollection(n, this::nextLong, () -> new HashSet<>(n));
 	}
 
 	/**
-	 * 指定された長さの長整数 TreeSet を読み込みます。
+	 * 指定された要素数の {@code TreeSet<Long>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ TreeSet&lt;Long&gt;
+	 * @param n 読み込む {@code TreeSet<Long>} の要素数
+	 * @return 読み込んだ  {@code TreeSet<Long>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public TreeSet<Long> nextLongTS(final int n) {
-		return nextLongCollection(n, TreeSet::new);
+		return nextCollection(n, this::nextLong, TreeSet::new);
 	}
 
 	/* ------------------------ Collection<Character>入力メソッド ------------------------ */
 
 	/**
-	 * 文字を読み込み、指定したコレクションに格納して返します。
+	 * 指定された要素数の {@code ArrayList<Character>} を読み込みます。
 	 *
-	 * @param <T>      コレクションの型
-	 * @param n        要素数
-	 * @param supplier コレクションのインスタンスを生成するサプライヤ
-	 * @return 読み込んだ文字のコレクション
-	 */
-	private <T extends Collection<Character>> T nextCharacterCollection(int n, final Supplier<T> supplier) {
-		final T collection = supplier.get();
-		while (n-- > 0) collection.add(nextChar());
-		return collection;
-	}
-
-	/**
-	 * 指定された長さの文字 ArrayList を読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 読み込んだ ArrayList&lt;Character&gt;
+	 * @param n 読み込む {@code ArrayList<Character>} の要素数
+	 * @return 読み込んだ  {@code ArrayList<Character>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public ArrayList<Character> nextCharacterAL(final int n) {
-		return nextCharacterCollection(n, () -> new ArrayList<>(n));
+		return nextCollection(n, this::nextChar, () -> new ArrayList<>(n));
 	}
 
 	/**
-	 * 指定された長さの文字 HashSet を読み込みます。
+	 * 指定された要素数の {@code HashSet<Character>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ HashSet&lt;Character&gt;
+	 * @param n 読み込む {@code HashSet<Character>} の要素数
+	 * @return 読み込んだ  {@code HashSet<Character>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public HashSet<Character> nextCharacterHS(final int n) {
-		return nextCharacterCollection(n, () -> new HashSet<>(n));
+		return nextCollection(n, this::nextChar, () -> new HashSet<>(n));
 	}
 
 	/**
-	 * 指定された長さの文字 TreeSet を読み込みます。
+	 * 指定された要素数の {@code TreeSet<Character>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ TreeSet&lt;Character&gt;
+	 * @param n 読み込む {@code TreeSet<Character>} の要素数
+	 * @return 読み込んだ  {@code TreeSet<Character>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public TreeSet<Character> nextCharacterTS(final int n) {
-		return nextCharacterCollection(n, TreeSet::new);
+		return nextCollection(n, this::nextChar, TreeSet::new);
 	}
 
 	/* ------------------------ Collection<String>入力メソッド ------------------------ */
 
 	/**
-	 * 文字列を読み込み、指定したコレクションに格納して返します。
+	 * 指定された要素数の {@code ArrayList<String>} を読み込みます。
 	 *
-	 * @param <T>      コレクションの型
-	 * @param n        要素数
-	 * @param supplier コレクションのインスタンスを生成するサプライヤ
-	 * @return 読み込んだ文字列のコレクション
-	 */
-	private <T extends Collection<String>> T nextStringCollection(int n, final Supplier<T> supplier) {
-		final T collection = supplier.get();
-		while (n-- > 0) collection.add(next());
-		return collection;
-	}
-
-	/**
-	 * 指定された長さの文字列 ArrayList を読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 読み込んだ ArrayList&lt;String&gt;
+	 * @param n 読み込む {@code ArrayList<String>} の要素数
+	 * @return 読み込んだ  {@code ArrayList<String>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public ArrayList<String> nextStringAL(final int n) {
-		return nextStringCollection(n, () -> new ArrayList<>(n));
+		return nextCollection(n, this::next, () -> new ArrayList<>(n));
 	}
 
 	/**
-	 * 指定された長さの文字列 HashSet を読み込みます。
+	 * 指定された要素数の {@code HashSet<String>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ HashSet&lt;String&gt;
+	 * @param n 読み込む {@code HashSet<String>} の要素数
+	 * @return 読み込んだ  {@code HashSet<String>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public HashSet<String> nextStringHS(final int n) {
-		return nextStringCollection(n, () -> new HashSet<>(n));
+		return nextCollection(n, this::next, () -> new HashSet<>(n));
 	}
 
 	/**
-	 * 指定された長さの文字列 TreeSet を読み込みます。
+	 * 指定された要素数の {@code TreeSet<String>} を読み込みます。
 	 *
-	 * @param n 要素数
-	 * @return 読み込んだ TreeSet&lt;String&gt;
+	 * @param n 読み込む {@code TreeSet<String>} の要素数
+	 * @return 読み込んだ  {@code TreeSet<String>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public TreeSet<String> nextStringTS(final int n) {
-		return nextStringCollection(n, TreeSet::new);
+		return nextCollection(n, this::next, TreeSet::new);
+	}
+
+	/* ------------------------ Collection 入力ヘルパーメソッド ------------------------ */
+
+	/**
+	 * 指定された要素数の {@code Collection<E>} を読み込みます。
+	 *
+	 * @param <E>        要素の型
+	 * @param <C>        コレクションの型
+	 * @param n          読み込む {@code Collection<E>} の要素数
+	 * @param input      要素を1つ読み込むためのサプライヤ (例: this::nextInt)
+	 * @param collection コレクションのインスタンスを生成するサプライヤ
+	 * @return 読み込んだ要素のコレクション
+	 */
+	private <E, C extends Collection<E>> C nextCollection(int n, final Supplier<E> input, final Supplier<C> collection) {
+		final C c = collection.get();
+		while (n-- > 0) c.add(input.get());
+		return c;
 	}
 
 	/* ------------------------ Multiset (Map) 入力メソッド ------------------------ */
 
 	/**
-	 * 整数の出現回数をカウントしたマルチセットを読み込みます。<br>
-	 * キーが整数、値が出現回数となるマップを返します。
+	 * int の出現回数をカウントし、{@code HashMap<Integer, Integer>} として返します。
 	 *
-	 * @param <T>      マップの型
-	 * @param n        要素数
-	 * @param supplier マップのインスタンスを生成するサプライヤ
-	 * @return 整数のマルチセット（マップ）
+	 * @param n 要素数
+	 * @return int の出現回数を格納した {@code HashMap<Integer, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
-	private <T extends Map<Integer, Integer>> T nextIntMultiset(int n, final Supplier<T> supplier) {
-		final T multiSet = supplier.get();
+	public HashMap<Integer, Integer> nextIntMultisetHM(final int n) {
+		return nextMultiset(n, this::nextInt, () -> new HashMap<>(n));
+	}
+
+	/**
+	 * int の出現回数をカウントし、{@code TreeMap<Integer, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return int の出現回数を格納した {@code TreeMap<Integer, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public TreeMap<Integer, Integer> nextIntMultisetTM(final int n) {
+		return nextMultiset(n, this::nextInt, TreeMap::new);
+	}
+
+	/**
+	 * long の出現回数をカウントし、{@code HashMap<Long, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return long の出現回数を格納した {@code HashMap<Long, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public HashMap<Long, Integer> nextLongMultisetHM(final int n) {
+		return nextMultiset(n, this::nextLong, () -> new HashMap<>(n));
+	}
+
+	/**
+	 * long の出現回数をカウントし、{@code TreeMap<Long, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return long の出現回数を格納した {@code TreeMap<Long, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public TreeMap<Long, Integer> nextLongMultisetTM(final int n) {
+		return nextMultiset(n, this::nextLong, TreeMap::new);
+	}
+
+	/**
+	 * char の出現回数をカウントし、{@code HashMap<Character, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return char の出現回数を格納した {@code HashMap<Character, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public HashMap<Character, Integer> nextCharMultisetHM(final int n) {
+		return nextMultiset(n, this::nextChar, () -> new HashMap<>(n));
+	}
+
+	/**
+	 * char の出現回数をカウントし、{@code TreeMap<Character, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return char の出現回数を格納した {@code TreeMap<Character, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public TreeMap<Character, Integer> nextCharMultisetTM(final int n) {
+		return nextMultiset(n, this::nextChar, TreeMap::new);
+	}
+
+	/**
+	 * String の出現回数をカウントし、{@code HashMap<String, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return String の出現回数を格納した {@code HashMap<String, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public HashMap<String, Integer> nextStringMultisetHM(final int n) {
+		return nextMultiset(n, this::next, () -> new HashMap<>(n));
+	}
+
+	/**
+	 * String の出現回数をカウントし、{@code TreeMap<String, Integer>} として返します。
+	 *
+	 * @param n 要素数
+	 * @return String の出現回数を格納した {@code TreeMap<String, Integer>}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	public TreeMap<String, Integer> nextStringMultisetTM(final int n) {
+		return nextMultiset(n, this::next, TreeMap::new);
+	}
+
+	/* ------------------------ MultiSet 入力ヘルパーメソッド ------------------------ */
+
+	/**
+	 * 指定した型の要素の出現回数をカウントしたマルチセットを読み込みます。
+	 *
+	 * @param <E> 要素の型
+	 * @param <T> マップの型
+	 * @param n   要素数
+	 * @param map マップのインスタンスを生成するサプライヤ
+	 * @return 整数のマルチセット（マップ）
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
+	 */
+	private <E, T extends Map<E, Integer>> T nextMultiset(int n, final Supplier<E> input, final Supplier<T> map) {
+		final T multiSet = map.get();
 		while (n-- > 0) {
-			final int i = nextInt();
+			final E i = input.get();
 			multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
 		}
 		return multiSet;
 	}
 
-	/**
-	 * 整数のマルチセットを HashMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 整数のマルチセット（HashMap）
-	 */
-	public HashMap<Integer, Integer> nextIntMultisetHM(final int n) {
-		return nextIntMultiset(n, () -> new HashMap<>(n));
-	}
-
-	/**
-	 * 整数のマルチセットを TreeMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 整数のマルチセット（TreeMap）
-	 */
-	public TreeMap<Integer, Integer> nextIntMultisetTM(final int n) {
-		return nextIntMultiset(n, TreeMap::new);
-	}
-
-	/**
-	 * 長整数の出現回数をカウントしたマルチセットを読み込みます。<br>
-	 * キーが長整数、値が出現回数となるマップを返します。
-	 *
-	 * @param <T>      マップの型
-	 * @param n        要素数
-	 * @param supplier マップのインスタンスを生成するサプライヤ
-	 * @return 長整数のマルチセット（マップ）
-	 */
-	private <T extends Map<Long, Integer>> T nextLongMultiset(int n, final Supplier<T> supplier) {
-		final T multiSet = supplier.get();
-		while (n-- > 0) {
-			final long l = nextLong();
-			multiSet.put(l, multiSet.getOrDefault(l, 0) + 1);
-		}
-		return multiSet;
-	}
-
-	/**
-	 * 長整数のマルチセットを HashMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 長整数のマルチセット（HashMap）
-	 */
-	public HashMap<Long, Integer> nextLongMultisetHM(final int n) {
-		return nextLongMultiset(n, () -> new HashMap<>(n));
-	}
-
-	/**
-	 * 長整数のマルチセットを TreeMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 長整数のマルチセット（TreeMap）
-	 */
-	public TreeMap<Long, Integer> nextLongMultisetTM(final int n) {
-		return nextLongMultiset(n, TreeMap::new);
-	}
-
-	/**
-	 * 文字の出現回数をカウントしたマルチセットを読み込みます。<br>
-	 * キーが文字、値が出現回数となるマップを返します。
-	 *
-	 * @param <T>      マップの型
-	 * @param n        要素数
-	 * @param supplier マップのインスタンスを生成するサプライヤ
-	 * @return 文字のマルチセット（マップ）
-	 */
-	private <T extends Map<Character, Integer>> T nextCharMultiset(int n, final Supplier<T> supplier) {
-		final T multiSet = supplier.get();
-		while (n-- > 0) {
-			final char c = nextChar();
-			multiSet.put(c, multiSet.getOrDefault(c, 0) + 1);
-		}
-		return multiSet;
-	}
-
-	/**
-	 * 文字のマルチセットを HashMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 文字のマルチセット（HashMap）
-	 */
-	public HashMap<Character, Integer> nextCharMultisetHM(final int n) {
-		return nextCharMultiset(n, () -> new HashMap<>(n));
-	}
-
-	/**
-	 * 文字のマルチセットを TreeMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 文字のマルチセット（TreeMap）
-	 */
-	public TreeMap<Character, Integer> nextCharMultisetTM(final int n) {
-		return nextCharMultiset(n, TreeMap::new);
-	}
-
-	/**
-	 * 文字列の出現回数をカウントしたマルチセットを読み込みます。<br>
-	 * キーが文字列、値が出現回数となるマップを返します。
-	 *
-	 * @param <T>      マップの型
-	 * @param n        要素数
-	 * @param supplier マップのインスタンスを生成するサプライヤ
-	 * @return 文字列のマルチセット（マップ）
-	 */
-	private <T extends Map<String, Integer>> T nextStringMultiset(int n, final Supplier<T> supplier) {
-		final T multiSet = supplier.get();
-		while (n-- > 0) {
-			final String s = next();
-			multiSet.put(s, multiSet.getOrDefault(s, 0) + 1);
-		}
-		return multiSet;
-	}
-
-	/**
-	 * 文字列のマルチセットを HashMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 文字列のマルチセット（HashMap）
-	 */
-	public HashMap<String, Integer> nextStringMultisetHM(final int n) {
-		return nextStringMultiset(n, () -> new HashMap<>(n));
-	}
-
-	/**
-	 * 文字列のマルチセットを TreeMap で読み込みます。
-	 *
-	 * @param n 要素数
-	 * @return 文字列のマルチセット（TreeMap）
-	 */
-	public TreeMap<String, Integer> nextStringMultisetTM(final int n) {
-		return nextStringMultiset(n, TreeMap::new);
-	}
-
 	/* ------------------------ Multiset (配列) 入力メソッド ------------------------ */
 
 	/**
-	 * 整数のマルチセットを int[] で読み込みます。
+	 * int の出現回数をカウントし、{@code int[]} として返します。
+	 * <strong>注意:</strong> このメソッドは入力値が 1-indexed で、かつ [1, m] の範囲内であることを前提とします。
 	 *
 	 * @param n 要素数
-	 * @param m 要素の最大値
-	 * @return 整数のマルチセット（int[]）
+	 * @return int の出現回数を格納した {@code int[]}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextIntMultiset(final int n, final int m) {
 		final int[] multiset = new int[m];
@@ -789,32 +762,36 @@ public final class ContestScanner extends FastScanner {
 	}
 
 	/**
-	 * 大文字のマルチセットを char[] で読み込みます。
+	 * 大文字 char の出現回数をカウントし、{@code int[]} として返します。
+	 * <strong>注意:</strong> このメソッドは入力値が 大文字 であることを前提とします。
 	 *
 	 * @param n 要素数
-	 * @return 整数のマルチセット（char[]）
+	 * @return 大文字 char の出現回数を格納した {@code int[]}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextUpperCharMultiset(final int n) {
 		return nextCharMultiset(n, 'A', 'Z');
 	}
 
 	/**
-	 * 小文字のマルチセットを char[] で読み込みます。
+	 * 小文字 char の出現回数をカウントし、{@code int[]} として返します。
+	 * <strong>注意:</strong> このメソッドは入力値が 小文字 であることを前提とします。
 	 *
 	 * @param n 要素数
-	 * @return 整数のマルチセット（char[]）
+	 * @return 小文字 char の出現回数を格納した {@code int[]}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextLowerCharMultiset(final int n) {
 		return nextCharMultiset(n, 'a', 'z');
 	}
 
 	/**
-	 * 連続する文字のマルチセットを char[] で読み込みます。
+	 * 指定した範囲の char の出現回数をカウントし、{@code int[]} として返します。
+	 * <strong>注意:</strong> このメソッドは入力値が [l, r] の範囲内であることを前提とします。
 	 *
 	 * @param n 要素数
-	 * @param l 最小文字
-	 * @param r 最大文字
-	 * @return 整数のマルチセット（char[]）
+	 * @return 指定した範囲の char の出現回数を格納した {@code int[]}
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public int[] nextCharMultiset(int n, final char l, final char r) {
 		final int[] multiset = new int[r - l + 1];
