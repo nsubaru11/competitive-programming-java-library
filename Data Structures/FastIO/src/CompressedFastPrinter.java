@@ -2,14 +2,21 @@ import sun.misc.Unsafe;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Iterator;
+import java.lang.reflect.Field;
 import java.util.Locale;
-import java.util.function.*;
+import java.util.Iterator;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
+import java.util.function.DoubleFunction;
+import java.util.function.IntUnaryOperator;
 
-import static java.lang.Math.*;
+
+import static java.lang.Math.min;
+import static java.lang.Math.round;
+import static java.lang.Math.max;
 
 @SuppressWarnings("unused")
 // FastPrinterとContestPrinterを統合し、コメントを削除した圧縮版のクラスです。

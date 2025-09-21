@@ -1,11 +1,15 @@
+import sun.misc.Unsafe;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
-import static java.lang.Math.max;
+
 import static java.lang.Math.min;
+import static java.lang.Math.max;
 
 /**
  * 競技プログラミング向けの高速出力クラスです。<br>
@@ -29,6 +33,16 @@ public class FastPrinter implements AutoCloseable {
 	 * 例: Long.MIN_VALUE は "-9223372036854775808"（20バイト）
 	 */
 	protected static final int MAX_LONG_DIGITS = 20;
+
+	/**
+	 * 10のべき乗の配列です。POW10[i] は 10^i を表します。
+	 */
+	protected static final long[] POW10 = {
+			1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
+			1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
+			10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
+			10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
+	};
 
 	/**
 	 * 出力用内部バッファのデフォルトサイズ（バイト単位）<br>
@@ -68,6 +82,46 @@ public class FastPrinter implements AutoCloseable {
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	};
 
+	/**
+	 * true は "Yes"、 false は "No" の配列です。
+	 */
+	private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
+
+	/**
+	 * true は "Yes"、 false は "No" の配列です。
+	 */
+	private static final byte[] FALSE_BYTES = {'N', 'o'};
+
+	/**
+	 * Unsafe を用いて、バイト配列の内容を直接書き換えるためのユーティリティメソッドです。
+	 */
+	private static final Unsafe UNSAFE;
+
+	/**
+	 * String の value フィールドのオフセット値です。
+	 */
+	private static final long STRING_VALUE_OFFSET;
+
+	/**
+	 * AbstractStringBuilder の value フィールドのオフセット値です。
+	 */
+	private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
+
+	/* ------------------------ 初期化処理 ------------------------ */
+
+	static {
+		try {
+			Field f = Unsafe.class.getDeclaredField("theUnsafe");
+			f.setAccessible(true);
+			UNSAFE = (Unsafe) f.get(null);
+			STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
+			Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
+			ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
+		} catch (Exception e) {
+			throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
+		}
+	}
+
 
 	/* ------------------------ インスタンス変数 ------------------------ */
 
@@ -81,6 +135,11 @@ public class FastPrinter implements AutoCloseable {
 	 * true の場合、各出力操作後に自動的に {@link #flush()} が呼ばれます。
 	 */
 	protected final boolean autoFlush;
+
+	/**
+	 * 内部バッファの容量です。64 バイト未満の場合は 64 バイトに調整されます。
+	 */
+	protected final int BUFFER_SIZE;
 
 	/**
 	 * 出力先の OutputStream です。デフォルトは {@code System.out} です。
@@ -179,7 +238,8 @@ public class FastPrinter implements AutoCloseable {
 	 */
 	public FastPrinter(final OutputStream out, final int bufferSize, final boolean autoFlush) {
 		this.out = out;
-		buffer = new byte[max(bufferSize, 64)];
+		this.BUFFER_SIZE = max(bufferSize, 64);
+		this.buffer = new byte[BUFFER_SIZE];
 		this.autoFlush = autoFlush;
 	}
 
@@ -194,8 +254,7 @@ public class FastPrinter implements AutoCloseable {
 	@Override
 	public void close() throws IOException {
 		flush();
-		if (out != System.out)
-			out.close();
+		if (out != System.out) out.close();
 	}
 
 	/**
@@ -203,8 +262,7 @@ public class FastPrinter implements AutoCloseable {
 	 */
 	public void flush() {
 		try {
-			if (pos > 0)
-				out.write(buffer, 0, pos);
+			if (pos > 0) out.write(buffer, 0, pos);
 			out.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -217,10 +275,11 @@ public class FastPrinter implements AutoCloseable {
 	/**
 	 * 改行のみ出力します。
 	 */
-	public final void println() {
+	public final FastPrinter println() {
 		ensureBufferSpace(1);
 		buffer[pos++] = '\n';
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -228,11 +287,12 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param i 出力する int 値
 	 */
-	public final void println(final int i) {
+	public final FastPrinter println(final int i) {
 		ensureBufferSpace(MAX_INT_DIGITS + 1);
 		fillBuffer(i);
 		buffer[pos++] = '\n';
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -240,11 +300,12 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param l 出力する long 値
 	 */
-	public final void println(final long l) {
+	public final FastPrinter println(final long l) {
 		ensureBufferSpace(MAX_LONG_DIGITS + 1);
 		fillBuffer(l);
 		buffer[pos++] = '\n';
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -252,11 +313,8 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param d 出力する double 値
 	 */
-	public final void println(final double d) {
-		fillBuffer(Double.toString(d));
-		ensureBufferSpace(1);
-		buffer[pos++] = '\n';
-		if (autoFlush) flush();
+	public final FastPrinter println(final double d) {
+		return println(Double.toString(d));
 	}
 
 	/**
@@ -264,11 +322,12 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param c 出力する char 値
 	 */
-	public final void println(final char c) {
+	public final FastPrinter println(final char c) {
 		ensureBufferSpace(2);
 		buffer[pos++] = (byte) c;
 		buffer[pos++] = '\n';
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -276,11 +335,12 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param b 出力する boolean 値
 	 */
-	public final void println(final boolean b) {
+	public final FastPrinter println(final boolean b) {
 		ensureBufferSpace(4);
 		fillBuffer(b);
 		buffer[pos++] = '\n';
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -288,11 +348,28 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param s 出力する String 値
 	 */
-	public final void println(final String s) {
-		fillBuffer(s);
+	public final FastPrinter println(final String s) {
+		final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
+		fillBuffer(src, s.length());
 		ensureBufferSpace(1);
 		buffer[pos++] = '\n';
 		if (autoFlush) flush();
+		return this;
+	}
+
+	/**
+	 * StringBuilder を出力します。（改行付き）
+	 *
+	 * @param s 出力する StringBuilder 値
+	 */
+	public FastPrinter println(final StringBuilder s) {
+		final byte[] src = (byte[]) UNSAFE.getObject(s, ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
+		final int len = s.length();
+		fillBuffer(src, len);
+		ensureBufferSpace(1);
+		buffer[pos++] = '\n';
+		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -302,22 +379,22 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param o 出力するオブジェクト
 	 */
-	public void println(final Object o) {
-		if (o == null) return;
+	public FastPrinter println(final Object o) {
+		if (o == null) return this;
 		if (o instanceof String s) {
-			println(s);
+			return println(s);
 		} else if (o instanceof Long l) {
-			println(l.longValue());
+			return println(l.longValue());
 		} else if (o instanceof Integer i) {
-			println(i.intValue());
+			return println(i.intValue());
 		} else if (o instanceof Double d) {
-			println(d.toString());
+			return println(d.toString());
 		} else if (o instanceof Boolean b) {
-			println(b.booleanValue());
+			return println(b.booleanValue());
 		} else if (o instanceof Character c) {
-			println(c.charValue());
+			return println(c.charValue());
 		} else {
-			println(o.toString());
+			return println(o.toString());
 		}
 	}
 
@@ -326,8 +403,8 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param bi 出力するオブジェクト
 	 */
-	public final void println(final BigInteger bi) {
-		println(bi.toString());
+	public final FastPrinter println(final BigInteger bi) {
+		return println(bi.toString());
 	}
 
 	/**
@@ -335,8 +412,8 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param bd 出力するオブジェクト
 	 */
-	public final void println(final BigDecimal bd) {
-		println(bd.toString());
+	public final FastPrinter println(final BigDecimal bd) {
+		return println(bd.toString());
 	}
 
 	/* ------------------------ print() 系メソッド ------------------------ */
@@ -346,10 +423,11 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param i 出力する int 値
 	 */
-	public final void print(final int i) {
+	public final FastPrinter print(final int i) {
 		ensureBufferSpace(MAX_INT_DIGITS);
 		fillBuffer(i);
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -357,10 +435,11 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param l 出力する long 値
 	 */
-	public final void print(final long l) {
+	public final FastPrinter print(final long l) {
 		ensureBufferSpace(MAX_LONG_DIGITS);
 		fillBuffer(l);
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -368,8 +447,8 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param d 出力する double 値
 	 */
-	public final void print(final double d) {
-		print(Double.toString(d));
+	public final FastPrinter print(final double d) {
+		return print(Double.toString(d));
 	}
 
 	/**
@@ -377,10 +456,11 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param c 出力する char 値
 	 */
-	public final void print(final char c) {
+	public final FastPrinter print(final char c) {
 		ensureBufferSpace(1);
 		buffer[pos++] = (byte) c;
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -388,10 +468,11 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param b 出力する boolean 値
 	 */
-	public final void print(final boolean b) {
+	public final FastPrinter print(final boolean b) {
 		ensureBufferSpace(3);
 		fillBuffer(b);
 		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -399,9 +480,24 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param s 出力する String 値
 	 */
-	public final void print(final String s) {
-		fillBuffer(s);
+	public final FastPrinter print(final String s) {
+		final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
+		fillBuffer(src, s.length());
 		if (autoFlush) flush();
+		return this;
+	}
+
+	/**
+	 * StringBuilder を出力します。（改行無し）
+	 *
+	 * @param s 出力する StringBuilder 値
+	 */
+	public FastPrinter print(final StringBuilder s) {
+		final byte[] src = (byte[]) UNSAFE.getObject(s, ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
+		final int len = s.length();
+		fillBuffer(src, len);
+		if (autoFlush) flush();
+		return this;
 	}
 
 	/**
@@ -411,22 +507,22 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param o 出力するオブジェクト
 	 */
-	public void print(final Object o) {
-		if (o == null) return;
+	public FastPrinter print(final Object o) {
+		if (o == null) return this;
 		if (o instanceof String s) {
-			print(s);
+			return print(s);
 		} else if (o instanceof Long l) {
-			print(l.longValue());
+			return print(l.longValue());
 		} else if (o instanceof Integer i) {
-			print(i.intValue());
+			return print(i.intValue());
 		} else if (o instanceof Double d) {
-			print(d.toString());
+			return print(d.toString());
 		} else if (o instanceof Boolean b) {
-			print(b.booleanValue());
+			return print(b.booleanValue());
 		} else if (o instanceof Character c) {
-			print(c.charValue());
+			return print(c.charValue());
 		} else {
-			print(o.toString());
+			return print(o.toString());
 		}
 	}
 
@@ -435,8 +531,8 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param bi 出力するオブジェクト
 	 */
-	public final void print(final BigInteger bi) {
-		print(bi.toString());
+	public final FastPrinter print(final BigInteger bi) {
+		return print(bi.toString());
 	}
 
 	/**
@@ -444,8 +540,8 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param bd 出力するオブジェクト
 	 */
-	public final void print(final BigDecimal bd) {
-		print(bd.toString());
+	public final FastPrinter print(final BigDecimal bd) {
+		return print(bd.toString());
 	}
 
 	/* ------------------------ printf() 系メソッド ------------------------ */
@@ -456,8 +552,8 @@ public class FastPrinter implements AutoCloseable {
 	 * @param format 書式文字列
 	 * @param args   書式引数
 	 */
-	public final void printf(final String format, final Object... args) {
-		print(String.format(format, args));
+	public final FastPrinter printf(final String format, final Object... args) {
+		return print(String.format(format, args));
 	}
 
 	/**
@@ -467,8 +563,8 @@ public class FastPrinter implements AutoCloseable {
 	 * @param format 書式文字列
 	 * @param args   書式引数
 	 */
-	public final void printf(final Locale locale, final String format, final Object... args) {
-		print(String.format(locale, format, args));
+	public final FastPrinter printf(final Locale locale, final String format, final Object... args) {
+		return print(String.format(locale, format, args));
 	}
 
 	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
@@ -493,17 +589,16 @@ public class FastPrinter implements AutoCloseable {
 	/**
 	 * 指定された文字列をバッファに格納します。
 	 *
-	 * @param s 出力する文字列
+	 * @param src 出力するbyte列
+	 * @param len 出力するバイト数
 	 */
-	protected final void fillBuffer(final String s) {
-		if (s == null) return;
-		final int len = s.length();
+	protected void fillBuffer(final byte[] src, final int len) {
 		for (int i = 0; i < len; ) {
 			ensureBufferSpace(1);
-			int limit = min(buffer.length - pos, len - i);
-			while (limit-- > 0) {
-				buffer[pos++] = (byte) s.charAt(i++);
-			}
+			int limit = min(BUFFER_SIZE - pos, len - i);
+			System.arraycopy(src, i, buffer, pos, limit);
+			pos += limit;
+			i += limit;
 		}
 	}
 
@@ -514,13 +609,38 @@ public class FastPrinter implements AutoCloseable {
 	 */
 	protected final void fillBuffer(final boolean b) {
 		if (b) {
-			buffer[pos++] = 'Y';
-			buffer[pos++] = 'e';
-			buffer[pos++] = 's';
+			System.arraycopy(TRUE_BYTES, 0, buffer, pos, 3);
+			pos += 3;
 		} else {
-			buffer[pos++] = 'N';
-			buffer[pos++] = 'o';
+			System.arraycopy(FALSE_BYTES, 0, buffer, pos, 2);
+			pos += 2;
 		}
+	}
+
+	/**
+	 * 指定された整数値を文字列に変換してバッファに格納します。<br>
+	 * 負の値の場合は先頭に '-' を付加します。
+	 *
+	 * @param i 出力する整数値
+	 */
+	protected void fillBuffer(int i) {
+		if (i >= 0) i = -i;
+		else buffer[pos++] = '-';
+		int quotient, remainder;
+		final int numOfDigits = countDigits(i);
+		int writePos = pos + numOfDigits;
+		while (i <= -100) {
+			quotient = i / 100;
+			remainder = (quotient << 6) + (quotient << 5) + (quotient << 2) - i;
+			buffer[--writePos] = DigitOnes[remainder];
+			buffer[--writePos] = DigitTens[remainder];
+			i = quotient;
+		}
+		quotient = i / 10;
+		remainder = (quotient << 3) + (quotient << 1) - i;
+		buffer[--writePos] = (byte) ('0' + remainder);
+		if (quotient < 0) buffer[--writePos] = (byte) ('0' - quotient);
+		pos += numOfDigits;
 	}
 
 	/**
@@ -530,29 +650,49 @@ public class FastPrinter implements AutoCloseable {
 	 * @param l 出力する整数値
 	 */
 	protected void fillBuffer(long l) {
-		if (l < 0) {
-			buffer[pos++] = '-';
-		} else {
-			l = -l;
-		}
+		if (l >= 0) l = -l;
+		else buffer[pos++] = '-';
 		long quotient;
 		int remainder;
 		final int numOfDigits = countDigits(l);
 		int writePos = pos + numOfDigits;
 		while (l <= -100) {
 			quotient = l / 100;
-			remainder = (int) (quotient * 100 - l);
+			remainder = (int) ((quotient << 6) + (quotient << 5) + (quotient << 2) - l);
 			buffer[--writePos] = DigitOnes[remainder];
 			buffer[--writePos] = DigitTens[remainder];
 			l = quotient;
 		}
 		quotient = l / 10;
-		remainder = (int) (quotient * 10 - l);
+		remainder = (int) ((quotient << 3) + (quotient << 1) - l);
 		buffer[--writePos] = (byte) ('0' + remainder);
-		if (quotient < 0) {
-			buffer[--writePos] = (byte) ('0' - quotient);
-		}
+		if (quotient < 0) buffer[--writePos] = (byte) ('0' - quotient);
 		pos += numOfDigits;
+	}
+
+	/**
+	 * 指定された整数値の桁数を数えます。
+	 * 与えられる数値は負の整数であることを前提とした実装です。
+	 *
+	 * @param i 整数
+	 * @return 桁数
+	 */
+	protected int countDigits(int i) {
+		if (i > -100000) {
+			if (i > -100) {
+				return i > -10 ? 1 : 2;
+			} else {
+				if (i > -10000) return i > -1000 ? 3 : 4;
+				else return 5;
+			}
+		} else {
+			if (i > -10000000) {
+				return i > -1000000 ? 6 : 7;
+			} else {
+				if (i > -1000000000) return i > -100000000 ? 8 : 9;
+				else return 10;
+			}
+		}
 	}
 
 	/**
@@ -562,26 +702,39 @@ public class FastPrinter implements AutoCloseable {
 	 * @param l 整数
 	 * @return 桁数
 	 */
-	private int countDigits(final long l) {
-		if (l > -10) return 1;
-		if (l > -100) return 2;
-		if (l > -1000) return 3;
-		if (l > -10000) return 4;
-		if (l > -100000) return 5;
-		if (l > -1000000) return 6;
-		if (l > -10000000) return 7;
-		if (l > -100000000) return 8;
-		if (l > -1000000000) return 9;
-		if (l > -10000000000L) return 10;
-		if (l > -100000000000L) return 11;
-		if (l > -1000000000000L) return 12;
-		if (l > -10000000000000L) return 13;
-		if (l > -100000000000000L) return 14;
-		if (l > -1000000000000000L) return 15;
-		if (l > -10000000000000000L) return 16;
-		if (l > -100000000000000000L) return 17;
-		if (l > -1000000000000000000L) return 18;
-		return 19;
+	protected int countDigits(long l) {
+		if (l > -1000000000) {
+			if (l > -10000) {
+				if (l > -100) {
+					return l > -10 ? 1 : 2;
+				} else {
+					return l > -1000 ? 3 : 4;
+				}
+			} else {
+				if (l > -1000000) {
+					return l > -100000 ? 5 : 6;
+				} else {
+					if (l > -100000000) return l > -10000000 ? 7 : 8;
+					else return 9;
+				}
+			}
+		} else {
+			if (l > -10000000000000L) {
+				if (l > -100000000000L) {
+					return l > -10000000000L ? 10 : 11;
+				} else {
+					return l > -1000000000000L ? 12 : 13;
+				}
+			} else {
+				if (l > -10000000000000000L) {
+					if (l > -1000000000000000L) return l > -100000000000000L ? 14 : 15;
+					else return 16;
+				} else {
+					if (l > -1000000000000000000L) return l > -100000000000000000L ? 17 : 18;
+					else return 19;
+				}
+			}
+		}
 	}
 
 }
