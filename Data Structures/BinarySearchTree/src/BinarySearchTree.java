@@ -242,8 +242,8 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 				if (left == null) return right;
 				if (right == null) return left;
 				Node temp = left.extractMax();
-				temp.left = left;
-				temp.right = right;
+				temp.setLeft(left);
+				temp.setRight(right);
 				temp.updateNode();
 				return temp;
 			}
