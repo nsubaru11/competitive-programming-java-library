@@ -30,7 +30,7 @@
 	- FastScanner, ContestScanner, CompressedFastScanner
 	- FastPrinter, ContestPrinter, CompressedFastPrinter
 - 平衡二分探索木（BinarySearchTree/src）
-	- AVLMultiSet, AVLSet, IntAVLMultiSet など
+	- AVLMultiset, AVLSet, IntAVLMultiset など
 
 ## 2. ビルド・実行（標準 Java のみ）
 
@@ -74,7 +74,7 @@ Junie が修正を行う場合は、最低限の再現用 `Main.java` を一時�
 	- 高速入力: FastScanner, ContestScanner, CompressedFastScanner
 	- 高速出力: FastPrinter, ContestPrinter, CompressedFastPrinter
 - 平衡 BST 系
-	- AVLSet／AVLSet／IntAVLMultiSet 等（順序統計・重複管理・rank/選択が可能）
+	- AVLSet／AVLSet／IntAVLMultiset 等（順序統計・重複管理・rank/選択が可能）
 - その他データ構造
 	- Fenwick Tree, Segment Tree, Sparse Table, Union-Find, Trie など
 - アルゴリズム集

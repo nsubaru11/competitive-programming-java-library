@@ -13,15 +13,15 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 @SuppressWarnings("unused")
-public final class LongAVLMultiSet implements Iterable<Long> {
+public final class IntAVLMultiset implements Iterable<Integer> {
 	// -------------- Fields --------------
 	private Node root;
-	private long first, last;
+	private int first, last;
 	private long size;
 	private int uniqueSize;
 
 	// -------------- Constructors --------------
-	public LongAVLMultiSet() {
+	public IntAVLMultiset() {
 		clear();
 	}
 
@@ -47,21 +47,21 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	// -------------- String --------------
 	public String toString() {
 		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		PrimitiveIterator.OfLong it = iterator();
-		while (it.hasNext()) sj.add(Long.toString(it.nextLong()));
+		PrimitiveIterator.OfInt it = iterator();
+		while (it.hasNext()) sj.add(Integer.toString(it.nextInt()));
 		return sj.toString();
 	}
 
 	// -------------- Contains --------------
-	public boolean contains(final long t) {
+	public boolean contains(final int t) {
 		if (size == 0) return false;
 		return count(t) > 0;
 	}
 
-	public boolean containsAll(final Collection<Long> c) {
+	public boolean containsAll(final Collection<Integer> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
-		for (long t : c) {
+		for (int t : c) {
 			if (!contains(t)) {
 				contains = false;
 				break;
@@ -71,40 +71,40 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Add --------------
-	public boolean add(final long t) {
+	public boolean add(final int t) {
 		return applyDeltaAndUpdate(t, 1, false);
 	}
 
-	public boolean add(final long t, final long cnt) {
+	public boolean add(final int t, final long cnt) {
 		if (cnt <= 0) throw new IllegalArgumentException("cnt must be > 0");
 		return applyDeltaAndUpdate(t, cnt, false);
 	}
 
-	public boolean addAll(final Collection<Long> c) {
+	public boolean addAll(final Collection<Integer> c) {
 		long oldSize = size;
-		for (long a : c) add(a);
+		for (int a : c) add(a);
 		return size != oldSize;
 	}
 
 	// -------------- Remove --------------
-	public boolean remove(final long t) {
+	public boolean remove(final int t) {
 		return applyDeltaAndUpdate(t, -1, false);
 	}
 
-	public boolean remove(final long t, final long cnt) {
+	public boolean remove(final int t, final long cnt) {
 		if (cnt <= 0) throw new IllegalArgumentException("cnt must be > 0");
 		return applyDeltaAndUpdate(t, -cnt, false);
 	}
 
-	public boolean removeAll(final long t) {
+	public boolean removeAll(final int t) {
 		return applyDeltaAndUpdate(t, 0, true);
 	}
 
-	public boolean removeAll(final Collection<Long> c) {
+	public boolean removeAll(final Collection<Integer> c) {
 		if (isEmpty()) return false;
 		long oldSize = size;
-		Collection<Long> hs = c instanceof Set ? c : new HashSet<>(c);
-		for (long v : hs) removeAll(v);
+		Collection<Integer> hs = c instanceof Set ? c : new HashSet<>(c);
+		for (int v : hs) removeAll(v);
 		return size != oldSize;
 	}
 
@@ -137,52 +137,52 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Arrays --------------
-	public long[] toArray() {
-		if (size == 0) return new long[0];
+	public int[] toArray() {
+		if (size == 0) return new int[0];
 		if (size > Integer.MAX_VALUE)
 			throw new IllegalStateException("Array too large: " + size + " elements (exceeds single-array limit)");
-		long[] arr = new long[(int) size];
-		PrimitiveIterator.OfLong it = iterator();
-		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextLong();
+		int[] arr = new int[(int) size];
+		PrimitiveIterator.OfInt it = iterator();
+		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextInt();
 		return arr;
 	}
 
-	public long[] toUniqueArray() {
-		if (uniqueSize == 0) return new long[0];
-		long[] arr = new long[uniqueSize];
-		PrimitiveIterator.OfLong it = uniqueIterator();
-		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextLong();
+	public int[] toUniqueArray() {
+		if (uniqueSize == 0) return new int[0];
+		int[] arr = new int[uniqueSize];
+		PrimitiveIterator.OfInt it = uniqueIterator();
+		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextInt();
 		return arr;
 	}
 
 	// -------------- Streams --------------
-	public Stream<Long> stream() {
+	public Stream<Integer> stream() {
 		return toStream(false);
 	}
 
-	public Stream<Long> uniqueStream() {
+	public Stream<Integer> uniqueStream() {
 		return toStream(true);
 	}
 
-	private Stream<Long> toStream(final boolean unique) {
+	private Stream<Integer> toStream(final boolean unique) {
 		long size = unique ? uniqueSize : this.size;
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (unique) characteristics |= Spliterator.DISTINCT;
-		PrimitiveIterator.OfLong it = unique ? uniqueIterator() : iterator();
+		PrimitiveIterator.OfInt it = unique ? uniqueIterator() : iterator();
 		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
 	// -------------- Iteration --------------
-	public PrimitiveIterator.OfLong iterator() {
+	public PrimitiveIterator.OfInt iterator() {
 		return new AvlIterator(root, false);
 	}
 
-	public PrimitiveIterator.OfLong uniqueIterator() {
+	public PrimitiveIterator.OfInt uniqueIterator() {
 		return new AvlIterator(root, true);
 	}
 
 	// -------------- Access by Index --------------
-	public long getByIndex(long index) {
+	public int getByIndex(long index) {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
@@ -199,7 +199,7 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 		return cur.label;
 	}
 
-	public long getByUniqueIndex(int index) {
+	public int getByUniqueIndex(int index) {
 		if (index < 0 || uniqueSize <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
@@ -217,29 +217,29 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Search & Rank --------------
-	public long indexOf(final long t) {
+	public long indexOf(final int t) {
 		if (size == 0) return -1;
 		long index = index(t, false);
 		return index >= 0 ? index : -1;
 	}
 
-	public int uniqueIndexOf(final long t) {
+	public int uniqueIndexOf(final int t) {
 		if (size == 0) return -1;
 		int index = (int) index(t, true);
 		return index >= 0 ? index : -1;
 	}
 
-	public long rank(final long t) {
+	public long rank(final int t) {
 		long index = index(t, false);
 		return index < 0 ? ~index : index;
 	}
 
-	public long uniqueRank(final long t) {
+	public long uniqueRank(final int t) {
 		long index = index(t, true);
 		return index < 0 ? ~index : index;
 	}
 
-	private long index(final long t, final boolean unique) {
+	private long index(final int t, final boolean unique) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
@@ -257,7 +257,7 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Bounds --------------
-	public long upperBound(final long t) {
+	public long upperBound(final int t) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
@@ -274,7 +274,7 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 		return cur == null ? ~index : index;
 	}
 
-	public long lowerBound(final long t) {
+	public long lowerBound(final int t) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
@@ -292,7 +292,7 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Counts --------------
-	public long count(final long t) {
+	public long count(final int t) {
 		if (size == 0) return 0;
 		Node cur = root;
 		while (cur != null) {
@@ -308,29 +308,29 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Navigation --------------
-	public Long higher(final long key) {
+	public Integer higher(final int key) {
 		return boundary(key, false, true);
 	}
 
-	public Long ceiling(final long key) {
+	public Integer ceiling(final int key) {
 		return boundary(key, true, true);
 	}
 
-	public Long lower(final long key) {
+	public Integer lower(final int key) {
 		return boundary(key, false, false);
 	}
 
-	public Long floor(final long key) {
+	public Integer floor(final int key) {
 		return boundary(key, true, false);
 	}
 
-	private Long boundary(final long key, final boolean inclusive, final boolean higher) {
+	private Integer boundary(final int key, final boolean inclusive, final boolean higher) {
 		if (size == 0) return null;
 		if (first == key && inclusive) return first;
 		if (first > key) return higher ? first : null;
 		if (last == key && inclusive) return last;
 		if (last < key) return higher ? null : last;
-		Long t = null;
+		Integer t = null;
 		Node cur = root;
 		while (cur != null) {
 			if (higher) {
@@ -353,44 +353,44 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 	}
 
 	// -------------- Endpoints --------------
-	public long first() {
+	public int first() {
 		return first;
 	}
 
-	public long last() {
+	public int last() {
 		return last;
 	}
 
-	public long pollFirst() {
+	public int pollFirst() {
 		if (size == 0) throw new NoSuchElementException();
-		long temp = first;
+		int temp = first;
 		removeByIndex(0, false);
 		return temp;
 	}
 
-	public long pollLast() {
+	public int pollLast() {
 		if (size == 0) throw new NoSuchElementException();
-		long temp = last;
+		int temp = last;
 		removeByIndex(size - 1, false);
 		return temp;
 	}
 
-	public long pollFirstAll() {
+	public int pollFirstAll() {
 		if (size == 0) throw new NoSuchElementException();
-		long temp = first;
+		int temp = first;
 		removeByIndex(0, true);
 		return temp;
 	}
 
-	public long pollLastAll() {
+	public int pollLastAll() {
 		if (size == 0) throw new NoSuchElementException();
-		long temp = last;
+		int temp = last;
 		removeByIndex(uniqueSize - 1, true);
 		return temp;
 	}
 
 	// -------------- Internal Helpers --------------
-	private boolean applyDeltaAndUpdate(final long t, final long delta, final boolean removeAll) {
+	private boolean applyDeltaAndUpdate(final int t, final long delta, final boolean removeAll) {
 		if (size == 0) {
 			if (delta <= 0 || removeAll) return false;
 			first = last = t;
@@ -446,12 +446,12 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 
 	// -------------- Nested classes --------------
 	private static final class Node {
-		private final long label;
+		private final int label;
 		private long cnt, size;
 		private int height, uniqueSize;
 		private Node left, right, parent;
 
-		private Node(final long label, final Node parent, final long cnt) {
+		private Node(final int label, final Node parent, final long cnt) {
 			this.label = label;
 			this.cnt = this.size = cnt;
 			this.height = this.uniqueSize = 1;
@@ -475,7 +475,7 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node applyDelta(final long t, final long delta, final boolean all) {
+		private Node applyDelta(final int t, final long delta, final boolean all) {
 			if (label < t) {
 				if (right == null) {
 					if (delta <= 0) return this;
@@ -648,7 +648,7 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 		}
 	}
 
-	private final class AvlIterator implements PrimitiveIterator.OfLong {
+	private final class AvlIterator implements PrimitiveIterator.OfInt {
 		private final boolean unique;
 		private Node cur;
 		private long remainingCnt;
@@ -663,9 +663,9 @@ public final class LongAVLMultiSet implements Iterable<Long> {
 			return cur != null;
 		}
 
-		public long nextLong() {
+		public int nextInt() {
 			if (cur == null) throw new NoSuchElementException();
-			long val = cur.label;
+			int val = cur.label;
 			if (!unique && remainingCnt > 1) {
 				remainingCnt--;
 				return val;

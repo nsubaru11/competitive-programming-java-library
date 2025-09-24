@@ -1,4 +1,4 @@
-# AVL木 (AVLSet / AVLMultiSet) 利用ガイド
+# AVL木 (AVLSet / AVLMultiset) 利用ガイド
 
 ## 1. AVLSet<T extends Comparable<T>>
 
@@ -70,11 +70,11 @@ System.out.println(set); // [5, 20]
 
 ---
 
-## 2. AVLMultiSet<T extends Comparable<T>>
+## 2. AVLMultiset<T extends Comparable<T>>
 
 ### 概要
 
-`AVLMultiSet`は、重複を許可する順序付き集合（Sorted Multiset）です。各要素が何個存在するかをカウントで管理します。
+`AVLMultiset`は、重複を許可する順序付き集合（Sorted Multiset）です。各要素が何個存在するかをカウントで管理します。
 
 ### 特徴
 
@@ -121,7 +121,7 @@ System.out.println(set); // [5, 20]
 ### 利用例
 
 ```java
-AVLMultiSet<String> multiSet = new AVLMultiSet<>();
+AVLMultiset<String> multiSet = new AVLMultiset<>();
 multiSet.add("apple");
 multiSet.add("orange");
 multiSet.add("apple", 2); // appleを2つ追加
@@ -136,7 +136,7 @@ System.out.println(multiSet.count("apple")); // 2
 
 ## 3. プリミティブ型特化クラス
 
-`AVLSet`および`AVLMultiSet`には、`int`型と`long`型に特化したクラスがあり、ボクシング・アンボクシングによるオーバーヘッドを回避して高速に動作します。
+`AVLSet`および`AVLMultiset`には、`int`型と`long`型に特化したクラスがあり、ボクシング・アンボクシングによるオーバーヘッドを回避して高速に動作します。
 
 ### 3.1. IntAVLSet
 
@@ -166,27 +166,27 @@ longSet.add(2L << 40);
 System.out.println(longSet.last()); // 2199023255552
 ```
 
-### 3.3. IntAVLMultiSet
+### 3.3. IntAVLMultiset
 
-`int`型専用の`AVLMultiSet`です。APIは`AVLMultiSet`とほぼ同じですが、引数と戻り値が`int`型になります。
+`int`型専用の`AVLMultiset`です。APIは`AVLMultiset`とほぼ同じですが、引数と戻り値が`int`型になります。
 
 #### 利用例
 
 ```java
-IntAVLMultiSet intMultiSet = new IntAVLMultiSet();
+IntAVLMultiset intMultiSet = new IntAVLMultiset();
 intMultiSet.add(100);
 intMultiSet.add(200, 5); // 200を5個追加
 System.out.println(intMultiSet.count(200)); // 5
 ```
 
-### 3.4. LongAVLMultiSet
+### 3.4. LongAVLMultiset
 
-`long`型専用の`AVLMultiSet`です。APIは`AVLMultiSet`とほぼ同じですが、引数と戻り値が`long`型になります。
+`long`型専用の`AVLMultiset`です。APIは`AVLMultiset`とほぼ同じですが、引数と戻り値が`long`型になります。
 
 #### 利用例
 
 ```java
-LongAVLMultiSet longMultiSet = new LongAVLMultiSet();
+LongAVLMultiset longMultiSet = new LongAVLMultiset();
 longMultiSet.add(1L << 40);
 longMultiSet.add(2L << 40, 3);
 System.out.println(longMultiSet.size()); // 4
@@ -205,4 +205,4 @@ System.out.println(longMultiSet.size()); // 4
 
 | バージョン番号       | 年月日        | 詳細                                           |
 |:--------------|:-----------|:---------------------------------------------|
-| **バージョン 1.0** | 2025-09-25 | `AVLSet`, `AVLMultiSet`およびプリミティブ特化クラスのガイド作成。 |
+| **バージョン 1.0** | 2025-09-25 | `AVLSet`, `AVLMultiset`およびプリミティブ特化クラスのガイド作成。 |

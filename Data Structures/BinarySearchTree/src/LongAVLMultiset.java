@@ -1,9 +1,7 @@
-import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -14,22 +12,16 @@ import java.util.stream.StreamSupport;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
-@SuppressWarnings({"unused", "unchecked"})
-public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
+@SuppressWarnings("unused")
+public final class LongAVLMultiset implements Iterable<Long> {
 	// -------------- Fields --------------
-	private final Comparator<? super T> comparator;
 	private Node root;
-	private T first, last;
+	private long first, last;
 	private long size;
 	private int uniqueSize;
 
 	// -------------- Constructors --------------
-	public AVLMultiSet() {
-		this(Comparator.naturalOrder());
-	}
-
-	public AVLMultiSet(final Comparator<? super T> comparator) {
-		this.comparator = comparator;
+	public LongAVLMultiset() {
 		clear();
 	}
 
@@ -48,27 +40,28 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 
 	public void clear() {
 		root = null;
-		first = last = null;
+		first = last = 0;
 		size = uniqueSize = 0;
 	}
 
 	// -------------- String --------------
 	public String toString() {
 		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for (T t : this) sj.add(t.toString());
+		PrimitiveIterator.OfLong it = iterator();
+		while (it.hasNext()) sj.add(Long.toString(it.nextLong()));
 		return sj.toString();
 	}
 
 	// -------------- Contains --------------
-	public boolean contains(final T t) {
+	public boolean contains(final long t) {
 		if (size == 0) return false;
 		return count(t) > 0;
 	}
 
-	public boolean containsAll(final Collection<T> c) {
+	public boolean containsAll(final Collection<Long> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
-		for (T t : c) {
+		for (long t : c) {
 			if (!contains(t)) {
 				contains = false;
 				break;
@@ -78,40 +71,40 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Add --------------
-	public boolean add(final T t) {
+	public boolean add(final long t) {
 		return applyDeltaAndUpdate(t, 1, false);
 	}
 
-	public boolean add(T t, final long cnt) {
+	public boolean add(final long t, final long cnt) {
 		if (cnt <= 0) throw new IllegalArgumentException("cnt must be > 0");
 		return applyDeltaAndUpdate(t, cnt, false);
 	}
 
-	public boolean addAll(Collection<T> c) {
+	public boolean addAll(final Collection<Long> c) {
 		long oldSize = size;
-		for (T a : c) add(a);
+		for (long a : c) add(a);
 		return size != oldSize;
 	}
 
 	// -------------- Remove --------------
-	public boolean remove(final T t) {
+	public boolean remove(final long t) {
 		return applyDeltaAndUpdate(t, -1, false);
 	}
 
-	public boolean remove(final T t, final long cnt) {
+	public boolean remove(final long t, final long cnt) {
 		if (cnt <= 0) throw new IllegalArgumentException("cnt must be > 0");
 		return applyDeltaAndUpdate(t, -cnt, false);
 	}
 
-	public boolean removeAll(final T t) {
+	public boolean removeAll(final long t) {
 		return applyDeltaAndUpdate(t, 0, true);
 	}
 
-	public boolean removeAll(final Collection<T> c) {
+	public boolean removeAll(final Collection<Long> c) {
 		if (isEmpty()) return false;
 		long oldSize = size;
-		Collection<T> hs = c instanceof Set ? c : new HashSet<>(c);
-		for (T v : hs) removeAll(v);
+		Collection<Long> hs = c instanceof Set ? c : new HashSet<>(c);
+		for (long v : hs) removeAll(v);
 		return size != oldSize;
 	}
 
@@ -144,52 +137,52 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Arrays --------------
-	public T[] toArray() {
-		if (size == 0) return (T[]) new Object[0];
+	public long[] toArray() {
+		if (size == 0) return new long[0];
 		if (size > Integer.MAX_VALUE)
 			throw new IllegalStateException("Array too large: " + size + " elements (exceeds single-array limit)");
-		T[] arr = (T[]) Array.newInstance(first.getClass(), (int) size);
-		int i = 0;
-		for (T t : this) arr[i++] = t;
+		long[] arr = new long[(int) size];
+		PrimitiveIterator.OfLong it = iterator();
+		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextLong();
 		return arr;
 	}
 
-	public T[] toUniqueArray() {
-		if (uniqueSize == 0) return (T[]) new Object[0];
-		Iterator<T> it = uniqueIterator();
-		T[] arr = (T[]) Array.newInstance(first.getClass(), uniqueSize);
-		for (int i = 0; it.hasNext(); i++) arr[i] = it.next();
+	public long[] toUniqueArray() {
+		if (uniqueSize == 0) return new long[0];
+		long[] arr = new long[uniqueSize];
+		PrimitiveIterator.OfLong it = uniqueIterator();
+		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextLong();
 		return arr;
 	}
 
 	// -------------- Streams --------------
-	public Stream<T> stream() {
+	public Stream<Long> stream() {
 		return toStream(false);
 	}
 
-	public Stream<T> uniqueStream() {
+	public Stream<Long> uniqueStream() {
 		return toStream(true);
 	}
 
-	private Stream<T> toStream(final boolean unique) {
+	private Stream<Long> toStream(final boolean unique) {
 		long size = unique ? uniqueSize : this.size;
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (unique) characteristics |= Spliterator.DISTINCT;
-		Iterator<T> it = unique ? uniqueIterator() : iterator();
+		PrimitiveIterator.OfLong it = unique ? uniqueIterator() : iterator();
 		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
 	// -------------- Iteration --------------
-	public Iterator<T> iterator() {
+	public PrimitiveIterator.OfLong iterator() {
 		return new AvlIterator(root, false);
 	}
 
-	public Iterator<T> uniqueIterator() {
+	public PrimitiveIterator.OfLong uniqueIterator() {
 		return new AvlIterator(root, true);
 	}
 
 	// -------------- Access by Index --------------
-	public T getByIndex(long index) {
+	public long getByIndex(long index) {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
@@ -206,7 +199,7 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 		return cur.label;
 	}
 
-	public T getByUniqueIndex(int index) {
+	public long getByUniqueIndex(int index) {
 		if (index < 0 || uniqueSize <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
@@ -224,37 +217,36 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Search & Rank --------------
-	public long indexOf(final T t) {
+	public long indexOf(final long t) {
 		if (size == 0) return -1;
 		long index = index(t, false);
 		return index >= 0 ? index : -1;
 	}
 
-	public int uniqueIndexOf(final T t) {
+	public int uniqueIndexOf(final long t) {
 		if (size == 0) return -1;
 		int index = (int) index(t, true);
 		return index >= 0 ? index : -1;
 	}
 
-	public long rank(final T t) {
+	public long rank(final long t) {
 		long index = index(t, false);
 		return index < 0 ? ~index : index;
 	}
 
-	public long uniqueRank(final T t) {
+	public long uniqueRank(final long t) {
 		long index = index(t, true);
 		return index < 0 ? ~index : index;
 	}
 
-	private long index(final T t, final boolean unique) {
+	private long index(final long t, final boolean unique) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				index += unique ? cur.leftUniqueSize() + 1 : cur.leftSize() + cur.cnt;
 				cur = cur.right;
-			} else if (cmp > 0) {
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				index += unique ? cur.leftUniqueSize() : cur.leftSize();
@@ -265,15 +257,14 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Bounds --------------
-	public long upperBound(final T t) {
+	public long upperBound(final long t) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				index += cur.leftSize() + cur.cnt;
 				cur = cur.right;
-			} else if (cmp > 0) {
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize() + cur.cnt - 1;
@@ -283,15 +274,14 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 		return cur == null ? ~index : index;
 	}
 
-	public long lowerBound(final T t) {
+	public long lowerBound(final long t) {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
+			if (cur.label < t) {
 				index += cur.leftSize() + cur.cnt;
 				cur = cur.right;
-			} else if (cmp > 0) {
+			} else if (cur.label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize();
@@ -302,55 +292,56 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Counts --------------
-	public long count(final T t) {
+	public long count(final long t) {
 		if (size == 0) return 0;
 		Node cur = root;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
-			if (cmp == 0) break;
-			cur = cmp < 0 ? cur.right : cur.left;
+			if (cur.label < t) {
+				cur = cur.right;
+			} else if (cur.label > t) {
+				cur = cur.left;
+			} else {
+				break;
+			}
 		}
 		return cur == null ? 0 : cur.cnt;
 	}
 
 	// -------------- Navigation --------------
-	public T higher(final T key) {
+	public Long higher(final long key) {
 		return boundary(key, false, true);
 	}
 
-	public T ceiling(final T key) {
+	public Long ceiling(final long key) {
 		return boundary(key, true, true);
 	}
 
-	public T lower(final T key) {
+	public Long lower(final long key) {
 		return boundary(key, false, false);
 	}
 
-	public T floor(final T key) {
+	public Long floor(final long key) {
 		return boundary(key, true, false);
 	}
 
-	private T boundary(final T key, final boolean inclusive, final boolean higher) {
+	private Long boundary(final long key, final boolean inclusive, final boolean higher) {
 		if (size == 0) return null;
-		int c1 = comparator.compare(first, key);
-		if (c1 == 0 && inclusive) return first;
-		if (c1 > 0) return higher ? first : null;
-		int c2 = comparator.compare(last, key);
-		if (c2 == 0 && inclusive) return last;
-		if (c2 < 0) return higher ? null : last;
-		T t = null;
+		if (first == key && inclusive) return first;
+		if (first > key) return higher ? first : null;
+		if (last == key && inclusive) return last;
+		if (last < key) return higher ? null : last;
+		Long t = null;
 		Node cur = root;
 		while (cur != null) {
-			int c = comparator.compare(cur.label, key);
 			if (higher) {
-				if (c > 0 || (inclusive && c == 0)) {
+				if (cur.label > key || (inclusive && cur.label == key)) {
 					t = cur.label;
 					cur = cur.left;
 				} else {
 					cur = cur.right;
 				}
 			} else {
-				if (c < 0 || (inclusive && c == 0)) {
+				if (cur.label < key || (inclusive && cur.label == key)) {
 					t = cur.label;
 					cur = cur.right;
 				} else {
@@ -362,44 +353,44 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Endpoints --------------
-	public T first() {
+	public long first() {
 		return first;
 	}
 
-	public T last() {
+	public long last() {
 		return last;
 	}
 
-	public T pollFirst() {
-		if (size == 0) return null;
-		T temp = first;
+	public long pollFirst() {
+		if (size == 0) throw new NoSuchElementException();
+		long temp = first;
 		removeByIndex(0, false);
 		return temp;
 	}
 
-	public T pollLast() {
-		if (size == 0) return null;
-		T temp = last;
+	public long pollLast() {
+		if (size == 0) throw new NoSuchElementException();
+		long temp = last;
 		removeByIndex(size - 1, false);
 		return temp;
 	}
 
-	public T pollFirstAll() {
-		if (size == 0) return null;
-		T temp = first;
+	public long pollFirstAll() {
+		if (size == 0) throw new NoSuchElementException();
+		long temp = first;
 		removeByIndex(0, true);
 		return temp;
 	}
 
-	public T pollLastAll() {
-		if (size == 0) return null;
-		T temp = last;
+	public long pollLastAll() {
+		if (size == 0) throw new NoSuchElementException();
+		long temp = last;
 		removeByIndex(uniqueSize - 1, true);
 		return temp;
 	}
 
 	// -------------- Internal Helpers --------------
-	private boolean applyDeltaAndUpdate(final T t, final long delta, final boolean removeAll) {
+	private boolean applyDeltaAndUpdate(final long t, final long delta, final boolean removeAll) {
 		if (size == 0) {
 			if (delta <= 0 || removeAll) return false;
 			first = last = t;
@@ -409,8 +400,8 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 			return true;
 		}
 		if (!removeAll && delta > 0) {
-			if (comparator.compare(t, first) < 0) first = t;
-			if (comparator.compare(t, last) > 0) last = t;
+			if (t < first) first = t;
+			if (t > last) last = t;
 		}
 		long oldSize = size;
 		int oldUniqueSize = uniqueSize;
@@ -418,8 +409,8 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 		update();
 		boolean updated = size != oldSize;
 		if (updated && size > 0 && uniqueSize != oldUniqueSize && (removeAll || delta <= 0)) {
-			if (comparator.compare(t, first) == 0) first = leftmost(root).label;
-			if (comparator.compare(t, last) == 0) last = rightmost(root).label;
+			if (t == first) first = leftmost(root).label;
+			if (t == last) last = rightmost(root).label;
 		}
 		return updated;
 	}
@@ -429,9 +420,9 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 			clear();
 			return;
 		}
-		size = root.size;
-		uniqueSize = root.uniqueSize;
 		root.parent = null;
+		uniqueSize = root.uniqueSize;
+		size = root.size;
 	}
 
 	private Node leftmost(Node cur) {
@@ -454,13 +445,13 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Nested classes --------------
-	private final class Node {
-		private final T label;
+	private static final class Node {
+		private final long label;
 		private long cnt, size;
 		private int height, uniqueSize;
 		private Node left, right, parent;
 
-		private Node(final T label, final Node parent, final long cnt) {
+		private Node(final long label, final Node parent, final long cnt) {
 			this.label = label;
 			this.cnt = this.size = cnt;
 			this.height = this.uniqueSize = 1;
@@ -484,16 +475,15 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node applyDelta(final T t, final long delta, final boolean all) {
-			int cmp = AVLMultiSet.this.comparator.compare(label, t);
-			if (cmp < 0) {
+		private Node applyDelta(final long t, final long delta, final boolean all) {
+			if (label < t) {
 				if (right == null) {
 					if (delta <= 0) return this;
 					setRight(new Node(t, this, delta));
 				} else {
 					setRight(right.applyDelta(t, delta, all));
 				}
-			} else if (cmp > 0) {
+			} else if (label > t) {
 				if (left == null) {
 					if (delta <= 0) return this;
 					setLeft(new Node(t, this, delta));
@@ -658,7 +648,7 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 		}
 	}
 
-	private final class AvlIterator implements Iterator<T> {
+	private final class AvlIterator implements PrimitiveIterator.OfLong {
 		private final boolean unique;
 		private Node cur;
 		private long remainingCnt;
@@ -673,9 +663,9 @@ public final class AVLMultiSet<T extends Comparable<T>> implements Iterable<T> {
 			return cur != null;
 		}
 
-		public T next() {
+		public long nextLong() {
 			if (cur == null) throw new NoSuchElementException();
-			T val = cur.label;
+			long val = cur.label;
 			if (!unique && remainingCnt > 1) {
 				remainingCnt--;
 				return val;
