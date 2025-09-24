@@ -16,7 +16,7 @@ public class Example {
 			}
 
 			System.out.print("\nb list:");
-			for (Iterator<Integer> it = list.distinctIterator(); it.hasNext(); ) {
+			for (Iterator<Integer> it = list.uniqueIterator(); it.hasNext(); ) {
 				int j = it.next();
 				System.out.print(" " + j);
 			}

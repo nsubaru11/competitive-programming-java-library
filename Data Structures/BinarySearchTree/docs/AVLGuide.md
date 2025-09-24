@@ -1,312 +1,208 @@
-# AVLSet と AVLMultiSet
+# AVL木 (AVLSet / AVLMultiSet) 利用ガイド
 
-## 🎯 設計の狙い
+## 1. AVLSet<T extends Comparable<T>>
 
-- **AVLSet**: 重複を許可しない順序付きセット（Set）
-- **AVLMultiSet**: 重複を許可する順序付きリスト（Multiset）
-- 競技プログラミングで使いやすい高速な平衡二分探索木を提供
-- Collection インターフェースを実装し、標準的な操作をサポート
+### 概要
 
-## 📊 現在の実装状況
+`AVLSet`は、重複を許可しない順序付き集合（Sorted Set）を実装したクラスです。AVL木に基づいているため、要素の追加、削除、検索が対数時間
+`O(log n)` で行えます。
 
-### ✅ 実装済み機能
-- **基本操作**: `add()`, `remove()`, `size()`, `isEmpty()`, `clear()`
-- **AVL平衡**: 自動的な回転による高さ平衡の維持
-- **重複管理**: AVLListでは`cnt`で重複数を管理
+### 特徴
 
-### ❌ 未実装機能
-- `contains()`, `iterator()`, `toArray()` などのCollectionメソッド
-- 順序統計（k番目、rank）
-- 境界探索（lowerBound, upperBound）
-- 個数取得（count）
+- **自動平衡**: 要素の追加・削除時に自動で木を平衡させ、性能を維持します。
+- **順序保証**: 要素は常にソートされた状態で保持されます。
+- **ジェネリクス対応**: `Comparable`を実装した任意のオブジェクトを格納できます。
 
-## 🔧 高速化の工夫
+### 主な機能（メソッド一覧）
 
-### 1. **メモリ局所性の最適化**
+#### 状態管理系
+
+| メソッド        | 戻り値の型     | 説明              |
+|:------------|:----------|:----------------|
+| `size()`    | `int`     | 要素数を返します。       |
+| `isEmpty()` | `boolean` | セットが空かどうかを返します。 |
+| `clear()`   | `void`    | 全ての要素を削除します。    |
+
+#### 追加・削除系
+
+| メソッド                  | 戻り値の型     | 説明                 |
+|:----------------------|:----------|:-------------------|
+| `add(T t)`            | `boolean` | 要素を追加します。          |
+| `remove(T t)`         | `boolean` | 要素を削除します。          |
+| `removeAt(int index)` | `boolean` | 指定インデックスの要素を削除します。 |
+| `pollFirst()`         | `T`       | 最小の要素を削除して返します。    |
+| `pollLast()`          | `T`       | 最大の要素を削除して返します。    |
+
+#### 検索・確認系
+
+| メソッド                    | 戻り値の型     | 説明                  |
+|:------------------------|:----------|:--------------------|
+| `contains(T t)`         | `boolean` | 要素が含まれているか確認します。    |
+| `first()`               | `T`       | 最小の要素を返します。         |
+| `last()`                | `T`       | 最大の要素を返します。         |
+| `getByIndex(int index)` | `T`       | 指定インデックスの要素を返します。   |
+| `indexOf(T t)`          | `int`     | 要素のインデックス（順位）を返します。 |
+| `rank(T t)`             | `int`     | 指定した値未満の要素数を返します。   |
+
+#### 境界探索系
+
+| メソッド             | 戻り値の型 | 説明                    |
+|:-----------------|:------|:----------------------|
+| `higher(T key)`  | `T`   | `key`より大きい最小の要素を返します。 |
+| `ceiling(T key)` | `T`   | `key`以上の最小の要素を返します。   |
+| `lower(T key)`   | `T`   | `key`より小さい最大の要素を返します。 |
+| `floor(T key)`   | `T`   | `key`以下の最大の要素を返します。   |
+
+### 利用例
+
 ```java
-// ノード構造の最適化
-private static final class Node<T extends Comparable<T>> {
-    private final T label;        // キー（不変）
-    private int cnt, size, height; // 4バイト整数をまとめて配置
-    private Node<T> left, right;   // ポインタ
-    
-    // キャッシュライン境界を考慮したフィールド配置
-}
+AVLSet<Integer> set = new AVLSet<>();
+set.add(10);
+set.add(20);
+set.add(5);
+
+System.out.println(set); // [5, 10, 20]
+System.out.println(set.contains(10)); // true
+System.out.println(set.getByIndex(1)); // 10
+set.remove(10);
+System.out.println(set); // [5, 20]
 ```
 
-### 2. **計算量の最適化**
-```java
-// バランス因子計算の高速化
-private int balanceFactor() {
-    int l = leftHeight();
-    int r = rightHeight();
-    return r - l; // 単純な差分で十分
-}
+---
 
-// 高さ計算のキャッシュ
-private int leftHeight() {
-    return left == null ? 0 : left.height;
-}
+## 2. AVLMultiSet<T extends Comparable<T>>
+
+### 概要
+
+`AVLMultiSet`は、重複を許可する順序付き集合（Sorted Multiset）です。各要素が何個存在するかをカウントで管理します。
+
+### 特徴
+
+- **重複許容**: 同じ値を持つ要素を複数個保持できます。
+- **個数管理**: `count(T t)`で特定の要素の個数を高速に取得できます。
+- **ユニーク要素操作**: 重複を除いた要素（ユニーク要素）に対する操作もサポートします。
+
+### 主な機能（メソッド一覧）
+
+#### 状態管理系
+
+| メソッド           | 戻り値の型     | 説明                 |
+|:---------------|:----------|:-------------------|
+| `size()`       | `long`    | 全要素の総数を返します。       |
+| `uniqueSize()` | `int`     | ユニーク要素の数を返します。     |
+| `isEmpty()`    | `boolean` | マルチセットが空かどうかを返します。 |
+| `clear()`      | `void`    | 全ての要素を削除します。       |
+
+#### 追加・削除系
+
+| メソッド                        | 戻り値の型     | 説明                             |
+|:----------------------------|:----------|:-------------------------------|
+| `add(T t)`                  | `boolean` | 要素を1つ追加します。                    |
+| `add(T t, long cnt)`        | `boolean` | 要素を`cnt`個追加します。                |
+| `remove(T t)`               | `boolean` | 要素を1つ削除します。                    |
+| `remove(T t, long cnt)`     | `boolean` | 要素を`cnt`個削除します。                |
+| `removeAll(T t)`            | `boolean` | 指定した値の要素を全て削除します。              |
+| `removeAt(long index)`      | `boolean` | 指定インデックスの要素を1つ削除します。           |
+| `removeUniqueAt(int index)` | `boolean` | 指定したユニークインデックスに該当する要素を全て削除します。 |
+
+#### 検索・確認系
+
+| メソッド                          | 戻り値の型     | 説明                     |
+|:------------------------------|:----------|:-----------------------|
+| `contains(T t)`               | `boolean` | 要素が1つ以上含まれているか確認します。   |
+| `count(T t)`                  | `long`    | 指定した要素の個数を返します。        |
+| `getByIndex(long index)`      | `T`       | 指定インデックスの要素を返します。      |
+| `getByUniqueIndex(int index)` | `T`       | 指定ユニークインデックスの要素を返します。  |
+| `indexOf(T t)`                | `long`    | 最初の要素のインデックスを返します。     |
+| `uniqueIndexOf(T t)`          | `int`     | 要素のユニークインデックスを返します。    |
+| `rank(T t)`                   | `long`    | `t`より小さい要素の総数を返します。    |
+| `uniqueRank(T t)`             | `long`    | `t`より小さいユニーク要素の数を返します。 |
+
+### 利用例
+
+```java
+AVLMultiSet<String> multiSet = new AVLMultiSet<>();
+multiSet.add("apple");
+multiSet.add("orange");
+multiSet.add("apple", 2); // appleを2つ追加
+
+System.out.println(multiSet); // [apple, apple, apple, orange]
+System.out.println(multiSet.count("apple")); // 3
+multiSet.remove("apple");
+System.out.println(multiSet.count("apple")); // 2
 ```
 
-### 3. **回転操作の最適化**
+---
+
+## 3. プリミティブ型特化クラス
+
+`AVLSet`および`AVLMultiSet`には、`int`型と`long`型に特化したクラスがあり、ボクシング・アンボクシングによるオーバーヘッドを回避して高速に動作します。
+
+### 3.1. IntAVLSet
+
+`int`型専用の`AVLSet`です。APIは`AVLSet`とほぼ同じですが、引数と戻り値が`int`型になります。
+
+#### 利用例
+
 ```java
-// 回転時の不要な更新を削減
-private Node<T> rotateLeft(int balance) {
-    if (balance == 2) {
-        // 単回転：直接的なポインタ操作
-        Node<T> newRoot = this.right;
-        this.right = newRoot.left;
-        newRoot.left = this;
-        updateNode(this);
-        updateNode(newRoot);
-        return newRoot;
-    } else {
-        // 二重回転：中間ノードを経由
-        // 既存実装を維持
-    }
-}
+IntAVLSet intSet = new IntAVLSet();
+intSet.add(100);
+intSet.add(200);
+intSet.add(100); // 重複は許可されない
+System.out.println(intSet.size()); // 2
+System.out.println(intSet.contains(100)); // true
 ```
 
-### 4. **削除操作の改善**
+### 3.2. LongAVLSet
+
+`long`型専用の`AVLSet`です。APIは`AVLSet`とほぼ同じですが、引数と戻り値が`long`型になります。
+
+#### 利用例
+
 ```java
-// 削除時の successor/predecessor 選択
-public Node<T> remove(T value) {
-    // ... 探索部分 ...
-    if (cmp == 0) {
-        if (cnt > 1) {
-            cnt--; // 重複削除のみ
-            updateNode(this);
-            return this;
-        }
-        // 物理削除：高さに基づく選択
-        if (leftHeight() >= rightHeight()) {
-            // predecessor を使用（左部分木の最大値）
-            Node<T> pred = findMax(left);
-            this.label = pred.label;
-            this.cnt = pred.cnt;
-            left = left.remove(pred.label);
-        } else {
-            // successor を使用（右部分木の最小値）
-            Node<T> succ = findMin(right);
-            this.label = succ.label;
-            this.cnt = succ.cnt;
-            right = right.remove(succ.label);
-        }
-    }
-    // ... 平衡化部分 ...
-}
+LongAVLSet longSet = new LongAVLSet();
+longSet.add(1L << 40);
+longSet.add(2L << 40);
+System.out.println(longSet.last()); // 2199023255552
 ```
 
-## 🚀 実装すべき高速化機能
+### 3.3. IntAVLMultiSet
 
-### 1. **contains() の実装**
+`int`型専用の`AVLMultiSet`です。APIは`AVLMultiSet`とほぼ同じですが、引数と戻り値が`int`型になります。
+
+#### 利用例
+
 ```java
-public boolean contains(Object o) {
-    if (o == null) return false;
-    try {
-        @SuppressWarnings("unchecked")
-        T value = (T) o;
-        return containsRecursive(root, value);
-    } catch (ClassCastException e) {
-        return false;
-    }
-}
-
-private boolean containsRecursive(Node<T> node, T value) {
-    if (node == null) return false;
-    int cmp = value.compareTo(node.label);
-    if (cmp < 0) return containsRecursive(node.left, value);
-    if (cmp > 0) return containsRecursive(node.right, value);
-    return true; // 見つかった
-}
+IntAVLMultiSet intMultiSet = new IntAVLMultiSet();
+intMultiSet.add(100);
+intMultiSet.add(200, 5); // 200を5個追加
+System.out.println(intMultiSet.count(200)); // 5
 ```
 
-### 2. **順序統計の実装**
+### 3.4. LongAVLMultiSet
+
+`long`型専用の`AVLMultiSet`です。APIは`AVLMultiSet`とほぼ同じですが、引数と戻り値が`long`型になります。
+
+#### 利用例
+
 ```java
-// k番目の要素を取得（1-indexed）
-public T kth(int k) {
-    if (k < 1 || k > size) {
-        throw new IndexOutOfBoundsException("k: " + k);
-    }
-    return kthRecursive(root, k);
-}
-
-private T kthRecursive(Node<T> node, int k) {
-    int leftSize = (node.left == null) ? 0 : node.left.size;
-    if (k <= leftSize) {
-        return kthRecursive(node.left, k);
-    }
-    if (k <= leftSize + node.cnt) {
-        return node.label;
-    }
-    return kthRecursive(node.right, k - leftSize - node.cnt);
-}
-
-// rank: xより小さい要素の個数
-public int rank(T x) {
-    return rankRecursive(root, x);
-}
-
-private int rankRecursive(Node<T> node, T x) {
-    if (node == null) return 0;
-    int cmp = x.compareTo(node.label);
-    if (cmp <= 0) {
-        return rankRecursive(node.left, x);
-    }
-    int leftSize = (node.left == null) ? 0 : node.left.size;
-    return leftSize + node.cnt + rankRecursive(node.right, x);
-}
+LongAVLMultiSet longMultiSet = new LongAVLMultiSet();
+longMultiSet.add(1L << 40);
+longMultiSet.add(2L << 40, 3);
+System.out.println(longMultiSet.size()); // 4
 ```
 
-### 3. **境界探索の実装**
-```java
-// x以上の最小要素
-public T lowerBound(T x) {
-    Node<T> result = lowerBoundRecursive(root, x);
-    return result != null ? result.label : null;
-}
+## パフォーマンス特性
 
-private Node<T> lowerBoundRecursive(Node<T> node, T x) {
-    if (node == null) return null;
-    int cmp = x.compareTo(node.label);
-    if (cmp <= 0) {
-        Node<T> leftResult = lowerBoundRecursive(node.left, x);
-        return leftResult != null ? leftResult : node;
-    }
-    return lowerBoundRecursive(node.right, x);
-}
+- **時間計算量**:
+	- 追加 (`add`), 削除 (`remove`), 検索 (`contains`, `count`): **O(log n)**
+	- インデックスによるアクセス (`getByIndex`): **O(log n)**
+	- 順位検索 (`rank`, `indexOf`): **O(log n)**
+	- first(), last(): **O(1)**
+- **空間計算量**: **O(n)** (nはユニーク要素数)
 
-// xより大きい最小要素
-public T upperBound(T x) {
-    Node<T> result = upperBoundRecursive(root, x);
-    return result != null ? result.label : null;
-}
+## バージョン情報
 
-private Node<T> upperBoundRecursive(Node<T> node, T x) {
-    if (node == null) return null;
-    int cmp = x.compareTo(node.label);
-    if (cmp < 0) {
-        Node<T> leftResult = upperBoundRecursive(node.left, x);
-        return leftResult != null ? leftResult : node;
-    }
-    return upperBoundRecursive(node.right, x);
-}
-```
-
-### 4. **Iterator の実装**
-```java
-public Iterator<T> iterator() {
-    return new AVLIterator();
-}
-
-private class AVLIterator implements Iterator<T> {
-    private final Stack<Node<T>> stack = new Stack<>();
-    private Node<T> current;
-    private int remaining;
-    
-    public AVLIterator() {
-        pushLeft(root);
-        if (!stack.isEmpty()) {
-            current = stack.pop();
-            remaining = current.cnt;
-        }
-    }
-    
-    private void pushLeft(Node<T> node) {
-        while (node != null) {
-            stack.push(node);
-            node = node.left;
-        }
-    }
-    
-    @Override
-    public boolean hasNext() {
-        return !stack.isEmpty() || (current != null && remaining > 0);
-    }
-    
-    @Override
-    public T next() {
-        if (!hasNext()) throw new NoSuchElementException();
-        
-        T result = current.label;
-        remaining--;
-        
-        if (remaining == 0) {
-            if (current.right != null) {
-                pushLeft(current.right);
-            }
-            current = stack.isEmpty() ? null : stack.pop();
-            if (current != null) {
-                remaining = current.cnt;
-            }
-        }
-        
-        return result;
-    }
-}
-```
-
-## 📈 パフォーマンス最適化
-
-### 1. **メモリ効率**
-- **オブジェクトプール**: 頻繁なノード作成/削除を避ける
-- **フィールド配置**: キャッシュライン境界を考慮
-- **プリミティブ使用**: 可能な限りint/longを使用
-
-### 2. **計算効率**
-- **早期終了**: 不要な計算を避ける
-- **キャッシュ活用**: 高さやサイズをキャッシュ
-- **分岐予測**: 条件分岐を最適化
-
-### 3. **競技プログラミング向け最適化**
-```java
-// 高速な比較関数
-private static final class FastComparator<T extends Comparable<T>> {
-    public static int compare(T a, T b) {
-        return a.compareTo(b);
-    }
-}
-
-// プリミティブ特化版
-public static class IntAVLSet {
-    private static final class Node {
-        private final int label;
-        private int cnt, size, height;
-        private Node left, right;
-        
-        // プリミティブ比較で高速化
-        private Node add(int value) {
-            if (value < label) {
-                left = left == null ? new Node(value) : left.add(value);
-            } else if (value > label) {
-                right = right == null ? new Node(value) : right.add(value);
-            } else {
-                cnt++;
-            }
-            // ... 平衡化
-        }
-    }
-}
-```
-
-## 🎯 実装優先度
-
-### 高優先度
-1. **contains()** - 基本的な検索機能
-2. **Iterator** - Collection インターフェースの完全実装
-3. **kth() / rank()** - 競技プログラミングで頻出
-
-### 中優先度
-1. **lowerBound() / upperBound()** - 境界探索
-2. **count()** - 個数取得
-3. **toArray()** - 配列変換
-
-### 低優先度
-1. **removeAll() / retainAll()** - 集合演算
-2. **addAll()** - 一括追加の最適化
-3. **逆順Iterator** - 降順走査
-
-## 📝 まとめ
-
-現在の実装は基本的なAVL木の構造は完成しているが、Collection インターフェースの完全実装と競技プログラミングで有用な機能が不足している。上記の高速化手法と実装すべき機能を追加することで、競技プログラミングで実用的な高速な平衡二分探索木ライブラリとなる。
+| バージョン番号       | 年月日        | 詳細                                           |
+|:--------------|:-----------|:---------------------------------------------|
+| **バージョン 1.0** | 2025-09-25 | `AVLSet`, `AVLMultiSet`およびプリミティブ特化クラスのガイド作成。 |

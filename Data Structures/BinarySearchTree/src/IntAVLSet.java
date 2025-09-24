@@ -1,4 +1,11 @@
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.StringJoiner;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -7,9 +14,10 @@ import static java.lang.Math.max;
 
 @SuppressWarnings("unused")
 public final class IntAVLSet implements Iterable<Integer> {
-	private int size;
+	// -------------- Fields --------------
 	private Node root;
 	private int first, last;
+	private int size;
 
 	// -------------- Constructors --------------
 	public IntAVLSet() {
@@ -31,138 +39,26 @@ public final class IntAVLSet implements Iterable<Integer> {
 		size = 0;
 	}
 
-	// -------------- Add --------------
-	public boolean add(int t) {
-		if (size == 0) {
-			first = last = t;
-			root = new Node(t, null);
-			size = 1;
-			return true;
-		}
-		if (first > t) first = t;
-		if (last < t) last = t;
-		root = root.add(t);
-		boolean isNotContain = size != root.size;
-		size = root.size;
-		root.parent = null;
-		return isNotContain;
-	}
-
-	public boolean addAll(Collection<Integer> c) {
-		int oldSize = size;
-		for (int a : c) add(a);
-		return size != oldSize;
-	}
-
-	// -------------- Remove --------------
-	public boolean remove(int t) {
-		if (size == 0) return false;
-		int oldSize = size;
-		Node newRoot = root.remove(t);
-		if (newRoot == null) {
-			clear();
-		} else {
-			root = newRoot;
-			root.parent = null;
-			if (size != root.size) {
-				if (first == t) first = leftmost(root).label;
-				if (last == t) last = rightmost(root).label;
-			}
-			size = root.size;
-		}
-		return size != oldSize;
-	}
-
-	public boolean removeAll(Collection<Integer> c) {
-		if (isEmpty()) return false;
-		int oldSize = size;
-		HashSet<Integer> hs = new HashSet<>(c);
-		for (int v : hs) remove(v);
-		return size != oldSize;
-	}
-
-	public boolean removeAt(int index) {
-		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
-		int oldSize = size;
-		Node newRoot = root.removeAt(index);
-		if (newRoot == null) {
-			clear();
-		} else {
-			root = newRoot;
-			root.parent = null;
-			if (size != root.size) {
-				if (index == 0) first = leftmost(root).label;
-				if (index == size - 1) last = rightmost(root).label;
-			}
-			size = root.size;
-		}
-		return size != oldSize;
-	}
-
-	// -------------- Arrays --------------
-	public int[] toArray() {
-		if (size == 0) return new int[0];
-		int[] arr = new int[size];
-		int i = 0;
-		for (int t : this) arr[i++] = t;
-		return arr;
-	}
-
-	// -------------- Streams --------------
-	public Stream<Integer> stream() {
-		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.SIZED | Spliterator.SUBSIZED;
-		Iterator<Integer> it = iterator();
-		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
-	}
-
-	// -------------- Iteration --------------
-	public Iterator<Integer> iterator() {
-		return new Iterator<>() {
-			private Node cur = root;
-			private boolean first = true;
-
-			public boolean hasNext() {
-				return cur != null;
-			}
-
-			public Integer next() {
-				if (cur == null) throw new NoSuchElementException();
-				if (first) {
-					cur = leftmost(cur);
-					first = false;
-					if (cur == null) throw new NoSuchElementException();
-				}
-				int val = cur.label;
-				cur = successor(cur);
-				return val;
-			}
-		};
-	}
-
 	// -------------- String --------------
 	public String toString() {
 		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for (int t : this) sj.add(String.valueOf(t));
+		PrimitiveIterator.OfInt it = iterator();
+		while (it.hasNext()) sj.add(Integer.toString(it.nextInt()));
 		return sj.toString();
 	}
 
 	// -------------- Contains --------------
-	public boolean contains(int t) {
+	public boolean contains(final int t) {
 		if (size == 0) return false;
 		Node cur = root;
 		while (cur != null) {
-			if (cur.label < t) {
-				cur = cur.right;
-			} else if (cur.label > t) {
-				cur = cur.left;
-			} else {
-				break;
-			}
+			if (cur.label == t) break;
+			cur = cur.label < t ? cur.right : cur.left;
 		}
 		return cur != null;
 	}
 
-	public boolean containsAll(Collection<Integer> c) {
+	public boolean containsAll(final Collection<Integer> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
 		for (int t : c) {
@@ -172,6 +68,99 @@ public final class IntAVLSet implements Iterable<Integer> {
 			}
 		}
 		return contains;
+	}
+
+	// -------------- Add --------------
+	public boolean add(final int t) {
+		if (size == 0) {
+			first = last = t;
+			root = new Node(t, null);
+			size = 1;
+			return true;
+		}
+		if (t < first) first = t;
+		if (t > last) last = t;
+		int oldSize = size;
+		root = root.add(t);
+		update();
+		return size != oldSize;
+	}
+
+	public boolean addAll(final Collection<Integer> c) {
+		int oldSize = size;
+		for (int a : c) add(a);
+		return size != oldSize;
+	}
+
+	// -------------- Remove --------------
+	public boolean remove(final int t) {
+		if (size == 0) return false;
+		int oldSize = size;
+		root = root.remove(t);
+		update();
+		boolean removed = size != oldSize;
+		if (size > 0 && removed) {
+			if (t == first) first = leftmost(root).label;
+			if (t == last) last = rightmost(root).label;
+		}
+		return removed;
+	}
+
+	public boolean removeAll(final Collection<Integer> c) {
+		if (isEmpty()) return false;
+		int oldSize = size;
+		Collection<Integer> hs = c instanceof Set ? c : new HashSet<>(c);
+		for (int v : hs) remove(v);
+		return size != oldSize;
+	}
+
+	public boolean removeAt(final int index) {
+		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
+		int oldSize = size;
+		root = root.removeAt(index);
+		update();
+		if (size > 0) {
+			if (index == 0) first = leftmost(root).label;
+			if (index == oldSize - 1) last = rightmost(root).label;
+		}
+		return size != oldSize;
+	}
+
+	// -------------- Arrays --------------
+	public int[] toArray() {
+		if (size == 0) return new int[0];
+		int[] arr = new int[size];
+		PrimitiveIterator.OfInt it = iterator();
+		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextInt();
+		return arr;
+	}
+
+	// -------------- Streams --------------
+	public Stream<Integer> stream() {
+		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
+		return StreamSupport.stream(Spliterators.spliterator(iterator(), size, characteristics), false);
+	}
+
+	// -------------- Iteration --------------
+	public PrimitiveIterator.OfInt iterator() {
+		return new PrimitiveIterator.OfInt() {
+			private Node cur;
+
+			{
+				cur = leftmost(root);
+			}
+
+			public boolean hasNext() {
+				return cur != null;
+			}
+
+			public int nextInt() {
+				if (cur == null) throw new NoSuchElementException();
+				int val = cur.label;
+				cur = successor(cur);
+				return val;
+			}
+		};
 	}
 
 	// -------------- Access by Index --------------
@@ -193,12 +182,13 @@ public final class IntAVLSet implements Iterable<Integer> {
 	}
 
 	// -------------- Search & Rank --------------
-	public int indexOf(int t) {
+	public int indexOf(final int t) {
+		if (size == 0) return -1;
 		int index = rank(t);
-		return index < 0 ? -1 : index;
+		return index >= 0 ? index : -1;
 	}
 
-	public int rank(int t) {
+	public int rank(final int t) {
 		Node cur = root;
 		int index = 0;
 		while (cur != null) {
@@ -216,23 +206,23 @@ public final class IntAVLSet implements Iterable<Integer> {
 	}
 
 	// -------------- Navigation --------------
-	public Integer higher(int key) {
+	public Integer higher(final int key) {
 		return boundary(key, false, true);
 	}
 
-	public Integer ceiling(int key) {
+	public Integer ceiling(final int key) {
 		return boundary(key, true, true);
 	}
 
-	public Integer lower(int key) {
+	public Integer lower(final int key) {
 		return boundary(key, false, false);
 	}
 
-	public Integer floor(int key) {
+	public Integer floor(final int key) {
 		return boundary(key, true, false);
 	}
 
-	private Integer boundary(int key, boolean inclusive, boolean higher) {
+	private Integer boundary(final int key, final boolean inclusive, final boolean higher) {
 		if (size == 0) return null;
 		if (first == key && inclusive) return first;
 		if (first > key) return higher ? first : null;
@@ -272,54 +262,59 @@ public final class IntAVLSet implements Iterable<Integer> {
 	public int pollFirst() {
 		if (size == 0) throw new NoSuchElementException();
 		int temp = first;
-		remove(first);
+		removeAt(0);
 		return temp;
 	}
 
 	public int pollLast() {
 		if (size == 0) throw new NoSuchElementException();
 		int temp = last;
-		remove(last);
+		removeAt(size - 1);
 		return temp;
 	}
 
 	// -------------- Internal Helpers --------------
-	private Node leftmost(Node n) {
-		if (n == null) return null;
-		while (n.left != null) n = n.left;
-		return n;
-	}
-
-	private Node rightmost(Node n) {
-		if (n == null) return null;
-		while (n.right != null) n = n.right;
-		return n;
-	}
-
-	private Node successor(Node n) {
-		if (n == null) return null;
-		if (n.right != null) return leftmost(n.right);
-		Node p = n.parent, ch = n;
-		while (p != null && p.right == ch) {
-			ch = p;
-			p = p.parent;
+	private void update() {
+		if (root == null) {
+			clear();
+			return;
 		}
-		return p;
+		size = root.size;
+		root.parent = null;
+	}
+
+	private Node leftmost(Node cur) {
+		if (cur == null) return null;
+		while (cur.left != null) cur = cur.left;
+		return cur;
+	}
+
+	private Node rightmost(Node cur) {
+		if (cur == null) return null;
+		while (cur.right != null) cur = cur.right;
+		return cur;
+	}
+
+	private Node successor(Node cur) {
+		if (cur == null) return null;
+		if (cur.right != null) return leftmost(cur.right);
+		while (cur.parent != null && cur.parent.right == cur) cur = cur.parent;
+		return cur.parent;
 	}
 
 	// -------------- Nested classes --------------
 	private static final class Node {
 		private final int label;
-		private int size, height;
+		private int height, size;
 		private Node left, right, parent;
 
-		public Node(int label, Node parent) {
-			this.parent = parent;
+		private Node(final int label, final Node parent) {
 			this.label = label;
-			size = height = 1;
+			this.height = this.size = 1;
+			this.parent = parent;
 		}
 
-		public Node removeAt(int index) {
+		private Node removeAt(int index) {
 			int lIdx = leftSize();
 			if (lIdx < index) {
 				index -= lIdx + 1;
@@ -334,7 +329,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node add(int t) {
+		private Node add(final int t) {
 			if (label < t) {
 				setRight(right == null ? new Node(t, this) : right.add(t));
 			} else if (label > t) {
@@ -347,7 +342,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node remove(int t) {
+		private Node remove(final int t) {
 			if (label < t) {
 				if (right == null) {
 					return this;
@@ -421,7 +416,7 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return max;
 		}
 
-		private Node rotate(int bf) {
+		private Node rotate(final int bf) {
 			Node prevParent = parent;
 			Node newRoot;
 			if (bf > 0) {
@@ -476,12 +471,12 @@ public final class IntAVLSet implements Iterable<Integer> {
 			return newRoot;
 		}
 
-		private void setLeft(Node child) {
+		private void setLeft(final Node child) {
 			left = child;
 			if (child != null) child.parent = this;
 		}
 
-		private void setRight(Node child) {
+		private void setRight(final Node child) {
 			right = child;
 			if (child != null) child.parent = this;
 		}

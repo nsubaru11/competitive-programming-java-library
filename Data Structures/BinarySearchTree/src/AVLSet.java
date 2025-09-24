@@ -1,5 +1,13 @@
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.StringJoiner;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -8,17 +16,18 @@ import static java.lang.Math.max;
 
 @SuppressWarnings({"unused", "unchecked"})
 public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
+	// -------------- Fields --------------
 	private final Comparator<? super T> comparator;
-	private int size;
 	private Node root;
 	private T first, last;
+	private int size;
 
 	// -------------- Constructors --------------
 	public AVLSet() {
 		this(Comparator.naturalOrder());
 	}
 
-	public AVLSet(Comparator<? super T> comparator) {
+	public AVLSet(final Comparator<? super T> comparator) {
 		this.comparator = comparator;
 		clear();
 	}
@@ -38,139 +47,26 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 		size = 0;
 	}
 
-	// -------------- Add --------------
-	public boolean add(T t) {
-		if (size == 0) {
-			first = last = t;
-			root = new Node(t, null);
-			size = 1;
-			return true;
-		}
-		if (comparator.compare(t, first) < 0) first = t;
-		if (comparator.compare(t, last) > 0) last = t;
-		root = root.add(t);
-		boolean isNotContain = size != root.size;
-		size = root.size;
-		root.parent = null;
-		return isNotContain;
-	}
-
-	public boolean addAll(Collection<T> c) {
-		int oldSize = size;
-		for (T a : c) add(a);
-		return size != oldSize;
-	}
-
-	// -------------- Remove --------------
-	public boolean remove(T t) {
-		if (size == 0) return false;
-		int oldSize = size;
-		Node newRoot = root.remove(t);
-		if (newRoot == null) {
-			clear();
-		} else {
-			root = newRoot;
-			root.parent = null;
-			if (size != root.size) {
-				if (comparator.compare(t, first) == 0) first = leftmost(root).label;
-				if (comparator.compare(t, last) == 0) last = rightmost(root).label;
-			}
-			size = root.size;
-		}
-		return size != oldSize;
-	}
-
-	public boolean removeAll(Collection<T> c) {
-		if (isEmpty()) return false;
-		int oldSize = size;
-		HashSet<T> hs = new HashSet<>(c);
-		for (T v : hs) remove(v);
-		return size != oldSize;
-	}
-
-	public boolean removeAt(int index) {
-		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
-		int oldSize = size;
-		Node newRoot = root.removeAt(index);
-		if (newRoot == null) {
-			clear();
-		} else {
-			root = newRoot;
-			root.parent = null;
-			if (size != root.size) {
-				if (index == 0) first = leftmost(root).label;
-				if (index == size - 1) last = rightmost(root).label;
-			}
-			size = root.size;
-		}
-		return size != oldSize;
-	}
-
-	// -------------- Arrays --------------
-	public T[] toArray() {
-		if (size == 0) return (T[]) new Object[0];
-		T[] arr = (T[]) Array.newInstance(first.getClass(), (int) size);
-		int i = 0;
-		for (T t : this) arr[i++] = t;
-		return arr;
-	}
-
-	// -------------- Streams --------------
-	public Stream<T> stream() {
-		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.SIZED | Spliterator.SUBSIZED;
-		Iterator<T> it = iterator();
-		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
-	}
-
-	// -------------- Iteration --------------
-	public Iterator<T> iterator() {
-		return new Iterator<>() {
-			private Node cur = root;
-			private boolean first = true;
-
-			public boolean hasNext() {
-				return cur != null;
-			}
-
-			public T next() {
-				if (cur == null) throw new NoSuchElementException();
-				if (first) {
-					cur = leftmost(cur);
-					first = false;
-					if (cur == null) throw new NoSuchElementException();
-				}
-				T val = cur.label;
-				cur = successor(cur);
-				return val;
-			}
-		};
-	}
-
 	// -------------- String --------------
 	public String toString() {
 		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for (T t : this) sj.add(String.valueOf(t));
+		for (T t : this) sj.add(t.toString());
 		return sj.toString();
 	}
 
 	// -------------- Contains --------------
-	public boolean contains(T t) {
+	public boolean contains(final T t) {
 		if (size == 0) return false;
 		Node cur = root;
 		while (cur != null) {
 			int cmp = comparator.compare(cur.label, t);
-			if (cmp < 0) {
-				cur = cur.right;
-			} else if (cmp > 0) {
-				cur = cur.left;
-			} else {
-				break;
-			}
+			if (cmp == 0) break;
+			cur = cmp < 0 ? cur.right : cur.left;
 		}
 		return cur != null;
 	}
 
-	public boolean containsAll(Collection<T> c) {
+	public boolean containsAll(final Collection<T> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
 		for (T t : c) {
@@ -180,6 +76,99 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 			}
 		}
 		return contains;
+	}
+
+	// -------------- Add --------------
+	public boolean add(final T t) {
+		if (size == 0) {
+			first = last = t;
+			root = new Node(t, null);
+			size = 1;
+			return true;
+		}
+		if (comparator.compare(t, first) < 0) first = t;
+		if (comparator.compare(t, last) > 0) last = t;
+		int oldSize = size;
+		root = root.add(t);
+		update();
+		return size != oldSize;
+	}
+
+	public boolean addAll(final Collection<T> c) {
+		int oldSize = size;
+		for (T a : c) add(a);
+		return size != oldSize;
+	}
+
+	// -------------- Remove --------------
+	public boolean remove(final T t) {
+		if (size == 0) return false;
+		int oldSize = size;
+		root = root.remove(t);
+		update();
+		boolean removed = size != oldSize;
+		if (size > 0 && removed) {
+			if (comparator.compare(t, first) == 0) first = leftmost(root).label;
+			if (comparator.compare(t, last) == 0) last = rightmost(root).label;
+		}
+		return removed;
+	}
+
+	public boolean removeAll(final Collection<T> c) {
+		if (isEmpty()) return false;
+		int oldSize = size;
+		Collection<T> hs = c instanceof Set ? c : new HashSet<>(c);
+		for (T v : hs) remove(v);
+		return size != oldSize;
+	}
+
+	public boolean removeAt(final int index) {
+		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
+		int oldSize = size;
+		root = root.removeAt(index);
+		update();
+		if (size > 0) {
+			if (index == 0) first = leftmost(root).label;
+			if (index == oldSize - 1) last = rightmost(root).label;
+		}
+		return size != oldSize;
+	}
+
+	// -------------- Arrays --------------
+	public T[] toArray() {
+		if (size == 0) return (T[]) new Object[0];
+		T[] arr = (T[]) Array.newInstance(first.getClass(), size);
+		int i = 0;
+		for (T t : this) arr[i++] = t;
+		return arr;
+	}
+
+	// -------------- Streams --------------
+	public Stream<T> stream() {
+		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
+		return StreamSupport.stream(Spliterators.spliterator(iterator(), size, characteristics), false);
+	}
+
+	// -------------- Iteration --------------
+	public Iterator<T> iterator() {
+		return new Iterator<>() {
+			private Node cur;
+
+			{
+				cur = leftmost(root);
+			}
+
+			public boolean hasNext() {
+				return cur != null;
+			}
+
+			public T next() {
+				if (cur == null) throw new NoSuchElementException();
+				T val = cur.label;
+				cur = successor(cur);
+				return val;
+			}
+		};
 	}
 
 	// -------------- Access by Index --------------
@@ -201,12 +190,13 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Search & Rank --------------
-	public int indexOf(T t) {
+	public int indexOf(final T t) {
+		if (size == 0) return -1;
 		int index = rank(t);
-		return index < 0 ? -1 : index;
+		return index >= 0 ? index : -1;
 	}
 
-	public int rank(T t) {
+	public int rank(final T t) {
 		Node cur = root;
 		int index = 0;
 		while (cur != null) {
@@ -225,23 +215,23 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	// -------------- Navigation --------------
-	public T higher(T key) {
+	public T higher(final T key) {
 		return boundary(key, false, true);
 	}
 
-	public T ceiling(T key) {
+	public T ceiling(final T key) {
 		return boundary(key, true, true);
 	}
 
-	public T lower(T key) {
+	public T lower(final T key) {
 		return boundary(key, false, false);
 	}
 
-	public T floor(T key) {
+	public T floor(final T key) {
 		return boundary(key, true, false);
 	}
 
-	private T boundary(T key, boolean inclusive, boolean higher) {
+	private T boundary(final T key, final boolean inclusive, final boolean higher) {
 		if (size == 0) return null;
 		int c1 = comparator.compare(first, key);
 		if (c1 == 0 && inclusive) return first;
@@ -252,16 +242,16 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 		T t = null;
 		Node cur = root;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, key);
+			int c = comparator.compare(cur.label, key);
 			if (higher) {
-				if (cmp > 0 || (inclusive && cmp == 0)) {
+				if (c > 0 || (inclusive && c == 0)) {
 					t = cur.label;
 					cur = cur.left;
 				} else {
 					cur = cur.right;
 				}
 			} else {
-				if (cmp < 0 || (inclusive && cmp == 0)) {
+				if (c < 0 || (inclusive && c == 0)) {
 					t = cur.label;
 					cur = cur.right;
 				} else {
@@ -284,54 +274,59 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 	public T pollFirst() {
 		if (size == 0) return null;
 		T temp = first;
-		remove(first);
+		removeAt(0);
 		return temp;
 	}
 
 	public T pollLast() {
 		if (size == 0) return null;
 		T temp = last;
-		remove(last);
+		removeAt(size - 1);
 		return temp;
 	}
 
 	// -------------- Internal Helpers --------------
-	private Node leftmost(Node n) {
-		if (n == null) return null;
-		while (n.left != null) n = n.left;
-		return n;
-	}
-
-	private Node rightmost(Node n) {
-		if (n == null) return null;
-		while (n.right != null) n = n.right;
-		return n;
-	}
-
-	private Node successor(Node n) {
-		if (n == null) return null;
-		if (n.right != null) return leftmost(n.right);
-		Node p = n.parent, ch = n;
-		while (p != null && p.right == ch) {
-			ch = p;
-			p = p.parent;
+	private void update() {
+		if (root == null) {
+			clear();
+			return;
 		}
-		return p;
+		size = root.size;
+		root.parent = null;
+	}
+
+	private Node leftmost(Node cur) {
+		if (cur == null) return null;
+		while (cur.left != null) cur = cur.left;
+		return cur;
+	}
+
+	private Node rightmost(Node cur) {
+		if (cur == null) return null;
+		while (cur.right != null) cur = cur.right;
+		return cur;
+	}
+
+	private Node successor(Node cur) {
+		if (cur == null) return null;
+		if (cur.right != null) return leftmost(cur.right);
+		while (cur.parent != null && cur.parent.right == cur) cur = cur.parent;
+		return cur.parent;
 	}
 
 	// -------------- Nested classes --------------
 	private final class Node {
 		private final T label;
-		private int size, height;
+		private int height, size;
 		private Node left, right, parent;
 
-		public Node(T label, Node parent) {
-			this.parent = parent;
+		private Node(final T label, final Node parent) {
 			this.label = label;
-			size = height = 1;
+			this.height = this.size = 1;
+			this.parent = parent;
 		}
 
-		public Node removeAt(int index) {
+		private Node removeAt(int index) {
 			int lIdx = leftSize();
 			if (lIdx < index) {
 				index -= lIdx + 1;
@@ -346,7 +341,7 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node add(T t) {
+		private Node add(final T t) {
 			int cmp = AVLSet.this.comparator.compare(label, t);
 			if (cmp < 0) {
 				setRight(right == null ? new Node(t, this) : right.add(t));
@@ -360,7 +355,7 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
-		private Node remove(T t) {
+		private Node remove(final T t) {
 			int cmp = AVLSet.this.comparator.compare(label, t);
 			if (cmp < 0) {
 				if (right == null) {
@@ -435,7 +430,7 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 			return max;
 		}
 
-		private Node rotate(int bf) {
+		private Node rotate(final int bf) {
 			Node prevParent = parent;
 			Node newRoot;
 			if (bf > 0) {
@@ -490,12 +485,12 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 			return newRoot;
 		}
 
-		private void setLeft(Node child) {
+		private void setLeft(final Node child) {
 			left = child;
 			if (child != null) child.parent = this;
 		}
 
-		private void setRight(Node child) {
+		private void setRight(final Node child) {
 			right = child;
 			if (child != null) child.parent = this;
 		}
