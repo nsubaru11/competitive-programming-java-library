@@ -1,96 +1,45 @@
-# Ring Buffer
+# RingBuffer
 
 ## 概要
 
-リングバッファ（環状バッファ、循環バッファとも呼ばれる）は、固定サイズの配列を循環的に使用するデータ構造です。先頭と末尾からの追加・削除が効率的に行えるため、キューやデックの実装に適しています。このライブラリでは、汎用的なリングバッファと、int型およびlong型に特化した高効率な実装を提供しています。
+競技プログラミング向けの、高速な固定長リングバッファを提供します。
+ジェネリクス版 (`RingBuffer<T>`) と、プリミティブ型に特化した`IntegerRingBuffer`、`LongRingBuffer` があります。
 
 ## 実装クラス
 
-### [RingBuffer](./src/RingBuffer.java)
+### [RingBuffer<T>](src/RingBuffer.java)
 
-- **用途**：任意の型の要素を扱う汎用的なリングバッファ
+- **用途**：オブジェクト（参照型）を格納するための汎用的なリングバッファ。
 - **特徴**：
-	- ジェネリック型をサポート
-	- 先頭と末尾からの効率的な追加・削除操作
-	- ランダムアクセス（インデックスによる要素の取得・設定）
-	- 動的な論理サイズの変更
-	- Iterableインターフェースの実装によるfor-each構文のサポート
-	- Cloneableインターフェースの実装によるディープコピーのサポート
-	- ストリームAPIのサポート
-- **主な操作**:
-	- `addLast(T e)/addFirst(T e)`: 末尾/先頭に要素を追加
-	- `pollLast()/pollFirst()`: 末尾/先頭の要素を取り出して削除
-	- `peekLast()/peekFirst()`: 末尾/先頭の要素を参照（削除しない）
-	- `get(int index)/set(int index, T e)`: インデックスによる要素の取得/設定
-	- `setLength(int newLen)`: 論理サイズの変更
-	- `size()/capacity()/remainingCapacity()`: サイズ、容量、残り容量の取得
-	- `isEmpty()/isFull()`: 空/満杯かどうかの判定
-	- `clear()`: すべての要素を削除
-	- `toArray()/toList()`: 配列/リストへの変換
-- **時間計算量**：
-	- 先頭/末尾への追加/削除: O(1)
-	- インデックスによるアクセス/設定: O(1)
-	- 要素の検索: O(n)
-- **空間計算量**：O(n)、ここでnは容量
+	- 内部容量を自動的に2のべき乗に正規化し、ビット演算で高速にインデックスを計算します。
+	- `add`, `poll`, `get` などの基本操作はO(1)で実行されます。
+- **時間計算量**：O(1) (基本操作)
+- **空間計算量**：O(C) (Cは容量)
 
-### [IntegerRingBuffer](./src/IntegerRingBuffer.java)
+### [IntegerRingBuffer](src/IntegerRingBuffer.java)
 
-- **用途**：int型の要素に特化したリングバッファ
+- **用途**：`int`型の値を格納するためのリングバッファ。
 - **特徴**：
-	- プリミティブ型の配列を使用し、ボクシング/アンボクシングのオーバーヘッドを回避
-	- RingBufferと同様の機能セット
-	- IntStreamによるストリーム操作のサポート
-- **主な操作**:
-	- `addLast(int e)/addFirst(int e)`: 末尾/先頭に要素を追加
-	- `pollLast()/pollFirst()`: 末尾/先頭の要素を取り出して削除
-	- `peekLast()/peekFirst()`: 末尾/先頭の要素を参照
-	- `get(int index)/set(int index, int e)`: インデックスによる要素の取得/設定
-	- `setLength(int newLen)`: 論理サイズの変更
-	- `size()/capacity()/remainingCapacity()`: サイズ、容量、残り容量の取得
-	- `isEmpty()/isFull()`: 空/満杯かどうかの判定
-	- `clear()`: すべての要素を削除
-	- `toArray()/toList()`: 配列/リストへの変換
-	- `stream()/parallelStream()`: IntStreamの取得
-- **時間計算量**：
-	- 先頭/末尾への追加/削除: O(1)
-	- インデックスによるアクセス/設定: O(1)
-	- 要素の検索: O(n)
-- **空間計算量**：O(n)
+	- `int`型に特化しており、ボクシング・アンボクシングのオーバーヘッドがありません。
+	- `RingBuffer<T>` と同じく、2のべき乗容量とビット演算による高速化が図られています。
+- **時間計算量**：O(1) (基本操作)
+- **空間計算量**：O(C) (Cは容量)
 
-### [LongRingBuffer](./src/LongRingBuffer.java)
+### [LongRingBuffer](src/LongRingBuffer.java)
 
-- **用途**：long型の要素に特化したリングバッファ
+- **用途**：`long`型の値を格納するためのリングバッファ。
 - **特徴**：
-	- プリミティブ型の配列を使用し、ボクシング/アンボクシングのオーバーヘッドを回避
-	- RingBufferと同様の機能セット
-	- LongStreamによるストリーム操作のサポート
-- **主な操作**:
-	- `addLast(long e)/addFirst(long e)`: 末尾/先頭に要素を追加
-	- `pollLast()/pollFirst()`: 末尾/先頭の要素を取り出して削除
-	- `peekLast()/peekFirst()`: 末尾/先頭の要素を参照
-	- `get(int index)/set(int index, long e)`: インデックスによる要素の取得/設定
-	- `setLength(int newLen)`: 論理サイズの変更
-	- `size()/capacity()/remainingCapacity()`: サイズ、容量、残り容量の取得
-	- `isEmpty()/isFull()`: 空/満杯かどうかの判定
-	- `clear()`: すべての要素を削除
-	- `toArray()/toList()`: 配列/リストへの変換
-	- `stream()/parallelStream()`: LongStreamの取得
-- **時間計算量**：
-	- 先頭/末尾への追加/削除: O(1)
-	- インデックスによるアクセス/設定: O(1)
-	- 要素の検索: O(n)
-- **空間計算量**：O(n)
+	- `long`型に特化しており、パフォーマンスが最適化されています。
+	- `RingBuffer<T>` と同じく、2のべき乗容量とビット演算による高速化が図られています。
+- **時間計算量**：O(1) (基本操作)
+- **空間計算量**：O(C) (Cは容量)
 
-## 選択ガイド
+## アルゴリズム（データ構造）選択ガイド
 
-- **RingBuffer<T>**: 整数以外の型（文字列、カスタムオブジェクトなど）を扱う場合に使用します。
-- **IntegerRingBuffer**: int型の値のみを扱う場合に使用します。ボクシング/アンボクシングのオーバーヘッドがないため、整数値を扱う場合はこちらの方が高速です。
-- **LongRingBuffer**: long型の値を扱う場合や、int型の範囲を超える可能性がある場合に使用します。IntegerRingBufferと同様に、プリミティブ型に特化しているため高速です。
+- **`IntegerRingBuffer` / `LongRingBuffer`**: `int`や`long`の値を扱う場合は、パフォーマンスが最も高いため、これらのプリミティブ型に特化したクラスの使用を強く推奨します。
+- **`RingBuffer<T>`**: プリミティブ型以外のオブジェクトを扱う場合に使用します。
 
 ## 注意事項
 
-- リングバッファが満杯の状態で追加操作を行うと、`false`が返され、バッファは変更されません。
-- 空のリングバッファから要素を取り出そうとすると、`NoSuchElementException`が発生します。
-- インデックスが範囲外の場合、`RingBufferIndexException`が発生します。
-- 論理インデックスと物理インデックスの変換は内部で自動的に行われるため、ユーザーは循環的なアクセスを意識する必要はありません。
-- `setLength`メソッドを使用して論理サイズを変更する場合、新しいサイズが容量を超えることはできません。
+- これらのクラスは競技プログラミングの文脈に最適化されており、一般的な堅牢性（不正な引数チェックなど）は意図的に省略されています。
+- 詳細なAPI仕様、設計思想、パフォーマンス特性については、[RingBuffer 利用ガイド](./docs/RingBufferGuide.md)を参照してください。

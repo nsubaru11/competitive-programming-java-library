@@ -1,5 +1,11 @@
 import java.io.Serial;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -7,12 +13,15 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-
 /**
- * UtilRingBufferクラス:
- * このクラスは固定長のジェネリクス型リングバッファを実装しており、先頭・末尾の追加／削除、ランダムアクセス、ストリーム変換などを提供します。
+ * ジェネリクス型リングバッファ。
+ * <p>
+ * 固定長のリングバッファを実装します。競技プログラミングでの利用を想定し、
+ * 内部容量を自動的に2のべき乗に正規化することで、剰余演算の代わりに高速なビット演算を利用します。
+ *
+ * @param <T> このコレクションが保持する要素の型
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "unchecked"})
 public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	private final int capacity; // バッファの最大サイズ
 	private final Supplier<T> init;
@@ -20,35 +29,26 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	private int head, size; // データの先頭を表すインデックスとデータの要素数
 
 	/**
-	 * 指定されたサイズで新しいRingBufferを初期化します。
+	 * 指定された推奨容量と初期化関数でRingBufferを構築します。
 	 *
-	 * @param capacity バッファの最大サイズ。(int)
-	 * @throws IllegalArgumentException サイズが0以下の場合
+	 * @param capacity 推奨されるバッファ容量。内部で2のべき乗に正規化されます。正の値を指定してください。
+	 * @param init     {@link #setLength(int)} でバッファが拡張される際に新しい要素を生成するための供給関数。
 	 */
-	@SuppressWarnings("unchecked")
-	public RingBuffer(final int capacity, Supplier<T> init) {
-		if (capacity <= 0)
-			throw new IllegalArgumentException();
-		this.capacity = capacity;
-		buf = (T[]) new Object[capacity];
+	public RingBuffer(final int capacity, final Supplier<T> init) {
+		this.capacity = 1 << (32 - Integer.numberOfLeadingZeros(capacity - 1));
+		buf = (T[]) new Object[this.capacity];
 		head = size = 0;
 		this.init = init;
-		for (int i = 0; i < capacity; i++)
-			buf[i] = init.get();
 	}
 
 	/**
-	 * 指定されたサイズで新しいRingBufferを初期化します。
+	 * 指定された推奨容量でRingBufferを構築します。
 	 *
-	 * @param capacity バッファの最大サイズ。(int)
-	 * @throws IllegalArgumentException サイズが0以下の場合
+	 * @param capacity 推奨されるバッファ容量。内部で2のべき乗に正規化されます。正の値を指定してください。
 	 */
-	@SuppressWarnings("unchecked")
 	public RingBuffer(final int capacity) {
-		if (capacity <= 0)
-			throw new IllegalArgumentException();
-		this.capacity = capacity;
-		buf = (T[]) new Object[capacity];
+		this.capacity = 1 << (32 - Integer.numberOfLeadingZeros(capacity - 1));
+		buf = (T[]) new Object[this.capacity];
 		head = size = 0;
 		this.init = () -> null;
 	}
@@ -57,24 +57,22 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * バッファの末尾に要素を追加します。
 	 *
 	 * @param e 追加する要素
-	 * @return バッファに正常に追加された場合はtrueを返します。 すでに満杯の場合はfalseを返します。
+	 * @return 要素が追加された場合は {@code true}、バッファが満杯で追加できなかった場合は {@code false}
 	 */
 	public boolean addLast(final T e) {
-		if (isFull())
-			return false;
+		if (isFull()) return false;
 		buf[physicalIndex(size++)] = e;
 		return true;
 	}
 
 	/**
-	 * バッファの先頭に要素を追加
+	 * バッファの先頭に要素を追加します。
 	 *
 	 * @param e 追加する要素
-	 * @return バッファに正常に追加された場合はtrueを返します。 すでに満杯の場合はfalseを返します。
+	 * @return 要素が追加された場合は {@code true}、バッファが満杯で追加できなかった場合は {@code false}
 	 */
 	public boolean addFirst(final T e) {
-		if (isFull())
-			return false;
+		if (isFull()) return false;
 		head = physicalIndex(capacity - 1);
 		buf[head] = e;
 		size++;
@@ -82,19 +80,16 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	}
 
 	/**
-	 * 指定したインデックスの要素を取得します。 負のインデックスは末尾からの相対位置を表す。
+	 * 指定したインデックスの要素を取得します。負のインデックスは、末尾からの相対位置として解釈されます (例: -1は最後の要素)。
 	 *
-	 * @param index 取得する要素のインデックス。-size <= index < sizeを満たす必要があります。
+	 * @param index 取得する要素のインデックス。{@code -size() <= index < size()} を満たす必要があります。
 	 * @return 指定されたインデックスの要素
 	 * @throws RingBufferIndexException バッファが空の場合、またはインデックスが範囲外の場合
 	 */
 	public T get(int index) {
-		if (isEmpty())
-			throw new RingBufferIndexException("Buffer is empty.");
-		if (index >= size || index < -size)
-			throw new RingBufferIndexException(index, -size, size - 1);
-		if (index < 0)
-			index += size;
+		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
+		if (index >= size || index < -size) throw new RingBufferIndexException(index, -size, size - 1);
+		if (index < 0) index += size;
 		return buf[physicalIndex(index)];
 	}
 
@@ -105,9 +100,10 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @throws RingBufferIndexException バッファが空の場合
 	 */
 	public T pollLast() {
-		if (isEmpty())
-			throw new RingBufferIndexException("Buffer is empty.");
-		return buf[physicalIndex(--size)];
+		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
+		final T last = buf[physicalIndex(size - 1)];
+		size--;
+		return last;
 	}
 
 	/**
@@ -117,8 +113,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @throws RingBufferIndexException バッファが空の場合
 	 */
 	public T pollFirst() {
-		if (isEmpty())
-			throw new RingBufferIndexException("Buffer is empty.");
+		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
 		T first = buf[head];
 		size--;
 		head = physicalIndex(1);
@@ -126,62 +121,57 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	}
 
 	/**
-	 * 末尾の要素を取得します。
+	 * 末尾の要素を取得します。要素は削除されません。
 	 *
 	 * @return 末尾の要素
 	 * @throws RingBufferIndexException バッファが空の場合
 	 */
 	public T peekLast() {
-		if (isEmpty())
-			throw new RingBufferIndexException("Buffer is empty.");
+		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
 		return buf[physicalIndex(size - 1)];
 	}
 
 	/**
-	 * 先頭の要素を取得します。
+	 * 先頭の要素を取得します。要素は削除されません。
 	 *
 	 * @return 先頭の要素
 	 * @throws RingBufferIndexException バッファが空の場合
 	 */
 	public T peekFirst() {
-		if (isEmpty())
-			throw new RingBufferIndexException("Buffer is empty.");
+		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
 		return buf[head];
 	}
 
 	/**
-	 * 指定されたインデックスの要素を上書きします。
+	 * 指定されたインデックスの要素を上書きします。負のインデックスは、末尾からの相対位置として解釈されます (例: -1は最後の要素)。
 	 *
-	 * @param index 上書きする要素のインデックス。-size <= index < sizeを満たす必要があります。
+	 * @param index 上書きする要素のインデックス。{@code -size() <= index < size()} を満たす必要があります。
 	 * @param e     新しい要素
-	 * @return このインスタンス自体を返します。
+	 * @return このインスタンス自体
 	 * @throws RingBufferIndexException バッファが空の場合、またはインデックスが範囲外の場合
 	 */
 	public RingBuffer<T> set(int index, final T e) {
-		if (isEmpty())
-			throw new RingBufferIndexException("Buffer is empty.");
-		if (index < -size || size <= index)
-			throw new RingBufferIndexException(index, -size, size - 1);
-		if (index < 0)
-			index += size;
+		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
+		if (index < -size || size <= index) throw new RingBufferIndexException(index, -size, size - 1);
+		if (index < 0) index += size;
 		buf[physicalIndex(index)] = e;
 		return this;
 	}
 
 	/**
-	 * 現在のバッファの長さを変更します。 長さが増加する場合、新しい位置には0が挿入されます。
+	 * 現在のバッファの長さを変更します。
+	 * <p>
+	 * 長さが増加する場合、新しい位置にはコンストラクタで指定された {@code init} 関数によって生成された値が挿入されます。
+	 * 長さが減少する場合、末尾の要素が切り捨てられます。
 	 *
-	 * @param newLen 新しい長さ（0 <= newLen <= sizeを満たす必要があります）
-	 * @return このインスタンス自体を返します。
-	 * @throws RingBufferIndexException 指定された長さが範囲外の場合
+	 * @param newLen 新しい長さ。{@code 0 <= newLen <= capacity()} を満たす必要があります。
+	 * @return このインスタンス自体
+	 * @throws RingBufferIndexException 指定された長さが {@code 0} 未満、または {@code capacity()} を超える場合
 	 */
 	public RingBuffer<T> setLength(int newLen) {
-		if (newLen > capacity || newLen < 0)
-			throw new RingBufferIndexException(newLen, capacity);
+		if (newLen > capacity || newLen < 0) throw new RingBufferIndexException(newLen, capacity);
 		if (size < newLen) {
-			while (size < newLen) {
-				addLast(init.get());
-			}
+			while (size < newLen) addLast(init.get());
 		} else {
 			size = newLen;
 		}
@@ -195,7 +185,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @return 指定した要素が含まれている場合はtrue、含まれていない場合はfalse
 	 */
 	public boolean contains(final T e) {
-		return stream().anyMatch(i -> Objects.equals(i, e));
+		return stream().anyMatch(e::equals);
 	}
 
 	/**
@@ -219,7 +209,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	/**
 	 * 現在のバッファ内の要素数を返します。
 	 *
-	 * @return 現在のバッファ内の要素数（0以上size以下）
+	 * @return 現在の要素数
 	 */
 	public int size() {
 		return size;
@@ -237,7 +227,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	/**
 	 * バッファにこれ以上追加できる残りの容量を返します。
 	 *
-	 * @return 現在の要素数を差し引いた、バッファに追加可能な空き容量
+	 * @return {@code capacity() - size()}
 	 */
 	public int remainingCapacity() {
 		return capacity - size;
@@ -283,7 +273,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * このRingBufferインスタンスのクローンを作成します。 クローンされたインスタンスは元のインスタンスの独立したコピーです。
 	 *
 	 * @return クローンされたRingBufferインスタンス
-	 **/
+	 */
 	public RingBuffer<T> clone() {
 		try {
 			RingBuffer<T> rb = (RingBuffer<T>) super.clone();
@@ -302,12 +292,10 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * バッファ内の要素と順序が完全に一致していることを示します。
 	 */
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof RingBuffer other))
-			return false;
+		if (this == o) return true;
+		if (!(o instanceof RingBuffer other)) return false;
 		return size == other.size && IntStream.range(0, size)
-				.allMatch(i -> Objects.equals(buf[physicalIndex(i)], other.buf[other.physicalIndex(i)]));
+				.allMatch(i -> buf[physicalIndex(i)].equals(other.buf[other.physicalIndex(i)]));
 	}
 
 	/**
@@ -325,21 +313,20 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @return 論理状態に基づいたハッシュコード
 	 */
 	public int hashCode() {
-		if (isEmpty())
-			return 0;
+		if (isEmpty()) return 0;
 		int result = 1;
-		for (T element : this)
-			result = 31 * result + Objects.hashCode(element);
+		for (T element : this) result = 31 * result + Objects.hashCode(element);
 		return result;
 	}
 
 	/**
-	 * バッファの論理状態（headからsize個の要素）を含む新しいStream<T>を返します。
+	 * バッファの論理状態（headからsize個の要素）を含む新しい {@code Stream<T>} を返します。
 	 *
-	 * @return 現在のバッファ内容を含むIntStream
+	 * @return 現在のバッファ内容を含む {@code Stream<T>}
 	 */
 	public Stream<T> stream() {
-		return StreamSupport.stream(spliterator(), false);
+		int characteristics = Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
+		return StreamSupport.stream(Spliterators.spliterator(iterator(), size, characteristics), false);
 	}
 
 	/**
@@ -352,16 +339,12 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	}
 
 	/**
-	 * バッファの論理状態（headからsize個の要素）を含む新しいT配列を返します。
+	 * バッファの論理状態（headからsize個の要素）を含む新しい {@code T} 型の配列を返します。
 	 *
 	 * @return 現在のバッファ内容を含む配列
 	 */
-	@SuppressWarnings("unchecked")
 	public T[] toArray() {
-		T[] data = (T[]) new Object[size];
-		for (int i = 0; i < size; i++)
-			data[i] = buf[physicalIndex(i)];
-		return data;
+		return (T[]) stream().toArray();
 	}
 
 	/**
@@ -371,10 +354,8 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @return バッファ内容がコピーされた配列
 	 */
 	public T[] toArray(final T[] data) {
-		if (data.length < size)
-			return toArray();
-		for (int i = 0; i < size; i++)
-			data[i] = buf[physicalIndex(i)];
+		if (data.length < size) return toArray();
+		for (int i = 0; i < size; i++) data[i] = buf[physicalIndex(i)];
 		return data;
 	}
 
@@ -384,10 +365,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @return バッファ内の要素のリスト
 	 */
 	public List<T> toList() {
-		List<T> list = new ArrayList<>(size);
-		for (T elements : this)
-			list.add(elements);
-		return list;
+		return stream().toList();
 	}
 
 	/**
@@ -404,8 +382,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 			}
 
 			public T next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
+				if (!hasNext()) throw new NoSuchElementException();
 				return buf[physicalIndex(index++)];
 			}
 		};
@@ -418,7 +395,7 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 	 * @return 実インデックス
 	 */
 	private int physicalIndex(int logicalIndex) {
-		return (head + logicalIndex) % capacity;
+		return (head + logicalIndex) & (capacity - 1);
 	}
 
 	/**
@@ -446,17 +423,17 @@ public class RingBuffer<T> implements Iterable<T>, Cloneable {
 		 * @param to    有効範囲の上限（含む）
 		 */
 		public RingBufferIndexException(int index, int from, int to) {
-			super(String.format("Invalid index %d. Valid length is [%d, %d].", index, from, to));
+			super(String.format("Invalid index %d. Valid range is [%d, %d].", index, from, to));
 		}
 
 		/**
-		 * 指定のlenが0 <= len <= sizeを満たさないときのエラーです。
+		 * 指定された長さが有効範囲外である場合の例外を初期化します。
 		 *
-		 * @param len  不正な長さ
-		 * @param size 有効なサイズの上限
+		 * @param len    不正な長さ
+		 * @param maxLen 許容される最大長
 		 */
-		public RingBufferIndexException(int len, int size) {
-			super(String.format("Invalid length %d. Max allowed: %d.", len, size));
+		public RingBufferIndexException(int len, int maxLen) {
+			super(String.format("Invalid length %d. Max allowed: %d.", len, maxLen));
 		}
 	}
 }
