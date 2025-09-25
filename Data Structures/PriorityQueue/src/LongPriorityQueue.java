@@ -1,6 +1,6 @@
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 
 /**
  * long型特化優先度キュークラス:
@@ -31,45 +31,71 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	}
 
 	public void push(long v) {
-		if (isFull()) {
-			buf = Arrays.copyOf(buf, capacity *= 2);
-		}
+		if (isFull()) buf = Arrays.copyOf(buf, capacity <<= 1);
 		int i = size++;
-		buf[i] = v;
+		if (isDescendingOrder) siftUpMax(v, i);
+		else siftUpMin(v, i);
+	}
+
+	private void siftUpMax(long v, int i) {
 		while (i > 0) {
-			int j = (i - 1) / 2;
-			if (isDescendingOrder) {
-				if (buf[i] <= buf[j]) break;
-			} else {
-				if (buf[i] >= buf[j]) break;
-			}
-			long temp = buf[i];
+			int j = (i - 1) >> 1;
+			if (v <= buf[j]) break;
 			buf[i] = buf[j];
-			buf[j] = temp;
 			i = j;
 		}
+		buf[i] = v;
+	}
+
+	private void siftUpMin(long v, int i) {
+		while (i > 0) {
+			int j = (i - 1) >> 1;
+			if (v >= buf[j]) break;
+			buf[i] = buf[j];
+			i = j;
+		}
+		buf[i] = v;
 	}
 
 	public long poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		long res = buf[0];
-		buf[0] = buf[--size];
-		int i = 0;
-		while (true) {
-			int l = 2 * i + 1, r = l + 1, m = i;
-			if (l < size && ((isDescendingOrder && buf[l] > buf[m]) || (!isDescendingOrder && buf[l] < buf[m]))) {
-				m = l;
-			}
-			if (r < size && ((isDescendingOrder && buf[r] > buf[m]) || (!isDescendingOrder && buf[r] < buf[m]))) {
-				m = r;
-			}
-			if (m == i) break;
-			long temp = buf[i];
-			buf[i] = buf[m];
-			buf[m] = temp;
-			i = m;
+		long v = buf[--size];
+		if (size > 0) {
+			if (isDescendingOrder) siftDownMax(v);
+			else siftDownMin(v);
 		}
 		return res;
+	}
+
+	private void siftDownMax(long v) {
+		int half = size >> 1;
+		int i = 0;
+		while (i < half) {
+			int child = (i << 1) + 1, r = child + 1;
+			if (r < size && buf[child] < buf[r]) {
+				child = r;
+			}
+			if (v >= buf[child]) break;
+			buf[i] = buf[child];
+			i = child;
+		}
+		buf[i] = v;
+	}
+
+	private void siftDownMin(long v) {
+		int half = size >> 1;
+		int i = 0;
+		while (i < half) {
+			int child = (i << 1) + 1, r = child + 1;
+			if (r < size && buf[child] > buf[r]) {
+				child = r;
+			}
+			if (v <= buf[child]) break;
+			buf[i] = buf[child];
+			i = child;
+		}
+		buf[i] = v;
 	}
 
 	public long peek() {
@@ -94,8 +120,8 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	}
 
 	@Override
-	public Iterator<Long> iterator() {
-		return new Iterator<>() {
+	public PrimitiveIterator.OfLong iterator() {
+		return new PrimitiveIterator.OfLong() {
 			int i = 0;
 
 			@Override
@@ -104,7 +130,7 @@ public final class LongPriorityQueue implements Iterable<Long> {
 			}
 
 			@Override
-			public Long next() {
+			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return buf[i++];
 			}

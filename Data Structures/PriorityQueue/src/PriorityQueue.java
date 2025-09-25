@@ -48,40 +48,33 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	}
 
 	public void push(T v) {
-		if (isFull()) {
-			buf = Arrays.copyOf(buf, capacity *= 2);
-		}
+		if (isFull()) buf = Arrays.copyOf(buf, capacity *= 2);
 		int i = size++;
-		buf[i] = v;
 		while (i > 0) {
-			int j = (i - 1) / 2;
-			if (comparator.compare(buf[i], buf[j]) >= 0) break;
-			T temp = buf[i];
+			int j = (i - 1) >> 1;
+			if (comparator.compare(v, buf[j]) >= 0) break;
 			buf[i] = buf[j];
-			buf[j] = temp;
 			i = j;
 		}
+		buf[i] = v;
 	}
 
 	public T poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		T res = buf[0];
-		buf[0] = buf[--size];
+		T v = buf[--size];
+		int half = size >> 1;
 		int i = 0;
-		while (true) {
-			int l = 2 * i + 1, r = l + 1, m = i;
-			if (l < size && comparator.compare(buf[l], buf[m]) < 0) {
-				m = l;
+		while (i < half) {
+			int child = (i << 1) + 1, r = child + 1;
+			if (r < size && comparator.compare(buf[child], buf[r]) > 0) {
+				child = r;
 			}
-			if (r < size && comparator.compare(buf[r], buf[m]) < 0) {
-				m = r;
-			}
-			if (m == i) break;
-			T temp = buf[i];
-			buf[i] = buf[m];
-			buf[m] = temp;
-			i = m;
+			if (comparator.compare(v, buf[child]) <= 0) break;
+			buf[i] = buf[child];
+			i = child;
 		}
+		buf[i] = v;
 		return res;
 	}
 
