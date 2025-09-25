@@ -22,7 +22,7 @@ import java.util.stream.StreamSupport;
  * @param <T> このコレクションが保持する要素の型
  */
 @SuppressWarnings({"unused", "unchecked"})
-public class RingBuffer<T> implements Iterable<T>, Cloneable {
+public final class RingBuffer<T> implements Iterable<T>, Cloneable {
 	private final int capacity; // バッファの最大サイズ
 	private final Supplier<T> init;
 	private T[] buf; // データを格納する配列

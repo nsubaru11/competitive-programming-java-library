@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
  * 内部容量を自動的に2のべき乗に正規化することで、剰余演算の代わりに高速なビット演算を利用します。
  */
 @SuppressWarnings("unused")
-public class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
+public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	private final int capacity; // バッファの最大サイズ
 	private int[] buf; // データを格納する配列
 	private int head, size; // データの先頭を表すインデックスとデータの要素数
