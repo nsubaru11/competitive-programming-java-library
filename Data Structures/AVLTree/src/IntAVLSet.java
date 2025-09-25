@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.StringJoiner;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.Math.abs;
@@ -136,9 +136,9 @@ public final class IntAVLSet implements Iterable<Integer> {
 	}
 
 	// -------------- Streams --------------
-	public Stream<Integer> stream() {
-		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
-		return StreamSupport.stream(Spliterators.spliterator(iterator(), size, characteristics), false);
+	public IntStream stream() {
+		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.DISTINCT;
+		return StreamSupport.intStream(Spliterators.spliterator(iterator(), size, characteristics), false);
 	}
 
 	// -------------- Iteration --------------

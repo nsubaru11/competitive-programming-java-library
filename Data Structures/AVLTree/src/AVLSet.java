@@ -145,7 +145,7 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 
 	// -------------- Streams --------------
 	public Stream<T> stream() {
-		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
+		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.DISTINCT;
 		return StreamSupport.stream(Spliterators.spliterator(iterator(), size, characteristics), false);
 	}
 

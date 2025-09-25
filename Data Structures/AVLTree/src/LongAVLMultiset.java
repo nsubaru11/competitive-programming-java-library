@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.StringJoiner;
-import java.util.stream.Stream;
+import java.util.stream.LongStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.Math.abs;
@@ -156,20 +156,20 @@ public final class LongAVLMultiset implements Iterable<Long> {
 	}
 
 	// -------------- Streams --------------
-	public Stream<Long> stream() {
+	public LongStream stream() {
 		return toStream(false);
 	}
 
-	public Stream<Long> uniqueStream() {
+	public LongStream uniqueStream() {
 		return toStream(true);
 	}
 
-	private Stream<Long> toStream(final boolean unique) {
+	private LongStream toStream(final boolean unique) {
 		long size = unique ? uniqueSize : this.size;
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (unique) characteristics |= Spliterator.DISTINCT;
 		PrimitiveIterator.OfLong it = unique ? uniqueIterator() : iterator();
-		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
+		return StreamSupport.longStream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
 	// -------------- Iteration --------------

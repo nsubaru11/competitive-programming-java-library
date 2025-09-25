@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.StringJoiner;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.Math.abs;
@@ -156,20 +156,20 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	}
 
 	// -------------- Streams --------------
-	public Stream<Integer> stream() {
+	public IntStream stream() {
 		return toStream(false);
 	}
 
-	public Stream<Integer> uniqueStream() {
+	public IntStream uniqueStream() {
 		return toStream(true);
 	}
 
-	private Stream<Integer> toStream(final boolean unique) {
+	private IntStream toStream(final boolean unique) {
 		long size = unique ? uniqueSize : this.size;
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (unique) characteristics |= Spliterator.DISTINCT;
 		PrimitiveIterator.OfInt it = unique ? uniqueIterator() : iterator();
-		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
+		return StreamSupport.intStream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
 	// -------------- Iteration --------------
