@@ -1,32 +1,40 @@
-public class PreComputedFactorials {
-	private final int maxNumber;
+@SuppressWarnings("unused")
+public final class PreComputedFactorials {
+	private final int n;
 	private final long mod;
+	private final boolean isPrime;
 	private final long[] factorials;
 	private final long[] inverseFactorials;
 
 	public PreComputedFactorials() {
-		this(1_000_000, 998244353);
+		this(1_000_000, 998244353, true);
 	}
 
-	public PreComputedFactorials(int maxNumber) {
-		this(maxNumber, 998244353);
+	public PreComputedFactorials(final int n) {
+		this(n, 998244353, true);
 	}
 
-	public PreComputedFactorials(long mod) {
-		this(1_000_000, mod);
-	}
-
-	public PreComputedFactorials(int maxNumber, long mod) {
-		this.maxNumber = maxNumber;
+	public PreComputedFactorials(final int n, final long mod, final boolean isPrime) {
+		this.n = n;
 		this.mod = mod;
-		factorials = new long[maxNumber + 1];
-		inverseFactorials = new long[maxNumber + 1];
-		initializeFactorials();
+		this.isPrime = isPrime;
+		factorials = new long[n + 1];
+		inverseFactorials = new long[n + 1];
+		if (isPrime) initializeFactorialsPrime();
+		else initializeFactorials();
+	}
+
+	private void initializeFactorialsPrime() {
+		factorials[0] = 1;
+		for (int i = 1; i <= n; i++) {
+			factorials[i] = i * factorials[i - 1] % mod;
+			inverseFactorials[i] = modPow(factorials[i], mod - 2);
+		}
 	}
 
 	private void initializeFactorials() {
 		factorials[0] = 1;
-		for (int i = 1; i <= maxNumber; i++) {
+		for (int i = 1; i <= n; i++) {
 			factorials[i] = i * factorials[i - 1] % mod;
 			inverseFactorials[i] = modPow(factorials[i], mod - 2);
 		}
@@ -40,19 +48,19 @@ public class PreComputedFactorials {
 		return ans;
 	}
 
-	public long factorial(int n) {
+	public long factorial(final int n) {
 		return factorials[n];
 	}
 
-	public long inverseFactorial(int n) {
+	public long inverseFactorial(final int n) {
 		return inverseFactorials[n];
 	}
 
-	public long combination(int n, int k) {
+	public long combination(final int n, final int k) {
 		return factorials[n] * inverseFactorials[k] % mod * inverseFactorials[n - k] % mod;
 	}
 
-	public long permutation(int n, int k) {
+	public long permutation(final int n, final int k) {
 		return factorials[n] * inverseFactorials[k] % mod;
 	}
 

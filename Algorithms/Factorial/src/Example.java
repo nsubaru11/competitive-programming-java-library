@@ -1,4 +1,4 @@
-public class Example {
+public final class Example {
 
 	public static void main(String[] args) {
 //		PreComputedFactorials fact = new PreComputedFactorials(13L);

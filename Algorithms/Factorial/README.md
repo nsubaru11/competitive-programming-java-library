@@ -1,4 +1,4 @@
-# Factorial
+# Factorial（開発中）
 
 ## 概要
 
