@@ -4,7 +4,7 @@ import static java.lang.Math.pow;
  * 多項式関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class PolynomialUtils {
+public final class PolynomialUtils {
 
 	/**
 	 * 多項式の加算を行います。
@@ -174,4 +174,4 @@ public class PolynomialUtils {
 			remainder = subtract(remainder, product);
 		}
 	}
-} 
+}

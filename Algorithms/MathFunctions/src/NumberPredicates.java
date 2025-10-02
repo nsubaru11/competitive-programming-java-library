@@ -7,7 +7,7 @@ import static java.lang.Math.*;
  * 数値判定関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class NumberPredicates {
+public final class NumberPredicates {
 
 	/**
 	 * 平方数かどうかの判定
@@ -121,4 +121,4 @@ public class NumberPredicates {
 		}
 		return n == 1;
 	}
-} 
+}

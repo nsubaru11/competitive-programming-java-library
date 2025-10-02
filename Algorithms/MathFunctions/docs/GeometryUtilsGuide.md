@@ -1,4 +1,4 @@
-# GeometryUtils 利用ガイド
+# GeometryUtils 利用ガイド（開発中）
 
 ## 概要
 

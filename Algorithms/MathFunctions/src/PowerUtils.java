@@ -2,7 +2,7 @@
  * 累乗・階乗関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class PowerUtils {
+public final class PowerUtils {
 
 	/**
 	 * a ^ b % mod を求めます。
@@ -82,4 +82,4 @@ public class PowerUtils {
 		return ans * ((1L << twoExponent) % mod) % mod;
 	}
 
-} 
+}

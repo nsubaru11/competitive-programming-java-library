@@ -2,7 +2,7 @@
  * 除算関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class DivisionUtils {
+public final class DivisionUtils {
 
 	/**
 	 * a / b以下で最大の長整数を返します。
@@ -11,7 +11,7 @@ public class DivisionUtils {
 	 * @param b 割る値(long)
 	 * @return ⌊a / b⌋
 	 */
-	public static long floorLong(long a, long b) {
+	public static long floorLong(final long a, final long b) {
 		return a < 0 ? (a - b + 1) / b : a / b;
 	}
 
@@ -22,7 +22,7 @@ public class DivisionUtils {
 	 * @param b 割る値(int)
 	 * @return ⌊a / b⌋
 	 */
-	public static int floorInt(int a, int b) {
+	public static int floorInt(final int a, final int b) {
 		return a < 0 ? (a - b + 1) / b : a / b;
 	}
 
@@ -33,7 +33,7 @@ public class DivisionUtils {
 	 * @param b 割る値(long)
 	 * @return ⌈a / b⌉
 	 */
-	public static long ceilLong(long a, long b) {
+	public static long ceilLong(final long a, final long b) {
 		return a < 0 ? a / b : (a + b - 1) / b;
 	}
 
@@ -44,8 +44,8 @@ public class DivisionUtils {
 	 * @param b 割る値(int)
 	 * @return ⌈a / b⌉
 	 */
-	public static long ceilInt(int a, int b) {
+	public static long ceilInt(final int a, final int b) {
 		return a < 0 ? a / b : (a + b - 1) / b;
 	}
 
-} 
+}

@@ -5,7 +5,7 @@ import static java.lang.Math.round;
  * 数値フォーマット関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class NumberFormatUtils {
+public final class NumberFormatUtils {
 
 	/**
 	 * doubleの高速なフォーマット。小数点第n - 1位を四捨五入します。
@@ -44,4 +44,4 @@ public class NumberFormatUtils {
 		if (str.length() >= digits) return str;
 		return "0".repeat(digits - str.length()) + str;
 	}
-} 
+}

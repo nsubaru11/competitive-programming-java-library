@@ -1,4 +1,4 @@
-# CombinatoricsUtils 利用ガイド
+# CombinatoricsUtils 利用ガイド（開発中）
 
 ## 概要
 

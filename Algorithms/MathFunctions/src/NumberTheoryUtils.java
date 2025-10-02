@@ -4,7 +4,7 @@ import static java.lang.Math.*;
  * 数論関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class NumberTheoryUtils {
+public final class NumberTheoryUtils {
 
 	/**
 	 * 最小公倍数を求めます
@@ -166,4 +166,4 @@ public class NumberTheoryUtils {
 		if (gcd != 1) return -1; // 逆数が存在しない
 		return (x[0] % m + m) % m;
 	}
-} 
+}

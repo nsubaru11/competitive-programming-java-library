@@ -4,7 +4,7 @@ import static java.lang.Math.min;
  * 組み合わせ論関連のユーティリティクラス
  */
 @SuppressWarnings("unused")
-public class CombinatoricsUtils {
+public final class CombinatoricsUtils {
 
 	/**
 	 * nCrを求めます。
@@ -13,7 +13,7 @@ public class CombinatoricsUtils {
 	 * @param r 二項係数を求めるのに用いる値
 	 * @return nCr
 	 */
-	public static long comb(int n, int r, long mod) {
+	public static long comb(int n, int r, final long mod) {
 		if (n < r || n < 0 || r < 0) return 0;
 		r = min(n - r, r);
 		long ans = 1;
@@ -38,7 +38,7 @@ public class CombinatoricsUtils {
 	 * @param mod 法とする整数
 	 * @return nCr % mod
 	 */
-	public static long modComb(int n, int r, long mod) {
+	public static long modComb(int n, int r, final long mod) {
 		if (n < r || n < 0 || r < 0) return 0;
 		r = min(n - r, r);
 		long numer = 1, denom = 1;
@@ -59,8 +59,7 @@ public class CombinatoricsUtils {
 	public static long perm(long n, long r) {
 		if (n < 0 || r < 0) return 0;
 		if (r > n) return 0;
-		if (r > Integer.MAX_VALUE)
-			throw new ArithmeticException("数が膨大すぎます。");
+		if (r > Integer.MAX_VALUE) throw new ArithmeticException("数が膨大すぎます。");
 		long result = 1;
 		for (long i = 0; i < r; i++) {
 			result *= (n - i);
@@ -76,7 +75,7 @@ public class CombinatoricsUtils {
 	 * @param mod 法とする整数
 	 * @return nPr % mod
 	 */
-	public static long modPerm(long n, long r, long mod) {
+	public static long modPerm(long n, long r, final long mod) {
 		if (n < 0 || r < 0) return 0;
 		if (r > n) return 0;
 		if (r > Integer.MAX_VALUE)
@@ -95,7 +94,7 @@ public class CombinatoricsUtils {
 	 * @param r 重複組み合わせを求めるのに用いる値
 	 * @return nHr
 	 */
-	public static long multiComb(int n, int r, long mod) {
+	public static long multiComb(final int n, final int r, final long mod) {
 		return comb(n + r - 1, r, mod);
 	}
 
@@ -107,7 +106,7 @@ public class CombinatoricsUtils {
 	 * @param mod 法とする整数
 	 * @return nHr % mod
 	 */
-	public static long modMultiComb(int n, int r, long mod) {
+	public static long modMultiComb(final int n, final int r, final long mod) {
 		return comb(n + r - 1, r, mod) % mod;
 	}
 
