@@ -27,6 +27,10 @@ public class Example {
 		while (!lqp.isEmpty()) {
 			System.out.print(" " + lqp.poll());
 		}
+		System.out.print("\nPriorityQueue:");
+		while (!pq.isEmpty()) {
+			System.out.print(" " + pq.poll());
+		}
 		System.out.print("\nIntPriorityQueueDescending:");
 		while (!ipqd.isEmpty()) {
 			System.out.print(" " + ipqd.poll());
@@ -34,10 +38,6 @@ public class Example {
 		System.out.print("\nLongPriorityQueueDescending:");
 		while (!lqpd.isEmpty()) {
 			System.out.print(" " + lqpd.poll());
-		}
-		System.out.print("\nPriorityQueue:");
-		while (!pq.isEmpty()) {
-			System.out.print(" " + pq.poll());
 		}
 		System.out.print("\nPriorityQueueDescending:");
 		while (!pqd.isEmpty()) {
