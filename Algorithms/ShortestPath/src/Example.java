@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
@@ -39,15 +38,15 @@ public class Example {
 			edges[i][1] = sc.nextInt() - 1;
 			edges[i][2] = sc.nextInt();
 		}
-//		solveDijkstra(v, edges);
+		solveDijkstra(v, edges);
 		System.out.println();
 		solveBellmanFord(v, e, edges);
 		System.out.println();
-//		solveWarshallfroyd(v, edges);
+		solveWarshallfroyd(v, edges);
 	}
 
 	private static void solveDijkstra(int v, int[][] edges) {
-		Dijkstra dijkstra = new Dijkstra(v);
+		Dijkstra dijkstra = new Dijkstra(v, edges.length);
 		for (int[] edge : edges) {
 			dijkstra.addEdge(edge[0], edge[1], edge[2]);
 		}
@@ -55,7 +54,7 @@ public class Example {
 		for (int i = 0; i < v; i++) {
 			StringJoiner sj2 = new StringJoiner(" ");
 			for (int j = 0; j < v; j++) {
-				long ans = dijkstra.getShortestPathWeight(i, j);
+				long ans = dijkstra.solve(i, j);
 				String ans2 = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
 				sj2.add(ans2);
 			}
@@ -73,7 +72,7 @@ public class Example {
 		for (int i = 0; i < v; i++) {
 			StringJoiner sj2 = new StringJoiner(" ");
 			for (int j = 0; j < v; j++) {
-				long ans = bellmanFord.getShortestPathWeight(i, j);
+				long ans = bellmanFord.solve(i, j);
 				String ans2 = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
 				sj2.add(ans2);
 			}
@@ -91,12 +90,12 @@ public class Example {
 		for (int i = 0; i < v; i++) {
 			StringJoiner sj2 = new StringJoiner(" ");
 			for (int j = 0; j < v; j++) {
-				long ans = warshallfroyd.getShortestPathWeight(i, j);
+				long ans = warshallfroyd.solve(i, j);
 				String ans2 = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
 				sj2.add(ans2);
 			}
 			sj.add(sj2.toString());
 		}
-		System.out.println(sj.toString());
+		System.out.println(sj);
 	}
 }

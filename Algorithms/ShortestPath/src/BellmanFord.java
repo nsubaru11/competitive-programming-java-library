@@ -25,7 +25,7 @@ public final class BellmanFord {
 	 * @param v 頂点数
 	 * @param e 辺の数（初期容量として使用）
 	 */
-	public BellmanFord(int v, int e) {
+	public BellmanFord(final int v, final int e) {
 		this.v = v;
 		ans = new long[v];
 		edges = new ArrayList<>(e);
@@ -38,7 +38,7 @@ public final class BellmanFord {
 	 * @param j    辺の終点（0-indexed）
 	 * @param cost 辺の重み
 	 */
-	public void addEdge(int i, int j, long cost) {
+	public void addEdge(final int i, final int j, final long cost) {
 		edges.add(new Edge(i, j, cost));
 		used = -1;
 	}
@@ -51,7 +51,7 @@ public final class BellmanFord {
 	 * @param j 終点
 	 * @return 始点から終点への最短経路の重み（経路が存在しない場合は INF）
 	 */
-	public long getShortestPathWeight(int i, int j) {
+	public long solve(final int i, final int j) {
 		if (used != i) {
 			used = i;
 			fill(ans, INF);

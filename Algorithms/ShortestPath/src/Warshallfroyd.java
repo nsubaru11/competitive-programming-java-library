@@ -4,7 +4,7 @@ import static java.util.Arrays.fill;
 /**
  * Warshall-Floyd アルゴリズムを実装するクラス。
  * 全点対間の最短経路を計算する。負閉路が存在する場合は、
- * getShortestPathWeight() は -INF を返し、getAllShortestPathWeight() は null を返す。
+ * solve() は -INF を返し、getAllShortestPathWeight() は null を返す。
  * <p>
  * ※ 隣接行列を用いるため、頂点数が大きい場合はメモリや計算量の観点で注意が必要。
  */
@@ -21,7 +21,7 @@ public final class Warshallfroyd {
 	 *
 	 * @param v 頂点数
 	 */
-	public Warshallfroyd(int v) {
+	public Warshallfroyd(final int v) {
 		this.v = v;
 		dist = new long[v][v];
 		for (int i = 0; i < v; i++) {
@@ -38,7 +38,7 @@ public final class Warshallfroyd {
 	 * @param to   到着点（0-indexed）
 	 * @param cost 辺の重み
 	 */
-	public void addEdge(int from, int to, long cost) {
+	public void addEdge(final int from, final int to, final long cost) {
 		dist[from][to] = min(dist[from][to], cost);
 		update = true;
 		isNegative = false;
@@ -52,7 +52,7 @@ public final class Warshallfroyd {
 	 * @param to   終点（0-indexed）
 	 * @return 始点から終点への最短経路の重み（到達不可能なら INF）
 	 */
-	public long getShortestPathWeight(int from, int to) {
+	public long solve(final int from, final int to) {
 		if (update) dist();
 		return isNegative ? -INF : dist[from][to];
 	}
