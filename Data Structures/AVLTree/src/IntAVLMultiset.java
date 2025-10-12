@@ -17,7 +17,7 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	// -------------- Fields --------------
 	private Node root;
 	private int first, last;
-	private long size;
+	private long size, sum, uniqueSum;
 	private int uniqueSize;
 
 	// -------------- Constructors --------------
@@ -26,6 +26,14 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	}
 
 	// -------------- Size & State --------------
+	public long sum() {
+		return sum;
+	}
+
+	public long uniqueSum() {
+		return uniqueSum;
+	}
+
 	public long size() {
 		return size;
 	}
@@ -41,13 +49,14 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	public void clear() {
 		root = null;
 		first = last = 0;
+		sum = uniqueSum = 0;
 		size = uniqueSize = 0;
 	}
 
 	// -------------- String --------------
 	public String toString() {
-		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		PrimitiveIterator.OfInt it = iterator();
+		final StringJoiner sj = new StringJoiner(", ", "[", "]");
+		final PrimitiveIterator.OfInt it = iterator();
 		while (it.hasNext()) sj.add(Integer.toString(it.nextInt()));
 		return sj.toString();
 	}
@@ -81,7 +90,7 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	}
 
 	public boolean addAll(final Collection<Integer> c) {
-		long oldSize = size;
+		final long oldSize = size;
 		for (int a : c) add(a);
 		return size != oldSize;
 	}
@@ -102,8 +111,8 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 
 	public boolean removeAll(final Collection<Integer> c) {
 		if (isEmpty()) return false;
-		long oldSize = size;
-		Collection<Integer> hs = c instanceof Set ? c : new HashSet<>(c);
+		final long oldSize = size;
+		final Collection<Integer> hs = c instanceof Set ? c : new HashSet<>(c);
 		for (int v : hs) removeAll(v);
 		return size != oldSize;
 	}
@@ -119,11 +128,11 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	}
 
 	private boolean removeByIndex(final long index, final boolean unique) {
-		long oldSize = size;
-		int oldUniqueSize = uniqueSize;
+		final long oldSize = size;
+		final int oldUniqueSize = uniqueSize;
 		root = root.removeAt(index, unique);
 		update();
-		boolean updated = size != oldSize;
+		final boolean updated = size != oldSize;
 		if (size > 0 && uniqueSize != oldUniqueSize) {
 			if (!unique) {
 				if (index == 0) first = leftmost(root).label;
@@ -141,16 +150,16 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		if (size == 0) return new int[0];
 		if (size > Integer.MAX_VALUE)
 			throw new IllegalStateException("Array too large: " + size + " elements (exceeds single-array limit)");
-		int[] arr = new int[(int) size];
-		PrimitiveIterator.OfInt it = iterator();
+		final int[] arr = new int[(int) size];
+		final PrimitiveIterator.OfInt it = iterator();
 		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextInt();
 		return arr;
 	}
 
 	public int[] toUniqueArray() {
 		if (uniqueSize == 0) return new int[0];
-		int[] arr = new int[uniqueSize];
-		PrimitiveIterator.OfInt it = uniqueIterator();
+		final int[] arr = new int[uniqueSize];
+		final PrimitiveIterator.OfInt it = uniqueIterator();
 		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextInt();
 		return arr;
 	}
@@ -165,10 +174,10 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	}
 
 	private IntStream toStream(final boolean unique) {
-		long size = unique ? uniqueSize : this.size;
+		final long size = unique ? uniqueSize : this.size;
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (unique) characteristics |= Spliterator.DISTINCT;
-		PrimitiveIterator.OfInt it = unique ? uniqueIterator() : iterator();
+		final PrimitiveIterator.OfInt it = unique ? uniqueIterator() : iterator();
 		return StreamSupport.intStream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
@@ -184,58 +193,52 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	// -------------- Access by Index --------------
 	public int getByIndex(long index) {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
-		Node cur = root;
-		while (cur != null) {
-			long leftSize = cur.left == null ? 0 : cur.left.size;
-			if (index < leftSize) {
-				cur = cur.left;
-			} else if (index >= leftSize + cur.cnt) {
-				index -= leftSize + cur.cnt;
-				cur = cur.right;
-			} else {
-				break;
-			}
-		}
-		return cur.label;
+		return getByIndex(index, false).label;
 	}
 
 	public int getByUniqueIndex(int index) {
 		if (index < 0 || uniqueSize <= index) throw new IndexOutOfBoundsException();
+		return getByIndex(index, true).label;
+	}
+
+	private Node getByIndex(long index, boolean unique) {
 		Node cur = root;
 		while (cur != null) {
-			int leftSize = cur.left == null ? 0 : cur.left.uniqueSize;
+			final Node left = cur.left;
+			final long leftSize = left == null ? 0 : unique ? left.uniqueSize : left.size;
+			final long delta = unique ? 1 : cur.cnt;
 			if (index < leftSize) {
-				cur = cur.left;
-			} else if (index >= leftSize + 1) {
-				index -= leftSize + 1;
+				cur = left;
+			} else if (index >= leftSize + delta) {
+				index -= leftSize + delta;
 				cur = cur.right;
 			} else {
 				break;
 			}
 		}
-		return cur.label;
+		return cur;
 	}
 
 	// -------------- Search & Rank --------------
 	public long indexOf(final int t) {
 		if (size == 0) return -1;
-		long index = index(t, false);
+		final long index = index(t, false);
 		return index >= 0 ? index : -1;
 	}
 
 	public int uniqueIndexOf(final int t) {
 		if (size == 0) return -1;
-		int index = (int) index(t, true);
+		final int index = (int) index(t, true);
 		return index >= 0 ? index : -1;
 	}
 
 	public long rank(final int t) {
-		long index = index(t, false);
+		final long index = index(t, false);
 		return index < 0 ? ~index : index;
 	}
 
 	public long uniqueRank(final int t) {
-		long index = index(t, true);
+		final long index = index(t, true);
 		return index < 0 ? ~index : index;
 	}
 
@@ -243,10 +246,11 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			if (cur.label < t) {
+			final int label = cur.label;
+			if (label < t) {
 				index += unique ? cur.leftUniqueSize() + 1 : cur.leftSize() + cur.cnt;
 				cur = cur.right;
-			} else if (cur.label > t) {
+			} else if (label > t) {
 				cur = cur.left;
 			} else {
 				index += unique ? cur.leftUniqueSize() : cur.leftSize();
@@ -261,10 +265,11 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			if (cur.label < t) {
+			final int label = cur.label;
+			if (label < t) {
 				index += cur.leftSize() + cur.cnt;
 				cur = cur.right;
-			} else if (cur.label > t) {
+			} else if (label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize() + cur.cnt - 1;
@@ -278,10 +283,11 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			if (cur.label < t) {
+			final int label = cur.label;
+			if (label < t) {
 				index += cur.leftSize() + cur.cnt;
 				cur = cur.right;
-			} else if (cur.label > t) {
+			} else if (label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize();
@@ -296,9 +302,10 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		if (size == 0) return 0;
 		Node cur = root;
 		while (cur != null) {
-			if (cur.label < t) {
+			final int label = cur.label;
+			if (label < t) {
 				cur = cur.right;
-			} else if (cur.label > t) {
+			} else if (label > t) {
 				cur = cur.left;
 			} else {
 				break;
@@ -333,16 +340,17 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		Integer t = null;
 		Node cur = root;
 		while (cur != null) {
+			final int label = cur.label;
 			if (higher) {
-				if (cur.label > key || (inclusive && cur.label == key)) {
-					t = cur.label;
+				if (label > key || (inclusive && label == key)) {
+					t = label;
 					cur = cur.left;
 				} else {
 					cur = cur.right;
 				}
 			} else {
-				if (cur.label < key || (inclusive && cur.label == key)) {
-					t = cur.label;
+				if (label < key || (inclusive && label == key)) {
+					t = label;
 					cur = cur.right;
 				} else {
 					cur = cur.left;
@@ -350,6 +358,41 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 			}
 		}
 		return t;
+	}
+
+	// -------------- sum --------------
+	public long prefixSum(final int i) {
+		if (i < 0 || size <= i) throw new IndexOutOfBoundsException();
+		final Node t = getByIndex(i, false);
+		return t.sum - t.rightSum();
+	}
+
+	public long prefixUniqueSum(final int i) {
+		if (i < 0 || uniqueSize <= i) throw new IndexOutOfBoundsException();
+		final Node t = getByIndex(i, true);
+		return t.uniqueSum - t.rightUniqueSum();
+	}
+
+	public long SuffixSum(final int i) {
+		if (i < 0 || size <= i) throw new IndexOutOfBoundsException();
+		final Node t = getByIndex(i, false);
+		return t.sum - t.leftSum();
+	}
+
+	public long SuffixUniqueSum(final int i) {
+		if (i < 0 || uniqueSize <= i) throw new IndexOutOfBoundsException();
+		final Node t = getByIndex(i, true);
+		return t.uniqueSum - t.leftUniqueSum();
+	}
+
+	public long sumRange(final int l, final int r) {
+		if (l > r) throw new IndexOutOfBoundsException();
+		return prefixSum(r) - prefixSum(l);
+	}
+
+	public long uniqueSumRange(final int l, final int r) {
+		if (l > r) throw new IndexOutOfBoundsException();
+		return prefixUniqueSum(r) - prefixUniqueSum(l);
 	}
 
 	// -------------- Endpoints --------------
@@ -363,28 +406,28 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 
 	public int pollFirst() {
 		if (size == 0) throw new NoSuchElementException();
-		int temp = first;
+		final int temp = first;
 		removeByIndex(0, false);
 		return temp;
 	}
 
 	public int pollLast() {
 		if (size == 0) throw new NoSuchElementException();
-		int temp = last;
+		final int temp = last;
 		removeByIndex(size - 1, false);
 		return temp;
 	}
 
 	public int pollFirstAll() {
 		if (size == 0) throw new NoSuchElementException();
-		int temp = first;
+		final int temp = first;
 		removeByIndex(0, true);
 		return temp;
 	}
 
 	public int pollLastAll() {
 		if (size == 0) throw new NoSuchElementException();
-		int temp = last;
+		final int temp = last;
 		removeByIndex(uniqueSize - 1, true);
 		return temp;
 	}
@@ -395,19 +438,18 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 			if (delta <= 0 || removeAll) return false;
 			first = last = t;
 			root = new Node(t, null, delta);
-			uniqueSize = 1;
-			size = delta;
+			update();
 			return true;
 		}
 		if (!removeAll && delta > 0) {
 			if (t < first) first = t;
 			if (t > last) last = t;
 		}
-		long oldSize = size;
-		int oldUniqueSize = uniqueSize;
+		final long oldSize = size;
+		final int oldUniqueSize = uniqueSize;
 		root = root.applyDelta(t, delta, removeAll);
 		update();
-		boolean updated = size != oldSize;
+		final boolean updated = size != oldSize;
 		if (updated && size > 0 && uniqueSize != oldUniqueSize && (removeAll || delta <= 0)) {
 			if (t == first) first = leftmost(root).label;
 			if (t == last) last = rightmost(root).label;
@@ -421,8 +463,10 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 			return;
 		}
 		root.parent = null;
-		uniqueSize = root.uniqueSize;
+		sum = root.sum;
+		uniqueSum = root.uniqueSum;
 		size = root.size;
+		uniqueSize = root.uniqueSize;
 	}
 
 	private Node leftmost(Node cur) {
@@ -447,31 +491,36 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	// -------------- Nested classes --------------
 	private static final class Node {
 		private final int label;
-		private long cnt, size;
+		private long cnt, size, sum, uniqueSum;
 		private int height, uniqueSize;
 		private Node left, right, parent;
 
 		private Node(final int label, final Node parent, final long cnt) {
 			this.label = label;
+			this.sum = label * cnt;
+			this.uniqueSum = label;
 			this.cnt = this.size = cnt;
 			this.height = this.uniqueSize = 1;
 			this.parent = parent;
 		}
 
 		private Node removeAt(long index, final boolean unique) {
-			long lIdx = unique ? leftUniqueSize() : leftSize();
-			long rIdx = lIdx + (unique ? 1 : cnt);
+			final long lIdx = unique ? leftUniqueSize() : leftSize();
+			final long rIdx = lIdx + (unique ? 1 : cnt);
 			if (rIdx <= index) {
 				index -= rIdx;
 				setRight(right.removeAt(index, unique));
+				updateNode();
 			} else if (index < lIdx) {
 				setLeft(left.removeAt(index, unique));
+				updateNode();
 			} else {
+				if (unique || cnt <= 1) return removeInternal();
 				cnt--;
-				if (unique || cnt <= 0) return removeInternal();
+				size--;
+				sum -= label;
 			}
-			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
@@ -483,6 +532,7 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 				} else {
 					setRight(right.applyDelta(t, delta, all));
 				}
+				updateNode();
 			} else if (label > t) {
 				if (left == null) {
 					if (delta <= 0) return this;
@@ -490,25 +540,27 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 				} else {
 					setLeft(left.applyDelta(t, delta, all));
 				}
+				updateNode();
 			} else {
+				if (all || cnt <= -delta) return removeInternal();
 				cnt += delta;
-				if (all || cnt <= 0) return removeInternal();
+				size += delta;
+				sum += label * delta;
 			}
-			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
 		private Node removeInternal() {
 			if (left == null) return right;
 			if (right == null) return left;
-			Node temp;
+			final Node temp;
 			if (leftHeight() >= rightHeight()) {
 				temp = left.extractMax();
 				if (temp == left) {
 					setLeft(temp.left);
 				} else {
-					int bf = left.leftHeight() - left.rightHeight();
+					final int bf = left.leftHeight() - left.rightHeight();
 					setLeft(abs(bf) <= 1 ? left : left.rotate(bf));
 				}
 			} else {
@@ -516,7 +568,7 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 				if (temp == right) {
 					setRight(temp.right);
 				} else {
-					int bf = right.leftHeight() - right.rightHeight();
+					final int bf = right.leftHeight() - right.rightHeight();
 					setRight(abs(bf) <= 1 ? right : right.rotate(bf));
 				}
 			}
@@ -524,16 +576,16 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 			temp.setLeft(left);
 			temp.setRight(right);
 			temp.updateNode();
-			int bf = temp.leftHeight() - temp.rightHeight();
+			final int bf = temp.leftHeight() - temp.rightHeight();
 			return abs(bf) <= 1 ? temp : temp.rotate(bf);
 		}
 
 		private Node extractMin() {
 			if (left == null) return this;
-			Node min = left.extractMin();
+			final Node min = left.extractMin();
 			if (left == min) setLeft(left.right);
 			if (left != null) {
-				int bf = left.leftHeight() - left.rightHeight();
+				final int bf = left.leftHeight() - left.rightHeight();
 				if (abs(bf) > 1) setLeft(left.rotate(bf));
 			}
 			updateNode();
@@ -542,10 +594,10 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 
 		private Node extractMax() {
 			if (right == null) return this;
-			Node max = right.extractMax();
+			final Node max = right.extractMax();
 			if (right == max) setRight(right.left);
 			if (right != null) {
-				int bf = right.leftHeight() - right.rightHeight();
+				final int bf = right.leftHeight() - right.rightHeight();
 				if (abs(bf) > 1) setRight(right.rotate(bf));
 			}
 			updateNode();
@@ -553,14 +605,14 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		}
 
 		private Node rotate(final int bf) {
-			Node prevParent = parent;
-			Node newRoot;
+			final Node prevParent = parent;
+			final Node newRoot;
 			if (bf > 0) {
-				int bfl = left.leftHeight() - left.rightHeight();
+				final int bfl = left.leftHeight() - left.rightHeight();
 				newRoot = bfl >= 0 ? rotateLL() : rotateLR();
 				newRoot.right.updateNode();
 			} else {
-				int bfr = right.leftHeight() - right.rightHeight();
+				final int bfr = right.leftHeight() - right.rightHeight();
 				newRoot = bfr > 0 ? rotateRL() : rotateRR();
 				newRoot.left.updateNode();
 			}
@@ -570,9 +622,9 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		}
 
 		private Node rotateLR() {
-			Node newRoot = this.left.right;
-			Node tempLeft = newRoot.left;
-			Node tempRight = newRoot.right;
+			final Node newRoot = this.left.right;
+			final Node tempLeft = newRoot.left;
+			final Node tempRight = newRoot.right;
 			newRoot.setRight(this);
 			newRoot.setLeft(this.left);
 			newRoot.right.setLeft(tempRight);
@@ -582,23 +634,23 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		}
 
 		private Node rotateLL() {
-			Node newRoot = this.left;
+			final Node newRoot = this.left;
 			setLeft(newRoot.right);
 			newRoot.setRight(this);
 			return newRoot;
 		}
 
 		private Node rotateRR() {
-			Node newRoot = this.right;
+			final Node newRoot = this.right;
 			setRight(newRoot.left);
 			newRoot.setLeft(this);
 			return newRoot;
 		}
 
 		private Node rotateRL() {
-			Node newRoot = this.right.left;
-			Node tempLeft = newRoot.left;
-			Node tempRight = newRoot.right;
+			final Node newRoot = this.right.left;
+			final Node tempLeft = newRoot.left;
+			final Node tempRight = newRoot.right;
 			newRoot.setLeft(this);
 			newRoot.setRight(this.right);
 			newRoot.left.setRight(tempLeft);
@@ -618,9 +670,27 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 		}
 
 		private void updateNode() {
+			sum = leftSum() + rightSum() + label * cnt;
+			uniqueSum = leftUniqueSum() + rightUniqueSum() + label;
 			size = leftSize() + rightSize() + cnt;
 			height = 1 + max(leftHeight(), rightHeight());
 			uniqueSize = leftUniqueSize() + rightUniqueSize() + 1;
+		}
+
+		private long leftSum() {
+			return left == null ? 0 : left.sum;
+		}
+
+		private long rightSum() {
+			return right == null ? 0 : right.sum;
+		}
+
+		private long leftUniqueSum() {
+			return left == null ? 0 : left.uniqueSum;
+		}
+
+		private long rightUniqueSum() {
+			return right == null ? 0 : right.uniqueSum;
 		}
 
 		private int leftHeight() {
@@ -665,14 +735,14 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 
 		public int nextInt() {
 			if (cur == null) throw new NoSuchElementException();
-			int val = cur.label;
+			final int label = cur.label;
 			if (!unique && remainingCnt > 1) {
 				remainingCnt--;
-				return val;
+				return label;
 			}
 			cur = successor(cur);
 			remainingCnt = cur == null ? 0 : cur.cnt;
-			return val;
+			return label;
 		}
 	}
 }
