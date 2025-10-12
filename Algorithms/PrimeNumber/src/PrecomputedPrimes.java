@@ -1,4 +1,8 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 import java.util.stream.LongStream;
 
 import static java.util.Arrays.binarySearch;
@@ -14,48 +18,48 @@ public final class PrecomputedPrimes implements Iterable<Long> {
 	private long[] primes;
 	private int cnt;
 
-	public PrecomputedPrimes(long n) {
+	public PrecomputedPrimes(final long n) {
 		cnt = 0;
 		MAX_VALUE = n;
 		oddBits = new long[(int) (((n >>> 1) + 63) >>> 6) + 1];
 		sieve(n);
 	}
 
-	public boolean isPrime(long n) {
+	public boolean isPrime(final long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
 		if ((n & 1) == 0) return n == 2;
 		return !isCompositeOdd(n);
 	}
 
-	public int countPrimesUpTo(long n) {
+	public int countPrimesUpTo(final long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
 		int index = binarySearch(primes, n);
 		return index < 0 ? ~index : index + 1;
 	}
 
-	public long ceilingPrime(long n) {
+	public long ceilingPrime(final long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
 		int index = binarySearch(primes, n);
 		index = index < 0 ? ~index : index;
 		return index >= cnt ? -1 : primes[index];
 	}
 
-	public long higherPrime(long n) {
+	public long higherPrime(final long n) {
 		return ceilingPrime(n + 1);
 	}
 
-	public long floorPrime(long n) {
+	public long floorPrime(final long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
 		int index = binarySearch(primes, n);
 		index = index < 0 ? ~index - 1 : index;
 		return index < 0 ? -1 : primes[index];
 	}
 
-	public long lowerPrime(long n) {
+	public long lowerPrime(final long n) {
 		return floorPrime(n - 1);
 	}
 
-	public long kthPrime(int i) {
+	public long kthPrime(final int i) {
 		if (i < 0 || cnt <= i) throw new IllegalArgumentException();
 		return primes[i];
 	}
@@ -75,9 +79,8 @@ public final class PrecomputedPrimes implements Iterable<Long> {
 		return factors;
 	}
 
-	@Override
-	public Iterator<Long> iterator() {
-		return new Iterator<>() {
+	public PrimitiveIterator.OfLong iterator() {
+		return new PrimitiveIterator.OfLong() {
 			private int index = 0;
 
 			@Override
@@ -86,9 +89,8 @@ public final class PrecomputedPrimes implements Iterable<Long> {
 			}
 
 			@Override
-			public Long next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
+			public long nextLong() {
+				if (!hasNext()) throw new NoSuchElementException();
 				return primes[index++];
 			}
 		};
@@ -98,7 +100,7 @@ public final class PrecomputedPrimes implements Iterable<Long> {
 		return Arrays.stream(primes);
 	}
 
-	private void sieve(long n) {
+	private void sieve(final long n) {
 		int estimatedCapacity = n < 20 ? 10 : (int) (1.05 * n / (Math.log(n) - 1.0));
 		primes = new long[estimatedCapacity];
 		final long sqrtN = (long) Math.sqrt(n);
@@ -128,19 +130,19 @@ public final class PrecomputedPrimes implements Iterable<Long> {
 		primes = copyOf(primes, cnt);
 	}
 
-	private int bitIndex(long n) {
+	private int bitIndex(final long n) {
 		return (int) (n >>> 7);
 	}
 
-	private long bitMask(long n) {
+	private long bitMask(final long n) {
 		return 1L << ((n >>> 1) & 63);
 	}
 
-	private void setCompositeOdd(long n) {
+	private void setCompositeOdd(final long n) {
 		oddBits[bitIndex(n)] |= bitMask(n);
 	}
 
-	private boolean isCompositeOdd(long n) {
+	private boolean isCompositeOdd(final long n) {
 		return (oddBits[bitIndex(n)] & bitMask(n)) != 0;
 	}
 }
