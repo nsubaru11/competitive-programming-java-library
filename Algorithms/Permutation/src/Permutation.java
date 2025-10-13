@@ -1,7 +1,8 @@
 /**
  * 順列列挙に関するクラスです。
  */
-public class Permutation {
+@SuppressWarnings("unused")
+public final class Permutation {
 
 	/**
 	 * 辞書順で次の順列に並び替えます。
@@ -9,8 +10,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(int[] arr) {
-		int len = arr.length;
+	public static boolean next(final int[] arr) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
@@ -33,7 +34,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(int[] arr, int fromIdx, int toIdx) {
+	public static boolean next(final int[] arr, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -54,8 +55,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(int[] arr) {
-		int len = arr.length;
+	public static boolean prev(final int[] arr) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
@@ -78,7 +79,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(int[] arr, int fromIdx, int toIdx) {
+	public static boolean prev(final int[] arr, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -99,8 +100,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(long[] arr) {
-		int len = arr.length;
+	public static boolean next(final long[] arr) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
@@ -123,7 +124,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(long[] arr, int fromIdx, int toIdx) {
+	public static boolean next(final long[] arr, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -144,8 +145,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(long[] arr) {
-		int len = arr.length;
+	public static boolean prev(final long[] arr) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
@@ -168,7 +169,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(long[] arr, int fromIdx, int toIdx) {
+	public static boolean prev(final long[] arr, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -189,8 +190,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(char[] arr) {
-		int len = arr.length;
+	public static boolean next(final char[] arr) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
@@ -213,7 +214,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(char[] arr, int fromIdx, int toIdx) {
+	public static boolean next(final char[] arr, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -234,8 +235,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(char[] arr) {
-		int len = arr.length;
+	public static boolean prev(final char[] arr) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
@@ -258,7 +259,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(char[] arr, int fromIdx, int toIdx) {
+	public static boolean prev(final char[] arr, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -273,19 +274,19 @@ public class Permutation {
 		return false;
 	}
 
-	private static void swap(final int[] a, int i, int j) {
+	private static void swap(final int[] a, final int i, final int j) {
 		int swap = a[i];
 		a[i] = a[j];
 		a[j] = swap;
 	}
 
-	private static void swap(final long[] a, int i, int j) {
+	private static void swap(final long[] a, final int i, final int j) {
 		long swap = a[i];
 		a[i] = a[j];
 		a[j] = swap;
 	}
 
-	private static void swap(final char[] a, int i, int j) {
+	private static void swap(final char[] a, final int i, final int j) {
 		char swap = a[i];
 		a[i] = a[j];
 		a[j] = swap;
@@ -309,8 +310,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(int[][] arr, int idx) {
-		int len = arr.length;
+	public static boolean next(final int[][] arr, final int idx) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
@@ -333,7 +334,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(int[][] arr, int idx, int fromIdx, int toIdx) {
+	public static boolean next(final int[][] arr, final int idx, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -354,8 +355,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(int[][] arr, int idx) {
-		int len = arr.length;
+	public static boolean prev(final int[][] arr, final int idx) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
@@ -378,7 +379,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(int[][] arr, int idx, int fromIdx, int toIdx) {
+	public static boolean prev(final int[][] arr, final int idx, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -399,8 +400,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(long[][] arr, int idx) {
-		int len = arr.length;
+	public static boolean next(final long[][] arr, final int idx) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
@@ -423,7 +424,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(long[][] arr, int idx, int fromIdx, int toIdx) {
+	public static boolean next(final long[][] arr, final int idx, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -444,8 +445,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(long[][] arr, int idx) {
-		int len = arr.length;
+	public static boolean prev(final long[][] arr, final int idx) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
@@ -468,7 +469,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(long[][] arr, int idx, int fromIdx, int toIdx) {
+	public static boolean prev(final long[][] arr, final int idx, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -489,8 +490,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(char[][] arr, int idx) {
-		int len = arr.length;
+	public static boolean next(final char[][] arr, final int idx) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
@@ -513,7 +514,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で次に当たる配列がある場合はtrue、arrが降順に並んでいるならfalse
 	 */
-	public static boolean next(char[][] arr, int idx, int fromIdx, int toIdx) {
+	public static boolean next(final char[][] arr, final int idx, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -534,8 +535,8 @@ public class Permutation {
 	 * @param arr 並び替え対象の配列
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(char[][] arr, int idx) {
-		int len = arr.length;
+	public static boolean prev(final char[][] arr, final int idx) {
+		final int len = arr.length;
 		for (int i = len - 2; i >= 0; --i) {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
@@ -558,7 +559,7 @@ public class Permutation {
 	 * @param toIdx   終点_exclude
 	 * @return 辞書順で前に当たる配列がある場合はtrue、arrが昇順に並んでいるならfalse
 	 */
-	public static boolean prev(char[][] arr, int idx, int fromIdx, int toIdx) {
+	public static boolean prev(final char[][] arr, final int idx, final int fromIdx, final int toIdx) {
 		for (int i = toIdx - 2; i >= fromIdx; --i) {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
@@ -573,20 +574,20 @@ public class Permutation {
 		return false;
 	}
 
-	private static void swap(int[][] a, int i, int j) {
-		int[] swap = a[i];
+	private static void swap(final int[][] a, int i, int j) {
+		final int[] swap = a[i];
 		a[i] = a[j];
 		a[j] = swap;
 	}
 
-	private static void swap(long[][] a, int i, int j) {
-		long[] swap = a[i];
+	private static void swap(final long[][] a, int i, int j) {
+		final long[] swap = a[i];
 		a[i] = a[j];
 		a[j] = swap;
 	}
 
-	private static void swap(char[][] a, int i, int j) {
-		char[] swap = a[i];
+	private static void swap(final char[][] a, int i, int j) {
+		final char[] swap = a[i];
 		a[i] = a[j];
 		a[j] = swap;
 	}
