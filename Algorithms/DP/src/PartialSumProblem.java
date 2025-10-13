@@ -1,10 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.math.*;
-import java.util.function.*;
-
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
 
 public class PartialSumProblem {
 
@@ -13,9 +8,7 @@ public class PartialSumProblem {
 		int k = sc.nextInt();
 		int[] a = new int[n];
 		int sum = 0;
-		for (int i = 0; i < n; i++) {
-			sum += a[i] = sc.nextInt();
-		}
+		for (int i = 0; i < n; i++) sum += a[i] = sc.nextInt();
 		boolean f = partialSumProblem(n, a, k, sum);
 		out.println("複数回使用なし" + (f ? "Yes" : "No"));
 		boolean f2 = partialSumProblem(n, a, k);
@@ -26,9 +19,7 @@ public class PartialSumProblem {
 		boolean[] dp = new boolean[k + 1];
 		dp[0] = true;
 		for (int i = 0; i < n; i++) {
-			for (int j = a[i]; j <= k; j++) {
-				dp[j] |= dp[j - a[i]];
-			}
+			for (int j = a[i]; j <= k; j++) dp[j] |= dp[j - a[i]];
 		}
 		return dp[k];
 	}
@@ -38,9 +29,7 @@ public class PartialSumProblem {
 		boolean[] dp = new boolean[k + 1];
 		dp[0] = true;
 		for (int i = 0; i < n; i++) {
-			for (int j = k; j >= a[i]; j--) {
-				dp[j] |= dp[j - a[i]];
-			}
+			for (int j = k; j >= a[i]; j--) dp[j] |= dp[j - a[i]];
 		}
 		return dp[k];
 	}
@@ -50,7 +39,7 @@ public class PartialSumProblem {
 			 final PrintWriter out = new PrintWriter(System.out)) {
 			solve(sc, out);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
 	}
 
