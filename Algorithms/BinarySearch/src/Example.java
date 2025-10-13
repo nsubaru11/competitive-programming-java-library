@@ -9,7 +9,7 @@ public class Example {
 		// 両方のBinarySearchクラスの機能をテスト
 		testArrayBinarySearch();
 		testBinarySearch();
-
+		System.out.println("\n===== 処理完了 =====");
 	}
 
 	/**
