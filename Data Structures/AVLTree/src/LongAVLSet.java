@@ -41,8 +41,8 @@ public final class LongAVLSet implements Iterable<Long> {
 
 	// -------------- String --------------
 	public String toString() {
-		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		PrimitiveIterator.OfLong it = iterator();
+		final StringJoiner sj = new StringJoiner(", ", "[", "]");
+		final PrimitiveIterator.OfLong it = iterator();
 		while (it.hasNext()) sj.add(Long.toString(it.nextLong()));
 		return sj.toString();
 	}
@@ -52,8 +52,9 @@ public final class LongAVLSet implements Iterable<Long> {
 		if (size == 0) return false;
 		Node cur = root;
 		while (cur != null) {
-			if (cur.label == t) break;
-			cur = cur.label < t ? cur.right : cur.left;
+			final long label = cur.label;
+			if (label == t) break;
+			cur = label < t ? cur.right : cur.left;
 		}
 		return cur != null;
 	}
@@ -61,7 +62,7 @@ public final class LongAVLSet implements Iterable<Long> {
 	public boolean containsAll(final Collection<Long> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
-		for (long t : c) {
+		for (final long t : c) {
 			if (!contains(t)) {
 				contains = false;
 				break;
@@ -80,25 +81,25 @@ public final class LongAVLSet implements Iterable<Long> {
 		}
 		if (t < first) first = t;
 		if (t > last) last = t;
-		int oldSize = size;
+		final int oldSize = size;
 		root = root.add(t);
 		update();
 		return size != oldSize;
 	}
 
 	public boolean addAll(final Collection<Long> c) {
-		int oldSize = size;
-		for (long a : c) add(a);
+		final int oldSize = size;
+		for (final long a : c) add(a);
 		return size != oldSize;
 	}
 
 	// -------------- Remove --------------
 	public boolean remove(final long t) {
 		if (size == 0) return false;
-		int oldSize = size;
+		final int oldSize = size;
 		root = root.remove(t);
 		update();
-		boolean removed = size != oldSize;
+		final boolean removed = size != oldSize;
 		if (size > 0 && removed) {
 			if (t == first) first = leftmost(root).label;
 			if (t == last) last = rightmost(root).label;
@@ -108,15 +109,15 @@ public final class LongAVLSet implements Iterable<Long> {
 
 	public boolean removeAll(final Collection<Long> c) {
 		if (isEmpty()) return false;
-		int oldSize = size;
-		Collection<Long> hs = c instanceof Set ? c : new HashSet<>(c);
-		for (long v : hs) remove(v);
+		final int oldSize = size;
+		final Collection<Long> hs = c instanceof Set ? c : new HashSet<>(c);
+		for (final long v : hs) remove(v);
 		return size != oldSize;
 	}
 
 	public boolean removeAt(final int index) {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
-		int oldSize = size;
+		final int oldSize = size;
 		root = root.removeAt(index);
 		update();
 		if (size > 0) {
@@ -129,15 +130,15 @@ public final class LongAVLSet implements Iterable<Long> {
 	// -------------- Arrays --------------
 	public long[] toArray() {
 		if (size == 0) return new long[0];
-		long[] arr = new long[size];
-		PrimitiveIterator.OfLong it = iterator();
+		final long[] arr = new long[size];
+		final PrimitiveIterator.OfLong it = iterator();
 		for (int i = 0; it.hasNext(); i++) arr[i] = it.nextLong();
 		return arr;
 	}
 
 	// -------------- Streams --------------
 	public LongStream stream() {
-		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.DISTINCT;
+		final int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.DISTINCT;
 		return StreamSupport.longStream(Spliterators.spliterator(iterator(), size, characteristics), false);
 	}
 
@@ -156,9 +157,9 @@ public final class LongAVLSet implements Iterable<Long> {
 
 			public long nextLong() {
 				if (cur == null) throw new NoSuchElementException();
-				long val = cur.label;
+				final long label = cur.label;
 				cur = successor(cur);
-				return val;
+				return label;
 			}
 		};
 	}
@@ -168,7 +169,7 @@ public final class LongAVLSet implements Iterable<Long> {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
-			int leftSize = cur.left == null ? 0 : cur.left.size;
+			final int leftSize = cur.left == null ? 0 : cur.left.size;
 			if (index < leftSize) {
 				cur = cur.left;
 			} else if (index > leftSize) {
@@ -184,7 +185,7 @@ public final class LongAVLSet implements Iterable<Long> {
 	// -------------- Search & Rank --------------
 	public int indexOf(final long t) {
 		if (size == 0) return -1;
-		int index = rank(t);
+		final int index = rank(t);
 		return index >= 0 ? index : -1;
 	}
 
@@ -192,10 +193,11 @@ public final class LongAVLSet implements Iterable<Long> {
 		Node cur = root;
 		int index = 0;
 		while (cur != null) {
-			if (cur.label < t) {
+			final long label = cur.label;
+			if (label < t) {
 				index += cur.leftSize() + 1;
 				cur = cur.right;
-			} else if (cur.label > t) {
+			} else if (label > t) {
 				cur = cur.left;
 			} else {
 				index += cur.leftSize();
@@ -231,16 +233,17 @@ public final class LongAVLSet implements Iterable<Long> {
 		Long t = null;
 		Node cur = root;
 		while (cur != null) {
+			final long label = cur.label;
 			if (higher) {
-				if (cur.label > key || (inclusive && cur.label == key)) {
-					t = cur.label;
+				if (label > key || (inclusive && label == key)) {
+					t = label;
 					cur = cur.left;
 				} else {
 					cur = cur.right;
 				}
 			} else {
-				if (cur.label < key || (inclusive && cur.label == key)) {
-					t = cur.label;
+				if (label < key || (inclusive && label == key)) {
+					t = label;
 					cur = cur.right;
 				} else {
 					cur = cur.left;
@@ -261,14 +264,14 @@ public final class LongAVLSet implements Iterable<Long> {
 
 	public long pollFirst() {
 		if (size == 0) throw new NoSuchElementException();
-		long temp = first;
+		final long temp = first;
 		removeAt(0);
 		return temp;
 	}
 
 	public long pollLast() {
 		if (size == 0) throw new NoSuchElementException();
-		long temp = last;
+		final long temp = last;
 		removeAt(size - 1);
 		return temp;
 	}
@@ -279,8 +282,8 @@ public final class LongAVLSet implements Iterable<Long> {
 			clear();
 			return;
 		}
-		size = root.size;
 		root.parent = null;
+		size = root.size;
 	}
 
 	private Node leftmost(Node cur) {
@@ -315,7 +318,7 @@ public final class LongAVLSet implements Iterable<Long> {
 		}
 
 		private Node removeAt(int index) {
-			int lIdx = leftSize();
+			final int lIdx = leftSize();
 			if (lIdx < index) {
 				index -= lIdx + 1;
 				setRight(right.removeAt(index));
@@ -325,7 +328,7 @@ public final class LongAVLSet implements Iterable<Long> {
 				return removeInternal();
 			}
 			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
@@ -338,7 +341,7 @@ public final class LongAVLSet implements Iterable<Long> {
 				return this;
 			}
 			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
@@ -359,20 +362,20 @@ public final class LongAVLSet implements Iterable<Long> {
 				return removeInternal();
 			}
 			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
 		private Node removeInternal() {
 			if (left == null) return right;
 			if (right == null) return left;
-			Node temp;
+			final Node temp;
 			if (leftHeight() >= rightHeight()) {
 				temp = left.extractMax();
 				if (temp == left) {
 					setLeft(temp.left);
 				} else {
-					int bf = left.leftHeight() - left.rightHeight();
+					final int bf = left.leftHeight() - left.rightHeight();
 					setLeft(abs(bf) <= 1 ? left : left.rotate(bf));
 				}
 			} else {
@@ -380,7 +383,7 @@ public final class LongAVLSet implements Iterable<Long> {
 				if (temp == right) {
 					setRight(temp.right);
 				} else {
-					int bf = right.leftHeight() - right.rightHeight();
+					final int bf = right.leftHeight() - right.rightHeight();
 					setRight(abs(bf) <= 1 ? right : right.rotate(bf));
 				}
 			}
@@ -388,16 +391,16 @@ public final class LongAVLSet implements Iterable<Long> {
 			temp.setLeft(left);
 			temp.setRight(right);
 			temp.updateNode();
-			int bf = temp.leftHeight() - temp.rightHeight();
+			final int bf = temp.leftHeight() - temp.rightHeight();
 			return abs(bf) <= 1 ? temp : temp.rotate(bf);
 		}
 
 		private Node extractMin() {
 			if (left == null) return this;
-			Node min = left.extractMin();
+			final Node min = left.extractMin();
 			if (left == min) setLeft(left.right);
 			if (left != null) {
-				int bf = left.leftHeight() - left.rightHeight();
+				final int bf = left.leftHeight() - left.rightHeight();
 				if (abs(bf) > 1) setLeft(left.rotate(bf));
 			}
 			updateNode();
@@ -406,10 +409,10 @@ public final class LongAVLSet implements Iterable<Long> {
 
 		private Node extractMax() {
 			if (right == null) return this;
-			Node max = right.extractMax();
+			final Node max = right.extractMax();
 			if (right == max) setRight(right.left);
 			if (right != null) {
-				int bf = right.leftHeight() - right.rightHeight();
+				final int bf = right.leftHeight() - right.rightHeight();
 				if (abs(bf) > 1) setRight(right.rotate(bf));
 			}
 			updateNode();
@@ -417,14 +420,14 @@ public final class LongAVLSet implements Iterable<Long> {
 		}
 
 		private Node rotate(final int bf) {
-			Node prevParent = parent;
-			Node newRoot;
+			final Node prevParent = parent;
+			final Node newRoot;
 			if (bf > 0) {
-				int bfl = left.leftHeight() - left.rightHeight();
+				final int bfl = left.leftHeight() - left.rightHeight();
 				newRoot = bfl >= 0 ? rotateLL() : rotateLR();
 				newRoot.right.updateNode();
 			} else {
-				int bfr = right.leftHeight() - right.rightHeight();
+				final int bfr = right.leftHeight() - right.rightHeight();
 				newRoot = bfr > 0 ? rotateRL() : rotateRR();
 				newRoot.left.updateNode();
 			}
@@ -434,9 +437,9 @@ public final class LongAVLSet implements Iterable<Long> {
 		}
 
 		private Node rotateLR() {
-			Node newRoot = this.left.right;
-			Node tempLeft = newRoot.left;
-			Node tempRight = newRoot.right;
+			final Node newRoot = this.left.right;
+			final Node tempLeft = newRoot.left;
+			final Node tempRight = newRoot.right;
 			newRoot.setRight(this);
 			newRoot.setLeft(this.left);
 			newRoot.right.setLeft(tempRight);
@@ -446,23 +449,23 @@ public final class LongAVLSet implements Iterable<Long> {
 		}
 
 		private Node rotateLL() {
-			Node newRoot = this.left;
+			final Node newRoot = this.left;
 			setLeft(newRoot.right);
 			newRoot.setRight(this);
 			return newRoot;
 		}
 
 		private Node rotateRR() {
-			Node newRoot = this.right;
+			final Node newRoot = this.right;
 			setRight(newRoot.left);
 			newRoot.setLeft(this);
 			return newRoot;
 		}
 
 		private Node rotateRL() {
-			Node newRoot = this.right.left;
-			Node tempLeft = newRoot.left;
-			Node tempRight = newRoot.right;
+			final Node newRoot = this.right.left;
+			final Node tempLeft = newRoot.left;
+			final Node tempRight = newRoot.right;
 			newRoot.setLeft(this);
 			newRoot.setRight(this.right);
 			newRoot.left.setRight(tempLeft);

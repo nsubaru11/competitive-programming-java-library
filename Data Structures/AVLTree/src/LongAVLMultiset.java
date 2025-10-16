@@ -70,7 +70,7 @@ public final class LongAVLMultiset implements Iterable<Long> {
 	public boolean containsAll(final Collection<Long> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
-		for (long t : c) {
+		for (final long t : c) {
 			if (!contains(t)) {
 				contains = false;
 				break;
@@ -91,7 +91,7 @@ public final class LongAVLMultiset implements Iterable<Long> {
 
 	public boolean addAll(final Collection<Long> c) {
 		final long oldSize = size;
-		for (long a : c) add(a);
+		for (final long a : c) add(a);
 		return size != oldSize;
 	}
 
@@ -113,7 +113,7 @@ public final class LongAVLMultiset implements Iterable<Long> {
 		if (isEmpty()) return false;
 		final long oldSize = size;
 		final Collection<Long> hs = c instanceof Set ? c : new HashSet<>(c);
-		for (long v : hs) removeAll(v);
+		for (final long v : hs) removeAll(v);
 		return size != oldSize;
 	}
 
@@ -373,13 +373,13 @@ public final class LongAVLMultiset implements Iterable<Long> {
 		return t.uniqueSum - t.rightUniqueSum();
 	}
 
-	public long SuffixSum(final int i) {
+	public long suffixSum(final int i) {
 		if (i < 0 || size <= i) throw new IndexOutOfBoundsException();
 		final Node t = getByIndex(i, false);
 		return t.sum - t.leftSum();
 	}
 
-	public long SuffixUniqueSum(final int i) {
+	public long suffixUniqueSum(final int i) {
 		if (i < 0 || uniqueSize <= i) throw new IndexOutOfBoundsException();
 		final Node t = getByIndex(i, true);
 		return t.uniqueSum - t.leftUniqueSum();
@@ -505,8 +505,8 @@ public final class LongAVLMultiset implements Iterable<Long> {
 		}
 
 		private Node removeAt(long index, final boolean unique) {
-			long lIdx = unique ? leftUniqueSize() : leftSize();
-			long rIdx = lIdx + (unique ? 1 : cnt);
+			final long lIdx = unique ? leftUniqueSize() : leftSize();
+			final long rIdx = lIdx + (unique ? 1 : cnt);
 			if (rIdx <= index) {
 				index -= rIdx;
 				setRight(right.removeAt(index, unique));

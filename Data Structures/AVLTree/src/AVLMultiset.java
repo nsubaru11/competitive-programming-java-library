@@ -54,8 +54,8 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 	// -------------- String --------------
 	public String toString() {
-		StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for (T t : this) sj.add(t.toString());
+		final StringJoiner sj = new StringJoiner(", ", "[", "]");
+		for (final T t : this) sj.add(t.toString());
 		return sj.toString();
 	}
 
@@ -68,7 +68,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	public boolean containsAll(final Collection<T> c) {
 		if (size == 0) return c.isEmpty();
 		boolean contains = true;
-		for (T t : c) {
+		for (final T t : c) {
 			if (!contains(t)) {
 				contains = false;
 				break;
@@ -88,8 +88,8 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	public boolean addAll(Collection<T> c) {
-		long oldSize = size;
-		for (T a : c) add(a);
+		final long oldSize = size;
+		for (final T a : c) add(a);
 		return size != oldSize;
 	}
 
@@ -109,9 +109,9 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 	public boolean removeAll(final Collection<T> c) {
 		if (isEmpty()) return false;
-		long oldSize = size;
-		Collection<T> hs = c instanceof Set ? c : new HashSet<>(c);
-		for (T v : hs) removeAll(v);
+		final long oldSize = size;
+		final Collection<T> hs = c instanceof Set ? c : new HashSet<>(c);
+		for (final T v : hs) removeAll(v);
 		return size != oldSize;
 	}
 
@@ -126,11 +126,11 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	private boolean removeByIndex(final long index, final boolean unique) {
-		long oldSize = size;
-		int oldUniqueSize = uniqueSize;
+		final long oldSize = size;
+		final int oldUniqueSize = uniqueSize;
 		root = root.removeAt(index, unique);
 		update();
-		boolean updated = size != oldSize;
+		final boolean updated = size != oldSize;
 		if (size > 0 && uniqueSize != oldUniqueSize) {
 			if (!unique) {
 				if (index == 0) first = leftmost(root).label;
@@ -148,16 +148,16 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		if (size == 0) return (T[]) new Object[0];
 		if (size > Integer.MAX_VALUE)
 			throw new IllegalStateException("Array too large: " + size + " elements (exceeds single-array limit)");
-		T[] arr = (T[]) Array.newInstance(first.getClass(), (int) size);
+		final T[] arr = (T[]) Array.newInstance(first.getClass(), (int) size);
 		int i = 0;
-		for (T t : this) arr[i++] = t;
+		for (final T t : this) arr[i++] = t;
 		return arr;
 	}
 
 	public T[] toUniqueArray() {
 		if (uniqueSize == 0) return (T[]) new Object[0];
-		Iterator<T> it = uniqueIterator();
-		T[] arr = (T[]) Array.newInstance(first.getClass(), uniqueSize);
+		final Iterator<T> it = uniqueIterator();
+		final T[] arr = (T[]) Array.newInstance(first.getClass(), uniqueSize);
 		for (int i = 0; it.hasNext(); i++) arr[i] = it.next();
 		return arr;
 	}
@@ -172,10 +172,10 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	private Stream<T> toStream(final boolean unique) {
-		long size = unique ? uniqueSize : this.size;
+		final long size = unique ? uniqueSize : this.size;
 		int characteristics = Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.SIZED | Spliterator.SUBSIZED;
 		if (unique) characteristics |= Spliterator.DISTINCT;
-		Iterator<T> it = unique ? uniqueIterator() : iterator();
+		final Iterator<T> it = unique ? uniqueIterator() : iterator();
 		return StreamSupport.stream(Spliterators.spliterator(it, size, characteristics), false);
 	}
 
@@ -193,7 +193,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		if (index < 0 || size <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
-			long leftSize = cur.left == null ? 0 : cur.left.size;
+			final long leftSize = cur.left == null ? 0 : cur.left.size;
 			if (index < leftSize) {
 				cur = cur.left;
 			} else if (index >= leftSize + cur.cnt) {
@@ -210,7 +210,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		if (index < 0 || uniqueSize <= index) throw new IndexOutOfBoundsException();
 		Node cur = root;
 		while (cur != null) {
-			int leftSize = cur.left == null ? 0 : cur.left.uniqueSize;
+			final int leftSize = cur.left == null ? 0 : cur.left.uniqueSize;
 			if (index < leftSize) {
 				cur = cur.left;
 			} else if (index >= leftSize + 1) {
@@ -226,23 +226,23 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	// -------------- Search & Rank --------------
 	public long indexOf(final T t) {
 		if (size == 0) return -1;
-		long index = index(t, false);
+		final long index = index(t, false);
 		return index >= 0 ? index : -1;
 	}
 
 	public int uniqueIndexOf(final T t) {
 		if (size == 0) return -1;
-		int index = (int) index(t, true);
+		final int index = (int) index(t, true);
 		return index >= 0 ? index : -1;
 	}
 
 	public long rank(final T t) {
-		long index = index(t, false);
+		final long index = index(t, false);
 		return index < 0 ? ~index : index;
 	}
 
 	public long uniqueRank(final T t) {
-		long index = index(t, true);
+		final long index = index(t, true);
 		return index < 0 ? ~index : index;
 	}
 
@@ -250,7 +250,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
+			final int cmp = comparator.compare(cur.label, t);
 			if (cmp < 0) {
 				index += unique ? cur.leftUniqueSize() + 1 : cur.leftSize() + cur.cnt;
 				cur = cur.right;
@@ -269,7 +269,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
+			final int cmp = comparator.compare(cur.label, t);
 			if (cmp < 0) {
 				index += cur.leftSize() + cur.cnt;
 				cur = cur.right;
@@ -287,7 +287,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		Node cur = root;
 		long index = 0;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
+			final int cmp = comparator.compare(cur.label, t);
 			if (cmp < 0) {
 				index += cur.leftSize() + cur.cnt;
 				cur = cur.right;
@@ -306,7 +306,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		if (size == 0) return 0;
 		Node cur = root;
 		while (cur != null) {
-			int cmp = comparator.compare(cur.label, t);
+			final int cmp = comparator.compare(cur.label, t);
 			if (cmp == 0) break;
 			cur = cmp < 0 ? cur.right : cur.left;
 		}
@@ -332,26 +332,27 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 	private T boundary(final T key, final boolean inclusive, final boolean higher) {
 		if (size == 0) return null;
-		int c1 = comparator.compare(first, key);
+		final int c1 = comparator.compare(first, key);
 		if (c1 == 0 && inclusive) return first;
 		if (c1 > 0) return higher ? first : null;
-		int c2 = comparator.compare(last, key);
+		final int c2 = comparator.compare(last, key);
 		if (c2 == 0 && inclusive) return last;
 		if (c2 < 0) return higher ? null : last;
 		T t = null;
 		Node cur = root;
 		while (cur != null) {
-			int c = comparator.compare(cur.label, key);
+			final T label = cur.label;
+			final int c = comparator.compare(label, key);
 			if (higher) {
 				if (c > 0 || (inclusive && c == 0)) {
-					t = cur.label;
+					t = label;
 					cur = cur.left;
 				} else {
 					cur = cur.right;
 				}
 			} else {
 				if (c < 0 || (inclusive && c == 0)) {
-					t = cur.label;
+					t = label;
 					cur = cur.right;
 				} else {
 					cur = cur.left;
@@ -372,28 +373,28 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 	public T pollFirst() {
 		if (size == 0) return null;
-		T temp = first;
+		final T temp = first;
 		removeByIndex(0, false);
 		return temp;
 	}
 
 	public T pollLast() {
 		if (size == 0) return null;
-		T temp = last;
+		final T temp = last;
 		removeByIndex(size - 1, false);
 		return temp;
 	}
 
 	public T pollFirstAll() {
 		if (size == 0) return null;
-		T temp = first;
+		final T temp = first;
 		removeByIndex(0, true);
 		return temp;
 	}
 
 	public T pollLastAll() {
 		if (size == 0) return null;
-		T temp = last;
+		final T temp = last;
 		removeByIndex(uniqueSize - 1, true);
 		return temp;
 	}
@@ -412,11 +413,11 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 			if (comparator.compare(t, first) < 0) first = t;
 			if (comparator.compare(t, last) > 0) last = t;
 		}
-		long oldSize = size;
-		int oldUniqueSize = uniqueSize;
+		final long oldSize = size;
+		final int oldUniqueSize = uniqueSize;
 		root = root.applyDelta(t, delta, removeAll);
 		update();
-		boolean updated = size != oldSize;
+		final boolean updated = size != oldSize;
 		if (updated && size > 0 && uniqueSize != oldUniqueSize && (removeAll || delta <= 0)) {
 			if (comparator.compare(t, first) == 0) first = leftmost(root).label;
 			if (comparator.compare(t, last) == 0) last = rightmost(root).label;
@@ -468,8 +469,8 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		}
 
 		private Node removeAt(long index, final boolean unique) {
-			long lIdx = unique ? leftUniqueSize() : leftSize();
-			long rIdx = lIdx + (unique ? 1 : cnt);
+			final long lIdx = unique ? leftUniqueSize() : leftSize();
+			final long rIdx = lIdx + (unique ? 1 : cnt);
 			if (rIdx <= index) {
 				index -= rIdx;
 				setRight(right.removeAt(index, unique));
@@ -480,12 +481,12 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 				if (unique || cnt <= 0) return removeInternal();
 			}
 			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
 		private Node applyDelta(final T t, final long delta, final boolean all) {
-			int cmp = AVLMultiset.this.comparator.compare(label, t);
+			final int cmp = AVLMultiset.this.comparator.compare(label, t);
 			if (cmp < 0) {
 				if (right == null) {
 					if (delta <= 0) return this;
@@ -505,20 +506,20 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 				if (all || cnt <= 0) return removeInternal();
 			}
 			updateNode();
-			int bf = leftHeight() - rightHeight();
+			final int bf = leftHeight() - rightHeight();
 			return abs(bf) <= 1 ? this : rotate(bf);
 		}
 
 		private Node removeInternal() {
 			if (left == null) return right;
 			if (right == null) return left;
-			Node temp;
+			final Node temp;
 			if (leftHeight() >= rightHeight()) {
 				temp = left.extractMax();
 				if (temp == left) {
 					setLeft(temp.left);
 				} else {
-					int bf = left.leftHeight() - left.rightHeight();
+					final int bf = left.leftHeight() - left.rightHeight();
 					setLeft(abs(bf) <= 1 ? left : left.rotate(bf));
 				}
 			} else {
@@ -526,7 +527,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 				if (temp == right) {
 					setRight(temp.right);
 				} else {
-					int bf = right.leftHeight() - right.rightHeight();
+					final int bf = right.leftHeight() - right.rightHeight();
 					setRight(abs(bf) <= 1 ? right : right.rotate(bf));
 				}
 			}
@@ -534,16 +535,16 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 			temp.setLeft(left);
 			temp.setRight(right);
 			temp.updateNode();
-			int bf = temp.leftHeight() - temp.rightHeight();
+			final int bf = temp.leftHeight() - temp.rightHeight();
 			return abs(bf) <= 1 ? temp : temp.rotate(bf);
 		}
 
 		private Node extractMin() {
 			if (left == null) return this;
-			Node min = left.extractMin();
+			final Node min = left.extractMin();
 			if (left == min) setLeft(left.right);
 			if (left != null) {
-				int bf = left.leftHeight() - left.rightHeight();
+				final int bf = left.leftHeight() - left.rightHeight();
 				if (abs(bf) > 1) setLeft(left.rotate(bf));
 			}
 			updateNode();
@@ -552,10 +553,10 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 		private Node extractMax() {
 			if (right == null) return this;
-			Node max = right.extractMax();
+			final Node max = right.extractMax();
 			if (right == max) setRight(right.left);
 			if (right != null) {
-				int bf = right.leftHeight() - right.rightHeight();
+				final int bf = right.leftHeight() - right.rightHeight();
 				if (abs(bf) > 1) setRight(right.rotate(bf));
 			}
 			updateNode();
@@ -563,14 +564,14 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		}
 
 		private Node rotate(final int bf) {
-			Node prevParent = parent;
-			Node newRoot;
+			final Node prevParent = parent;
+			final Node newRoot;
 			if (bf > 0) {
-				int bfl = left.leftHeight() - left.rightHeight();
+				final int bfl = left.leftHeight() - left.rightHeight();
 				newRoot = bfl >= 0 ? rotateLL() : rotateLR();
 				newRoot.right.updateNode();
 			} else {
-				int bfr = right.leftHeight() - right.rightHeight();
+				final int bfr = right.leftHeight() - right.rightHeight();
 				newRoot = bfr > 0 ? rotateRL() : rotateRR();
 				newRoot.left.updateNode();
 			}
@@ -580,9 +581,9 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		}
 
 		private Node rotateLR() {
-			Node newRoot = this.left.right;
-			Node tempLeft = newRoot.left;
-			Node tempRight = newRoot.right;
+			final Node newRoot = this.left.right;
+			final Node tempLeft = newRoot.left;
+			final Node tempRight = newRoot.right;
 			newRoot.setRight(this);
 			newRoot.setLeft(this.left);
 			newRoot.right.setLeft(tempRight);
@@ -592,23 +593,23 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 		}
 
 		private Node rotateLL() {
-			Node newRoot = this.left;
+			final Node newRoot = this.left;
 			setLeft(newRoot.right);
 			newRoot.setRight(this);
 			return newRoot;
 		}
 
 		private Node rotateRR() {
-			Node newRoot = this.right;
+			final Node newRoot = this.right;
 			setRight(newRoot.left);
 			newRoot.setLeft(this);
 			return newRoot;
 		}
 
 		private Node rotateRL() {
-			Node newRoot = this.right.left;
-			Node tempLeft = newRoot.left;
-			Node tempRight = newRoot.right;
+			final Node newRoot = this.right.left;
+			final Node tempLeft = newRoot.left;
+			final Node tempRight = newRoot.right;
 			newRoot.setLeft(this);
 			newRoot.setRight(this.right);
 			newRoot.left.setRight(tempLeft);
@@ -675,14 +676,14 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 		public T next() {
 			if (cur == null) throw new NoSuchElementException();
-			T val = cur.label;
+			final T label = cur.label;
 			if (!unique && remainingCnt > 1) {
 				remainingCnt--;
-				return val;
+				return label;
 			}
 			cur = successor(cur);
 			remainingCnt = cur == null ? 0 : cur.cnt;
-			return val;
+			return label;
 		}
 	}
 }
