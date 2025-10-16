@@ -416,10 +416,10 @@ public class CompressedFastScanner {
 			return nextCollection(n, this::next, TreeSet::new);
 		}
 
-		private <E, C extends Collection<E>> C nextCollection(int n, final Supplier<E> input, final Supplier<C> collection) {
-			final C c = collection.get();
-			while (n-- > 0) c.add(input.get());
-			return c;
+		private <S, T extends Collection<S>> T nextCollection(int n, final Supplier<S> input, final Supplier<T> collection) {
+			final T t = collection.get();
+			while (n-- > 0) t.add(input.get());
+			return t;
 		}
 
 		public HashMap<Integer, Integer> nextIntMultisetHM(final int n) {
@@ -454,10 +454,10 @@ public class CompressedFastScanner {
 			return nextMultiset(n, this::next, TreeMap::new);
 		}
 
-		private <E, T extends Map<E, Integer>> T nextMultiset(int n, final Supplier<E> input, final Supplier<T> map) {
+		private <S, T extends Map<S, Integer>> T nextMultiset(int n, final Supplier<S> input, final Supplier<T> map) {
 			final T multiSet = map.get();
 			while (n-- > 0) {
-				final E i = input.get();
+				final S i = input.get();
 				multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
 			}
 			return multiSet;
