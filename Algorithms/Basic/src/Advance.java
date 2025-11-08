@@ -24,7 +24,7 @@ public final class Advance {
 	/**
 	 * n ^ k % mod
 	 */
-	public static long modPow(long n, long k, long mod) {
+	public static long modPow(long n, long k, final long mod) {
 		long modPow = 1;
 		for (n %= mod, k %= mod; k > 0; k >>= 1, n = n * n % mod) {
 			if ((k & 1) == 1) modPow = modPow * n % mod;
@@ -37,24 +37,23 @@ public final class Advance {
 	/**
 	 * 最大公約数
 	 */
-	public static int gcd(int a, int b) {
+	public static int gcd(final int a, final int b) {
 		return b > 0 ? gcd(b, a % b) : a;
 	}
 
 	/**
 	 * 最大公約数
 	 */
-	public static long gcd(long a, long b) {
+	public static long gcd(final long a, final long b) {
 		return b > 0 ? gcd(b, a % b) : a;
 	}
 
 	/**
 	 * 最大公約数
 	 */
-	public static int gcd(int[] arr) {
+	public static int gcd(final int[] arr) {
 		int iGcd = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			iGcd = gcd(iGcd, arr[i]);
 		}
 		return iGcd;
@@ -63,10 +62,9 @@ public final class Advance {
 	/**
 	 * 最大公約数
 	 */
-	public static long gcd(long[] arr) {
+	public static long gcd(final long[] arr) {
 		long lGcd = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			lGcd = gcd(lGcd, arr[i]);
 		}
 		return lGcd;
@@ -77,24 +75,23 @@ public final class Advance {
 	/**
 	 * 最小公倍数
 	 */
-	public static long lcm(int a, int b) {
+	public static long lcm(final int a, final int b) {
 		return (long) a / gcd(a, b) * b;
 	}
 
 	/**
 	 * 最小公倍数
 	 */
-	public static long lcm(long a, long b) {
+	public static long lcm(final long a, final long b) {
 		return a / gcd(a, b) * b;
 	}
 
 	/**
 	 * 最小公倍数
 	 */
-	public static long lcm(int[] arr) {
+	public static long lcm(final int[] arr) {
 		long lcm = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			lcm = lcm(lcm, arr[i]);
 		}
 		return lcm;
@@ -103,10 +100,9 @@ public final class Advance {
 	/**
 	 * 最小公倍数
 	 */
-	public static long lcm(long[] arr) {
+	public static long lcm(final long[] arr) {
 		long lcm = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			lcm = lcm(lcm, arr[i]);
 		}
 		return lcm;
@@ -117,7 +113,7 @@ public final class Advance {
 	/**
 	 * int配列の合計
 	 */
-	public static long sum(int[] arr) {
+	public static long sum(final int[] arr) {
 		long sum = 0;
 		for (int x : arr) sum += x;
 		return sum;
@@ -126,7 +122,7 @@ public final class Advance {
 	/**
 	 * long配列の合計
 	 */
-	public static long sum(long[] arr) {
+	public static long sum(final long[] arr) {
 		long sum = 0;
 		for (long x : arr) sum += x;
 		return sum;
@@ -135,10 +131,9 @@ public final class Advance {
 	/**
 	 * int配列の最小値
 	 */
-	public static int min(int[] arr) {
+	public static int min(final int[] arr) {
 		int min = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			min = Math.min(min, arr[i]);
 		}
 		return min;
@@ -147,10 +142,9 @@ public final class Advance {
 	/**
 	 * long配列の最小値
 	 */
-	public static long min(long[] arr) {
+	public static long min(final long[] arr) {
 		long min = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			min = Math.min(min, arr[i]);
 		}
 		return min;
@@ -159,10 +153,9 @@ public final class Advance {
 	/**
 	 * int配列の最大値
 	 */
-	public static int max(int[] arr) {
+	public static int max(final int[] arr) {
 		int max = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			max = Math.max(max, arr[i]);
 		}
 		return max;
@@ -171,10 +164,9 @@ public final class Advance {
 	/**
 	 * long配列の最大値
 	 */
-	public static long max(long[] arr) {
+	public static long max(final long[] arr) {
 		long max = arr[0];
-		int len = arr.length;
-		for (int i = 1; i < len; i++) {
+		for (int i = 1, len = arr.length; i < len; i++) {
 			max = Math.max(max, arr[i]);
 		}
 		return max;
@@ -185,10 +177,9 @@ public final class Advance {
 	/**
 	 * 約数のHashSet
 	 */
-	public static HashSet<Integer> factorsHashSet(long n) {
-		HashSet<Integer> hs = new HashSet<>();
-		int sqrt = (int) sqrt(n) + 1;
-		for (int i = 1; i < sqrt; i++) {
+	public static HashSet<Integer> factorsHashSet(final long n) {
+		final HashSet<Integer> hs = new HashSet<>();
+		for (int i = 1, sqrt = (int) sqrt(n) + 1; i < sqrt; i++) {
 			if (n % i == 0) {
 				hs.add(i);
 				hs.add((int) (n / i));
@@ -200,10 +191,9 @@ public final class Advance {
 	/**
 	 * 約数のTreeSet
 	 */
-	public static TreeSet<Integer> factorsTreeSet(long n) {
-		TreeSet<Integer> hs = new TreeSet<>();
-		int sqrt = (int) sqrt(n) + 1;
-		for (int i = 1; i < sqrt; i++) {
+	public static TreeSet<Integer> factorsTreeSet(final long n) {
+		final TreeSet<Integer> hs = new TreeSet<>();
+		for (int i = 1, sqrt = (int) sqrt(n) + 1; i < sqrt; i++) {
 			if (n % i == 0) {
 				hs.add(i);
 				hs.add((int) (n / i));

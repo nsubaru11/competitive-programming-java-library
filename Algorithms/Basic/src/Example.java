@@ -2,7 +2,7 @@ import java.util.Arrays;
 
 import static java.lang.System.out;
 
-public class Example {
+public final class Example {
 
 	public static void main(String[] args) {
 		// 文字配列・文字列から整数への変換テスト
