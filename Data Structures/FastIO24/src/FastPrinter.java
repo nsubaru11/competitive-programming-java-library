@@ -680,7 +680,11 @@ public class FastPrinter implements AutoCloseable {
 	protected final void ensureCapacity(final int additional) {
 		final int required = pos + additional;
 		if (required <= buffer.length) return;
-		buffer = Arrays.copyOf(buffer, roundUpToPowerOfTwo(required));
+		if (required <= 1_000_000_000) {
+			buffer = Arrays.copyOf(buffer, roundUpToPowerOfTwo(required));
+		} else {
+			flush();
+		}
 	}
 
 	/**
