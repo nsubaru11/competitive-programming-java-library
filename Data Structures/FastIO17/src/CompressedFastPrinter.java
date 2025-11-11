@@ -2,26 +2,77 @@ import sun.misc.Unsafe;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.lang.reflect.Field;
-import java.util.Locale;
 import java.util.Iterator;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.LongFunction;
-import java.util.function.DoubleFunction;
-import java.util.function.IntUnaryOperator;
+import java.util.Locale;
+import java.util.function.*;
 
-
-import static java.lang.Math.min;
-import static java.lang.Math.round;
-import static java.lang.Math.max;
+import static java.lang.Math.*;
 
 @SuppressWarnings("unused")
 // FastPrinterとContestPrinterを統合し、コメントを削除した圧縮版のクラスです。
 // コメントが必要なく、文字数を気にするなら、こちらを使用して下さい。
 public class CompressedFastPrinter {
+
+	public static void main(String[] args) {
+		try (FastPrinter out = new FastPrinter(System.out)) {
+			System.err.println("--- FastIO17 CompressedFastPrinter Benchmark ---");
+			long totalStartTime = System.nanoTime();
+
+			final int N = 10_000_000;
+
+			// --- Int Test ---
+			long startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println(i);
+			}
+			long endTime = System.nanoTime();
+			System.err.println("  - Int test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Long Test ---
+			startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println((long) i * 1000);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Long test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Double Test ---
+			startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println(i / 100.0);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Double test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Short String Test ---
+			startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println("String" + i);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Short String test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Long String Test ---
+			String longString = "0123456789".repeat(10_000);
+			int longStringLoop = 1000;
+
+			startTime = System.nanoTime();
+			for (int i = 0; i < longStringLoop; i++) {
+				out.println(longString);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Long String test (100,000 chars x " + longStringLoop + " ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			long totalEndTime = System.nanoTime();
+			System.err.println("Total execution time: " + (totalEndTime - totalStartTime) / 1_000_000 + " ms");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	private static final class FastPrinter implements AutoCloseable {
 		private static final int MAX_INT_DIGITS = 11;

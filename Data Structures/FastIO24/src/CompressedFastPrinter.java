@@ -19,10 +19,58 @@ import static java.lang.Math.round;
 public final class CompressedFastPrinter {
 
 	public static void main(String[] args) {
-		try (FastPrinter out = new FastPrinter()) {
-			out.printRepeat("Hello World!", 100).println();
-			out.printlnRepeat("abc", 50);
-			out.printlnRepeat('a', 7);
+		try (FastPrinter out = new FastPrinter(System.out)) {
+			System.err.println("--- FastIO24 CompressedFastPrinter Benchmark ---");
+			long totalStartTime = System.nanoTime();
+
+			final int N = 10_000_000;
+
+			// --- Int Test ---
+			long startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println(i);
+			}
+			long endTime = System.nanoTime();
+			System.err.println("  - Int test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Long Test ---
+			startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println((long) i * 1000);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Long test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Double Test ---
+			startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println(i / 100.0);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Double test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Short String Test ---
+			startTime = System.nanoTime();
+			for (int i = 0; i < N; i++) {
+				out.println("String" + i);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Short String test (2,500,000 ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Long String Test ---
+			String longString = "0123456789".repeat(10_000);
+			int longStringLoop = 1000;
+
+			startTime = System.nanoTime();
+			for (int i = 0; i < longStringLoop; i++) {
+				out.println(longString);
+			}
+			endTime = System.nanoTime();
+			System.err.println("  - Long String test (100,000 chars x " + longStringLoop + " ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			long totalEndTime = System.nanoTime();
+			System.err.println("Total execution time: " + (totalEndTime - totalStartTime) / 1_000_000 + " ms");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -384,7 +432,11 @@ public final class CompressedFastPrinter {
 		private void ensureCapacity(final int additional) {
 			final int required = pos + additional;
 			if (required <= buffer.length) return;
-			buffer = Arrays.copyOf(buffer, roundUpToPowerOfTwo(required));
+			if (required <= 1_000_000_000) {
+				buffer = Arrays.copyOf(buffer, roundUpToPowerOfTwo(required));
+			} else {
+				flush();
+			}
 		}
 
 		private void write(final boolean b) {

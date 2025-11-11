@@ -3,13 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.sort;
@@ -18,6 +12,27 @@ import static java.util.Arrays.sort;
 // FastScannerとContestScannerを統合し、コメントを削除した圧縮版のクラスです。
 // コメントが必要なく、文字数を気にするなら、こちらを使用して下さい。
 public class CompressedFastScanner {
+
+	public static void main(String[] args) {
+		long startTime = System.nanoTime();
+		try (FastScanner sc = new FastScanner(System.in)) {
+			final int N = 10_000_000;
+			for (int i = 0; i < N; i++) {
+				sc.nextInt();
+			}
+			for (int i = 0; i < N; i++) {
+				sc.nextLong();
+			}
+			for (int i = 0; i < N; i++) {
+				sc.next();
+			}
+		} catch (Exception e) {
+			// EOF is expected
+		}
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1_000_000;
+		System.err.println("FastIO24 CompressedFastScanner execution time: " + duration + " ms");
+	}
 
 	private static final class FastScanner implements AutoCloseable {
 		private static final int DEFAULT_BUFFER_SIZE = 65536;
