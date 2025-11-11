@@ -268,11 +268,8 @@ public final class CompressedFastPrinter {
 		}
 
 		public FastPrinter println(final Object o) {
-			if (o == null) {
-				println();
-				return this;
-			}
 			return switch (o) {
+				case null -> println();
 				case Boolean b -> println(b.booleanValue());
 				case Byte b -> println(b.byteValue());
 				case Character c -> println(c.charValue());
