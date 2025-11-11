@@ -2,12 +2,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.LongFunction;
-import java.util.function.DoubleFunction;
-import java.util.function.IntUnaryOperator;
-
+import java.util.function.*;
 
 import static java.lang.Math.round;
 
@@ -338,8 +333,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final double d, final int n) {
-		print(d, n).println();
-		return this;
+		return print(d, n).println();
 	}
 
 	/**
@@ -521,8 +515,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final boolean[] arr, final int from, final int to) {
-		for (int i = from; i < to; i++) println(arr[i]);
-		return this;
+		return print(arr, from, to, '\n').println();
 	}
 
 	/**
@@ -534,8 +527,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final char[] arr, final int from, final int to) {
-		for (int i = from; i < to; i++) println(arr[i]);
-		return this;
+		return print(arr, from, to, '\n').println();
 	}
 
 	/**
@@ -547,8 +539,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final int[] arr, final int from, final int to) {
-		for (int i = from; i < to; i++) println(arr[i]);
-		return this;
+		return print(arr, from, to, '\n').println();
 	}
 
 	/**
@@ -560,8 +551,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final long[] arr, final int from, final int to) {
-		for (int i = from; i < to; i++) println(arr[i]);
-		return this;
+		return print(arr, from, to, '\n').println();
 	}
 
 	/**
@@ -573,8 +563,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final double[] arr, final int from, final int to) {
-		for (int i = from; i < to; i++) println(arr[i]);
-		return this;
+		return print(arr, from, to, '\n').println();
 	}
 
 	/**
@@ -586,8 +575,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public ContestPrinter println(final String[] arr, final int from, final int to) {
-		for (int i = from; i < to; i++) println(arr[i]);
-		return this;
+		return print(arr, from, to, '\n').println();
 	}
 
 	/**
@@ -917,8 +905,7 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public ContestPrinter print(final char[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
-		final int n = to - from;
-		ensureCapacity(n * 2 - 1);
+		ensureCapacity(((to - from) << 1) - 1);
 		byte[] buf = buffer;
 		int p = pos;
 		BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[from]);
@@ -989,9 +976,10 @@ public final class ContestPrinter extends FastPrinter {
 		if (from >= to) return this;
 		print(arr[from]);
 		for (int i = from + 1; i < to; i++) {
-			ensureCapacity(1);
+			String s = Double.toString(arr[i]);
+			ensureCapacity(s.length() + 1);
 			BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
-			print(arr[i]);
+			write(s);
 		}
 		if (autoFlush) flush();
 		return this;
@@ -1356,6 +1344,30 @@ public final class ContestPrinter extends FastPrinter {
 	/* ------------------------ 2次元配列関数変換系メソッド ------------------------ */
 
 	/**
+	 * 二次元の boolean 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
+	 *
+	 * @param arr2d    出力する二次元の boolean 配列
+	 * @param function boolean を変換する関数
+	 * @param <T>      変換後の型
+	 */
+	public <T> ContestPrinter println(final boolean[][] arr2d, final Function<Boolean, T> function) {
+		for (final boolean[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	/**
+	 * 二次元の char 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
+	 *
+	 * @param arr2d    出力する二次元の char 配列
+	 * @param function char を変換する関数
+	 * @param <T>      変換後の型
+	 */
+	public <T> ContestPrinter println(final char[][] arr2d, final IntFunction<T> function) {
+		for (final char[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	/**
 	 * 二次元の int 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
 	 *
 	 * @param arr2d    出力する二次元の int 配列
@@ -1388,30 +1400,6 @@ public final class ContestPrinter extends FastPrinter {
 	 */
 	public <T> ContestPrinter println(final double[][] arr2d, final DoubleFunction<T> function) {
 		for (final double[] arr : arr2d) print(arr, function).println();
-		return this;
-	}
-
-	/**
-	 * 二次元の char 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
-	 *
-	 * @param arr2d    出力する二次元の char 配列
-	 * @param function char を変換する関数
-	 * @param <T>      変換後の型
-	 */
-	public <T> ContestPrinter println(final char[][] arr2d, final IntFunction<T> function) {
-		for (final char[] arr : arr2d) print(arr, function).println();
-		return this;
-	}
-
-	/**
-	 * 二次元の boolean 配列の各要素を指定された関数で変換し、各行を半角スペース区切りで出力（各行末に改行）
-	 *
-	 * @param arr2d    出力する二次元の boolean 配列
-	 * @param function boolean を変換する関数
-	 * @param <T>      変換後の型
-	 */
-	public <T> ContestPrinter println(final boolean[][] arr2d, final Function<Boolean, T> function) {
-		for (final boolean[] arr : arr2d) print(arr, function).println();
 		return this;
 	}
 
@@ -1530,8 +1518,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public <T> ContestPrinter println(final Iterable<T> iter) {
-		for (final T e : iter) println(e);
-		return this;
+		return print(iter, '\n').println();
 	}
 
 	/**
@@ -1588,8 +1575,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
 	public <T, U> ContestPrinter println(final Iterable<T> iter, final Function<T, U> function) {
-		for (final T e : iter) println(function.apply(e));
-		return this;
+		return print(iter, function, '\n').println();
 	}
 
 	/**
@@ -1641,27 +1627,27 @@ public final class ContestPrinter extends FastPrinter {
 	/**
 	 * 指定された文字を指定された回数繰り返し出力します。（改行無し）
 	 *
-	 * @param c     繰り返す文字
-	 * @param times 繰り返す回数
+	 * @param c   繰り返す文字
+	 * @param cnt 繰り返す回数
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
-	public ContestPrinter printRepeat(final char c, final int times) {
-		if (times <= 0) return this;
-		ensureCapacity(times);
+	public ContestPrinter printRepeat(final char c, final int cnt) {
+		if (cnt <= 0) return this;
+		ensureCapacity(cnt);
 		final byte[] buf = buffer;
 		final byte b = (byte) c;
 		int p = pos;
 		BYTE_ARRAY_HANDLE.set(buf, p++, b);
-		int cnt = 1;
-		while ((cnt << 1) <= times) {
-			System.arraycopy(buf, pos, buf, p, cnt);
-			p += cnt;
-			cnt <<= 1;
+		int copied = 1;
+		while (copied << 1 <= cnt) {
+			System.arraycopy(buf, pos, buf, p, copied);
+			p += copied;
+			copied <<= 1;
 		}
-		final int remaining = times - cnt;
-		if (remaining > 0) {
-			System.arraycopy(buf, pos, buf, p, remaining);
-			p += remaining;
+		final int remain = cnt - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain);
+			p += remain;
 		}
 		pos = p;
 		if (autoFlush) flush();
@@ -1671,20 +1657,20 @@ public final class ContestPrinter extends FastPrinter {
 	/**
 	 * 指定された文字列を指定された回数繰り返し出力します。（改行無し）
 	 *
-	 * @param s     繰り返す文字列
-	 * @param times 繰り返す回数
+	 * @param s   繰り返す文字列
+	 * @param cnt 繰り返す回数
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
-	public ContestPrinter printRepeat(final String s, final int times) {
-		if (times <= 0) return this;
+	public ContestPrinter printRepeat(final String s, final int cnt) {
+		if (cnt <= 0) return this;
 		final int len = s.length();
 		if (len == 0) return this;
-		final int total = len * times;
+		final int total = len * cnt;
 		ensureCapacity(total);
 		final byte[] buf = buffer;
 		int p = pos, i = 0;
-		final int limit = len & ~7;
-		while (i < limit) {
+		final int limit8 = len & ~7;
+		while (i < limit8) {
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
@@ -1695,16 +1681,16 @@ public final class ContestPrinter extends FastPrinter {
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 		}
 		while (i < len) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-		int cnt = 1;
-		while ((cnt << 1) <= times) {
-			System.arraycopy(buf, pos, buf, p, cnt * len);
-			p += cnt * len;
-			cnt <<= 1;
+		int copied = 1;
+		while (copied << 1 <= cnt) {
+			System.arraycopy(buf, pos, buf, p, copied * len);
+			p += copied * len;
+			copied <<= 1;
 		}
-		final int remaining = times - cnt;
-		if (remaining > 0) {
-			System.arraycopy(buf, pos, buf, p, remaining * len);
-			p += remaining * len;
+		final int remain = cnt - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain * len);
+			p += remain * len;
 		}
 		pos = p;
 		if (autoFlush) flush();
@@ -1714,28 +1700,29 @@ public final class ContestPrinter extends FastPrinter {
 	/**
 	 * 指定された文字と改行のペアを指定された回数繰り返し出力します。
 	 *
-	 * @param c     繰り返す文字
-	 * @param times 繰り返す回数
+	 * @param c   繰り返す文字
+	 * @param cnt 繰り返す回数
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
-	public ContestPrinter printlnRepeat(final char c, final int times) {
-		if (times <= 0) return this;
-		ensureCapacity(times << 1);
+	public ContestPrinter printlnRepeat(final char c, final int cnt) {
+		if (cnt <= 0) return this;
+		final int total = cnt << 1;
+		ensureCapacity(total);
 		final byte[] buf = buffer;
 		final byte b = (byte) c;
 		int p = pos;
 		BYTE_ARRAY_HANDLE.set(buf, p++, b);
 		BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
-		int cnt = 1;
-		while ((cnt << 1) <= times) {
-			System.arraycopy(buf, pos, buf, p, cnt << 1);
-			p += cnt << 1;
-			cnt <<= 1;
+		int copied = 2;
+		while (copied << 1 <= total) {
+			System.arraycopy(buf, pos, buf, p, copied);
+			p += copied;
+			copied <<= 1;
 		}
-		final int remaining = times - cnt;
-		if (remaining > 0) {
-			System.arraycopy(buf, pos, buf, p, remaining << 1);
-			p += remaining << 1;
+		final int remain = total - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain);
+			p += remain;
 		}
 		pos = p;
 		if (autoFlush) flush();
@@ -1745,20 +1732,22 @@ public final class ContestPrinter extends FastPrinter {
 	/**
 	 * 指定された文字列と改行のペアを指定された回数繰り返し出力します。
 	 *
-	 * @param s     繰り返す文字列
-	 * @param times 繰り返す回数
+	 * @param s   繰り返す文字列
+	 * @param cnt 繰り返す回数
 	 * @return このContestPrinterインスタンス(メソッドチェーン用)
 	 */
-	public ContestPrinter printlnRepeat(final String s, final int times) {
-		if (times <= 0) return this;
+	public ContestPrinter printlnRepeat(final String s, final int cnt) {
+		if (cnt <= 0) return this;
 		final int sLen = s.length();
-		final int len = sLen + 1;
-		final int total = len * times;
+		if (sLen == 0) return this;
+		final int unit = sLen + 1;
+		final int total = unit * cnt;
 		ensureCapacity(total);
 		final byte[] buf = buffer;
-		int p = pos, i = 0;
-		final int limit = sLen & ~7;
-		while (i < limit) {
+		int p = pos;
+		int i = 0;
+		final int limit8 = sLen & ~7;
+		while (i < limit8) {
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
@@ -1770,16 +1759,16 @@ public final class ContestPrinter extends FastPrinter {
 		}
 		while (i < sLen) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 		BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
-		int cnt = 1;
-		while ((cnt << 1) <= times) {
-			System.arraycopy(buf, pos, buf, p, cnt * len);
-			p += cnt * len;
-			cnt <<= 1;
+		int copied = 1;
+		while (copied << 1 <= cnt) {
+			System.arraycopy(buf, pos, buf, p, copied * unit);
+			p += copied * unit;
+			copied <<= 1;
 		}
-		final int remaining = times - cnt;
-		if (remaining > 0) {
-			System.arraycopy(buf, pos, buf, p, remaining * len);
-			p += remaining * len;
+		final int remain = cnt - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain * unit);
+			p += remain * unit;
 		}
 		pos = p;
 		if (autoFlush) flush();
@@ -1891,8 +1880,9 @@ public final class ContestPrinter extends FastPrinter {
 		final int len = arr.length;
 		final byte[] buf = buffer;
 		for (int i = len - 1; i >= 0; i--) {
-			ensureCapacity(arr[i].length() + 1);
-			write(arr[i]);
+			String s = arr[i];
+			ensureCapacity(s.length() + 1);
+			write(s);
 			BYTE_ARRAY_HANDLE.set(buf, pos++, LINE);
 		}
 		if (autoFlush) flush();

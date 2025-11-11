@@ -7,11 +7,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.function.DoubleFunction;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.IntUnaryOperator;
-import java.util.function.LongFunction;
+import java.util.function.*;
 
 import static java.lang.Math.max;
 import static java.lang.Math.round;
@@ -733,7 +729,7 @@ public final class CompressedFastPrinter {
 
 		public FastPrinter print(final char[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
-			ensureCapacity((to - from) * 2 - 1);
+			ensureCapacity(((to - from) << 1) - 1);
 			byte[] buf = buffer;
 			int p = pos;
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[from]);
@@ -749,7 +745,7 @@ public final class CompressedFastPrinter {
 		public FastPrinter print(final int[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
 			final int len = to - from;
-			ensureCapacity(len * (MAX_INT_DIGITS + 1)); // 各要素の最大桁数 + 区切り文字
+			ensureCapacity(len * (MAX_INT_DIGITS + 1));
 			write(arr[from]);
 			for (int i = from + 1; i < to; i++) {
 				BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
@@ -762,7 +758,7 @@ public final class CompressedFastPrinter {
 		public FastPrinter print(final long[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
 			final int len = to - from;
-			ensureCapacity(len * (MAX_LONG_DIGITS + 1)); // 各要素の最大桁数 + 区切り文字
+			ensureCapacity(len * (MAX_LONG_DIGITS + 1));
 			write(arr[from]);
 			for (int i = from + 1; i < to; i++) {
 				BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
@@ -1099,39 +1095,39 @@ public final class CompressedFastPrinter {
 			return this;
 		}
 
-		public FastPrinter printRepeat(final char c, final int times) {
-			if (times <= 0) return this;
-			ensureCapacity(times);
+		public FastPrinter printRepeat(final char c, final int cnt) {
+			if (cnt <= 0) return this;
+			ensureCapacity(cnt);
 			final byte[] buf = buffer;
 			final byte b = (byte) c;
 			int p = pos;
 			BYTE_ARRAY_HANDLE.set(buf, p++, b);
-			int cnt = 1;
-			while ((cnt << 1) <= times) {
-				System.arraycopy(buf, pos, buf, p, cnt);
-				p += cnt;
-				cnt <<= 1;
+			int copied = 1;
+			while (copied << 1 <= cnt) {
+				System.arraycopy(buf, pos, buf, p, copied);
+				p += copied;
+				copied <<= 1;
 			}
-			final int remaining = times - cnt;
-			if (remaining > 0) {
-				System.arraycopy(buf, pos, buf, p, remaining);
-				p += remaining;
+			final int remain = cnt - copied;
+			if (remain > 0) {
+				System.arraycopy(buf, pos, buf, p, remain);
+				p += remain;
 			}
 			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
-		public FastPrinter printRepeat(final String s, final int times) {
-			if (times <= 0) return this;
+		public FastPrinter printRepeat(final String s, final int cnt) {
+			if (cnt <= 0) return this;
 			final int len = s.length();
 			if (len == 0) return this;
-			final int total = len * times;
+			final int total = len * cnt;
 			ensureCapacity(total);
 			final byte[] buf = buffer;
 			int p = pos, i = 0;
-			final int limit = len & ~7;
-			while (i < limit) {
+			final int limit8 = len & ~7;
+			while (i < limit8) {
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
@@ -1142,56 +1138,59 @@ public final class CompressedFastPrinter {
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			}
 			while (i < len) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-			int cnt = 1;
-			while ((cnt << 1) <= times) {
-				System.arraycopy(buf, pos, buf, p, cnt * len);
-				p += cnt * len;
-				cnt <<= 1;
+			int copied = 1;
+			while (copied << 1 <= cnt) {
+				System.arraycopy(buf, pos, buf, p, copied * len);
+				p += copied * len;
+				copied <<= 1;
 			}
-			final int remaining = times - cnt;
-			if (remaining > 0) {
-				System.arraycopy(buf, pos, buf, p, remaining * len);
-				p += remaining * len;
+			final int remain = cnt - copied;
+			if (remain > 0) {
+				System.arraycopy(buf, pos, buf, p, remain * len);
+				p += remain * len;
 			}
 			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
-		public FastPrinter printlnRepeat(final char c, final int times) {
-			if (times <= 0) return this;
-			ensureCapacity(times << 1);
+		public FastPrinter printlnRepeat(final char c, final int cnt) {
+			if (cnt <= 0) return this;
+			final int total = cnt << 1;
+			ensureCapacity(total);
 			final byte[] buf = buffer;
 			final byte b = (byte) c;
 			int p = pos;
 			BYTE_ARRAY_HANDLE.set(buf, p++, b);
 			BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
-			int cnt = 1;
-			while ((cnt << 1) <= times) {
-				System.arraycopy(buf, pos, buf, p, cnt << 1);
-				p += cnt << 1;
-				cnt <<= 1;
+			int copied = 2;
+			while (copied << 1 <= total) {
+				System.arraycopy(buf, pos, buf, p, copied);
+				p += copied;
+				copied <<= 1;
 			}
-			final int remaining = times - cnt;
-			if (remaining > 0) {
-				System.arraycopy(buf, pos, buf, p, remaining << 1);
-				p += remaining << 1;
+			final int remain = total - copied;
+			if (remain > 0) {
+				System.arraycopy(buf, pos, buf, p, remain);
+				p += remain;
 			}
 			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
-		public FastPrinter printlnRepeat(final String s, final int times) {
-			if (times <= 0) return this;
+		public FastPrinter printlnRepeat(final String s, final int cnt) {
+			if (cnt <= 0) return this;
 			final int sLen = s.length();
-			final int len = sLen + 1;
-			final int total = len * times;
+			if (sLen == 0) return this;
+			final int unit = sLen + 1;
+			final int total = unit * cnt;
 			ensureCapacity(total);
 			final byte[] buf = buffer;
-			int p = pos, i = 0;
-			final int limit = sLen & ~7;
-			while (i < limit) {
+			int p = pos;
+			int i = 0;
+			final int limit8 = sLen & ~7;
+			while (i < limit8) {
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
@@ -1203,16 +1202,16 @@ public final class CompressedFastPrinter {
 			}
 			while (i < sLen) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
-			int cnt = 1;
-			while ((cnt << 1) <= times) {
-				System.arraycopy(buf, pos, buf, p, cnt * len);
-				p += cnt * len;
-				cnt <<= 1;
+			int copied = 1;
+			while (copied << 1 <= cnt) {
+				System.arraycopy(buf, pos, buf, p, copied * unit);
+				p += copied * unit;
+				copied <<= 1;
 			}
-			final int remaining = times - cnt;
-			if (remaining > 0) {
-				System.arraycopy(buf, pos, buf, p, remaining * len);
-				p += remaining * len;
+			final int remain = cnt - copied;
+			if (remain > 0) {
+				System.arraycopy(buf, pos, buf, p, remain * unit);
+				p += remain * unit;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -1248,7 +1247,7 @@ public final class CompressedFastPrinter {
 		public FastPrinter printlnReverse(final int[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			ensureCapacity(len * (MAX_INT_DIGITS + 1)); // 各要素の最大桁数 + 改行文字
+			ensureCapacity(len * (MAX_INT_DIGITS + 1));
 			final byte[] buf = buffer;
 			for (int i = len - 1; i >= 0; i--) {
 				write(arr[i]);
@@ -1261,7 +1260,7 @@ public final class CompressedFastPrinter {
 		public FastPrinter printlnReverse(final long[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			ensureCapacity(len * (MAX_LONG_DIGITS + 1)); // 各要素の最大桁数 + 改行文字
+			ensureCapacity(len * (MAX_LONG_DIGITS + 1));
 			final byte[] buf = buffer;
 			for (int i = len - 1; i >= 0; i--) {
 				write(arr[i]);
@@ -1288,8 +1287,9 @@ public final class CompressedFastPrinter {
 			final int len = arr.length;
 			final byte[] buf = buffer;
 			for (int i = len - 1; i >= 0; i--) {
-				ensureCapacity(arr[i].length() + 1);
-				write(arr[i]);
+				String s = arr[i];
+				ensureCapacity(s.length() + 1);
+				write(s);
 				BYTE_ARRAY_HANDLE.set(buf, pos++, LINE);
 			}
 			if (autoFlush) flush();
@@ -1336,7 +1336,7 @@ public final class CompressedFastPrinter {
 		public FastPrinter printReverse(final int[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			ensureCapacity(len * (MAX_INT_DIGITS + 1) - 1); // 各要素の最大桁数 + 区切り文字
+			ensureCapacity(len * (MAX_INT_DIGITS + 1) - 1);
 			final byte[] buf = buffer;
 			write(arr[len - 1]);
 			for (int i = len - 2; i >= 0; i--) {
@@ -1350,7 +1350,7 @@ public final class CompressedFastPrinter {
 		public FastPrinter printReverse(final long[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			ensureCapacity(len * (MAX_LONG_DIGITS + 1) - 1); // 各要素の最大桁数 + 区切り文字
+			ensureCapacity(len * (MAX_LONG_DIGITS + 1) - 1);
 			final byte[] buf = buffer;
 			write(arr[len - 1]);
 			for (int i = len - 2; i >= 0; i--) {
