@@ -6,7 +6,7 @@ import java.util.Map;
  * Trieは文字列の集合を効率的に管理するデータ構造であり、
  * 単語の挿入、検索、プレフィックス検索などを高速に実行できる。
  */
-public class Trie {
+public final class Trie {
 	private final Map<Character, TrieNode> children;
 
 	/**
@@ -20,15 +20,12 @@ public class Trie {
 	 * 単語をTrieに挿入する。
 	 *
 	 * @param word 挿入する単語。nullであってはならない。
-	 * @throws IllegalArgumentException 単語がnullの場合にスローされる。
 	 */
-	public void insert(String word) {
-		if (word == null || word.isEmpty())
-			throw new IllegalArgumentException("word cannot be null");
+	public void insert(final String word) {
 		Map<Character, TrieNode> nodes = children;
 		TrieNode node = null;
-		for (char c : word.toCharArray()) {
-			node = nodes.computeIfAbsent(c, k -> new TrieNode());
+		for (final char c : word.toCharArray()) {
+			node = nodes.computeIfAbsent(c, _ -> new TrieNode());
 			node.increment();
 			nodes = node.getChildren();
 		}
@@ -40,12 +37,9 @@ public class Trie {
 	 *
 	 * @param word 検索する単語。nullであってはならない。
 	 * @return 単語が存在すればtrue、存在しなければfalse。
-	 * @throws IllegalArgumentException 単語がnullの場合にスローされる。
 	 */
-	public boolean search(String word) {
-		if (word == null)
-			throw new IllegalArgumentException("word cannot be null");
-		TrieNode node = findLastNode(word);
+	public boolean search(final String word) {
+		final TrieNode node = findLastNode(word);
 		return node != null && node.isEnd();
 	}
 
@@ -54,12 +48,9 @@ public class Trie {
 	 *
 	 * @param prefix 検索するプレフィックス。nullであってはならない。
 	 * @return プレフィックスに一致する単語の出現回数。
-	 * @throws IllegalArgumentException プレフィックスがnullの場合にスローされる。
 	 */
-	public int countPrefix(String prefix) {
-		if (prefix == null)
-			throw new IllegalArgumentException("prefix cannot be null");
-		TrieNode node = findLastNode(prefix);
+	public int countPrefix(final String prefix) {
+		final TrieNode node = findLastNode(prefix);
 		return node != null ? node.frequency() : 0;
 	}
 
@@ -69,14 +60,12 @@ public class Trie {
 	 * @param key 走査する文字列。nullであってはならない。
 	 * @return 最後の文字に対応するTrieNode。存在しなければnull。
 	 */
-	private TrieNode findLastNode(String key) {
+	private TrieNode findLastNode(final String key) {
 		Map<Character, TrieNode> nodes = children;
 		TrieNode node = null;
-		for (int i = 0; i < key.length(); i++) {
-			char c = key.charAt(i);
+		for (final char c : key.toCharArray()) {
 			node = nodes.get(c);
-			if (node == null)
-				return null;
+			if (node == null) return null;
 			nodes = node.getChildren();
 		}
 		return node;
