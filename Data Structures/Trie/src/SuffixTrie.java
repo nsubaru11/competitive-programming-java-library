@@ -6,13 +6,13 @@ import java.util.Map;
  * Trieは文字列の集合を効率的に管理するデータ構造であり、
  * 単語の挿入、検索、プレフィックス検索などを高速に実行できる。
  */
-public final class Trie {
+public final class SuffixTrie {
 	private final Map<Character, TrieNode> children;
 
 	/**
 	 * Trieのルートノードを初期化するコンストラクタ。
 	 */
-	public Trie() {
+	public SuffixTrie() {
 		children = new HashMap<>();
 	}
 
@@ -21,10 +21,10 @@ public final class Trie {
 	 *
 	 * @param word 挿入する単語。nullであってはならない。
 	 */
-	public Trie insert(final String word) {
+	public SuffixTrie insert(final String word) {
 		Map<Character, TrieNode> nodes = children;
 		TrieNode node = null;
-		for (int i = 0; i < word.length(); i++) {
+		for (int i = word.length() - 1; i >= 0; i--) {
 			final char c = word.charAt(i);
 			node = nodes.computeIfAbsent(c, _ -> new TrieNode());
 			node.increment();
@@ -48,11 +48,11 @@ public final class Trie {
 	/**
 	 * 指定したプレフィックスで始まる単語の出現回数を返す。
 	 *
-	 * @param prefix 検索するプレフィックス。nullであってはならない。
+	 * @param suffix 検索するプレフィックス。nullであってはならない。
 	 * @return プレフィックスに一致する単語の出現回数。
 	 */
-	public int countPrefix(final String prefix) {
-		final TrieNode node = findLastNode(prefix);
+	public int countPrefix(final String suffix) {
+		final TrieNode node = findLastNode(suffix);
 		return node != null ? node.frequency() : 0;
 	}
 
@@ -65,7 +65,7 @@ public final class Trie {
 	private TrieNode findLastNode(final String key) {
 		Map<Character, TrieNode> nodes = children;
 		TrieNode node = null;
-		for (int i = 0; i < key.length(); i++) {
+		for (int i = key.length() - 1; i >= 0; i--) {
 			final char c = key.charAt(i);
 			node = nodes.get(c);
 			if (node == null) return null;
