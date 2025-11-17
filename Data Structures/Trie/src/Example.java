@@ -1,6 +1,6 @@
-public class Example {
+public final class Example {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		Trie trie = new Trie();
 		trie.insert("prefix");
 		trie.insert("previous");
