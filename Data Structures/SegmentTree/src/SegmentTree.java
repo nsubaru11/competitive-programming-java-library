@@ -5,16 +5,18 @@ import java.util.function.*;
 public final class SegmentTree<T> implements Iterable<T> {
 	private final int n, leafStart;
 	private final T[] tree;
+	private final T identity;
 	private final BiFunction<T, T, T> func;
 	private final int[] updateList;
 	private final boolean[] pending;
 	private int head, updateCnt;
 
-	public SegmentTree(final int n, final BiFunction<T, T, T> func) {
+	public SegmentTree(final int n, final BiFunction<T, T, T> func, final T identity) {
 		this.n = n;
 		leafStart = n == 1 ? 0 : Integer.highestOneBit((n - 1) << 1) - 1;
 		tree = (T[]) new Object[leafStart + n];
 		this.func = func;
+		this.identity = identity;
 		updateList = new int[leafStart + 1];
 		pending = new boolean[leafStart];
 	}
@@ -30,7 +32,7 @@ public final class SegmentTree<T> implements Iterable<T> {
 		int p = (idx - 1) >> 1;
 		if (p >= 0 && !pending[p]) {
 			pending[p] = true;
-			enqueueLeftChild(idx);
+			updateList[(head + updateCnt++) & leafStart] = idx - ((idx & 1) ^ 1);
 		}
 	}
 
@@ -38,21 +40,10 @@ public final class SegmentTree<T> implements Iterable<T> {
 		if (updateCnt > 0) build();
 		l += leafStart;
 		r += leafStart;
-		T ans = null;
-		boolean first = true;
+		T ans = identity;
 		while (l <= r) {
-			if ((l & 1) == 0) {
-				if (first) {
-					ans = tree[l];
-					first = false;
-				} else ans = func.apply(ans, tree[l]);
-			}
-			if ((r & 1) == 1) {
-				if (first) {
-					ans = tree[r];
-					first = false;
-				} else ans = func.apply(ans, tree[r]);
-			}
+			if ((l & 1) == 0) ans = func.apply(ans, tree[l]);
+			if ((r & 1) == 1) ans = func.apply(ans, tree[r]);
 			l >>= 1;
 			r = (r - 2) >> 1;
 		}
@@ -72,19 +63,15 @@ public final class SegmentTree<T> implements Iterable<T> {
 				tree[parent] = tree[left];
 			}
 			pending[parent] = false;
-			if (parent > 0 && !tree[parent].equals(old)) {
+			if (parent > 0 && !Objects.equals(old, tree[parent])) {
 				int p = (parent - 1) >> 1;
 				if (!pending[p]) {
 					pending[p] = true;
-					enqueueLeftChild(parent);
+					updateList[(head + updateCnt++) & leafStart] = parent - ((parent & 1) ^ 1);
 				}
 			}
 		}
 		updateCnt = 0;
-	}
-
-	private void enqueueLeftChild(final int idx) {
-		updateList[(head + updateCnt++) & leafStart] = idx - ((idx & 1) ^ 1);
 	}
 
 	public Iterator<T> iterator() {

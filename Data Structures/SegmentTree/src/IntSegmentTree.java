@@ -5,16 +5,18 @@ import java.util.function.*;
 public final class IntSegmentTree implements Iterable<Integer> {
 	private final int n, leafStart;
 	private final int[] tree;
+	private final int identity;
 	private final IntBinaryOperator func;
 	private final int[] updateList;
 	private final boolean[] pending;
 	private int head, updateCnt;
 
-	public IntSegmentTree(final int n, final IntBinaryOperator func) {
+	public IntSegmentTree(final int n, final IntBinaryOperator func, final int identity) {
 		this.n = n;
 		leafStart = n == 1 ? 0 : Integer.highestOneBit((n - 1) << 1) - 1;
 		tree = new int[leafStart + n];
 		this.func = func;
+		this.identity = identity;
 		updateList = new int[leafStart + 1];
 		pending = new boolean[leafStart];
 	}
@@ -30,7 +32,7 @@ public final class IntSegmentTree implements Iterable<Integer> {
 		int p = (idx - 1) >> 1;
 		if (p >= 0 && !pending[p]) {
 			pending[p] = true;
-			enqueueLeftChild(idx);
+			updateList[(head + updateCnt++) & leafStart] = idx - ((idx & 1) ^ 1);
 		}
 	}
 
@@ -38,21 +40,10 @@ public final class IntSegmentTree implements Iterable<Integer> {
 		if (updateCnt > 0) build();
 		l += leafStart;
 		r += leafStart;
-		int ans = 0;
-		boolean first = true;
+		int ans = identity;
 		while (l <= r) {
-			if ((l & 1) == 0) {
-				if (first) {
-					ans = tree[l];
-					first = false;
-				} else ans = func.applyAsInt(ans, tree[l]);
-			}
-			if ((r & 1) == 1) {
-				if (first) {
-					ans = tree[r];
-					first = false;
-				} else ans = func.applyAsInt(ans, tree[r]);
-			}
+			if ((l & 1) == 0) ans = func.applyAsInt(ans, tree[l]);
+			if ((r & 1) == 1) ans = func.applyAsInt(ans, tree[r]);
 			l >>= 1;
 			r = (r - 2) >> 1;
 		}
@@ -76,15 +67,11 @@ public final class IntSegmentTree implements Iterable<Integer> {
 				int p = (parent - 1) >> 1;
 				if (!pending[p]) {
 					pending[p] = true;
-					enqueueLeftChild(parent);
+					updateList[(head + updateCnt++) & leafStart] = parent - ((parent & 1) ^ 1);
 				}
 			}
 		}
 		updateCnt = 0;
-	}
-
-	private void enqueueLeftChild(final int idx) {
-		updateList[(head + updateCnt++) & leafStart] = idx - ((idx & 1) ^ 1);
 	}
 
 	public PrimitiveIterator.OfInt iterator() {
