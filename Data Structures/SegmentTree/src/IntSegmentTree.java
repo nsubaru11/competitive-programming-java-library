@@ -2,29 +2,29 @@ import java.util.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
-public final class SegmentTree<T> implements Iterable<T> {
+public final class IntSegmentTree implements Iterable<Integer> {
 	private final int n, leafStart;
-	private final T[] tree;
-	private final BiFunction<T, T, T> func;
+	private final int[] tree;
+	private final IntBinaryOperator func;
 	private final int[] updateList;
 	private final boolean[] pending;
 	private int head, updateCnt;
 
-	public SegmentTree(final int n, final BiFunction<T, T, T> func) {
+	public IntSegmentTree(final int n, final IntBinaryOperator func) {
 		this.n = n;
 		leafStart = n == 1 ? 0 : Integer.highestOneBit((n - 1) << 1) - 1;
-		tree = (T[]) new Object[leafStart + n];
+		tree = new int[leafStart + n];
 		this.func = func;
 		updateList = new int[leafStart + 1];
 		pending = new boolean[leafStart];
 	}
 
-	public T get(final int i) {
+	public int get(final int i) {
 		if (i < 0 || i >= n) throw new IndexOutOfBoundsException();
 		return tree[leafStart + i];
 	}
 
-	public void set(final int i, final T e) {
+	public void set(final int i, final int e) {
 		int idx = leafStart + i;
 		tree[idx] = e;
 		int p = (idx - 1) >> 1;
@@ -34,24 +34,24 @@ public final class SegmentTree<T> implements Iterable<T> {
 		}
 	}
 
-	public T query(int l, int r) {
+	public int query(int l, int r) {
 		if (updateCnt > 0) build();
 		l += leafStart;
 		r += leafStart;
-		T ans = null;
+		int ans = 0;
 		boolean first = true;
 		while (l <= r) {
 			if ((l & 1) == 0) {
 				if (first) {
 					ans = tree[l];
 					first = false;
-				} else ans = func.apply(ans, tree[l]);
+				} else ans = func.applyAsInt(ans, tree[l]);
 			}
 			if ((r & 1) == 1) {
 				if (first) {
 					ans = tree[r];
 					first = false;
-				} else ans = func.apply(ans, tree[r]);
+				} else ans = func.applyAsInt(ans, tree[r]);
 			}
 			l >>= 1;
 			r = (r - 2) >> 1;
@@ -65,14 +65,14 @@ public final class SegmentTree<T> implements Iterable<T> {
 			int left = updateList[pos];
 			int right = left + 1;
 			int parent = left >> 1;
-			T old = tree[parent];
+			int old = tree[parent];
 			if (right < tree.length) {
-				tree[parent] = func.apply(tree[left], tree[right]);
+				tree[parent] = func.applyAsInt(tree[left], tree[right]);
 			} else {
 				tree[parent] = tree[left];
 			}
 			pending[parent] = false;
-			if (parent > 0 && !tree[parent].equals(old)) {
+			if (parent > 0 && tree[parent] != old) {
 				int p = (parent - 1) >> 1;
 				if (!pending[p]) {
 					pending[p] = true;
@@ -87,15 +87,15 @@ public final class SegmentTree<T> implements Iterable<T> {
 		updateList[(head + updateCnt++) & leafStart] = idx - ((idx & 1) ^ 1);
 	}
 
-	public Iterator<T> iterator() {
-		return new Iterator<>() {
+	public PrimitiveIterator.OfInt iterator() {
+		return new PrimitiveIterator.OfInt() {
 			private int idx = 0;
 
 			public boolean hasNext() {
 				return idx < n;
 			}
 
-			public T next() {
+			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return tree[leafStart + idx++];
 			}
