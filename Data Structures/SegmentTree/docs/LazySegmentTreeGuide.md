@@ -1,3 +1,1 @@
-public class LazySegmentTree {
-
-}
+[//]: # (todo: 遅延セグメント木のドキュメントを作成する)
