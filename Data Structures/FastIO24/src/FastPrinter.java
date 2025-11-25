@@ -1,13 +1,9 @@
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Locale;
+import java.io.*;
+import java.lang.invoke.*;
+import java.math.*;
+import java.util.*;
 
-import static java.lang.Math.max;
+import static java.lang.Math.*;
 
 /**
  * 競技プログラミング向けの高速出力クラスです。<br>
@@ -353,6 +349,7 @@ public class FastPrinter implements AutoCloseable {
 	 */
 	public final FastPrinter println(final boolean b) {
 		write(b);
+		ensureCapacity(1);
 		BYTE_ARRAY_HANDLE.set(buffer, pos++, LINE);
 		if (autoFlush) flush();
 		return this;

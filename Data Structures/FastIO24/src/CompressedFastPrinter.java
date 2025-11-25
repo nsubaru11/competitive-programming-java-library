@@ -1,16 +1,10 @@
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Locale;
+import java.io.*;
+import java.lang.invoke.*;
+import java.math.*;
+import java.util.*;
 import java.util.function.*;
 
-import static java.lang.Math.max;
-import static java.lang.Math.round;
+import static java.lang.Math.*;
 
 
 // FastPrinterとContestPrinterを統合し、コメントを削除した圧縮版のクラスです。
@@ -250,6 +244,7 @@ public final class CompressedFastPrinter {
 
 		public FastPrinter println(final boolean b) {
 			write(b);
+			ensureCapacity(1);
 			BYTE_ARRAY_HANDLE.set(buffer, pos++, LINE);
 			if (autoFlush) flush();
 			return this;

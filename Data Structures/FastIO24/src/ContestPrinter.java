@@ -1,10 +1,9 @@
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Iterator;
+import java.io.*;
+import java.math.*;
+import java.util.*;
 import java.util.function.*;
 
-import static java.lang.Math.round;
+import static java.lang.Math.*;
 
 /**
  * {@code ContestPrinter} は、競技プログラミングにおける多様な出力要求に特化した高速出力ユーティリティです。<br>

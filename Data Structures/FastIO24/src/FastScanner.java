@@ -1,8 +1,5 @@
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.io.*;
+import java.math.*;
 
 /**
  * 競技プログラミング向けの高速入力クラスです。

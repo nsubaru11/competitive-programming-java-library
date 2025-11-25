@@ -1,14 +1,8 @@
-import java.io.InputStream;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Supplier;
+import java.io.*;
+import java.util.*;
+import java.util.function.*;
 
-import static java.util.Arrays.sort;
+import static java.util.Arrays.*;
 
 /**
  * {@code ContestScanner} は、競技プログラミング向けの高速入力ユーティリティです。<br>

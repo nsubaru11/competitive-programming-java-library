@@ -1,12 +1,9 @@
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.io.*;
+import java.math.*;
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.*;
 
-import static java.util.Arrays.sort;
+import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 // FastScannerとContestScannerを統合し、コメントを削除した圧縮版のクラスです。
