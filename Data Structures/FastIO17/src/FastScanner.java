@@ -1,8 +1,5 @@
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.io.*;
+import java.math.*;
 
 /**
  * 競技プログラミング向けの高速入力クラスです。
@@ -110,11 +107,17 @@ public class FastScanner implements AutoCloseable {
 	 * このスキャナが使用する {@code InputStream} を閉じます。
 	 * 入力元が {@code System.in} の場合は閉じません。
 	 *
-	 * @throws IOException {@code InputStream} のクローズ中にエラーが発生した場合
+	 * @throws RuntimeException {@code InputStream} のクローズ中にエラーが発生した場合
 	 */
 	@Override
-	public final void close() throws IOException {
-		if (in != System.in) in.close();
+	public final void close() {
+		try {
+			if (in != System.in) in.close();
+			pos = 0;
+			bufferLength = 0;
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -128,7 +131,7 @@ public class FastScanner implements AutoCloseable {
 		if (pos >= bufferLength) {
 			try {
 				bufferLength = in.read(buffer, pos = 0, buffer.length);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 			if (bufferLength <= 0) throw new RuntimeException(new EOFException());
@@ -147,7 +150,7 @@ public class FastScanner implements AutoCloseable {
 			int b = skipSpaces();
 			pos--;
 			return b;
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			return 0;
 		}
 	}
@@ -172,17 +175,15 @@ public class FastScanner implements AutoCloseable {
 	public final int nextInt() {
 		int b = skipSpaces();
 		boolean negative = false;
-		if (b != '-') {
-			// fall through
-		} else {
+		if (b == '-') {
 			negative = true;
 			b = read();
 		}
 		int result = 0;
-		while ('0' <= b && b <= '9') {
+		do {
 			result = (result << 3) + (result << 1) + (b & 15);
 			b = read();
-		}
+		} while (b >= '0' && b <= '9');
 		return negative ? -result : result;
 	}
 
@@ -195,17 +196,15 @@ public class FastScanner implements AutoCloseable {
 	public final long nextLong() {
 		int b = skipSpaces();
 		boolean negative = false;
-		if (b != '-') {
-			// fall through
-		} else {
+		if (b == '-') {
 			negative = true;
 			b = read();
 		}
 		long result = 0;
-		while ('0' <= b && b <= '9') {
+		do {
 			result = (result << 3) + (result << 1) + (b & 15);
 			b = read();
-		}
+		} while (b >= '0' && b <= '9');
 		return negative ? -result : result;
 	}
 
@@ -218,26 +217,24 @@ public class FastScanner implements AutoCloseable {
 	public final double nextDouble() {
 		int b = skipSpaces();
 		boolean negative = false;
-		if (b != '-') {
-			// fall through
-		} else {
+		if (b == '-') {
 			negative = true;
 			b = read();
 		}
 		long intPart = 0;
-		while ('0' <= b && b <= '9') {
+		do {
 			intPart = (intPart << 3) + (intPart << 1) + (b & 15);
 			b = read();
-		}
+		} while (b >= '0' && b <= '9');
 		double result = intPart;
 		if (b == '.') {
 			b = read();
 			double scale = 0.1;
-			while ('0' <= b && b <= '9') {
+			do {
 				result += (b & 15) * scale;
 				scale *= 0.1;
 				b = read();
-			}
+			} while (b >= '0' && b <= '9');
 		}
 		return negative ? -result : result;
 	}
@@ -272,10 +269,10 @@ public class FastScanner implements AutoCloseable {
 	public final StringBuilder nextStringBuilder() {
 		final StringBuilder sb = new StringBuilder();
 		int b = skipSpaces();
-		while (b > 32) {
+		do {
 			sb.append((char) b);
 			b = read();
-		}
+		} while (b > 32);
 		return sb;
 	}
 

@@ -1,19 +1,15 @@
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.io.*;
+import java.math.*;
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.*;
 
-import static java.util.Arrays.sort;
+import static java.util.Arrays.*;
 
-@SuppressWarnings("unused")
 // FastScannerとContestScannerを統合し、コメントを削除した圧縮版のクラスです。
 // コメントが必要なく、文字数を気にするなら、こちらを使用して下さい。
+@SuppressWarnings("unused")
 public class CompressedFastScanner {
 
-	// テスト用
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		try (FastScanner sc = new FastScanner(System.in)) {
@@ -65,15 +61,21 @@ public class CompressedFastScanner {
 		}
 
 		@Override
-		public void close() throws IOException {
-			if (in != System.in) in.close();
+		public void close() {
+			try {
+				if (in != System.in) in.close();
+				pos = 0;
+				bufferLength = 0;
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		private int read() {
 			if (pos >= bufferLength) {
 				try {
 					bufferLength = in.read(buffer, pos = 0, buffer.length);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					throw new RuntimeException(e);
 				}
 				if (bufferLength <= 0) throw new RuntimeException(new EOFException());
@@ -86,7 +88,7 @@ public class CompressedFastScanner {
 				int b = skipSpaces();
 				pos--;
 				return b;
-			} catch (RuntimeException e) {
+			} catch (final RuntimeException e) {
 				return 0;
 			}
 		}
@@ -98,57 +100,54 @@ public class CompressedFastScanner {
 		public int nextInt() {
 			int b = skipSpaces();
 			boolean negative = false;
-			if (b != '-') {
-			} else {
+			if (b == '-') {
 				negative = true;
 				b = read();
 			}
 			int result = 0;
-			while ('0' <= b && b <= '9') {
+			do {
 				result = (result << 3) + (result << 1) + (b & 15);
 				b = read();
-			}
+			} while (b >= '0' && b <= '9');
 			return negative ? -result : result;
 		}
 
 		public long nextLong() {
 			int b = skipSpaces();
 			boolean negative = false;
-			if (b != '-') {
-			} else {
+			if (b == '-') {
 				negative = true;
 				b = read();
 			}
 			long result = 0;
-			while ('0' <= b && b <= '9') {
+			do {
 				result = (result << 3) + (result << 1) + (b & 15);
 				b = read();
-			}
+			} while (b >= '0' && b <= '9');
 			return negative ? -result : result;
 		}
 
 		public double nextDouble() {
 			int b = skipSpaces();
 			boolean negative = false;
-			if (b != '-') {
-			} else {
+			if (b == '-') {
 				negative = true;
 				b = read();
 			}
 			long intPart = 0;
-			while ('0' <= b && b <= '9') {
+			do {
 				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
 				b = read();
-			}
+			} while (b >= '0' && b <= '9');
 			double result = intPart;
 			if (b == '.') {
 				b = read();
 				double scale = 0.1;
-				while ('0' <= b && b <= '9') {
+				do {
 					result += (b & 15) * scale;
 					scale *= 0.1;
 					b = read();
-				}
+				} while (b >= '0' && b <= '9');
 			}
 			return negative ? -result : result;
 		}
@@ -165,10 +164,10 @@ public class CompressedFastScanner {
 		public StringBuilder nextStringBuilder() {
 			final StringBuilder sb = new StringBuilder();
 			int b = skipSpaces();
-			while (b > 32) {
+			do {
 				sb.append((char) b);
 				b = read();
-			}
+			} while (b > 32);
 			return sb;
 		}
 

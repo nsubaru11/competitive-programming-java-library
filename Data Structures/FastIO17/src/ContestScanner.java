@@ -1,14 +1,8 @@
-import java.io.InputStream;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Supplier;
+import java.io.*;
+import java.util.*;
+import java.util.function.*;
 
-import static java.util.Arrays.sort;
+import static java.util.Arrays.*;
 
 /**
  * {@code ContestScanner} は、競技プログラミング向けの高速入力ユーティリティです。<br>
@@ -196,6 +190,7 @@ public final class ContestScanner extends FastScanner {
 	 *
 	 * @param n 読み込む配列の行数
 	 * @return 読み込んだ char 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[][] nextCharMat(final int n) {
 		final char[][] c = new char[n][];
@@ -621,17 +616,17 @@ public final class ContestScanner extends FastScanner {
 	/**
 	 * 指定された要素数の {@code Collection<E>} を読み込みます。
 	 *
-	 * @param <E>        要素の型
-	 * @param <C>        コレクションの型
+	 * @param <S>        要素の型
+	 * @param <T>        コレクションの型
 	 * @param n          読み込む {@code Collection<E>} の要素数
 	 * @param input      要素を1つ読み込むためのサプライヤ (例: this::nextInt)
 	 * @param collection コレクションのインスタンスを生成するサプライヤ
 	 * @return 読み込んだ要素のコレクション
 	 */
-	private <E, C extends Collection<E>> C nextCollection(int n, final Supplier<E> input, final Supplier<C> collection) {
-		final C c = collection.get();
-		while (n-- > 0) c.add(input.get());
-		return c;
+	private <S, T extends Collection<S>> T nextCollection(int n, final Supplier<S> input, final Supplier<T> collection) {
+		final T t = collection.get();
+		while (n-- > 0) t.add(input.get());
+		return t;
 	}
 
 	/* ------------------------ Multiset (Map) 入力メソッド ------------------------ */
@@ -729,17 +724,18 @@ public final class ContestScanner extends FastScanner {
 	/**
 	 * 指定した型の要素の出現回数をカウントしたマルチセットを読み込みます。
 	 *
-	 * @param <E> 要素の型
-	 * @param <T> マップの型
-	 * @param n   要素数
-	 * @param map マップのインスタンスを生成するサプライヤ
+	 * @param <S>   要素の型
+	 * @param <T>   マップの型
+	 * @param n     要素数
+	 * @param input 要素を1つ読み込むためのサプライヤ (例: this::nextInt)
+	 * @param map   マップのインスタンスを生成するサプライヤ
 	 * @return 整数のマルチセット（マップ）
 	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
-	private <E, T extends Map<E, Integer>> T nextMultiset(int n, final Supplier<E> input, final Supplier<T> map) {
+	private <S, T extends Map<S, Integer>> T nextMultiset(int n, final Supplier<S> input, final Supplier<T> map) {
 		final T multiSet = map.get();
 		while (n-- > 0) {
-			final E i = input.get();
+			final S i = input.get();
 			multiSet.put(i, multiSet.getOrDefault(i, 0) + 1);
 		}
 		return multiSet;
@@ -752,6 +748,7 @@ public final class ContestScanner extends FastScanner {
 	 * <strong>注意:</strong> このメソッドは入力値が 1-indexed で、かつ [1, m] の範囲内であることを前提とします。
 	 *
 	 * @param n 要素数
+	 * @param m カウント対象の最大値
 	 * @return int の出現回数を格納した {@code int[]}
 	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
@@ -790,6 +787,8 @@ public final class ContestScanner extends FastScanner {
 	 * <strong>注意:</strong> このメソッドは入力値が [l, r] の範囲内であることを前提とします。
 	 *
 	 * @param n 要素数
+	 * @param l 範囲の開始文字
+	 * @param r 範囲の終了文字
 	 * @return 指定した範囲の char の出現回数を格納した {@code int[]}
 	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
