@@ -190,6 +190,7 @@ public final class ContestScanner extends FastScanner {
 	 *
 	 * @param n 読み込む配列の行数
 	 * @return 読み込んだ char 2次元配列
+	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
 	public char[][] nextCharMat(final int n) {
 		final char[][] c = new char[n][];
@@ -723,10 +724,11 @@ public final class ContestScanner extends FastScanner {
 	/**
 	 * 指定した型の要素の出現回数をカウントしたマルチセットを読み込みます。
 	 *
-	 * @param <S> 要素の型
-	 * @param <T> マップの型
-	 * @param n   要素数
-	 * @param map マップのインスタンスを生成するサプライヤ
+	 * @param <S>   要素の型
+	 * @param <T>   マップの型
+	 * @param n     要素数
+	 * @param input 要素を1つ読み込むためのサプライヤ (例: this::nextInt)
+	 * @param map   マップのインスタンスを生成するサプライヤ
 	 * @return 整数のマルチセット（マップ）
 	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
@@ -746,6 +748,7 @@ public final class ContestScanner extends FastScanner {
 	 * <strong>注意:</strong> このメソッドは入力値が 1-indexed で、かつ [1, m] の範囲内であることを前提とします。
 	 *
 	 * @param n 要素数
+	 * @param m カウント対象の最大値
 	 * @return int の出現回数を格納した {@code int[]}
 	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */
@@ -784,6 +787,8 @@ public final class ContestScanner extends FastScanner {
 	 * <strong>注意:</strong> このメソッドは入力値が [l, r] の範囲内であることを前提とします。
 	 *
 	 * @param n 要素数
+	 * @param l 範囲の開始文字
+	 * @param r 範囲の終了文字
 	 * @return 指定した範囲の char の出現回数を格納した {@code int[]}
 	 * @throws RuntimeException ストリームの終端に達した場合など、読み込みに失敗した場合
 	 */

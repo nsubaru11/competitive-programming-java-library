@@ -131,7 +131,7 @@ public class FastScanner implements AutoCloseable {
 		if (pos >= bufferLength) {
 			try {
 				bufferLength = in.read(buffer, pos = 0, buffer.length);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 			if (bufferLength <= 0) throw new RuntimeException(new EOFException());
@@ -150,7 +150,7 @@ public class FastScanner implements AutoCloseable {
 			int b = skipSpaces();
 			pos--;
 			return b;
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			return 0;
 		}
 	}

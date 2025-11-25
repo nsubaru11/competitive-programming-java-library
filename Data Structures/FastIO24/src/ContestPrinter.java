@@ -15,7 +15,6 @@ import static java.lang.Math.*;
 @SuppressWarnings("unused")
 public final class ContestPrinter extends FastPrinter {
 
-
 	/**
 	 * 10のべき乗の配列です。POW10[i] は 10^i を表します。
 	 */
@@ -124,7 +123,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 基本的な型（String, Integer, Long など）やその配列は、それぞれに最適化されたメソッドで処理します。
 	 *
 	 * @param o 出力するオブジェクト
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	@Override
 	public ContestPrinter println(final Object o) {
@@ -161,7 +160,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 基本的な型（String, Integer, Long など）やその配列は、それぞれに最適化されたメソッドで処理します。
 	 *
 	 * @param o 出力するオブジェクト
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	@Override
 	public ContestPrinter print(final Object o) {
@@ -202,7 +201,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する int 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int a, final int b) {
 		return println(a, b, '\n');
@@ -213,7 +212,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する long 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int a, final long b) {
 		return println(a, b, '\n');
@@ -224,7 +223,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する int 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long a, final int b) {
 		return println(a, b, '\n');
@@ -235,7 +234,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する long 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long a, final long b) {
 		return println(a, b, '\n');
@@ -247,7 +246,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param a         出力する整数値(int または long)
 	 * @param b         出力する整数値(int または long)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long a, final long b, final char delimiter) {
 		ensureCapacity((MAX_LONG_DIGITS << 1) + 2);
@@ -266,7 +265,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する int 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final int a, final int b) {
 		return print(a, b, ' ');
@@ -277,7 +276,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する int 値
 	 * @param b 出力する long 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final int a, final long b) {
 		return print(a, b, ' ');
@@ -288,7 +287,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する int 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long a, final int b) {
 		return print(a, b, ' ');
@@ -299,7 +298,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param a 出力する long 値
 	 * @param b 出力する long 値
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long a, final long b) {
 		return print(a, b, ' ');
@@ -311,7 +310,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param a         出力する整数値(int または long)
 	 * @param b         出力する整数値(int または long)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long a, final long b, final char delimiter) {
 		ensureCapacity((MAX_LONG_DIGITS << 1) + 1);
@@ -329,7 +328,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param d 出力する double 値
 	 * @param n 小数点以下の桁数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double d, final int n) {
 		return print(d, n).println();
@@ -340,7 +339,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param d 出力する double 値
 	 * @param n 小数点以下の桁数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(double d, int n) {
 		if (n <= 0) {
@@ -370,7 +369,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * boolean 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する boolean 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final boolean[] arr) {
 		return print(arr, 0, arr.length, '\n').println();
@@ -380,7 +379,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * char 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する char 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final char[] arr) {
 		return print(arr, 0, arr.length, '\n').println();
@@ -390,7 +389,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * int 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する int 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int[] arr) {
 		return print(arr, 0, arr.length, '\n').println();
@@ -400,7 +399,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * long 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する long 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long[] arr) {
 		return print(arr, 0, arr.length, '\n').println();
@@ -410,7 +409,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * double 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する double 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double[] arr) {
 		return print(arr, 0, arr.length, '\n').println();
@@ -420,7 +419,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * String 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する String 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final String[] arr) {
 		return print(arr, 0, arr.length, '\n').println();
@@ -430,7 +429,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 可変長の Object 配列の各要素を改行区切りで出力します。
 	 *
 	 * @param arr 出力する Object 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final Object... arr) {
 		for (final Object o : arr) println(o);
@@ -442,7 +441,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する boolean 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final boolean[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter).println();
@@ -453,7 +452,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する char 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final char[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter).println();
@@ -464,7 +463,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する int 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter).println();
@@ -475,7 +474,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する long 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter).println();
@@ -486,7 +485,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する double 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter).println();
@@ -497,7 +496,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する String 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final String[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter).println();
@@ -511,7 +510,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する boolean 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final boolean[] arr, final int from, final int to) {
 		return print(arr, from, to, '\n').println();
@@ -523,7 +522,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する char 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final char[] arr, final int from, final int to) {
 		return print(arr, from, to, '\n').println();
@@ -535,7 +534,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する int 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int[] arr, final int from, final int to) {
 		return print(arr, from, to, '\n').println();
@@ -547,7 +546,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する long 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long[] arr, final int from, final int to) {
 		return print(arr, from, to, '\n').println();
@@ -559,7 +558,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する double 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double[] arr, final int from, final int to) {
 		return print(arr, from, to, '\n').println();
@@ -571,7 +570,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する String 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final String[] arr, final int from, final int to) {
 		return print(arr, from, to, '\n').println();
@@ -584,7 +583,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final boolean[] arr, final int from, final int to, final char delimiter) {
 		return print(arr, from, to, delimiter).println();
@@ -597,7 +596,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final char[] arr, final int from, final int to, final char delimiter) {
 		return print(arr, from, to, delimiter).println();
@@ -610,7 +609,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int[] arr, final int from, final int to, final char delimiter) {
 		return print(arr, from, to, delimiter).println();
@@ -623,7 +622,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long[] arr, final int from, final int to, final char delimiter) {
 		return print(arr, from, to, delimiter).println();
@@ -636,7 +635,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double[] arr, final int from, final int to, final char delimiter) {
 		return print(arr, from, to, delimiter).println();
@@ -649,7 +648,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final String[] arr, final int from, final int to, final char delimiter) {
 		return print(arr, from, to, delimiter).println();
@@ -661,7 +660,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * boolean 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する boolean 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final boolean[] arr) {
 		return print(arr, 0, arr.length, ' ');
@@ -671,7 +670,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * char 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する char 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final char[] arr) {
 		return print(arr, 0, arr.length, ' ');
@@ -681,7 +680,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * int 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する int 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final int[] arr) {
 		return print(arr, 0, arr.length, ' ');
@@ -691,7 +690,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * long 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する long 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long[] arr) {
 		return print(arr, 0, arr.length, ' ');
@@ -701,7 +700,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * double 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する double 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final double[] arr) {
 		return print(arr, 0, arr.length, ' ');
@@ -711,7 +710,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * String 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する String 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final String[] arr) {
 		return print(arr, 0, arr.length, ' ');
@@ -721,7 +720,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 可変長の Object 配列の各要素を半角スペース区切りで出力します。(改行無し)
 	 *
 	 * @param arr 出力する Object 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final Object... arr) {
 		final int len = arr.length;
@@ -739,7 +738,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する boolean 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final boolean[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter);
@@ -750,7 +749,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する char 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final char[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter);
@@ -761,7 +760,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する int 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final int[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter);
@@ -772,7 +771,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する long 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter);
@@ -783,7 +782,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する double 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final double[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter);
@@ -794,7 +793,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr       出力する String 配列
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final String[] arr, final char delimiter) {
 		return print(arr, 0, arr.length, delimiter);
@@ -806,7 +805,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する boolean 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final boolean[] arr, final int from, final int to) {
 		return print(arr, from, to, ' ');
@@ -818,7 +817,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する char 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final char[] arr, final int from, final int to) {
 		return print(arr, from, to, ' ');
@@ -830,7 +829,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する int 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final int[] arr, final int from, final int to) {
 		return print(arr, from, to, ' ');
@@ -842,7 +841,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する long 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long[] arr, final int from, final int to) {
 		return print(arr, from, to, ' ');
@@ -854,7 +853,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する double 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final double[] arr, final int from, final int to) {
 		return print(arr, from, to, ' ');
@@ -866,7 +865,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する String 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final String[] arr, final int from, final int to) {
 		return print(arr, from, to, ' ');
@@ -879,7 +878,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final boolean[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
@@ -900,7 +899,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final char[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
@@ -924,7 +923,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final int[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
@@ -946,7 +945,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final long[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
@@ -969,7 +968,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final double[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
@@ -991,7 +990,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param from      開始インデックス(含む)
 	 * @param to        終了インデックス(除く)
 	 * @param delimiter 区切り文字
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter print(final String[] arr, final int from, final int to, final char delimiter) {
 		if (from >= to) return this;
@@ -1013,6 +1012,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する boolean 配列
 	 * @param function boolean を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final boolean[] arr, final Function<Boolean, T> function) {
 		for (final boolean b : arr) println(function.apply(b));
@@ -1025,6 +1025,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する char 配列
 	 * @param function char を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final char[] arr, final IntFunction<T> function) {
 		for (final char c : arr) println(function.apply(c));
@@ -1037,6 +1038,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する int 配列
 	 * @param function int を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final int[] arr, final IntFunction<T> function) {
 		for (final int i : arr) println(function.apply(i));
@@ -1049,6 +1051,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する long 配列
 	 * @param function long を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final long[] arr, final LongFunction<T> function) {
 		for (final long l : arr) println(function.apply(l));
@@ -1061,6 +1064,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する double 配列
 	 * @param function double を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final double[] arr, final DoubleFunction<T> function) {
 		for (final double l : arr) println(function.apply(l));
@@ -1073,6 +1077,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する String 配列
 	 * @param function String を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final String[] arr, final Function<String, T> function) {
 		for (final String s : arr) println(function.apply(s));
@@ -1087,6 +1092,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する boolean 配列
 	 * @param function boolean を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final boolean[] arr, final Function<Boolean, T> function) {
 		final int len = arr.length;
@@ -1105,6 +1111,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する char 配列
 	 * @param function char を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final char[] arr, final IntFunction<T> function) {
 		final int len = arr.length;
@@ -1123,6 +1130,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する int 配列
 	 * @param function int を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final int[] arr, final IntFunction<T> function) {
 		final int len = arr.length;
@@ -1141,6 +1149,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する long 配列
 	 * @param function long を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final long[] arr, final LongFunction<T> function) {
 		final int len = arr.length;
@@ -1159,6 +1168,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する double 配列
 	 * @param function double を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final double[] arr, final DoubleFunction<T> function) {
 		final int len = arr.length;
@@ -1177,6 +1187,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr      出力する String 配列
 	 * @param function String を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final String[] arr, final Function<String, T> function) {
 		final int len = arr.length;
@@ -1195,6 +1206,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の boolean 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の boolean 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final boolean[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1204,6 +1216,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の char 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の char 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final char[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1213,6 +1226,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の int 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の int 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1222,6 +1236,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の long 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の long 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1231,6 +1246,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の double 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の double 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1240,6 +1256,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の String 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の String 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final String[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1249,6 +1266,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の Object 配列を、各行を半角スペース区切りで出力します。（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の Object 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final Object[][] arr2d) {
 		return println(arr2d, ' ');
@@ -1259,6 +1277,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の boolean 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final boolean[][] arr2d, final char delimiter) {
 		for (final boolean[] arr : arr2d) println(arr, delimiter);
@@ -1270,6 +1289,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の char 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final char[][] arr2d, final char delimiter) {
 		for (final char[] arr : arr2d) println(arr, delimiter);
@@ -1281,6 +1301,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の int 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final int[][] arr2d, final char delimiter) {
 		for (final int[] arr : arr2d) println(arr, delimiter);
@@ -1292,6 +1313,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の long 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final long[][] arr2d, final char delimiter) {
 		for (final long[] arr : arr2d) println(arr, delimiter);
@@ -1303,6 +1325,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の double 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final double[][] arr2d, final char delimiter) {
 		for (final double[] arr : arr2d) println(arr, delimiter);
@@ -1314,6 +1337,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の String 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final String[][] arr2d, final char delimiter) {
 		for (final String[] arr : arr2d) println(arr, delimiter);
@@ -1325,6 +1349,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d     出力する二次元の Object 配列
 	 * @param delimiter 区切り文字
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter println(final Object[][] arr2d, final char delimiter) {
 		for (final Object[] arr : arr2d) {
@@ -1348,6 +1373,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d    出力する二次元の boolean 配列
 	 * @param function boolean を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final boolean[][] arr2d, final Function<Boolean, T> function) {
 		for (final boolean[] arr : arr2d) print(arr, function).println();
@@ -1360,6 +1386,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d    出力する二次元の char 配列
 	 * @param function char を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final char[][] arr2d, final IntFunction<T> function) {
 		for (final char[] arr : arr2d) print(arr, function).println();
@@ -1372,6 +1399,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d    出力する二次元の int 配列
 	 * @param function int を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final int[][] arr2d, final IntFunction<T> function) {
 		for (final int[] arr : arr2d) print(arr, function).println();
@@ -1384,6 +1412,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d    出力する二次元の long 配列
 	 * @param function long を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final long[][] arr2d, final LongFunction<T> function) {
 		for (final long[] arr : arr2d) print(arr, function).println();
@@ -1396,6 +1425,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d    出力する二次元の double 配列
 	 * @param function double を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final double[][] arr2d, final DoubleFunction<T> function) {
 		for (final double[] arr : arr2d) print(arr, function).println();
@@ -1408,6 +1438,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr2d    出力する二次元の String 配列
 	 * @param function String を変換する関数
 	 * @param <T>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final String[][] arr2d, final Function<String, T> function) {
 		for (final String[] arr : arr2d) print(arr, function).println();
@@ -1420,6 +1451,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * char 配列の各要素を区切り文字無しで出力します。（改行無し）
 	 *
 	 * @param arr 出力する char 配列
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printChars(final char[] arr) {
 		return printChars(arr, 0, arr.length);
@@ -1431,7 +1463,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param arr  出力する char 配列
 	 * @param from 開始インデックス(含む)
 	 * @param to   終了インデックス(除く)
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printChars(final char[] arr, final int from, final int to) {
 		final int len = to - from;
@@ -1460,7 +1492,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr      出力する char 配列
 	 * @param function char を変換する関数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printChars(final char[] arr, final IntUnaryOperator function) {
 		final int len = arr.length;
@@ -1488,7 +1520,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * 二次元の char 配列を、各行を区切り文字無しで出力（各行末に改行）
 	 *
 	 * @param arr2d 出力する二次元の char 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printChars(final char[][] arr2d) {
 		for (final char[] arr : arr2d) printChars(arr).println();
@@ -1500,7 +1532,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param arr2d    出力する二次元の char 配列
 	 * @param function char を変換する関数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printChars(final char[][] arr2d, final IntUnaryOperator function) {
 		for (final char[] arr : arr2d) printChars(arr, function).println();
@@ -1514,7 +1546,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param iter 出力するイテラブルオブジェクト
 	 * @param <T>  各要素の型
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final Iterable<T> iter) {
 		return print(iter, '\n').println();
@@ -1526,7 +1558,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param iter      出力するイテラブルオブジェクト
 	 * @param delimiter 区切り文字
 	 * @param <T>       各要素の型
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter println(final Iterable<T> iter, final char delimiter) {
 		return print(iter, delimiter).println();
@@ -1537,7 +1569,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param iter 出力するイテラブルオブジェクト
 	 * @param <T>  各要素の型
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final Iterable<T> iter) {
 		return print(iter, ' ');
@@ -1549,7 +1581,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param iter      出力するイテラブルオブジェクト
 	 * @param delimiter 区切り文字
 	 * @param <T>       各要素の型
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T> ContestPrinter print(final Iterable<T> iter, final char delimiter) {
 		final Iterator<T> it = iter.iterator();
@@ -1571,7 +1603,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param function 変換する関数
 	 * @param <T>      変換前の型
 	 * @param <U>      変換後の型
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T, U> ContestPrinter println(final Iterable<T> iter, final Function<T, U> function) {
 		return print(iter, function, '\n').println();
@@ -1585,7 +1617,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param delimiter 区切り文字
 	 * @param <T>       変換前の型
 	 * @param <U>       変換後の型
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T, U> ContestPrinter println(final Iterable<T> iter, final Function<T, U> function, final char delimiter) {
 		return print(iter, function, delimiter).println();
@@ -1598,6 +1630,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param function 変換する関数
 	 * @param <T>      変換前の型
 	 * @param <U>      変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T, U> ContestPrinter print(final Iterable<T> iter, final Function<T, U> function) {
 		return print(iter, function, ' ');
@@ -1611,6 +1644,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * @param delimiter 区切り文字
 	 * @param <T>       変換前の型
 	 * @param <U>       変換後の型
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public <T, U> ContestPrinter print(final Iterable<T> iter, final Function<T, U> function, final char delimiter) {
 		final Iterator<T> it = iter.iterator();
@@ -1628,7 +1662,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param c   繰り返す文字
 	 * @param cnt 繰り返す回数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printRepeat(final char c, final int cnt) {
 		if (cnt <= 0) return this;
@@ -1658,7 +1692,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param s   繰り返す文字列
 	 * @param cnt 繰り返す回数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printRepeat(final String s, final int cnt) {
 		if (cnt <= 0) return this;
@@ -1701,7 +1735,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param c   繰り返す文字
 	 * @param cnt 繰り返す回数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnRepeat(final char c, final int cnt) {
 		if (cnt <= 0) return this;
@@ -1733,7 +1767,7 @@ public final class ContestPrinter extends FastPrinter {
 	 *
 	 * @param s   繰り返す文字列
 	 * @param cnt 繰り返す回数
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnRepeat(final String s, final int cnt) {
 		if (cnt <= 0) return this;
@@ -1778,7 +1812,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * boolean 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する boolean 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final boolean[] arr) {
 		final int len = arr.length;
@@ -1796,7 +1830,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * char 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する char 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final char[] arr) {
 		final int len = arr.length;
@@ -1816,7 +1850,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * int 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する int 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final int[] arr) {
 		final int len = arr.length;
@@ -1835,7 +1869,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * long 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する long 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final long[] arr) {
 		final int len = arr.length;
@@ -1854,7 +1888,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * double 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する double 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final double[] arr) {
 		final int len = arr.length;
@@ -1873,7 +1907,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * String 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する String 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final String[] arr) {
 		final int len = arr.length;
@@ -1892,7 +1926,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * Object 配列の要素を逆順で、改行区切りで出力します。
 	 *
 	 * @param arr 出力する Object 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printlnReverse(final Object[] arr) {
 		final int len = arr.length;
@@ -1905,7 +1939,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * boolean 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する boolean 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final boolean[] arr) {
 		final int len = arr.length;
@@ -1925,7 +1959,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * char 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する char 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final char[] arr) {
 		final int len = arr.length;
@@ -1947,7 +1981,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * int 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する int 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final int[] arr) {
 		final int len = arr.length;
@@ -1967,7 +2001,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * long 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する long 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final long[] arr) {
 		final int len = arr.length;
@@ -1987,7 +2021,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * double 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する double 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final double[] arr) {
 		final int len = arr.length;
@@ -2008,7 +2042,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * String 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する String 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final String[] arr) {
 		final int len = arr.length;
@@ -2029,7 +2063,7 @@ public final class ContestPrinter extends FastPrinter {
 	 * Object 配列の要素を逆順で、半角スペース区切りで出力します。（改行無し）
 	 *
 	 * @param arr 出力する Object 配列
-	 * @return このContestPrinterインスタンス(メソッドチェーン用)
+	 * @return この {@code ContestPrinter} インスタンス
 	 */
 	public ContestPrinter printReverse(final Object[] arr) {
 		final int len = arr.length;

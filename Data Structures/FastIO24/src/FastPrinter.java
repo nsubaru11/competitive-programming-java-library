@@ -25,44 +25,54 @@ public class FastPrinter implements AutoCloseable {
 	 * 例: Integer.MIN_VALUE は "-2147483648"（11バイト）
 	 */
 	protected static final int MAX_INT_DIGITS = 11;
+
 	/**
 	 * long 型の値を文字列に変換した際に必要となる最大桁数（符号込み）<br>
 	 * 例: Long.MIN_VALUE は "-9223372036854775808"（20バイト）
 	 */
 	protected static final int MAX_LONG_DIGITS = 20;
+
 	/**
 	 * 改行文字（'\n'）のバイト表現
 	 */
 	protected static final byte LINE = '\n';
+
 	/**
 	 * 空白文字（' '）のバイト表現
 	 */
 	protected static final byte SPACE = ' ';
+
 	/**
 	 * ハイフン（'-'）のバイト表現
 	 */
 	protected static final byte HYPHEN = '-';
+
 	/**
 	 * ピリオド（'.'）のバイト表現
 	 */
 	protected static final byte PERIOD = '.';
+
 	/**
 	 * 数字のゼロ（'0'）のバイト表現
 	 */
 	protected static final byte ZERO = '0';
+
 	/**
 	 * 出力用内部バッファのデフォルトサイズ（バイト単位）<br>
 	 * ※64バイト未満の場合、内部的に64バイトに調整されます。
 	 */
 	private static final int DEFAULT_BUFFER_SIZE = 65536;
+
 	/**
 	 * boolean値がtrueの場合の出力文字列 "Yes" のバイト配列
 	 */
 	private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
+
 	/**
 	 * boolean値がfalseの場合の出力文字列 "No" のバイト配列
 	 */
 	private static final byte[] FALSE_BYTES = {'N', 'o'};
+
 	/**
 	 * 00～99 の1の位の数字を格納した配列
 	 */
@@ -78,6 +88,7 @@ public class FastPrinter implements AutoCloseable {
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	};
+
 	/**
 	 * 00～99 の10の位の数字を格納した配列
 	 */
@@ -101,14 +112,17 @@ public class FastPrinter implements AutoCloseable {
 	 * true の場合、各出力操作後に自動的に {@link #flush()} が呼ばれます。
 	 */
 	protected final boolean autoFlush;
+
 	/**
 	 * 出力先の OutputStream です。デフォルトは {@code System.out} です。
 	 */
 	private final OutputStream out;
+
 	/**
 	 * 出力先の内部バッファです。書き込みはこの配列に対して行い、必要に応じて {@link #flush()} で出力します。
 	 */
 	protected byte[] buffer;
+
 	/**
 	 * 現在のバッファ内での書き込み位置
 	 */
@@ -332,7 +346,7 @@ public class FastPrinter implements AutoCloseable {
 	/**
 	 * 改行のみ出力します。
 	 *
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public FastPrinter println() {
 		ensureCapacity(1);
@@ -345,7 +359,7 @@ public class FastPrinter implements AutoCloseable {
 	 * boolean 値を出力します。（true は "Yes"、 false は "No"、改行付き）
 	 *
 	 * @param b 出力する boolean 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final boolean b) {
 		write(b);
@@ -359,7 +373,7 @@ public class FastPrinter implements AutoCloseable {
 	 * byte 値を出力します。（改行付き）
 	 *
 	 * @param b 出力する byte 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final byte b) {
 		ensureCapacity(2);
@@ -373,7 +387,7 @@ public class FastPrinter implements AutoCloseable {
 	 * char 値を出力します。（改行付き）
 	 *
 	 * @param c 出力する char 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final char c) {
 		ensureCapacity(2);
@@ -387,7 +401,7 @@ public class FastPrinter implements AutoCloseable {
 	 * int 値を出力します。（改行付き）
 	 *
 	 * @param i 出力する int 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final int i) {
 		ensureCapacity(MAX_INT_DIGITS + 1);
@@ -401,7 +415,7 @@ public class FastPrinter implements AutoCloseable {
 	 * long 値を出力します。（改行付き）
 	 *
 	 * @param l 出力する long 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final long l) {
 		ensureCapacity(MAX_LONG_DIGITS + 1);
@@ -415,7 +429,7 @@ public class FastPrinter implements AutoCloseable {
 	 * double 値を {@code Double.toString(d)} で文字列化し出力します。（改行付き）
 	 *
 	 * @param d 出力する double 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final double d) {
 		return println(Double.toString(d));
@@ -425,7 +439,7 @@ public class FastPrinter implements AutoCloseable {
 	 * BigInteger を {@code toString()} で文字列化し出力します。（改行付き）
 	 *
 	 * @param bi 出力する BigInteger
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final BigInteger bi) {
 		return println(bi.toString());
@@ -435,7 +449,7 @@ public class FastPrinter implements AutoCloseable {
 	 * BigDecimal を {@code toString()} で文字列化し出力します。（改行付き）
 	 *
 	 * @param bd 出力する BigDecimal
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final BigDecimal bd) {
 		return println(bd.toString());
@@ -445,7 +459,7 @@ public class FastPrinter implements AutoCloseable {
 	 * String を出力します。（改行付き）
 	 *
 	 * @param s 出力する String 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final String s) {
 		ensureCapacity(s.length() + 1);
@@ -459,7 +473,7 @@ public class FastPrinter implements AutoCloseable {
 	 * StringBuilder を出力します。（改行付き）
 	 *
 	 * @param s 出力する StringBuilder 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter println(final StringBuilder s) {
 		ensureCapacity(s.length() + 1);
@@ -476,7 +490,7 @@ public class FastPrinter implements AutoCloseable {
 	 * 基本的な型（String, Integer, Long など）はそれぞれに最適化されたメソッドで処理します。
 	 *
 	 * @param o 出力するオブジェクト
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public FastPrinter println(final Object o) {
 		return switch (o) {
@@ -500,7 +514,7 @@ public class FastPrinter implements AutoCloseable {
 	 * boolean 値を出力します。（true は "Yes"、 false は "No"、改行無し）
 	 *
 	 * @param b 出力する boolean 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final boolean b) {
 		write(b);
@@ -512,7 +526,7 @@ public class FastPrinter implements AutoCloseable {
 	 * byte 値を出力します。（改行無し）
 	 *
 	 * @param b 出力する byte 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final byte b) {
 		ensureCapacity(1);
@@ -525,7 +539,7 @@ public class FastPrinter implements AutoCloseable {
 	 * char 値を出力します。（改行無し）
 	 *
 	 * @param c 出力する char 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final char c) {
 		ensureCapacity(1);
@@ -538,7 +552,7 @@ public class FastPrinter implements AutoCloseable {
 	 * int 値を出力します。（改行無し）
 	 *
 	 * @param i 出力する int 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final int i) {
 		ensureCapacity(MAX_INT_DIGITS);
@@ -551,7 +565,7 @@ public class FastPrinter implements AutoCloseable {
 	 * long 値を出力します。（改行無し）
 	 *
 	 * @param l 出力する long 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final long l) {
 		ensureCapacity(MAX_LONG_DIGITS);
@@ -564,7 +578,7 @@ public class FastPrinter implements AutoCloseable {
 	 * double 値を {@code Double.toString(d)} で文字列化し出力します。（改行無し）
 	 *
 	 * @param d 出力する double 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final double d) {
 		return print(Double.toString(d));
@@ -574,7 +588,7 @@ public class FastPrinter implements AutoCloseable {
 	 * BigInteger を {@code toString()} で文字列化し出力します。（改行無し）
 	 *
 	 * @param bi 出力する BigInteger
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final BigInteger bi) {
 		return print(bi.toString());
@@ -584,7 +598,7 @@ public class FastPrinter implements AutoCloseable {
 	 * BigDecimal を {@code toString()} で文字列化し出力します。（改行無し）
 	 *
 	 * @param bd 出力する BigDecimal
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final BigDecimal bd) {
 		return print(bd.toString());
@@ -594,7 +608,7 @@ public class FastPrinter implements AutoCloseable {
 	 * String を出力します。（改行無し）
 	 *
 	 * @param s 出力する String 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final String s) {
 		ensureCapacity(s.length());
@@ -607,7 +621,7 @@ public class FastPrinter implements AutoCloseable {
 	 * StringBuilder を出力します。（改行無し）
 	 *
 	 * @param s 出力する StringBuilder 値
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter print(final StringBuilder s) {
 		ensureCapacity(s.length());
@@ -623,7 +637,7 @@ public class FastPrinter implements AutoCloseable {
 	 * 基本的な型（String, Integer, Long など）はそれぞれに最適化されたメソッドで処理します。
 	 *
 	 * @param o 出力するオブジェクト
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public FastPrinter print(final Object o) {
 		return switch (o) {
@@ -648,7 +662,7 @@ public class FastPrinter implements AutoCloseable {
 	 *
 	 * @param format 書式文字列
 	 * @param args   書式引数
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter printf(final String format, final Object... args) {
 		return print(String.format(format, args));
@@ -660,7 +674,7 @@ public class FastPrinter implements AutoCloseable {
 	 * @param locale 言語環境
 	 * @param format 書式文字列
 	 * @param args   書式引数
-	 * @return このFastPrinterインスタンス（メソッドチェーン用）
+	 * @return この {@code FastPrinter} インスタンス
 	 */
 	public final FastPrinter printf(final Locale locale, final String format, final Object... args) {
 		return print(String.format(locale, format, args));

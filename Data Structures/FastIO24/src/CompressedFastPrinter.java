@@ -6,7 +6,6 @@ import java.util.function.*;
 
 import static java.lang.Math.*;
 
-
 // FastPrinterとContestPrinterを統合し、コメントを削除した圧縮版のクラスです。
 // コメントが必要なく、文字数を気にするなら、こちらを使用して下さい。
 @SuppressWarnings("unused")
