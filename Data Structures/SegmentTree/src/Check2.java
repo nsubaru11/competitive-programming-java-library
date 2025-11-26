@@ -67,75 +67,178 @@ public final class Check2 {
 
 	@SuppressWarnings("unused")
 	private static final class IntSegmentTree implements Iterable<Integer> {
-		private final int n, leafStart;
-		private final int[] tree;
-		private final int identity;
-		private final IntBinaryOperator func;
-		private final int[] updateList;
-		private final boolean[] pending;
-		private int head, updateCnt;
+		private final int elementCount, leafStart, identity;
+		private final IntBinaryOperator operator;
+		private final int[] tree, updateQueue;
+		private final boolean[] isPending;
+		private int queueHead, pendingCount;
 
-		public IntSegmentTree(final int n, final IntBinaryOperator func, final int identity) {
-			this.n = n;
-			leafStart = n == 1 ? 0 : Integer.highestOneBit((n - 1) << 1) - 1;
-			tree = new int[leafStart + n];
-			this.func = func;
+		public IntSegmentTree(final int elementCount, final IntBinaryOperator operator, final int identity) {
+			this.elementCount = elementCount;
+			leafStart = elementCount == 1 ? 0 : Integer.highestOneBit((elementCount - 1) << 1) - 1;
 			this.identity = identity;
-			updateList = new int[leafStart + 1];
-			pending = new boolean[leafStart];
+			this.operator = operator;
+			tree = new int[leafStart + elementCount];
+			if (identity != 0) Arrays.fill(tree, leafStart, leafStart + elementCount, identity);
+			updateQueue = new int[leafStart + 1];
+			isPending = new boolean[leafStart];
+		}
+
+		public IntSegmentTree(final int[] data, final IntBinaryOperator operator, final int identity) {
+			this.elementCount = data.length;
+			leafStart = elementCount == 1 ? 0 : Integer.highestOneBit((elementCount - 1) << 1) - 1;
+			this.identity = identity;
+			this.operator = operator;
+			tree = new int[leafStart + elementCount];
+			System.arraycopy(data, 0, tree, leafStart, elementCount);
+			updateQueue = new int[leafStart + 1];
+			isPending = new boolean[leafStart];
+			buildAll();
 		}
 
 		public int get(final int i) {
-			if (i < 0 || i >= n) throw new IndexOutOfBoundsException();
 			return tree[leafStart + i];
 		}
 
 		public void set(final int i, final int e) {
-			int idx = leafStart + i;
+			final int idx = leafStart + i;
+			final int prev = tree[idx];
 			tree[idx] = e;
-			int p = (idx - 1) >> 1;
-			if (p >= 0 && !pending[p]) {
-				pending[p] = true;
-				updateList[(head + updateCnt++) & leafStart] = idx - ((idx & 1) ^ 1);
+			final int p = (idx - 1) >> 1;
+			if (prev != e && p >= 0 && !isPending[p]) {
+				isPending[p] = true;
+				updateQueue[(queueHead + pendingCount++) & leafStart] = idx - ((idx & 1) ^ 1);
 			}
 		}
 
+		public void update(final int i, final IntUnaryOperator func) {
+			set(i, func.applyAsInt(tree[leafStart + i]));
+		}
+
+		public void fill(final int val) {
+			Arrays.fill(tree, leafStart, leafStart + elementCount, val);
+			buildAll();
+		}
+
+		public void setAll(final IntUnaryOperator func) {
+			for (int i = 0, idx = leafStart; i < elementCount; i++, idx++) tree[idx] = func.applyAsInt(tree[idx]);
+			buildAll();
+		}
+
 		public int query(int l, int r) {
-			if (updateCnt > 0) build();
+			if (pendingCount > 0) build();
 			l += leafStart;
 			r += leafStart;
 			int ans = identity;
 			while (l <= r) {
-				if ((l & 1) == 0) ans = func.applyAsInt(ans, tree[l]);
-				if ((r & 1) == 1) ans = func.applyAsInt(ans, tree[r]);
+				if ((l & 1) == 0) ans = operator.applyAsInt(ans, tree[l]);
+				if ((r & 1) == 1) ans = operator.applyAsInt(ans, tree[r]);
 				l >>= 1;
 				r = (r - 2) >> 1;
 			}
 			return ans;
 		}
 
-		public void build() {
-			while (updateCnt-- > 0) {
-				int pos = head++ & leafStart;
-				int left = updateList[pos];
-				int right = left + 1;
-				int parent = left >> 1;
-				int old = tree[parent];
+		public int queryAll() {
+			if (pendingCount > 0) build();
+			return tree[0];
+		}
+
+		public int maxRight(int l, final IntPredicate tester) {
+			if (pendingCount > 0) build();
+			if (l == elementCount) return elementCount;
+			int ans = identity;
+			l += leafStart;
+			do {
+				while ((l & 1) == 1) l = (l - 1) >> 1;
+				int combined = operator.applyAsInt(ans, tree[l]);
+				if (!tester.test(combined)) {
+					while (l < leafStart) {
+						l = (l << 1) + 1;
+						combined = operator.applyAsInt(ans, tree[l]);
+						if (tester.test(combined)) {
+							ans = combined;
+							l++;
+						}
+					}
+					return l - leafStart;
+				}
+				ans = combined;
+				l++;
+			} while ((l & (l - 1)) != 0);
+			return elementCount;
+		}
+
+		public int minLeft(int r, final IntPredicate tester) {
+			if (pendingCount > 0) build();
+			if (r == 0) return 0;
+			int ans = identity;
+			r += leafStart - 1;
+			do {
+				while (r > 0 && (r & 1) == 0) r = (r - 2) >> 1;
+				int combined = operator.applyAsInt(tree[r], ans);
+				if (!tester.test(combined)) {
+					while (r < leafStart) {
+						r = (r << 1) + 2;
+						combined = operator.applyAsInt(tree[r], ans);
+						if (tester.test(combined)) {
+							ans = combined;
+							r--;
+						}
+					}
+					return r - leafStart + 1;
+				}
+				ans = combined;
+				r--;
+			} while (((r + 1) & r) != 0);
+			return 0;
+		}
+
+		public int size() {
+			return elementCount;
+		}
+
+		private void build() {
+			while (pendingCount-- > 0) {
+				final int pos = queueHead++ & leafStart;
+				final int left = updateQueue[pos];
+				final int right = left + 1;
+				final int parent = left >> 1;
+				final int old = tree[parent];
 				if (right < tree.length) {
-					tree[parent] = func.applyAsInt(tree[left], tree[right]);
+					tree[parent] = operator.applyAsInt(tree[left], tree[right]);
 				} else {
 					tree[parent] = tree[left];
 				}
-				pending[parent] = false;
+				isPending[parent] = false;
 				if (parent > 0 && tree[parent] != old) {
-					int p = (parent - 1) >> 1;
-					if (!pending[p]) {
-						pending[p] = true;
-						updateList[(head + updateCnt++) & leafStart] = parent - ((parent & 1) ^ 1);
+					final int p = (parent - 1) >> 1;
+					if (!isPending[p]) {
+						isPending[p] = true;
+						updateQueue[(queueHead + pendingCount++) & leafStart] = parent - ((parent & 1) ^ 1);
 					}
 				}
 			}
-			updateCnt = 0;
+			pendingCount = 0;
+		}
+
+		private void buildAll() {
+			final int len = tree.length;
+			for (int i = leafStart - 1; i >= 0; i--) {
+				final int l = (i << 1) + 1, r = l + 1;
+				if (r < len) {
+					tree[i] = operator.applyAsInt(tree[l], tree[r]);
+				} else if (l < len) {
+					tree[i] = tree[l];
+				} else {
+					tree[i] = identity;
+				}
+			}
+			if (pendingCount > 0) {
+				queueHead = 0;
+				pendingCount = 0;
+				Arrays.fill(isPending, false);
+			}
 		}
 
 		public PrimitiveIterator.OfInt iterator() {
@@ -143,7 +246,7 @@ public final class Check2 {
 				private int idx = 0;
 
 				public boolean hasNext() {
-					return idx < n;
+					return idx < elementCount;
 				}
 
 				public int nextInt() {
@@ -155,19 +258,9 @@ public final class Check2 {
 
 		@Override
 		public String toString() {
-			StringBuilder s = new StringBuilder();
-			for (int i = 1, idx = 0; i < leafStart; i <<= 1) {
-				s.append('[').append(tree[i - 1]);
-				for (int j = 0; j < i - 1; j++) {
-					s.append(", ").append(tree[i + j]);
-				}
-				s.append("]\n");
-			}
-			s.append('[').append(tree[leafStart]);
-			for (int i = 1; i < n; i++) {
-				s.append(", ").append(tree[leafStart + i]);
-			}
-			s.append("]");
+			final StringBuilder s = new StringBuilder();
+			s.append(tree[leafStart]);
+			for (int i = leafStart + 1; i < tree.length; i++) s.append(' ').append(tree[i]);
 			return s.toString();
 		}
 

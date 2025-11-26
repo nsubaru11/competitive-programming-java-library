@@ -12,12 +12,14 @@ Segment Tree（セグメント木）データ構造に関連するクラス群�
 
 - **用途**：任意のオブジェクト型 `T` を扱う汎用的なセグメント木。
 - **特徴**：
-	- 集約ルールを定義する二項演算 `func` とその単位元 `identity` をコンストラクタで指定でき、範囲合計、範囲最小値、範囲最大値など、様々な問題に適用可能です。
-	- `set` 操作による更新は内部で遅延評価され、`query` の直前に一括で反映されるため、更新が連続する場合のパフォーマンスが向上します。
+	- 集約ルールを定義する二項演算 `operator` とその単位元 `identity`
+	  をコンストラクタで指定でき、範囲合計、範囲最小値、範囲最大値、累積判定 (`maxRight`/`minLeft`) まで幅広く適用できます。
+	- 点更新 (`set`/`update`) は内部キューに遅延反映され、`query`/`queryAll`/境界探索呼び出し時にまとめて処理されるため、連続更新を高速化します。
+	- `fill` や `setAll` を用意し、全要素の一括変更にも対応しています。
 - **時間計算量**：
 	- 初期化: $O(N)$
-	- 点更新 (`set`): $O(\log N)$
-	- 範囲クエリ (`query`): $O(\log N)$
+	- 点更新 (`set`/`update`): $O(\log N)$
+	- 範囲クエリ (`query`/`queryAll`/`maxRight`/`minLeft`): $O(\log N)$
 - **空間計算量**：$O(N)$
 
 ### [IntSegmentTree](src/IntSegmentTree.java) / [LongSegmentTree](src/LongSegmentTree.java)
@@ -25,7 +27,7 @@ Segment Tree（セグメント木）データ構造に関連するクラス群�
 - **用途**：`int` 型または `long` 型のデータに特化したセグメント木。
 - **特徴**：
 	- プリミティブ型を直接扱うことで、ジェネリック版の `SegmentTree` で生じるボクシング・アンボクシングのオーバーヘッドを解消し、より高いパフォーマンスを発揮します。
-	- 機能セットは汎用版の `SegmentTree` と同等です。
+	- 汎用版と同等の API（`set`/`update`/`fill`/`setAll`/`query`/`queryAll`/`maxRight`/`minLeft`）を提供し、境界探索も同じ要領で利用できます。
 - **時間計算量**：`SegmentTree` と同様
 - **空間計算量**：`SegmentTree` と同様
 
