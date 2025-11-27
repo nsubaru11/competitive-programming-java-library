@@ -1,6 +1,6 @@
-import static java.util.Arrays.fill;
+import java.util.*;
 
-import java.util.NoSuchElementException;
+import static java.util.Arrays.*;
 
 /**
  * Dijkstra アルゴリズムを実装するクラス
@@ -16,10 +16,10 @@ public final class Dijkstra {
 	// -------------- フィールド --------------
 	private static final long INF = Long.MAX_VALUE;
 	private final IndexedPriorityQueue ans;
-	private final int[] dest, next, first;
+	private final int[] dest, next, first, path;
 	private final long[] cost;
-	private int used = -1;
-	private int e;
+	private final int v;
+	private int used = -1, e;
 
 	// -------------- コンストラクタ --------------
 
@@ -44,7 +44,9 @@ public final class Dijkstra {
 		dest = new int[e];
 		next = new int[e];
 		first = new int[v];
+		path = new int[v];
 		cost = new long[e];
+		this.v = v;
 		fill(first, -1);
 		this.e = 0;
 		ans = new IndexedPriorityQueue(v, isMax);
@@ -82,17 +84,37 @@ public final class Dijkstra {
 			used = i;
 			ans.clear();
 			ans.push(i, 0);
+			path[i] = i;
 			while (!ans.isEmpty()) {
 				long c = ans.peek();
 				int from = ans.pollNode();
 				for (int e = first[from]; e != -1; e = next[e]) {
 					int to = dest[e];
 					long cost = this.cost[e];
-					ans.relax(to, c + cost);
+					if (ans.relax(to, c + cost)) path[to] = from;
 				}
 			}
 		}
 		return ans.getCostOrDefault(j, INF);
+	}
+
+	/**
+	 * 始点 i から終点 j への最短経路を返す
+	 *
+	 * @param i 始点
+	 * @param j 終点
+	 * @return 始点から終点への最短経路（経路が存在しない場合は null）
+	 */
+	public ArrayList<Integer> getPath(final int i, final int j) {
+		if (used != i) solve(i, j);
+		if (ans.getCostOrDefault(j, INF) == INF) return null;
+		ArrayList<Integer> path = new ArrayList<>(v);
+		for (int p = j; p != i; p = this.path[p]) path.add(p);
+		path.add(i);
+		for (int k = 0, size = path.size(); k < size / 2; k++) {
+			path.set(k, path.set(size - k - 1, path.get(k)));
+		}
+		return path;
 	}
 
 	// -------------- 内部クラス：IndexedPriorityQueue --------------
