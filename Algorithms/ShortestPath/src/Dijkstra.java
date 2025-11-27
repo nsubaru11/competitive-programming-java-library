@@ -86,11 +86,11 @@ public final class Dijkstra {
 			ans.push(i, 0);
 			path[i] = i;
 			while (!ans.isEmpty()) {
-				long c = ans.peek();
-				int from = ans.pollNode();
+				final long c = ans.peek();
+				final int from = ans.pollNode();
 				for (int e = first[from]; e != -1; e = next[e]) {
-					int to = dest[e];
-					long cost = this.cost[e];
+					final int to = dest[e];
+					final long cost = this.cost[e];
 					if (ans.relax(to, c + cost)) path[to] = from;
 				}
 			}
@@ -108,7 +108,7 @@ public final class Dijkstra {
 	public ArrayList<Integer> getPath(final int i, final int j) {
 		if (used != i) solve(i, j);
 		if (ans.getCostOrDefault(j, INF) == INF) return null;
-		ArrayList<Integer> path = new ArrayList<>(v);
+		final ArrayList<Integer> path = new ArrayList<>(v);
 		for (int p = j; p != i; p = this.path[p]) path.add(p);
 		path.add(i);
 		for (int k = 0, size = path.size(); k < size / 2; k++) {
@@ -208,7 +208,7 @@ public final class Dijkstra {
 		public int pollNode() {
 			if (isEmpty()) throw new NoSuchElementException();
 			if (unsortedCount > 0) ensureHeapProperty();
-			int node = heap[0];
+			final int node = heap[0];
 			position[node] = -1;
 			size--;
 			if (size > 0) {
@@ -258,9 +258,9 @@ public final class Dijkstra {
 		 * (heapifyCost < incrementalCost なら heapify を選択)
 		 */
 		private void ensureHeapProperty() {
-			int log2N = 31 - Integer.numberOfLeadingZeros(size);
-			int heapifyCost = size * 2 - 2 * log2N;
-			int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
+			final int log2N = 31 - Integer.numberOfLeadingZeros(size);
+			final int heapifyCost = size * 2 - 2 * log2N;
+			final int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
 			if (heapifyCost < incrementalCost) {
 				heapify();
 			} else {
@@ -276,10 +276,10 @@ public final class Dijkstra {
 		 */
 		private int getIncrementalCostStrict() {
 			int totalCost = 0;
-			int sortedSize = size - unsortedCount;
+			final int sortedSize = size - unsortedCount;
 			for (int i = 1; i <= unsortedCount; i++) {
-				int currentHeapSize = sortedSize + i;
-				int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
+				final int currentHeapSize = sortedSize + i;
+				final int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
 				totalCost += depth;
 			}
 			return totalCost;
@@ -292,10 +292,10 @@ public final class Dijkstra {
 		 * @return 最大比較回数の近似値
 		 */
 		private int getIncrementalCostApprox() {
-			int sortedSize = size - unsortedCount;
-			int avgHeapSize = sortedSize + (unsortedCount >> 1);
+			final int sortedSize = size - unsortedCount;
+			final int avgHeapSize = sortedSize + (unsortedCount >> 1);
 			if (avgHeapSize == 0) return 0;
-			int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
+			final int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
 			return unsortedCount * depthOfAvgSize;
 		}
 
@@ -315,10 +315,10 @@ public final class Dijkstra {
 		 * @param i    ノードの現在位置
 		 */
 		private void siftUp(final int node, int i) {
-			long c = cost[node];
+			final long c = cost[node];
 			while (i > 0) {
-				int j = (i - 1) >> 1;
-				int parent = heap[j];
+				final int j = (i - 1) >> 1;
+				final int parent = heap[j];
 				if (c >= cost[parent]) break;
 				heap[i] = parent;
 				position[parent] = i;
@@ -335,12 +335,12 @@ public final class Dijkstra {
 		 * @param i    ノードの現在位置
 		 */
 		private void siftDown(final int node, int i) {
-			long c = cost[node];
-			int half = size >> 1;
+			final long c = cost[node];
+			final int half = size >> 1;
 			while (i < half) {
 				int child = (i << 1) + 1;
 				child += child + 1 < size && cost[heap[child]] > cost[heap[child + 1]] ? 1 : 0;
-				int childNode = heap[child];
+				final int childNode = heap[child];
 				if (c <= cost[childNode]) break;
 				heap[i] = childNode;
 				position[childNode] = i;
