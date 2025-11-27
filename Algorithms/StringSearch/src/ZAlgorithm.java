@@ -17,14 +17,12 @@ public final class ZAlgorithm {
 		for (int i = 1, l = 0, r = 0; i < len; i++) {
 			if (i < r && z[i - l] < r - i) {
 				z[i] = z[i - l];
-			} else {
-				if (r < i) r = i;
-				while (r < len && s.charAt(r) == s.charAt(r - i)) {
-					r++;
-				}
-				z[i] = r - i;
-				l = i;
+				continue;
 			}
+			if (r < i) r = i;
+			while (r < len && s.charAt(r) == s.charAt(r - i)) r++;
+			z[i] = r - i;
+			l = i;
 		}
 		return z;
 	}
@@ -42,14 +40,12 @@ public final class ZAlgorithm {
 		for (int i = 1, l = 0, r = 0; i < len; i++) {
 			if (i < r && z[i - l] < r - i) {
 				z[i] = z[i - l];
-			} else {
-				if (r < i) r = i;
-				while (r < len && s[r] == s[r - i]) {
-					r++;
-				}
-				z[i] = r - i;
-				l = i;
+				continue;
 			}
+			if (r < i) r = i;
+			while (r < len && s[r] == s[r - i]) r++;
+			z[i] = r - i;
+			l = i;
 		}
 		return z;
 	}
