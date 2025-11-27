@@ -1,7 +1,9 @@
 /**
  * KMP（Knuth-Morris-Pratt）Algorithmに基づいて、文字列探索を行います。
  */
-public class KMP {
+@SuppressWarnings("unused")
+public final class KMP {
+	// todo: KMP法の実装を行う
 
 	private KMP() {
 		// コンストラクタはプライベート
