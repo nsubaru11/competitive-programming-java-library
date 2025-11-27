@@ -6,6 +6,7 @@ import java.util.*;
  * 時間計算量: O(|E|log|V|)
  * 空間計算量: O(|V| + |E|)
  */
+@SuppressWarnings("unused")
 public final class Prim {
 	private final int v;
 	private final boolean isMinimum;

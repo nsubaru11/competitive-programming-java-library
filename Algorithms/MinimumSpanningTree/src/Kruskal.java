@@ -6,6 +6,7 @@ import java.util.*;
  * 時間計算量: O(|E|log|E|)（Eは辺の数）
  * 空間計算量: O(|V| + |E|)
  */
+@SuppressWarnings("unused")
 public final class Kruskal {
 	private final int v;
 	private final UnionFind uf;
