@@ -10,6 +10,7 @@ import java.util.stream.*;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
+// https://judge.yosupo.jp/problem/deque
 public final class Check1 {
 
 	// region initialization
@@ -45,7 +46,7 @@ public final class Check1 {
 			} else if (t == 3) {
 				a.pollLast();
 			} else if (t == 4) {
-				System.out.println(a.get(sc.nextInt()));
+				out.println(a.get(sc.nextInt()));
 			}
 		}
 	}
