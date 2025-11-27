@@ -64,7 +64,9 @@ public final class LongSegmentTree implements Iterable<Long> {
 	}
 
 	public long query(int l, int r) {
+		if (l > r) return identity;
 		if (pendingCount > 0) build();
+		if (l == r) return tree[leafStart + l];
 		l += leafStart;
 		r += leafStart;
 		long ans = identity;
