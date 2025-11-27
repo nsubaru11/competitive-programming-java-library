@@ -3,7 +3,7 @@
 ## 概要
 
 競技プログラミング向けの、高速な固定長リングバッファを提供します。
-ジェネリクス版 (`RingBuffer<T>`) と、プリミティブ型に特化した`IntegerRingBuffer`、`LongRingBuffer` があります。
+ジェネリクス版 (`RingBuffer<T>`) と、プリミティブ型に特化した`IntRingBuffer`、`LongRingBuffer` があります。
 
 ## 実装クラス
 
@@ -16,7 +16,7 @@
 - **時間計算量**：O(1) (基本操作)
 - **空間計算量**：O(C) (Cは容量)
 
-### [IntegerRingBuffer](src/IntegerRingBuffer.java)
+### [IntRingBuffer](src/IntRingBuffer.java)
 
 - **用途**：`int`型の値を格納するためのリングバッファ。
 - **特徴**：
@@ -36,7 +36,7 @@
 
 ## アルゴリズム（データ構造）選択ガイド
 
-- **`IntegerRingBuffer` / `LongRingBuffer`**: `int`や`long`の値を扱う場合は、パフォーマンスが最も高いため、これらのプリミティブ型に特化したクラスの使用を強く推奨します。
+- **`IntRingBuffer` / `LongRingBuffer`**: `int`や`long`の値を扱う場合は、パフォーマンスが最も高いため、これらのプリミティブ型に特化したクラスの使用を強く推奨します。
 - **`RingBuffer<T>`**: プリミティブ型以外のオブジェクトを扱う場合に使用します。
 
 ## 注意事項

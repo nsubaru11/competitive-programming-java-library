@@ -17,17 +17,17 @@ import java.util.stream.StreamSupport;
  * 内部容量を自動的に2のべき乗に正規化することで、剰余演算の代わりに高速なビット演算を利用します。
  */
 @SuppressWarnings("unused")
-public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
+public final class IntRingBuffer implements Iterable<Integer>, Cloneable {
 	private final int capacity; // バッファの最大サイズ
 	private int[] buf; // データを格納する配列
 	private int head, size; // データの先頭を表すインデックスとデータの要素数
 
 	/**
-	 * 指定された推奨容量でIntegerRingBufferを構築します。
+	 * 指定された推奨容量でIntRingBufferを構築します。
 	 *
 	 * @param capacity 推奨されるバッファ容量。内部で2のべき乗に正規化されます。正の値を指定してください。
 	 */
-	public IntegerRingBuffer(final int capacity) {
+	public IntRingBuffer(final int capacity) {
 		this.capacity = 1 << (32 - Integer.numberOfLeadingZeros(capacity - 1));
 		this.buf = new int[this.capacity];
 		this.head = size = 0;
@@ -128,7 +128,7 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 * @return このインスタンス自体
 	 * @throws RingBufferIndexException バッファが空の場合、またはインデックスが範囲外の場合
 	 */
-	public IntegerRingBuffer set(int index, final int e) {
+	public IntRingBuffer set(int index, final int e) {
 		if (isEmpty()) throw new RingBufferIndexException("Buffer is empty.");
 		if (index < -size || size <= index) throw new RingBufferIndexException(index, -size, size - 1);
 		if (index < 0) index += size;
@@ -146,7 +146,7 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 * @return このインスタンス自体
 	 * @throws RingBufferIndexException 指定された長さが {@code 0} 未満、または {@code capacity()} を超える場合
 	 */
-	public IntegerRingBuffer setLength(int newLen) {
+	public IntRingBuffer setLength(int newLen) {
 		if (newLen > capacity || newLen < 0) throw new RingBufferIndexException(newLen, capacity);
 		if (size < newLen) {
 			while (size < newLen) addLast(0);
@@ -217,7 +217,7 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 * @param generator 要素を生成する関数。インデックス（0からsize-1まで）を引数として受け取り、初期化する値を返します。
 	 * @return このインスタンス自体を返します。
 	 */
-	public IntegerRingBuffer setAll(final IntUnaryOperator generator) {
+	public IntRingBuffer setAll(final IntUnaryOperator generator) {
 		head = 0;
 		size = capacity;
 		Arrays.setAll(buf, generator);
@@ -230,7 +230,7 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 * @param e バッファの全ての要素を埋める値
 	 * @return このインスタンス自体を返します。
 	 */
-	public IntegerRingBuffer fill(final int e) {
+	public IntRingBuffer fill(final int e) {
 		head = 0;
 		size = capacity;
 		Arrays.fill(buf, e);
@@ -242,7 +242,7 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 *
 	 * @return このインスタンス
 	 */
-	public IntegerRingBuffer clear() {
+	public IntRingBuffer clear() {
 		head = size = 0;
 		return this;
 	}
@@ -252,9 +252,9 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 *
 	 * @return クローンされたRingBufferインスタンス
 	 */
-	public IntegerRingBuffer clone() {
+	public IntRingBuffer clone() {
 		try {
-			IntegerRingBuffer rb = (IntegerRingBuffer) super.clone();
+			IntRingBuffer rb = (IntRingBuffer) super.clone();
 			rb.buf = Arrays.copyOf(this.buf, this.capacity);
 			return rb;
 		} catch (CloneNotSupportedException e) {
@@ -271,7 +271,7 @@ public final class IntegerRingBuffer implements Iterable<Integer>, Cloneable {
 	 */
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof IntegerRingBuffer other)) return false;
+		if (!(o instanceof IntRingBuffer other)) return false;
 		return size == other.size && IntStream.range(0, size)
 				.allMatch(i -> buf[physicalIndex(i)] == other.buf[other.physicalIndex(i)]);
 	}

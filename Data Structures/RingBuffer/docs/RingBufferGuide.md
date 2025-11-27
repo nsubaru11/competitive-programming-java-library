@@ -1,8 +1,8 @@
-# RingBuffer / IntegerRingBuffer / LongRingBuffer 利用ガイド
+# RingBuffer / IntRingBuffer / LongRingBuffer 利用ガイド
 
 ## 概要
 
-`RingBuffer`、`IntegerRingBuffer`、`LongRingBuffer`は、競技プログラミングでの利用に特化して設計された、固定長のリングバッファです。
+`RingBuffer`、`IntRingBuffer`、`LongRingBuffer`は、競技プログラミングでの利用に特化して設計された、固定長のリングバッファです。
 ジェネリクス版、およびプリミティブ型（`int`, `long`）に特化した実装を提供し、パフォーマンスを重視した設計となっています。
 
 ## 特徴
@@ -10,7 +10,7 @@
 - **容量の自動正規化**: コンストラクタに指定された容量（`capacity`）は、内部的に最も近い2のべき乗の値に自動的に正規化されます。
 - **高速なインデックス計算**: 容量を2のべき乗に保つことで、剰余演算子（`%`）の代わりに高速なビット演算子（`&`
 	）を用いて配列のインデックスを計算します。これにより、要素の追加や取得処理が高速化されています。
-- **プリミティブ型への特化**: `IntegerRingBuffer`と`LongRingBuffer`は、それぞれ`int`型と`long`
+- **プリミティブ型への特化**: `IntRingBuffer`と`LongRingBuffer`は、それぞれ`int`型と`long`
 	型に特化しています。これにより、ジェネリクス版で発生するボクシング・アンボクシングのオーバーヘッドを回避し、さらなるパフォーマンス向上を実現しています。
 - **可読性のためのStream API**: `contains`や`toString`など、全要素のスキャンが必要な`O(N)`
 	の計算量を持つメソッドでは、パフォーマンスよりも可読性を重視し、Stream APIを意図的に採用しています。
@@ -21,7 +21,7 @@
 
 ## 主な機能（メソッド一覧）
 
-3つのクラスはほぼ共通のAPIを持っています。以下は`IntegerRingBuffer`を例としたメソッド一覧です。ジェネリクス版では型引数
+3つのクラスはほぼ共通のAPIを持っています。以下は`IntRingBuffer`を例としたメソッド一覧です。ジェネリクス版では型引数
 `T`、`long`版では`long`が使われます。
 
 ### 1. 要素の追加・削除
@@ -43,27 +43,27 @@
 
 ### 3. 更新・操作
 
-| メソッド                | 戻り値の型               | 説明                  | 計算量  |
-|:--------------------|:--------------------|:--------------------|:----:|
-| `set(index, e)`     | `IntegerRingBuffer` | 指定インデックスの要素を上書きします。 | O(1) |
-| `setLength(newLen)` | `IntegerRingBuffer` | バッファの長さを変更します。      | O(L) |
-| `clear()`           | `IntegerRingBuffer` | バッファを空にします。         | O(1) |
-| `fill(e)`           | `IntegerRingBuffer` | 全ての要素を指定値で埋めます。     | O(C) |
-| `setAll(generator)` | `IntegerRingBuffer` | 関数を用いて全ての要素を初期化します。 | O(C) |
+| メソッド                | 戻り値の型           | 説明                  | 計算量  |
+|:--------------------|:----------------|:--------------------|:----:|
+| `set(index, e)`     | `IntRingBuffer` | 指定インデックスの要素を上書きします。 | O(1) |
+| `setLength(newLen)` | `IntRingBuffer` | バッファの長さを変更します。      | O(L) |
+| `clear()`           | `IntRingBuffer` | バッファを空にします。         | O(1) |
+| `fill(e)`           | `IntRingBuffer` | 全ての要素を指定値で埋めます。     | O(C) |
+| `setAll(generator)` | `IntRingBuffer` | 関数を用いて全ての要素を初期化します。 | O(C) |
 
 *L: 変更後の長さと現在の長さの差, C: 容量*
 
 ## 利用例
 
-`IntegerRingBuffer`を使って、いくつかの整数を格納し、先頭から取り出す例です。
+`IntRingBuffer`を使って、いくつかの整数を格納し、先頭から取り出す例です。
 
 ```java
-import competitive.programming.java.library.DataStructures.RingBuffer.src.IntegerRingBuffer;
+import competitive.programming.java.library.DataStructures.RingBuffer.src.IntRingBuffer;
 
 public class Main {
     public static void main(String[] args) {
         // 容量8で作成（最も近い2のべき乗である8に正規化される）
-        IntegerRingBuffer buffer = new IntegerRingBuffer(8);
+        IntRingBuffer buffer = new IntRingBuffer(8);
 
         // 末尾に要素を追加
         buffer.addLast(10); // [10]
