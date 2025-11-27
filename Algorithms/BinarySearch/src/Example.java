@@ -1,9 +1,9 @@
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * BinarySearchとArrayBinarySearchの使用例とテストケース
  */
-public class Example {
+public final class Example {
 
 	public static void main(String[] args) {
 		// 両方のBinarySearchクラスの機能をテスト
