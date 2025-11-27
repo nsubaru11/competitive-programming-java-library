@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Kruskal法を用いた全域木（MST）問題のソルバー。
@@ -8,7 +6,7 @@ import java.util.PriorityQueue;
  * 時間計算量: O(|E|log|E|)（Eは辺の数）
  * 空間計算量: O(|V| + |E|)
  */
-public class Kruskal {
+public final class Kruskal {
 	private final int v;
 	private final UnionFind uf;
 	private final PriorityQueue<Edge> edges;
@@ -22,7 +20,7 @@ public class Kruskal {
 	public Kruskal(final int v, final boolean isMinimum) {
 		this.v = v;
 		uf = new UnionFind(v);
-		Comparator<Edge> comparator = isMinimum
+		final Comparator<Edge> comparator = isMinimum
 				? Comparator.comparingLong(Edge::cost)
 				: Comparator.comparingLong(Edge::cost).reversed();
 		edges = new PriorityQueue<>(comparator);

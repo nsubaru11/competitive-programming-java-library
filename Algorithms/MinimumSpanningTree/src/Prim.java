@@ -6,7 +6,7 @@ import java.util.*;
  * 時間計算量: O(|E|log|V|)
  * 空間計算量: O(|V| + |E|)
  */
-public class Prim {
+public final class Prim {
 	private final int v;
 	private final boolean isMinimum;
 	private final List<List<Edge>> edges;
@@ -58,25 +58,23 @@ public class Prim {
 		int start = 0;
 		long ans = 0;
 		int size = 0;
-		BitSet visited = new BitSet(v);
-		Comparator<Edge> comparator = isMinimum
+		final BitSet visited = new BitSet(v);
+		final Comparator<Edge> comparator = isMinimum
 				? Comparator.comparingLong(Edge::cost)
 				: Comparator.comparingLong(Edge::cost).reversed();
-		PriorityQueue<Edge> heap = new PriorityQueue<>(comparator);
+		final PriorityQueue<Edge> heap = new PriorityQueue<>(comparator);
 		visited.set(start);
 		size++;
 		heap.addAll(edges.get(start));
 		while (!heap.isEmpty() && size < v) {
-			Edge e = heap.poll();
-			int v = e.v();
+			final Edge e = heap.poll();
+			final int v = e.v();
 			if (visited.get(v)) continue;
 			visited.set(v);
 			size++;
 			ans += e.cost();
-			for (Edge edge : edges.get(v)) {
-				if (!visited.get(edge.v())) {
-					heap.add(edge);
-				}
+			for (final Edge edge : edges.get(v)) {
+				if (!visited.get(edge.v())) heap.add(edge);
 			}
 		}
 		return size == v ? ans : -1;
