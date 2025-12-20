@@ -20,18 +20,15 @@ public final class FactorialTable {
 		for (int i = 1; i <= n; i++) {
 			fact[i] = (int) ((long) i * fact[i - 1] % mod);
 		}
-		invFact[n] = modPow(fact[n], mod - 2);
+		int a = fact[n], b = mod - 2;
+		int invFactN = 1;
+		for (; b > 0; a = (int) ((long) a * a % mod), b >>= 1) {
+			if ((b & 1) == 1) invFactN = (int) ((long) invFactN * a % mod);
+		}
+		invFact[n] = invFactN;
 		for (int i = n; i > 0; i--) {
 			invFact[i - 1] = (int) ((long) invFact[i] * i % mod);
 		}
-	}
-
-	private int modPow(int a, int b) {
-		int ans = 1;
-		for (; b > 0; a = (int) ((long) a * a % mod), b >>= 1) {
-			if ((b & 1) == 1) ans = (int) ((long) ans * a % mod);
-		}
-		return ans;
 	}
 
 	public int fact(final int n) {
