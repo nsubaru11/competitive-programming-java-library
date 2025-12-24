@@ -12,13 +12,13 @@ import static java.util.Arrays.copyOf;
  * エラトステネスの篩を用いて最大Integer.MAXVALUEの値
  */
 @SuppressWarnings("unused")
-public final class PrecomputedPrimes implements Iterable<Long> {
+public final class PrimeTable implements Iterable<Long> {
 	private final long MAX_VALUE;
 	private final long[] oddBits;
 	private long[] primes;
 	private int cnt;
 
-	public PrecomputedPrimes(final long n) {
+	public PrimeTable(final long n) {
 		cnt = 0;
 		MAX_VALUE = n;
 		oddBits = new long[(int) (((n >>> 1) + 63) >>> 6) + 1];
