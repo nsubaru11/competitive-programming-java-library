@@ -8,7 +8,6 @@
 @SuppressWarnings("unused")
 public final class ArrayBinarySearch {
 
-	// コンストラクタをprivateにしてインスタンス化を防止
 	private ArrayBinarySearch() {
 		throw new UnsupportedOperationException("このクラスはインスタンス化できません");
 	}
