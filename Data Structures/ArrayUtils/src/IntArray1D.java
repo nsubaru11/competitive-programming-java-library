@@ -3,22 +3,20 @@ import java.util.function.*;
 
 
 /**
- * 不変整数配列 + 高速回転操作
+ * 不変長整数配列 + 高速回転操作
  */
 @SuppressWarnings("unused")
 public final class IntArray1D implements Iterable<Integer> {
 	public final long sum;
-	public final int size, capacity, mask, max, min;
+	public final int size, max, min;
 	private final int[] arr;
 	private final long[] ps;
 	private int offset = 0;
 
 	public IntArray1D(final int n, final IntUnaryOperator init) {
 		size = n;
-		capacity = n == 1 ? 1 : Integer.highestOneBit((n - 1) << 1);
-		mask = capacity - 1;
-		arr = new int[capacity];
-		ps = new long[capacity + 1];
+		arr = new int[2 * n];
+		ps = new long[2 * n + 1];
 		int v = init.applyAsInt(0);
 		arr[0] = v;
 		int mx, mn;
@@ -33,20 +31,18 @@ public final class IntArray1D implements Iterable<Integer> {
 		sum = s;
 		max = mx;
 		min = mn;
-		System.arraycopy(arr, 0, arr, n, capacity - n);
-		for (int i = 1; i < capacity; i++) {
-			ps[i] = ps[i - 1] + arr[i - 1];
+		System.arraycopy(arr, 0, arr, n, n);
+		for (int i = 0; i < 2 * n; i++) {
+			ps[i + 1] = ps[i] + arr[i];
 		}
 	}
 
 	public int get(final int i) {
-		return arr[(i + offset) & mask];
+		return arr[offset + i];
 	}
 
 	public long sum(final int l, final int r) {
-		final int pl = (l + offset) & mask;
-		final int pr = (r + offset) & mask;
-		return pr >= pl ? ps[pr + 1] - ps[pl] : ps[size] - ps[pl] + ps[pr + 1];
+		return ps[offset + r] - ps[offset + l - 1];
 	}
 
 	public long sum() {
@@ -94,9 +90,9 @@ public final class IntArray1D implements Iterable<Integer> {
 	 */
 	public int localMaxCnt() {
 		if (size < 3) return 0;
-		int cnt = 0, l = arr[offset], m = arr[(offset + 1) & mask];
+		int cnt = 0, l = arr[offset], m = arr[offset + 1];
 		for (int i = 2; i < size; i++) {
-			final int r = arr[(i + offset) & mask];
+			final int r = arr[i + offset];
 			if (l < m && m > r) cnt++;
 			l = m;
 			m = r;
@@ -111,9 +107,9 @@ public final class IntArray1D implements Iterable<Integer> {
 	 */
 	public int localMinCnt() {
 		if (size < 3) return 0;
-		int cnt = 0, l = arr[offset], m = arr[(offset + 1) & mask];
+		int cnt = 0, l = arr[offset], m = arr[offset + 1];
 		for (int i = 2; i < size; i++) {
-			final int r = arr[(i + offset) & mask];
+			final int r = arr[offset + i];
 			if (l > m && m < r) cnt++;
 			l = m;
 			m = r;
@@ -130,7 +126,7 @@ public final class IntArray1D implements Iterable<Integer> {
 		if (size == 1) return 1;
 		int len = 1, cnt = 1, prev = arr[offset];
 		for (int i = 1; i < size; i++) {
-			final int cur = arr[(i + offset) & mask];
+			final int cur = arr[offset + i];
 			if (prev == cur) {
 				if (len < ++cnt) len = cnt;
 			} else {
@@ -150,10 +146,10 @@ public final class IntArray1D implements Iterable<Integer> {
 	public long maxWin(final int k) {
 		if (k == size) return sum;
 		long win = 0;
-		for (int i = 0; i < k; i++) win += arr[(i + offset) & mask];
+		for (int i = 0; i < k; i++) win += arr[offset + i];
 		long res = win;
 		for (int i = k; i < size; i++) {
-			win += arr[(i + offset) & mask] - arr[(i - k + offset) & mask];
+			win += arr[offset + i] - arr[offset + i - k];
 			if (win > res) res = win;
 		}
 		return res;
@@ -168,10 +164,10 @@ public final class IntArray1D implements Iterable<Integer> {
 	public long minWin(final int k) {
 		if (k == size) return sum;
 		long win = 0;
-		for (int i = 0; i < k; i++) win += arr[(i + offset) & mask];
+		for (int i = 0; i < k; i++) win += arr[offset + i];
 		long res = win;
 		for (int i = k; i < size; i++) {
-			win += arr[(i + offset) & mask] - arr[(i - k + offset) & mask];
+			win += arr[offset + i] - arr[offset + i - k];
 			if (win < res) res = win;
 		}
 		return res;
@@ -188,15 +184,15 @@ public final class IntArray1D implements Iterable<Integer> {
 		if (size < k) return -1;
 		final ArrayDeque<Integer> dq = new ArrayDeque<>(k);
 		for (int i = 0; i < k; i++) {
-			final int v = arr[(i + offset) & mask];
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] < v) dq.pollLast();
+			final int v = arr[offset + i];
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] < v) dq.pollLast();
 			dq.addLast(i);
 		}
 		int len = 1, maxIdx = dq.peekFirst();
 		for (int i = k; i < size; i++) {
 			if (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();
-			final int v = arr[(i + offset) & mask];
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] < v) dq.pollLast();
+			final int v = arr[offset + i];
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] < v) dq.pollLast();
 			dq.addLast(i);
 			if (dq.peek() == maxIdx) len++;
 			else {
@@ -218,15 +214,15 @@ public final class IntArray1D implements Iterable<Integer> {
 		if (size < k) return -1;
 		final ArrayDeque<Integer> dq = new ArrayDeque<>(k);
 		for (int i = 0; i < k; i++) {
-			final int v = arr[(i + offset) & mask];
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] > v) dq.pollLast();
+			final int v = arr[offset + i];
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] > v) dq.pollLast();
 			dq.addLast(i);
 		}
 		int len = 1, minIdx = dq.peekFirst();
 		for (int i = k; i < size; i++) {
-			final int v = arr[(i + offset) & mask];
+			final int v = arr[offset + i];
 			if (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] > v) dq.pollLast();
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] > v) dq.pollLast();
 			dq.addLast(i);
 			if (dq.peek() == minIdx) len++;
 			else {
@@ -247,7 +243,7 @@ public final class IntArray1D implements Iterable<Integer> {
 		final int[] dp = new int[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final int v = arr[(i + offset) & mask];
+			final int v = arr[offset + i];
 			int pos = bs(dp, len, v);
 			if (pos < 0) {
 				pos = ~pos;
@@ -268,7 +264,7 @@ public final class IntArray1D implements Iterable<Integer> {
 		final int[] dp = new int[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final int v = arr[(i + offset) & mask];
+			final int v = arr[offset + i];
 			int pos = bsUpper(dp, len, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
@@ -287,7 +283,7 @@ public final class IntArray1D implements Iterable<Integer> {
 		final int[] dp = new int[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final int v = -arr[(i + offset) & mask];
+			final int v = -arr[offset + i];
 			int pos = bs(dp, len, v);
 			if (pos < 0) {
 				pos = ~pos;
@@ -308,7 +304,7 @@ public final class IntArray1D implements Iterable<Integer> {
 		final int[] dp = new int[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final int v = -arr[(i + offset) & mask];
+			final int v = -arr[offset + i];
 			int pos = bsUpper(dp, len, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
@@ -318,7 +314,7 @@ public final class IntArray1D implements Iterable<Integer> {
 	}
 
 	/**
-	 * 任意個選択の部分和判定（実測最適化版）
+	 * 任意個選択の部分和判定
 	 *
 	 * @param target 目標和
 	 * @return 部分集合の和が target になるか
@@ -328,25 +324,11 @@ public final class IntArray1D implements Iterable<Integer> {
 		if (size == 1) return target == arr[0] || target == 0;
 		if (target == 0 || target == sum) return true;
 		if (target < 0 || target > sum) return false;
-		if (size <= 15) return subsetMitm(target);
-		if (size <= 20) {
-			if (target <= 1_000_000_000 && 0 <= min && target * 2 < sum) {
-				return subsetBit((int) target);
-			}
-			return subsetMitm(target);
-		}
-		if (size <= 25) {
-			if (target <= 1_000_000_000 && 0 <= min && target * 5 < sum * 3) {
-				return subsetBit((int) target);
-			}
-			return subsetMitm(target);
-		}
-		if (target <= 1_000_000_000 && 0 <= min) return subsetBit((int) target);
 		return subsetMitm(target);
 	}
 
 	/**
-	 * ちょうど k 個選択の部分和判定（回転考慮なし）
+	 * ちょうど k 個選択の部分和判定
 	 *
 	 * @param target 目標和
 	 * @param k      選択個数
@@ -354,26 +336,7 @@ public final class IntArray1D implements Iterable<Integer> {
 	 */
 	public boolean subset(final long target, final int k) {
 		if (size == 1) return target == arr[0];
-		if (size <= 30 && (1 << size) < size * k) {
-			return subsetRec(target, k, size - 1);
-		} else {
-			return subsetBit((int) target, k);
-		}
-	}
-
-	private boolean subsetBit(final int t) {
-		final BitSet bs = new BitSet(t + 1);
-		bs.set(0);
-		if (t >= arr[0]) bs.set(arr[0]);
-		for (int i = 1; i < size; i++) {
-			final int v = arr[i];
-			if (t < v) continue;
-			for (int j = bs.previousSetBit(t - v); j >= 0; j = bs.previousSetBit(j - 1)) {
-				bs.set(j + v);
-			}
-			if (bs.get(t)) return true;
-		}
-		return false;
+		return subsetRec(target, k, size - 1);
 	}
 
 	private boolean subsetMitm(final long t) {
@@ -404,25 +367,6 @@ public final class IntArray1D implements Iterable<Integer> {
 		if (ps[idx + 1] < target) return false;
 		if (subsetRec(target - arr[idx], k - 1, idx - 1)) return true;
 		return subsetRec(target, k, idx - 1);
-	}
-
-	public boolean subsetBit(final int target, final int k) {
-		final int len = target * k;
-		final BitSet bs = new BitSet(len + 1);
-		if (target >= arr[0]) bs.set(arr[0]);
-		for (int i = 1; i < size; i++) {
-			final int v = arr[i];
-			if (target < v) continue;
-			if (v == target) return true;
-			if (len < v + target) continue;
-			for (int b = bs.previousSetBit(len - v - target); b >= 0; b = bs.previousSetBit(b - 1)) {
-				int r = b % size;
-				if ((r + v <= target && r != 0) || (r == 0 && v == 0)) bs.set(b + target + v);
-			}
-			bs.set(v);
-			if (bs.get(len)) return true;
-		}
-		return false;
 	}
 
 	private int bs(final int[] a, final int len, final int t) {
@@ -459,7 +403,7 @@ public final class IntArray1D implements Iterable<Integer> {
 			}
 
 			public int nextInt() {
-				return get(idx++);
+				return arr[offset + idx++];
 			}
 		};
 	}

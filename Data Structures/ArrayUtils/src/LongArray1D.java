@@ -8,23 +8,21 @@ import java.util.function.*;
 @SuppressWarnings("unused")
 public final class LongArray1D implements Iterable<Long> {
 	public final long sum, max, min;
-	public final int size, capacity, mask;
-	private final long[] arr;
-	private final long[] ps;
+	public final int size;
+	private final long[] arr, ps;
 	private int offset = 0;
 
 	public LongArray1D(final int n, final IntToLongFunction init) {
 		size = n;
-		capacity = n == 1 ? 1 : Integer.highestOneBit((n - 1) << 1);
-		mask = capacity - 1;
-		arr = new long[capacity];
-		ps = new long[capacity + 1];
-		long v = init.applyAsLong(0);
-		arr[0] = v;
-		long mx, mn;
-		long s = mx = mn = v;
+		arr = new long[2 * n];
+		ps = new long[2 * n + 1];
+		long v0 = init.applyAsLong(0);
+		arr[0] = v0;
+		long s = v0;
+		long mx = v0;
+		long mn = v0;
 		for (int i = 1; i < n; i++) {
-			v = init.applyAsLong(i);
+			long v = init.applyAsLong(i);
 			arr[i] = v;
 			s += v;
 			if (v > mx) mx = v;
@@ -33,20 +31,18 @@ public final class LongArray1D implements Iterable<Long> {
 		sum = s;
 		max = mx;
 		min = mn;
-		System.arraycopy(arr, 0, arr, n, capacity - n);
-		for (int i = 1; i < capacity; i++) {
-			ps[i] = ps[i - 1] + arr[i - 1];
+		System.arraycopy(arr, 0, arr, n, n);
+		for (int i = 0; i < 2 * n; i++) {
+			ps[i + 1] = ps[i] + arr[i];
 		}
 	}
 
 	public long get(final int i) {
-		return arr[(i + offset) & mask];
+		return arr[offset + i];
 	}
 
 	public long sum(final int l, final int r) {
-		final int pl = (l + offset) & mask;
-		final int pr = (r + offset) & mask;
-		return pr >= pl ? ps[pr + 1] - ps[pl] : ps[size] - ps[pl] + ps[pr + 1];
+		return ps[offset + r] - ps[offset + l - 1];
 	}
 
 	public long sum() {
@@ -95,9 +91,9 @@ public final class LongArray1D implements Iterable<Long> {
 	public int localMaxCnt() {
 		if (size < 3) return 0;
 		int cnt = 0;
-		long l = arr[offset], m = arr[(offset + 1) & mask];
+		long l = arr[offset], m = arr[offset + 1];
 		for (int i = 2; i < size; i++) {
-			final long r = arr[(i + offset) & mask];
+			final long r = arr[offset + i];
 			if (l < m && m > r) cnt++;
 			l = m;
 			m = r;
@@ -113,9 +109,9 @@ public final class LongArray1D implements Iterable<Long> {
 	public int localMinCnt() {
 		if (size < 3) return 0;
 		int cnt = 0;
-		long l = arr[offset], m = arr[(offset + 1) & mask];
+		long l = arr[offset], m = arr[offset + 1];
 		for (int i = 2; i < size; i++) {
-			final long r = arr[(i + offset) & mask];
+			final long r = arr[offset + i];
 			if (l > m && m < r) cnt++;
 			l = m;
 			m = r;
@@ -133,7 +129,7 @@ public final class LongArray1D implements Iterable<Long> {
 		int len = 1, cnt = 1;
 		long prev = arr[offset];
 		for (int i = 1; i < size; i++) {
-			final long cur = arr[(i + offset) & mask];
+			final long cur = arr[offset + i];
 			if (prev == cur) {
 				if (len < ++cnt) len = cnt;
 			} else {
@@ -153,10 +149,10 @@ public final class LongArray1D implements Iterable<Long> {
 	public long maxWin(final int k) {
 		if (k == size) return sum;
 		long win = 0;
-		for (int i = 0; i < k; i++) win += arr[(i + offset) & mask];
+		for (int i = 0; i < k; i++) win += arr[offset + i];
 		long res = win;
 		for (int i = k; i < size; i++) {
-			win += arr[(i + offset) & mask] - arr[(i - k + offset) & mask];
+			win += arr[offset + i] - arr[offset + i - k];
 			if (win > res) res = win;
 		}
 		return res;
@@ -171,10 +167,10 @@ public final class LongArray1D implements Iterable<Long> {
 	public long minWin(final int k) {
 		if (k == size) return sum;
 		long win = 0;
-		for (int i = 0; i < k; i++) win += arr[(i + offset) & mask];
+		for (int i = 0; i < k; i++) win += arr[offset + i];
 		long res = win;
 		for (int i = k; i < size; i++) {
-			win += arr[(i + offset) & mask] - arr[(i - k + offset) & mask];
+			win += arr[offset + i] - arr[offset + i - k];
 			if (win < res) res = win;
 		}
 		return res;
@@ -191,15 +187,15 @@ public final class LongArray1D implements Iterable<Long> {
 		if (size < k) return -1;
 		final ArrayDeque<Integer> dq = new ArrayDeque<>(k);
 		for (int i = 0; i < k; i++) {
-			final long v = arr[(i + offset) & mask];
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] < v) dq.pollLast();
+			final long v = arr[offset + i];
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] < v) dq.pollLast();
 			dq.addLast(i);
 		}
 		int len = 1, maxIdx = dq.peekFirst();
 		for (int i = k; i < size; i++) {
 			if (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();
-			final long v = arr[(i + offset) & mask];
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] < v) dq.pollLast();
+			final long v = arr[offset + i];
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] < v) dq.pollLast();
 			dq.addLast(i);
 			if (dq.peek() == maxIdx) len++;
 			else {
@@ -221,15 +217,15 @@ public final class LongArray1D implements Iterable<Long> {
 		if (size < k) return -1;
 		final ArrayDeque<Integer> dq = new ArrayDeque<>(k);
 		for (int i = 0; i < k; i++) {
-			final long v = arr[(i + offset) & mask];
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] > v) dq.pollLast();
+			final long v = arr[offset + i];
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] > v) dq.pollLast();
 			dq.addLast(i);
 		}
 		int len = 1, minIdx = dq.peekFirst();
 		for (int i = k; i < size; i++) {
-			final long v = arr[(i + offset) & mask];
+			final long v = arr[offset + i];
 			if (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();
-			while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] > v) dq.pollLast();
+			while (!dq.isEmpty() && arr[offset + dq.peekLast()] > v) dq.pollLast();
 			dq.addLast(i);
 			if (dq.peek() == minIdx) len++;
 			else {
@@ -250,7 +246,7 @@ public final class LongArray1D implements Iterable<Long> {
 		final long[] dp = new long[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final long v = arr[(i + offset) & mask];
+			final long v = arr[offset + i];
 			int pos = bs(dp, len, v);
 			if (pos < 0) {
 				pos = ~pos;
@@ -271,7 +267,7 @@ public final class LongArray1D implements Iterable<Long> {
 		final long[] dp = new long[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final long v = arr[(i + offset) & mask];
+			final long v = arr[offset + i];
 			int pos = bsUpper(dp, len, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
@@ -290,7 +286,7 @@ public final class LongArray1D implements Iterable<Long> {
 		final long[] dp = new long[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final long v = -arr[(i + offset) & mask];
+			final long v = -arr[offset + i];
 			int pos = bs(dp, len, v);
 			if (pos < 0) {
 				pos = ~pos;
@@ -311,7 +307,7 @@ public final class LongArray1D implements Iterable<Long> {
 		final long[] dp = new long[size];
 		int len = 0;
 		for (int i = 0; i < size; i++) {
-			final long v = -arr[(i + offset) & mask];
+			final long v = -arr[offset + i];
 			int pos = bsUpper(dp, len, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
@@ -321,7 +317,7 @@ public final class LongArray1D implements Iterable<Long> {
 	}
 
 	/**
-	 * 任意個選択の部分和判定（実測最適化版）
+	 * 任意個選択の部分和判定
 	 *
 	 * @param target 目標和
 	 * @return 部分集合の和が target になるか
@@ -335,7 +331,7 @@ public final class LongArray1D implements Iterable<Long> {
 	}
 
 	/**
-	 * ちょうど k 個選択の部分和判定（回転考慮なし）
+	 * ちょうど k 個選択の部分和判定
 	 *
 	 * @param target 目標和
 	 * @param k      選択個数
@@ -410,7 +406,7 @@ public final class LongArray1D implements Iterable<Long> {
 			}
 
 			public long nextLong() {
-				return get(idx++);
+				return arr[offset + idx++];
 			}
 		};
 	}
