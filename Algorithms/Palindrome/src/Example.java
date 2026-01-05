@@ -41,26 +41,26 @@ public class Example {
 
 		out.println("\n--- 回文判定 ---");
 		for (String s : testStrings) {
-			out.println(s + " は回文か: " + PalindromeUtils.isPalindrome(s));
+			out.println(s + " は回文か: " + PalindromeNative.isPalindrome(s));
 		}
 
 		out.println("\n--- 範囲指定の回文判定 ---");
 		String rangeTest = "levelupracecar";
 		out.println("文字列: " + rangeTest);
-		out.println("範囲[0, 5)は回文か: " + PalindromeUtils.isPalindromeRange(rangeTest, 0, 5)); // "level"
-		out.println("範囲[7, 14)は回文か: " + PalindromeUtils.isPalindromeRange(rangeTest, 7, 14)); // "racecar"
+		out.println("範囲[0, 5)は回文か: " + PalindromeNative.isPalindromeRange(rangeTest, 0, 5)); // "level"
+		out.println("範囲[7, 14)は回文か: " + PalindromeNative.isPalindromeRange(rangeTest, 7, 14)); // "racecar"
 
 		out.println("\n--- 最長回文部分文字列 ---");
 		String longText = "babad";
 		out.println("文字列: " + longText);
-		out.println("最長回文部分文字列: " + PalindromeUtils.findLongestPalindrome(longText));
+		out.println("最長回文部分文字列: " + PalindromeNative.findLongestPalindrome(longText));
 
 		out.println("\n--- 回文への変換 ---");
 		String[] conversionTests = {"abc", "abb", "cbabc"};
 		for (String s : conversionTests) {
-			String palindrome = PalindromeUtils.makePalindrome(s);
+			String palindrome = PalindromeNative.makePalindrome(s);
 			out.println(s + " -> " + palindrome + " (" +
-					(PalindromeUtils.isPalindrome(palindrome) ? "回文" : "非回文") + ")");
+					(PalindromeNative.isPalindrome(palindrome) ? "回文" : "非回文") + ")");
 		}
 	}
 }
