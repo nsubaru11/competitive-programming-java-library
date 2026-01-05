@@ -206,7 +206,7 @@ public final class BinarySearch {
 	 */
 	private static void validateRange(final long l, final long r, final CompareFunction comparator) {
 		if (comparator == null) throw new BSException(BSException.ErrorType.NULL_COMPARATOR);
-		if (l >= r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
+		if (l > r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 	}
 
 	/* -------------------------- 比較用関数型インターフェース CompareFunction -------------------------- */

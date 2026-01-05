@@ -621,7 +621,7 @@ public final class ArrayBinarySearch {
 	private static void validateRange(final int[] arr, final int l, final int r) {
 		if (arr == null) throw new BSException(BSException.ErrorType.NULL_ARRAY);
 		if (l < 0 || r > arr.length) throw new BSException(BSException.ErrorType.INVALID_RANGE, l, r, arr.length);
-		if (l >= r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
+		if (l > r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 	}
 
 	/**
@@ -635,7 +635,7 @@ public final class ArrayBinarySearch {
 	private static void validateRange(final long[] arr, final int l, final int r) {
 		if (arr == null) throw new BSException(BSException.ErrorType.NULL_ARRAY);
 		if (l < 0 || r > arr.length) throw new BSException(BSException.ErrorType.INVALID_RANGE, l, r, arr.length);
-		if (l >= r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
+		if (l > r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 	}
 
 	/**
@@ -649,7 +649,7 @@ public final class ArrayBinarySearch {
 	private static void validateRange(final double[] arr, final int l, final int r) {
 		if (arr == null) throw new BSException(BSException.ErrorType.NULL_ARRAY);
 		if (l < 0 || r > arr.length) throw new BSException(BSException.ErrorType.INVALID_RANGE, l, r, arr.length);
-		if (l >= r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
+		if (l > r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 	}
 
 	/**
@@ -665,7 +665,7 @@ public final class ArrayBinarySearch {
 		if (arr == null) throw new BSException(BSException.ErrorType.NULL_ARRAY);
 		if (t == null) throw new BSException(BSException.ErrorType.NULL_TARGET);
 		if (l < 0 || r > arr.length) throw new BSException(BSException.ErrorType.INVALID_RANGE, l, r, arr.length);
-		if (l >= r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
+		if (l > r) throw new BSException(BSException.ErrorType.INVALID_BOUNDS, l, r);
 	}
 
 	/* -------------------------- 二分探索専用例外クラス BSException -------------------------- */
