@@ -4,7 +4,6 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.function.*;
 
 import static java.lang.Math.*;
@@ -13,11 +12,11 @@ import static java.util.Arrays.*;
 // https://judge.yosupo.jp/problem/static_range_sum
 public final class Check1 {
 
-	// region initialization
-	// ------------------------ 定数 ------------------------
+	// region < Constants & Globals >
 	private static final boolean DEBUG;
 	private static final int MOD;
-	private static final int[] dij;
+	private static final int[] di;
+	private static final int[] dj;
 	private static final FastScanner sc;
 	private static final FastPrinter out;
 
@@ -25,17 +24,17 @@ public final class Check1 {
 		DEBUG = true;
 		MOD = 998244353;
 		// MOD = 1_000_000_007;
-		dij = new int[]{-1, -1, -1, 0, 0, 1, 1, 1, -1, 0, 1, -1, 1, -1, 0, 1};
+		di = new int[]{0, -1, 0, 1, -1, -1, 1, 1};
+		dj = new int[]{-1, 0, 1, 0, -1, 1, 1, -1};
 		sc = new FastScanner(System.in);
 		out = new FastPrinter(System.out);
 	}
 	// endregion
 
-	// ------------------------ メインロジック ------------------------
 	private static void solve() {
 		int n = sc.nextInt();
 		int q = sc.nextInt();
-		LongArray1D s = new LongArray1D(n, i -> sc.nextInt());
+		IntArray1D s = new IntArray1D(n, i -> sc.nextInt());
 		while (q-- > 0) {
 			int l = sc.nextInt();
 			int r = sc.nextInt();
@@ -43,51 +42,27 @@ public final class Check1 {
 		}
 	}
 
-	// region main() and debug() methods
-	// ------------------------ main() 関数 ------------------------
-	public static void main(final String[] args) {
-		try {
-			solve();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		} finally {
-			sc.close();
-			out.close();
-		}
-	}
-
-	// ------------------------ デバッグ用 ------------------------
-	private static void debug(final Object... args) {
-		if (DEBUG) {
-			out.flush();
-			System.err.println(deepToString(args));
-		}
-	}
-	// endregion
-
 	/**
 	 * 不変長整数配列 + 高速回転操作
 	 */
 	@SuppressWarnings("unused")
-	private static final class LongArray1D implements Iterable<Long> {
-		public final long sum, max, min;
-		public final int size, capacity, mask;
-		private final long[] arr;
+	private static final class IntArray1D implements Iterable<Integer> {
+		public final long sum;
+		public final int size, max, min;
+		private final int[] arr;
 		private final long[] ps;
 		private int offset = 0;
 
-		public LongArray1D(final int n, final IntToLongFunction init) {
+		public IntArray1D(final int n, final IntUnaryOperator init) {
 			size = n;
-			capacity = n == 1 ? 1 : Integer.highestOneBit((n - 1) << 1);
-			mask = capacity - 1;
-			arr = new long[capacity];
-			ps = new long[capacity + 1];
-			long v = init.applyAsLong(0);
+			arr = new int[2 * n];
+			ps = new long[2 * n + 1];
+			int v = init.applyAsInt(0);
 			arr[0] = v;
-			long mx, mn;
+			int mx, mn;
 			long s = mx = mn = v;
 			for (int i = 1; i < n; i++) {
-				v = init.applyAsLong(i);
+				v = init.applyAsInt(i);
 				arr[i] = v;
 				s += v;
 				if (v > mx) mx = v;
@@ -96,31 +71,29 @@ public final class Check1 {
 			sum = s;
 			max = mx;
 			min = mn;
-			System.arraycopy(arr, 0, arr, n, capacity - n);
-			for (int i = 1; i < capacity; i++) {
-				ps[i] = ps[i - 1] + arr[i - 1];
+			System.arraycopy(arr, 0, arr, n, n);
+			for (int i = 0; i < 2 * n; i++) {
+				ps[i + 1] = ps[i] + arr[i];
 			}
 		}
 
-		public long get(final int i) {
-			return arr[(i + offset) & mask];
+		public int get(final int i) {
+			return arr[offset + i];
 		}
 
 		public long sum(final int l, final int r) {
-			final int pl = (l + offset) & mask;
-			final int pr = (r + offset) & mask;
-			return pr >= pl ? ps[pr + 1] - ps[pl] : ps[size] - ps[pl] + ps[pr + 1];
+			return ps[offset + r + 1] - ps[offset + l];
 		}
 
 		public long sum() {
 			return sum;
 		}
 
-		public long getMax() {
+		public int getMax() {
 			return max;
 		}
 
-		public long getMin() {
+		public int getMin() {
 			return min;
 		}
 
@@ -157,10 +130,9 @@ public final class Check1 {
 		 */
 		public int localMaxCnt() {
 			if (size < 3) return 0;
-			int cnt = 0;
-			long l = arr[offset], m = arr[(offset + 1) & mask];
+			int cnt = 0, l = arr[offset], m = arr[offset + 1];
 			for (int i = 2; i < size; i++) {
-				final long r = arr[(i + offset) & mask];
+				final int r = arr[i + offset];
 				if (l < m && m > r) cnt++;
 				l = m;
 				m = r;
@@ -175,10 +147,9 @@ public final class Check1 {
 		 */
 		public int localMinCnt() {
 			if (size < 3) return 0;
-			int cnt = 0;
-			long l = arr[offset], m = arr[(offset + 1) & mask];
+			int cnt = 0, l = arr[offset], m = arr[offset + 1];
 			for (int i = 2; i < size; i++) {
-				final long r = arr[(i + offset) & mask];
+				final int r = arr[offset + i];
 				if (l > m && m < r) cnt++;
 				l = m;
 				m = r;
@@ -193,10 +164,9 @@ public final class Check1 {
 		 */
 		public int runLen() {
 			if (size == 1) return 1;
-			int len = 1, cnt = 1;
-			long prev = arr[offset];
+			int len = 1, cnt = 1, prev = arr[offset];
 			for (int i = 1; i < size; i++) {
-				final long cur = arr[(i + offset) & mask];
+				final int cur = arr[offset + i];
 				if (prev == cur) {
 					if (len < ++cnt) len = cnt;
 				} else {
@@ -216,10 +186,10 @@ public final class Check1 {
 		public long maxWin(final int k) {
 			if (k == size) return sum;
 			long win = 0;
-			for (int i = 0; i < k; i++) win += arr[(i + offset) & mask];
+			for (int i = 0; i < k; i++) win += arr[offset + i];
 			long res = win;
 			for (int i = k; i < size; i++) {
-				win += arr[(i + offset) & mask] - arr[(i - k + offset) & mask];
+				win += arr[offset + i] - arr[offset + i - k];
 				if (win > res) res = win;
 			}
 			return res;
@@ -234,10 +204,10 @@ public final class Check1 {
 		public long minWin(final int k) {
 			if (k == size) return sum;
 			long win = 0;
-			for (int i = 0; i < k; i++) win += arr[(i + offset) & mask];
+			for (int i = 0; i < k; i++) win += arr[offset + i];
 			long res = win;
 			for (int i = k; i < size; i++) {
-				win += arr[(i + offset) & mask] - arr[(i - k + offset) & mask];
+				win += arr[offset + i] - arr[offset + i - k];
 				if (win < res) res = win;
 			}
 			return res;
@@ -254,15 +224,15 @@ public final class Check1 {
 			if (size < k) return -1;
 			final ArrayDeque<Integer> dq = new ArrayDeque<>(k);
 			for (int i = 0; i < k; i++) {
-				final long v = arr[(i + offset) & mask];
-				while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] < v) dq.pollLast();
+				final int v = arr[offset + i];
+				while (!dq.isEmpty() && arr[offset + dq.peekLast()] < v) dq.pollLast();
 				dq.addLast(i);
 			}
 			int len = 1, maxIdx = dq.peekFirst();
 			for (int i = k; i < size; i++) {
 				if (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();
-				final long v = arr[(i + offset) & mask];
-				while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] < v) dq.pollLast();
+				final int v = arr[offset + i];
+				while (!dq.isEmpty() && arr[offset + dq.peekLast()] < v) dq.pollLast();
 				dq.addLast(i);
 				if (dq.peek() == maxIdx) len++;
 				else {
@@ -284,15 +254,15 @@ public final class Check1 {
 			if (size < k) return -1;
 			final ArrayDeque<Integer> dq = new ArrayDeque<>(k);
 			for (int i = 0; i < k; i++) {
-				final long v = arr[(i + offset) & mask];
-				while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] > v) dq.pollLast();
+				final int v = arr[offset + i];
+				while (!dq.isEmpty() && arr[offset + dq.peekLast()] > v) dq.pollLast();
 				dq.addLast(i);
 			}
 			int len = 1, minIdx = dq.peekFirst();
 			for (int i = k; i < size; i++) {
-				final long v = arr[(i + offset) & mask];
+				final int v = arr[offset + i];
 				if (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();
-				while (!dq.isEmpty() && arr[(dq.peekLast() + offset) & mask] > v) dq.pollLast();
+				while (!dq.isEmpty() && arr[offset + dq.peekLast()] > v) dq.pollLast();
 				dq.addLast(i);
 				if (dq.peek() == minIdx) len++;
 				else {
@@ -310,10 +280,10 @@ public final class Check1 {
 		 */
 		public int lis() {
 			if (size <= 1) return size;
-			final long[] dp = new long[size];
+			final int[] dp = new int[size];
 			int len = 0;
 			for (int i = 0; i < size; i++) {
-				final long v = arr[(i + offset) & mask];
+				final int v = arr[offset + i];
 				int pos = bs(dp, len, v);
 				if (pos < 0) {
 					pos = ~pos;
@@ -331,10 +301,10 @@ public final class Check1 {
 		 */
 		public int lnds() {
 			if (size <= 1) return size;
-			final long[] dp = new long[size];
+			final int[] dp = new int[size];
 			int len = 0;
 			for (int i = 0; i < size; i++) {
-				final long v = arr[(i + offset) & mask];
+				final int v = arr[offset + i];
 				int pos = bsUpper(dp, len, v);
 				pos = pos < 0 ? ~pos : pos + 1;
 				dp[pos] = v;
@@ -350,10 +320,10 @@ public final class Check1 {
 		 */
 		public int lds() {
 			if (size <= 1) return size;
-			final long[] dp = new long[size];
+			final int[] dp = new int[size];
 			int len = 0;
 			for (int i = 0; i < size; i++) {
-				final long v = -arr[(i + offset) & mask];
+				final int v = -arr[offset + i];
 				int pos = bs(dp, len, v);
 				if (pos < 0) {
 					pos = ~pos;
@@ -371,10 +341,10 @@ public final class Check1 {
 		 */
 		public int lnis() {
 			if (size <= 1) return size;
-			final long[] dp = new long[size];
+			final int[] dp = new int[size];
 			int len = 0;
 			for (int i = 0; i < size; i++) {
-				final long v = -arr[(i + offset) & mask];
+				final int v = -arr[offset + i];
 				int pos = bsUpper(dp, len, v);
 				pos = pos < 0 ? ~pos : pos + 1;
 				dp[pos] = v;
@@ -384,7 +354,7 @@ public final class Check1 {
 		}
 
 		/**
-		 * 任意個選択の部分和判定（実測最適化版）
+		 * 任意個選択の部分和判定
 		 *
 		 * @param target 目標和
 		 * @return 部分集合の和が target になるか
@@ -398,7 +368,7 @@ public final class Check1 {
 		}
 
 		/**
-		 * ちょうど k 個選択の部分和判定（回転考慮なし）
+		 * ちょうど k 個選択の部分和判定
 		 *
 		 * @param target 目標和
 		 * @param k      選択個数
@@ -439,7 +409,7 @@ public final class Check1 {
 			return subsetRec(target, k, idx - 1);
 		}
 
-		private int bs(final long[] a, final int len, final long t) {
+		private int bs(final int[] a, final int len, final int t) {
 			int l = 0, r = len - 1;
 			while (l <= r) {
 				final int m = l + ((r - l) >>> 1);
@@ -450,7 +420,7 @@ public final class Check1 {
 			return ~l;
 		}
 
-		private int bsUpper(final long[] a, final int len, final long t) {
+		private int bsUpper(final int[] a, final int len, final int t) {
 			int ans = -1;
 			int l = 0, r = len - 1;
 			while (l <= r) {
@@ -464,30 +434,101 @@ public final class Check1 {
 			return ans == -1 ? ~l : ans;
 		}
 
-		public PrimitiveIterator.OfLong iterator() {
-			return new PrimitiveIterator.OfLong() {
+		public PrimitiveIterator.OfInt iterator() {
+			return new PrimitiveIterator.OfInt() {
 				private int idx = 0;
 
 				public boolean hasNext() {
 					return idx < size;
 				}
 
-				public long nextLong() {
-					return get(idx++);
+				public int nextInt() {
+					return arr[offset + idx++];
 				}
 			};
 		}
 
 		public String toString() {
 			final StringBuilder sb = new StringBuilder();
-			final PrimitiveIterator.OfLong it = iterator();
-			sb.append(it.nextLong());
-			while (it.hasNext()) sb.append(' ').append(it.nextLong());
+			final PrimitiveIterator.OfInt it = iterator();
+			sb.append(it.nextInt());
+			while (it.hasNext()) sb.append(' ').append(it.nextInt());
 			return sb.toString();
 		}
 	}
 
-	// ------------------------ 高速入出力クラス ------------------------
+	// region < Utility Methods >
+	private static boolean isValidRange(final int i, final int j, final int h, final int w) {
+		return 0 <= i && i < h && 0 <= j && j < w;
+	}
+
+	private static long modPow(long a, long b, final long mod) {
+		long ans = 1;
+		for (a %= mod; b > 0; a = a * a % mod, b >>= 1) {
+			if ((b & 1) == 1) ans = ans * a % mod;
+		}
+		return ans;
+	}
+
+	private static long floorLong(final long a, final long b) {
+		return a < 0 ? (a - b + 1) / b : a / b;
+	}
+
+	private static int floorInt(final int a, final int b) {
+		return a < 0 ? (a - b + 1) / b : a / b;
+	}
+
+	private static long ceilLong(final long a, final long b) {
+		return a < 0 ? a / b : (a + b - 1) / b;
+	}
+
+	private static long ceilInt(final int a, final int b) {
+		return a < 0 ? a / b : (a + b - 1) / b;
+	}
+
+	private static long LCM(final long x, final long y) {
+		return x == 0 || y == 0 ? 0 : x * (y / GCD(x, y));
+	}
+
+	public static long GCD(long a, long b) {
+		a = abs(a);
+		b = abs(b);
+		if (a == 0) return b;
+		if (b == 0) return a;
+		int commonShift = Long.numberOfTrailingZeros(a | b);
+		a >>= Long.numberOfTrailingZeros(a);
+		while (b != 0) {
+			b >>= Long.numberOfTrailingZeros(b);
+			if (a > b) {
+				long tmp = a;
+				a = b;
+				b = tmp;
+			}
+			b -= a;
+		}
+		return a << commonShift;
+	}
+	// endregion
+
+	// region < I/O & Debug >
+	public static void main(final String[] args) {
+		try {
+			solve();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		} finally {
+			sc.close();
+			out.close();
+		}
+	}
+
+	private static void debug(final Object... args) {
+		if (DEBUG) {
+			out.flush();
+			System.err.println(deepToString(args));
+		}
+	}
+
 	@SuppressWarnings("unused")
 	private static final class FastScanner implements AutoCloseable {
 		private static final int DEFAULT_BUFFER_SIZE = 65536;
@@ -2384,4 +2425,5 @@ public final class Check1 {
 			return this;
 		}
 	}
+	// endregion
 }

@@ -42,7 +42,7 @@ public final class IntArray1D implements Iterable<Integer> {
 	}
 
 	public long sum(final int l, final int r) {
-		return ps[offset + r] - ps[offset + l - 1];
+		return ps[offset + r + 1] - ps[offset + l];
 	}
 
 	public long sum() {
