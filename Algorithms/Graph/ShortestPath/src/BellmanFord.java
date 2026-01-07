@@ -60,9 +60,8 @@ public final class BellmanFord {
 		Arrays.fill(dist, INF);
 		dist[i] = 0;
 
-		boolean updated = false;
 		for (int k = 1; k <= n; k++) {
-			updated = false;
+			boolean updated = false;
 			for (int u = 0; u < n; u++) {
 				if (dist[u] == INF) continue;
 				for (int e = first[u]; e != -1; e = next[e]) {
