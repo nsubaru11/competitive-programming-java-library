@@ -1,4 +1,4 @@
-import static java.util.Arrays.fill;
+import java.util.*;
 
 /**
  * Bellman-Ford アルゴリズムを実装するクラス。
@@ -11,85 +11,89 @@ import static java.util.Arrays.fill;
 @SuppressWarnings("unused")
 public final class BellmanFord {
 	private static final long INF = Long.MAX_VALUE;
-	private static final long NEG_INF = Long.MIN_VALUE;
-
-	private final int v;
-	private final long[] ans;
+	private final int n;
 	private final int[] dest, next, first;
 	private final long[] cost;
-	private int e;
-	private int used = -1;
+	private final long[] dist;
+	private int edgeCount = 0;
+	private int cache = -1;
+	private boolean hasNegCycle = false;
 
 	/**
-	 * コンストラクタ
-	 *
-	 * @param v 頂点数
-	 * @param e 辺数の最大値
+	 * @param n 頂点数
+	 * @param m 辺の最大数（確保するメモリ量）
 	 */
-	public BellmanFord(final int v, final int e) {
-		this.v = v;
-		ans = new long[v];
-		dest = new int[e];
-		next = new int[e];
-		first = new int[v];
-		cost = new long[e];
-		fill(first, -1);
-		this.e = 0;
+	public BellmanFord(final int n, final int m) {
+		this.n = n;
+		dist = new long[n];
+		dest = new int[m];
+		next = new int[m];
+		cost = new long[m];
+		first = new int[n];
+		Arrays.fill(first, -1);
 	}
 
 	/**
-	 * 有向辺を追加する。
-	 *
-	 * @param i 辺の始点（0-indexed）
-	 * @param j 辺の終点（0-indexed）
-	 * @param c 辺の重み
+	 * 有向辺を追加する
 	 */
-	public void addEdge(final int i, final int j, final long c) {
-		dest[e] = j;
-		cost[e] = c;
-		next[e] = first[i];
-		first[i] = e;
-		e++;
-		used = -1;
+	public void addEdge(final int from, final int to, final long c) {
+		dest[edgeCount] = to;
+		cost[edgeCount] = c;
+		next[edgeCount] = first[from];
+		first[from] = edgeCount++;
+		cache = -1;
 	}
 
 	/**
-	 * 始点 i から終点 j への最短経路の重みを返す
-	 * 負閉路の影響を受ける場合は -INF を返す
-	 *
-	 * @param i 始点
-	 * @param j 終点
-	 * @return 始点から終点への最短経路の重み（到達不可能なら INF、負閉路影響下なら -INF）
+	 * 始点 i から終点 j への最短距離を求める。
+	 * 始点から到達可能な負閉路が存在する場合は -INF (Long.MIN_VALUE) を返す。
+	 * 到達不能な場合は INF (Long.MAX_VALUE) を返す。
 	 */
 	public long solve(final int i, final int j) {
-		if (used != i) {
-			used = i;
-			fill(ans, INF);
-			ans[i] = 0;
-			boolean update = false;
-			for (int vtx = 0; vtx < v; vtx++) {
-				update = false;
-				for (int from = 0; from < v; from++) {
-					long d = ans[from];
-					if (d == INF || d == NEG_INF) continue;
+		if (cache == i) {
+			if (hasNegCycle) return Long.MIN_VALUE;
+			return dist[j];
+		}
 
-					for (int edge = first[from]; edge != -1; edge = next[edge]) {
-						int to = dest[edge];
-						long c = cost[edge];
-						long newDist = d + c;
+		cache = i;
+		hasNegCycle = false;
+		Arrays.fill(dist, INF);
+		dist[i] = 0;
 
-						if (ans[to] > newDist) {
-							ans[to] = newDist;
-							update = true;
+		boolean updated = false;
+		for (int k = 1; k <= n; k++) {
+			updated = false;
+			for (int u = 0; u < n; u++) {
+				if (dist[u] == INF) continue;
+				for (int e = first[u]; e != -1; e = next[e]) {
+					int v = dest[e];
+					long c = cost[e];
+					if (dist[v] > dist[u] + c) {
+						dist[v] = dist[u] + c;
+						updated = true;
+						if (k == n) {
+							hasNegCycle = true;
+							return Long.MIN_VALUE;
 						}
 					}
-					if (!update) break;
 				}
-				if (update) return -INF;
 			}
-			return ans[j];
+			if (!updated) break;
 		}
-		return ans[j];
+		return dist[j];
 	}
 
+	/**
+	 * 直前の solve() 呼び出しにおいて、到達可能な負閉路が検出されたかを返す
+	 */
+	public boolean hasNegativeCycle() {
+		return hasNegCycle;
+	}
+
+	/**
+	 * 直前の solve() の始点からの距離配列を取得する
+	 */
+	public long[] getDist() {
+		return dist;
+	}
 }
