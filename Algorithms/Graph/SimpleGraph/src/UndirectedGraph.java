@@ -8,15 +8,13 @@ import static java.util.Arrays.*;
 @SuppressWarnings("unused")
 public final class UndirectedGraph {
 	// -------------- フィールド --------------
-	private static final long INF = Long.MAX_VALUE;
 	private final int[] dest, next, first, degree;
-	private final int n, m;
+	private final int n;
 	private int edgeCount = 0;
 
 	public UndirectedGraph(final int n, final int m) {
 		this.n = n;
 		int m2 = m * 2;
-		this.m = m2;
 		dest = new int[m2];
 		next = new int[m2];
 		first = new int[n];

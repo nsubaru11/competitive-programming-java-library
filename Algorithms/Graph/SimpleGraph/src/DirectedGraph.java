@@ -9,14 +9,12 @@ import static java.util.Arrays.*;
 @SuppressWarnings("unused")
 public final class DirectedGraph {
 	// -------------- フィールド --------------
-	private static final long INF = Long.MAX_VALUE;
 	private final int[] dest, next, first, inDegree, outDegree;
-	private final int n, m;
+	private final int n;
 	private int edgeCount = 0;
 
 	public DirectedGraph(final int n, final int m) {
 		this.n = n;
-		this.m = m;
 		dest = new int[m];
 		next = new int[m];
 		first = new int[n];
@@ -87,46 +85,75 @@ public final class DirectedGraph {
 		return count < n;
 	}
 
-	public int[] scc() {
+	public int[][] scc() {
 		int[] ord = new int[n];
 		int[] low = new int[n];
-		int[] stack = new int[n];
-		boolean[] onStack = new boolean[n];
-		int[] timer = {1}, ptr = {0};
-		int[] groupIds = new int[n];
-		int[] groupCount = {0};
-		for (int i = 0; i < n; i++) {
-			if (ord[i] == 0) dfs(i, ord, low, stack, onStack, timer, ptr, groupIds, groupCount);
-		}
-		int maxId = groupCount[0] - 1;
-		for (int i = 0; i < n; i++) {
-			groupIds[i] = maxId - groupIds[i];
-		}
-		return groupIds;
-	}
 
-	private void dfs(final int u, final int[] ord, final int[] low, final int[] stack, final boolean[] onStack, final int[] timer, final int[] ptr, final int[] groupIds, final int[] groupCount) {
-		ord[u] = low[u] = timer[0]++;
-		stack[ptr[0]++] = u;
-		onStack[u] = true;
-		for (int e = first[u]; e != -1; e = next[e]) {
-			int v = dest[e];
-			if (ord[v] == 0) {
-				dfs(v, ord, low, stack, onStack, timer, ptr, groupIds, groupCount);
-				low[u] = min(low[u], low[v]);
-			} else if (onStack[v]) {
-				low[u] = min(low[u], ord[v]);
+		int[] edgeIter = new int[n];
+		System.arraycopy(first, 0, edgeIter, 0, n);
+
+		int[] stack = new int[n];
+		int stackPtr = 0;
+
+		int[] sccStack = new int[n];
+		int sccPtr = 0;
+		boolean[] onSccStack = new boolean[n];
+
+		int timer = 1;
+
+		int[] sccList = new int[n];
+		int listPtr = 0;
+		int[] sep = new int[n + 1];
+		int sepPtr = 0;
+		sep[sepPtr++] = 0;
+		for (int i = 0; i < n; i++) if (ord[i] == 0) {
+			stack[stackPtr++] = i;
+			outer:
+			while (stackPtr > 0) {
+				int u = stack[stackPtr - 1];
+				if (ord[u] == 0) {
+					ord[u] = low[u] = timer++;
+					sccStack[sccPtr++] = u;
+					onSccStack[u] = true;
+				}
+				while (edgeIter[u] != -1) {
+					int e = edgeIter[u];
+					int v = dest[e];
+					edgeIter[u] = next[e];
+					if (ord[v] == 0) {
+						stack[stackPtr++] = v;
+						continue outer;
+					} else if (onSccStack[v]) {
+						low[u] = min(low[u], ord[v]);
+					}
+				}
+				if (stackPtr > 1) {
+					int p = stack[stackPtr - 2];
+					low[p] = min(low[p], low[u]);
+				}
+				if (low[u] == ord[u]) {
+					while (true) {
+						int v = sccStack[--sccPtr];
+						onSccStack[v] = false;
+						sccList[listPtr++] = v;
+						if (u == v) break;
+					}
+					sep[sepPtr++] = listPtr;
+				}
+				stackPtr--;
 			}
 		}
-		if (ord[u] == low[u]) {
-			int id = groupCount[0]++;
-			int v;
-			do {
-				v = stack[--ptr[0]];
-				groupIds[v] = id;
-				onStack[v] = false;
-			} while (v != u);
+		int groupCount = sepPtr - 1;
+		int[][] result = new int[groupCount][];
+		for (int i = 0, end = sep[groupCount]; i < groupCount; i++) {
+			int start = sep[groupCount - i - 1];
+			int len = end - start;
+			int[] grp = new int[len];
+			System.arraycopy(sccList, start, grp, 0, len);
+			result[i] = grp;
+			end = start;
 		}
+		return result;
 	}
 
 	public Iterable<Integer> adj(final int u) {
