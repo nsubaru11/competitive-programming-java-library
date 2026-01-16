@@ -3,7 +3,7 @@ import java.util.*;
 public final class Example {
 
 	public static void main(String[] args) {
-		Kruskal k = new Kruskal(5);
+		Kruskal k = new Kruskal(5, 10);
 		k.addEdge(0, 1, 3);
 		k.addEdge(0, 4, 1);
 		k.addEdge(1, 4, 4);
@@ -14,7 +14,7 @@ public final class Example {
 		k.addEdge(3, 1, 2);
 		System.out.println(k.solve());
 
-		Prim p = new Prim(5);
+		Prim p = new Prim(5, 10);
 		p.addEdge(0, 1, 3);
 		p.addEdge(0, 4, 1);
 		p.addEdge(1, 4, 4);
@@ -24,17 +24,6 @@ public final class Example {
 		p.addEdge(2, 4, 6);
 		p.addEdge(3, 1, 2);
 		System.out.println(p.solve());
-		Scanner sc = new Scanner(System.in);
-		int n = sc.nextInt();
-		int m = sc.nextInt();
-		Kruskal k2 = new Kruskal(n);
-		while (m-- > 0) {
-			int u = sc.nextInt();
-			int v = sc.nextInt();
-			long w = sc.nextLong();
-			k2.addEdge(u, v, w);
-		}
-		System.out.println(k2.solve());
 	}
 
 }

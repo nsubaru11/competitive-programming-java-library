@@ -8,43 +8,54 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public final class Kruskal {
-	private final int v;
+	private final int n;
+	private final boolean isMinimum;
+	private final int[] from, to;
+	private final long[] cost;
+	private final Integer[] edges;
 	private final UnionFind uf;
-	private final PriorityQueue<Edge> edges;
+	private int edgeCnt = 0;
 
 	/**
 	 * 指定された頂点数と最小/最大フラグでソルバーを初期化します。
 	 *
-	 * @param v         頂点数（0からv-1までの頂点番号が使用される）
+	 * @param n         頂点数（0からv-1までの頂点番号が使用される）
+	 * @param m         辺の数
 	 * @param isMinimum trueの場合は最小全域木、falseの場合は最大全域木を求めます
 	 */
-	public Kruskal(final int v, final boolean isMinimum) {
-		this.v = v;
-		uf = new UnionFind(v);
-		final Comparator<Edge> comparator = isMinimum
-				? Comparator.comparingLong(Edge::cost)
-				: Comparator.comparingLong(Edge::cost).reversed();
-		edges = new PriorityQueue<>(comparator);
+	public Kruskal(final int n, final int m, final boolean isMinimum) {
+		this.n = n;
+		this.isMinimum = isMinimum;
+		from = new int[m];
+		to = new int[m];
+		cost = new long[m];
+		uf = new UnionFind(n);
+		edges = new Integer[m];
 	}
 
 	/**
 	 * 最小全域木を求めるソルバーを初期化します。
 	 *
-	 * @param v 頂点数（0からv-1までの頂点番号が使用される）
+	 * @param n 頂点数（0からv-1までの頂点番号が使用される）
+	 * @param m 辺の数
 	 */
-	public Kruskal(final int v) {
-		this(v, true);
+	public Kruskal(final int n, final int m) {
+		this(n, m, true);
 	}
 
 	/**
 	 * グラフに辺を追加します。
 	 *
-	 * @param u    辺の始点（0からv-1までの値）
-	 * @param v    辺の終点（0からv-1までの値）
-	 * @param cost 辺の重み
+	 * @param u 辺の始点（0からv-1までの値）
+	 * @param v 辺の終点（0からv-1までの値）
+	 * @param c 辺の重み
 	 */
-	public void addEdge(final int u, final int v, final long cost) {
-		edges.add(new Edge(u, v, cost));
+	public void addEdge(final int u, final int v, final long c) {
+		from[edgeCnt] = u;
+		to[edgeCnt] = v;
+		cost[edgeCnt] = isMinimum ? c : -c;
+		edges[edgeCnt] = edgeCnt;
+		edgeCnt++;
 	}
 
 	/**
@@ -56,61 +67,31 @@ public final class Kruskal {
 	 */
 	public long solve() {
 		long ans = 0;
-		int size = v;
-		while (!edges.isEmpty()) {
-			Edge e = edges.poll();
-			int u = e.u();
-			int v = e.v();
-			long cost = e.cost();
+		int size = n;
+		Arrays.sort(edges, 0, edgeCnt, (i, j) -> Long.compare(cost[i], cost[j]));
+		for (int i = 0; i < edgeCnt; i++) {
+			int e = edges[i];
+			int u = from[e];
+			int v = to[e];
+			long c = cost[e];
 			if (uf.find(u) != uf.find(v)) {
 				uf.union(u, v);
-				ans += cost;
+				ans += c;
 				size--;
 			}
 		}
-		return size > 1 ? -1 : ans;
+		return size > 1 ? -1 : isMinimum ? ans : -ans;
 	}
 
-	/**
-	 * グラフの辺を表すレコード。
-	 */
-	private record Edge(int u, int v, long cost) {
-		// コンストラクタはrecordにより自動生成されます
-	}
-
-	/**
-	 * Union-Find（素集合データ構造）の実装。
-	 * 経路圧縮とランクによる最適化を行っています。
-	 */
 	private static final class UnionFind {
-		/**
-		 * 各要素の親要素を格納する配列
-		 */
-		private final int[] root;
-		/**
-		 * 各要素がルートの場合のランク（木の高さの上限）を格納する配列
-		 */
-		private final int[] rank;
+		private final int[] root, rank;
 
-		/**
-		 * 指定されたサイズでUnion-Findデータ構造を初期化します。
-		 * 初期状態では、各要素は独立した集合です。
-		 *
-		 * @param size 要素数
-		 */
 		public UnionFind(final int size) {
 			root = new int[size];
 			rank = new int[size];
 			Arrays.setAll(root, i -> i);
 		}
 
-		/**
-		 * 要素xが属する集合の代表元を見つけます。
-		 * 経路圧縮を行い、効率的な検索を可能にします。
-		 *
-		 * @param x 検索する要素
-		 * @return xが属する集合の代表元
-		 */
 		public int find(final int x) {
 			int root = x;
 			while (root != this.root[root]) {
@@ -125,13 +106,6 @@ public final class Kruskal {
 			return root;
 		}
 
-		/**
-		 * 要素xを含む集合と要素yを含む集合を統合します。
-		 * ランクに基づく最適化を行い、木の高さを最小に保ちます。
-		 *
-		 * @param x 最初の集合に属する要素
-		 * @param y 2番目の集合に属する要素
-		 */
 		public void union(int x, int y) {
 			x = find(x);
 			y = find(y);
