@@ -1,6 +1,7 @@
 import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
+import java.nio.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -12,7 +13,7 @@ import static java.lang.Math.*;
 public final class CompressedFastPrinter {
 
 	public static void main(String[] args) {
-		try (FastPrinter out = new FastPrinter(System.out)) {
+		try (FastPrinter out = new FastPrinter()) {
 			System.err.println("--- FastIO24 CompressedFastPrinter Benchmark ---");
 			long totalStartTime = System.nanoTime();
 
@@ -71,6 +72,7 @@ public final class CompressedFastPrinter {
 
 	private static final class FastPrinter implements AutoCloseable {
 		private static final VarHandle BYTE_ARRAY_HANDLE = MethodHandles.arrayElementVarHandle(byte[].class);
+		private static final VarHandle SHORT_HANDLE = MethodHandles.byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
 		private static final int MAX_INT_DIGITS = 11;
 		private static final int MAX_LONG_DIGITS = 20;
 		private static final int DEFAULT_BUFFER_SIZE = 65536;
@@ -81,30 +83,19 @@ public final class CompressedFastPrinter {
 		private static final byte ZERO = '0';
 		private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
 		private static final byte[] FALSE_BYTES = {'N', 'o'};
-		private static final byte[] DigitOnes = {
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+		private static final short[] DIGIT_PAIRS = {
+				12336, 12592, 12848, 13104, 13360, 13616, 13872, 14128, 14384, 14640,
+				12337, 12593, 12849, 13105, 13361, 13617, 13873, 14129, 14385, 14641,
+				12338, 12594, 12850, 13106, 13362, 13618, 13874, 14130, 14386, 14642,
+				12339, 12595, 12851, 13107, 13363, 13619, 13875, 14131, 14387, 14643,
+				12340, 12596, 12852, 13108, 13364, 13620, 13876, 14132, 14388, 14644,
+				12341, 12597, 12853, 13109, 13365, 13621, 13877, 14133, 14389, 14645,
+				12342, 12598, 12854, 13110, 13366, 13622, 13878, 14134, 14390, 14646,
+				12343, 12599, 12855, 13111, 13367, 13623, 13879, 14135, 14391, 14647,
+				12344, 12600, 12856, 13112, 13368, 13624, 13880, 14136, 14392, 14648,
+				12345, 12601, 12857, 13113, 13369, 13625, 13881, 14137, 14393, 14649,
 		};
-		private static final byte[] DigitTens = {
-				'0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-				'1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
-				'2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
-				'3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
-				'4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
-				'5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
-				'6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
-				'7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
-				'8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
-				'9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
-		};
+
 		private static final long[] POW10 = {
 				1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
 				1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
@@ -117,7 +108,7 @@ public final class CompressedFastPrinter {
 		private int pos = 0;
 
 		public FastPrinter() {
-			this(System.out, DEFAULT_BUFFER_SIZE, false);
+			this(new FileOutputStream(FileDescriptor.out), DEFAULT_BUFFER_SIZE, false);
 		}
 
 		public FastPrinter(final OutputStream out) {
@@ -125,11 +116,11 @@ public final class CompressedFastPrinter {
 		}
 
 		public FastPrinter(final int bufferSize) {
-			this(System.out, bufferSize, false);
+			this(new FileOutputStream(FileDescriptor.out), bufferSize, false);
 		}
 
 		public FastPrinter(final boolean autoFlush) {
-			this(System.out, DEFAULT_BUFFER_SIZE, autoFlush);
+			this(new FileOutputStream(FileDescriptor.out), DEFAULT_BUFFER_SIZE, autoFlush);
 		}
 
 		public FastPrinter(final OutputStream out, final boolean autoFlush) {
@@ -137,7 +128,7 @@ public final class CompressedFastPrinter {
 		}
 
 		public FastPrinter(final int bufferSize, final boolean autoFlush) {
-			this(System.out, bufferSize, autoFlush);
+			this(new FileOutputStream(FileDescriptor.out), bufferSize, autoFlush);
 		}
 
 		public FastPrinter(final OutputStream out, final int bufferSize) {
@@ -451,13 +442,13 @@ public final class CompressedFastPrinter {
 			while (i <= -100) {
 				final int q = i / 100;
 				final int r = (q << 6) + (q << 5) + (q << 2) - i;
-				BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitOnes[r]);
-				BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitTens[r]);
 				i = q;
+				writePos -= 2;
+				SHORT_HANDLE.set(buf, writePos, DIGIT_PAIRS[r]);
 			}
 			final int r = -i;
-			BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitOnes[r]);
-			if (r >= 10) BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitTens[r]);
+			if (r >= 10) SHORT_HANDLE.set(buf, writePos - 2, DIGIT_PAIRS[r]);
+			else BYTE_ARRAY_HANDLE.set(buf, writePos - 1, (byte) (r + ZERO));
 			pos = p + digits;
 		}
 
@@ -471,13 +462,13 @@ public final class CompressedFastPrinter {
 			while (l <= -100) {
 				final long q = l / 100;
 				final int r = (int) ((q << 6) + (q << 5) + (q << 2) - l);
-				BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitOnes[r]);
-				BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitTens[r]);
 				l = q;
+				writePos -= 2;
+				SHORT_HANDLE.set(buf, writePos, DIGIT_PAIRS[r]);
 			}
 			final int r = (int) -l;
-			BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitOnes[r]);
-			if (r >= 10) BYTE_ARRAY_HANDLE.set(buf, --writePos, DigitTens[r]);
+			if (r >= 10) SHORT_HANDLE.set(buf, writePos - 2, DIGIT_PAIRS[r]);
+			else BYTE_ARRAY_HANDLE.set(buf, writePos - 1, (byte) (r + ZERO));
 			pos = p + digits;
 		}
 
@@ -487,14 +478,16 @@ public final class CompressedFastPrinter {
 			int p = pos, i = 0;
 			final int limit = len & ~7;
 			while (i < limit) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) s.charAt(i));
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) s.charAt(i + 1));
+				BYTE_ARRAY_HANDLE.set(buf, p + 2, (byte) s.charAt(i + 2));
+				BYTE_ARRAY_HANDLE.set(buf, p + 3, (byte) s.charAt(i + 3));
+				BYTE_ARRAY_HANDLE.set(buf, p + 4, (byte) s.charAt(i + 4));
+				BYTE_ARRAY_HANDLE.set(buf, p + 5, (byte) s.charAt(i + 5));
+				BYTE_ARRAY_HANDLE.set(buf, p + 6, (byte) s.charAt(i + 6));
+				BYTE_ARRAY_HANDLE.set(buf, p + 7, (byte) s.charAt(i + 7));
+				p += 8;
+				i += 8;
 			}
 			while (i < len) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			pos = p;
@@ -777,8 +770,9 @@ public final class CompressedFastPrinter {
 			int p = pos;
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[from]);
 			for (int i = from + 1; i < to; i++) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) delimiter);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i]);
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) delimiter);
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) arr[i]);
+				p += 2;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -1045,14 +1039,16 @@ public final class CompressedFastPrinter {
 			int p = pos, i = from;
 			final int limit8 = from + (len & ~7);
 			while (i < limit8) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) arr[i]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) arr[i + 1]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 2, (byte) arr[i + 2]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 3, (byte) arr[i + 3]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 4, (byte) arr[i + 4]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 5, (byte) arr[i + 5]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 6, (byte) arr[i + 6]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 7, (byte) arr[i + 7]);
+				p += 8;
+				i += 8;
 			}
 			while (i < to) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i++]);
 			pos = p;
@@ -1067,14 +1063,16 @@ public final class CompressedFastPrinter {
 			int p = pos, i = 0;
 			final int limit = len & ~7;
 			while (i < limit) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) function.applyAsInt(arr[i]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) function.applyAsInt(arr[i + 1]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 2, (byte) function.applyAsInt(arr[i + 2]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 3, (byte) function.applyAsInt(arr[i + 3]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 4, (byte) function.applyAsInt(arr[i + 4]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 5, (byte) function.applyAsInt(arr[i + 5]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 6, (byte) function.applyAsInt(arr[i + 6]));
+				BYTE_ARRAY_HANDLE.set(buf, p + 7, (byte) function.applyAsInt(arr[i + 7]));
+				p += 8;
+				i += 8;
 			}
 			while (i < len) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) function.applyAsInt(arr[i++]));
 			pos = p;
@@ -1171,14 +1169,16 @@ public final class CompressedFastPrinter {
 			int p = pos, i = 0;
 			final int limit8 = len & ~7;
 			while (i < limit8) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) s.charAt(i));
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) s.charAt(i + 1));
+				BYTE_ARRAY_HANDLE.set(buf, p + 2, (byte) s.charAt(i + 2));
+				BYTE_ARRAY_HANDLE.set(buf, p + 3, (byte) s.charAt(i + 3));
+				BYTE_ARRAY_HANDLE.set(buf, p + 4, (byte) s.charAt(i + 4));
+				BYTE_ARRAY_HANDLE.set(buf, p + 5, (byte) s.charAt(i + 5));
+				BYTE_ARRAY_HANDLE.set(buf, p + 6, (byte) s.charAt(i + 6));
+				BYTE_ARRAY_HANDLE.set(buf, p + 7, (byte) s.charAt(i + 7));
+				p += 8;
+				i += 8;
 			}
 			while (i < len) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			int copied = 1;
@@ -1204,8 +1204,9 @@ public final class CompressedFastPrinter {
 			final byte[] buf = buffer;
 			final byte b = (byte) c;
 			int p = pos;
-			BYTE_ARRAY_HANDLE.set(buf, p++, b);
-			BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
+			BYTE_ARRAY_HANDLE.set(buf, p, b);
+			BYTE_ARRAY_HANDLE.set(buf, p + 1, LINE);
+			p += 2;
 			int copied = 2;
 			while (copied << 1 <= total) {
 				System.arraycopy(buf, pos, buf, p, copied);
@@ -1234,14 +1235,16 @@ public final class CompressedFastPrinter {
 			int i = 0;
 			final int limit8 = sLen & ~7;
 			while (i < limit8) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) s.charAt(i));
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) s.charAt(i + 1));
+				BYTE_ARRAY_HANDLE.set(buf, p + 2, (byte) s.charAt(i + 2));
+				BYTE_ARRAY_HANDLE.set(buf, p + 3, (byte) s.charAt(i + 3));
+				BYTE_ARRAY_HANDLE.set(buf, p + 4, (byte) s.charAt(i + 4));
+				BYTE_ARRAY_HANDLE.set(buf, p + 5, (byte) s.charAt(i + 5));
+				BYTE_ARRAY_HANDLE.set(buf, p + 6, (byte) s.charAt(i + 6));
+				BYTE_ARRAY_HANDLE.set(buf, p + 7, (byte) s.charAt(i + 7));
+				p += 8;
+				i += 8;
 			}
 			while (i < sLen) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
 			BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
@@ -1279,8 +1282,9 @@ public final class CompressedFastPrinter {
 			final byte[] buf = buffer;
 			int p = pos;
 			for (int i = len - 1; i >= 0; i--) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i]);
-				BYTE_ARRAY_HANDLE.set(buf, p++, LINE);
+				BYTE_ARRAY_HANDLE.set(buf, p, (byte) arr[i]);
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, LINE);
+				p += 2;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -1368,8 +1372,9 @@ public final class CompressedFastPrinter {
 			int p = pos;
 			BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[len - 1]);
 			for (int i = len - 2; i >= 0; i--) {
-				BYTE_ARRAY_HANDLE.set(buf, p++, SPACE);
-				BYTE_ARRAY_HANDLE.set(buf, p++, (byte) arr[i]);
+				BYTE_ARRAY_HANDLE.set(buf, p, SPACE);
+				BYTE_ARRAY_HANDLE.set(buf, p + 1, (byte) arr[i]);
+				p += 2;
 			}
 			pos = p;
 			if (autoFlush) flush();
