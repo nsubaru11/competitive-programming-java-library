@@ -11,24 +11,42 @@ import static java.util.Arrays.*;
 public class CompressedFastScanner {
 
 	public static void main(String[] args) {
-		long startTime = System.nanoTime();
-		try (FastScanner sc = new FastScanner(System.in)) {
+		try (FastScanner sc = new FastScanner()) {
+			System.err.println("--- FastIO24 CompressedFastScanner Benchmark ---");
+			long totalStartTime = System.nanoTime();
+
 			final int N = 10_000_000;
+
+			// --- Int Test ---
+			long startTime = System.nanoTime();
 			for (int i = 0; i < N; i++) {
 				sc.nextInt();
 			}
+			long endTime = System.nanoTime();
+			System.err.println("  - Int test (" + N + " ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- Long Test ---
+			startTime = System.nanoTime();
 			for (int i = 0; i < N; i++) {
 				sc.nextLong();
 			}
+			endTime = System.nanoTime();
+			System.err.println("  - Long test (" + N + " ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			// --- String Test ---
+			startTime = System.nanoTime();
 			for (int i = 0; i < N; i++) {
 				sc.next();
 			}
+			endTime = System.nanoTime();
+			System.err.println("  - String test (" + N + " ops): " + (endTime - startTime) / 1_000_000 + " ms");
+
+			long totalEndTime = System.nanoTime();
+			System.err.println("Total execution time: " + (totalEndTime - totalStartTime) / 1_000_000 + " ms");
+
 		} catch (Exception e) {
 			// EOF is expected
 		}
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1_000_000;
-		System.err.println("FastIO24 CompressedFastScanner execution time: " + duration + " ms");
 	}
 
 	private static final class FastScanner implements AutoCloseable {
@@ -38,7 +56,7 @@ public class CompressedFastScanner {
 		private int pos = 0, bufferLength = 0;
 
 		public FastScanner() {
-			this(System.in, DEFAULT_BUFFER_SIZE);
+			this(new FileInputStream(FileDescriptor.in), DEFAULT_BUFFER_SIZE);
 		}
 
 		public FastScanner(final InputStream in) {
@@ -46,7 +64,7 @@ public class CompressedFastScanner {
 		}
 
 		public FastScanner(final int bufferSize) {
-			this(System.in, bufferSize);
+			this(new FileInputStream(FileDescriptor.in), bufferSize);
 		}
 
 		public FastScanner(final InputStream in, final int bufferSize) {
@@ -55,76 +73,101 @@ public class CompressedFastScanner {
 		}
 
 		private int skipSpaces() {
-			int b = read();
-			while (b <= 32) b = read();
+			int b;
+			do {
+				if (pos >= bufferLength) {
+					try {
+						bufferLength = in.read(buffer);
+						pos = 0;
+					} catch (final IOException e) {
+						throw new RuntimeException(e);
+					}
+					if (bufferLength <= 0) throw new NoSuchElementException();
+				}
+				b = buffer[pos++];
+			} while (b <= 32);
 			return b;
 		}
 
 		@Override
 		public void close() {
 			try {
-				if (in != System.in) in.close();
-				pos = 0;
-				bufferLength = 0;
+				in.close();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		private int read() {
-			if (pos >= bufferLength) {
-				try {
-					bufferLength = in.read(buffer, pos = 0, buffer.length);
-				} catch (final IOException e) {
-					throw new RuntimeException(e);
-				}
-				if (bufferLength <= 0) throw new RuntimeException(new EOFException());
-			}
-			return buffer[pos++] & 0xFF;
-		}
-
-		public int peek() {
+		private boolean hasNextByte() {
+			if (pos < bufferLength) return true;
+			pos = 0;
 			try {
-				int b = skipSpaces();
-				pos--;
-				return b;
-			} catch (final RuntimeException e) {
-				return 0;
+				bufferLength = in.read(buffer);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
+			return bufferLength > 0;
 		}
 
 		public boolean hasNext() {
-			return peek() != 0;
+			while (hasNextByte()) {
+				if (buffer[pos] > 32) return true;
+				pos++;
+			}
+			return false;
+		}
+
+		public char nextChar() {
+			if (!hasNext()) throw new NoSuchElementException();
+			return (char) buffer[pos++];
 		}
 
 		public int nextInt() {
 			int b = skipSpaces();
+			int n = 0;
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				b = read();
+				if (pos == bufferLength) hasNextByte();
+				b = buffer[pos++];
 			}
-			int result = 0;
-			do {
-				result = (result << 3) + (result << 1) + (b & 15);
-				b = read();
-			} while (b >= '0' && b <= '9');
-			return negative ? -result : result;
+			if (pos + 11 <= bufferLength) {
+				do {
+					n = (n << 3) + (n << 1) + (b & 15);
+					b = buffer[pos++];
+				} while (b > 32);
+			} else {
+				do {
+					n = (n << 3) + (n << 1) + (b & 15);
+					if (pos == bufferLength && !hasNextByte()) break;
+					b = buffer[pos++];
+				} while (b > 32);
+			}
+			return negative ? -n : n;
 		}
 
 		public long nextLong() {
 			int b = skipSpaces();
+			long n = 0;
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				b = read();
+				if (pos == bufferLength) hasNextByte();
+				b = buffer[pos++];
 			}
-			long result = 0;
-			do {
-				result = (result << 3) + (result << 1) + (b & 15);
-				b = read();
-			} while (b >= '0' && b <= '9');
-			return negative ? -result : result;
+			if (pos + 20 <= bufferLength) {
+				do {
+					n = (n << 3) + (n << 1) + (b & 15);
+					b = buffer[pos++];
+				} while (b > 32);
+			} else {
+				do {
+					n = (n << 3) + (n << 1) + (b & 15);
+					if (pos == bufferLength && !hasNextByte()) break;
+					b = buffer[pos++];
+				} while (b > 32);
+			}
+			return negative ? -n : n;
 		}
 
 		public double nextDouble() {
@@ -132,29 +175,31 @@ public class CompressedFastScanner {
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				b = read();
+				if (pos == bufferLength) hasNextByte();
+				b = buffer[pos++];
 			}
 			long intPart = 0;
 			do {
 				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
-				b = read();
+				if (pos == bufferLength && !hasNextByte()) {
+					b = -1;
+					break;
+				}
+				b = buffer[pos++];
 			} while (b >= '0' && b <= '9');
 			double result = intPart;
 			if (b == '.') {
-				b = read();
+				if (pos == bufferLength) hasNextByte();
+				b = buffer[pos++];
 				double scale = 0.1;
 				do {
 					result += (b & 15) * scale;
 					scale *= 0.1;
-					b = read();
+					if (pos == bufferLength && !hasNextByte()) break;
+					b = buffer[pos++];
 				} while (b >= '0' && b <= '9');
 			}
 			return negative ? -result : result;
-		}
-
-		public char nextChar() {
-			int b = skipSpaces();
-			return (char) b;
 		}
 
 		public String next() {
@@ -166,21 +211,31 @@ public class CompressedFastScanner {
 			int b = skipSpaces();
 			do {
 				sb.append((char) b);
-				b = read();
+				if (pos == bufferLength && !hasNextByte()) break;
+				b = buffer[pos++];
 			} while (b > 32);
 			return sb;
 		}
 
 		public String nextLine() {
 			final StringBuilder sb = new StringBuilder();
-			int b = read();
-			while (b != 0 && b != '\n' && b != '\r') {
+			if (pos == bufferLength && !hasNextByte()) return "";
+			int b = buffer[pos];
+			while (b != '\n' && b != '\r') {
 				sb.append((char) b);
-				b = read();
+				pos++;
+				if (pos == bufferLength && !hasNextByte()) {
+					b = -1;
+					break;
+				}
+				b = buffer[pos];
 			}
-			if (b == '\r') {
-				int c = read();
-				if (c != '\n') pos--;
+			if (b == '\n' || b == '\r') {
+				pos++;
+				if (b == '\r') {
+					if (pos == bufferLength) hasNextByte();
+					if (pos < bufferLength && buffer[pos] == '\n') pos++;
+				}
 			}
 			return sb.toString();
 		}
