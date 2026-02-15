@@ -4,10 +4,12 @@
 
 `FastScanner`は、競技プログラミング向けに設計された高速入力クラスです。  
 内部バッファを利用してInputStream（標準では`System.in`）からの入力を効率的に処理し、通常の`Scanner`クラスよりも高速な処理が可能です。
+以前のバージョンで別クラスだった `ContestScanner` の機能（配列やコレクションの一括読み込みなど）が統合されており、高い記述性とパフォーマンスを両立しています。
 
 ## 特徴
 
 - **効率的な入力**: 内部バッファを利用して効率的に入力処理を行います。
+- **多機能**: 1次元から3次元までの配列、ソート済み配列、累積和配列、各種コレクション、マルチセットなど、多彩な入力パターンを一行で記述できます。
 - **高速性の重視**: 不要なオブジェクト生成を避け、パフォーマンスを重視しています。
 - **EOF/状態確認**: `hasNext()` や `peek()` を利用して、入力の終端（EOF）や次の文字を安全に確認できます。
 - **文字コード**: `ASCII` 範囲内の文字入力のみをサポートします。
@@ -17,6 +19,7 @@
 
 - Java 標準の入出力ライブラリ (`InputStream`)
 - `java.math.BigInteger`, `java.math.BigDecimal`
+- `java.util.*`, `java.util.function.*`
 
 ## 主な機能
 
@@ -32,12 +35,38 @@
 | `nextStringBuilder()` | `StringBuilder` | 次のトークンを`StringBuilder`として読み込む |
 | `nextLine()`          | `String`        | 次の1行を読み込む（改行は含まない）            |
 
-### 拡張数値型の入力メソッド
+### 配列入力メソッド
 
-| メソッド               | 戻り値の型        | 説明                         |
-|--------------------|--------------|----------------------------|
-| `nextBigInteger()` | `BigInteger` | 次のトークンを`BigInteger`として読み込む |
-| `nextBigDecimal()` | `BigDecimal` | 次のトークンを`BigDecimal`として読み込む |
+| メソッド                             | 戻り値の型       | 説明                       |
+|----------------------------------|-------------|--------------------------|
+| `nextInt(int n)`                 | `int[]`     | 指定された長さの整数配列を読み込む        |
+| `nextLong(int n)`                | `long[]`    | 指定された長さの長整数配列を読み込む       |
+| `nextDouble(int n)`              | `double[]`  | 指定された長さの浮動小数点配列を読み込む     |
+| `nextChars()`                    | `char[]`    | 次の文字列を文字配列として読み込む        |
+| `nextChars(int n)`               | `char[]`    | 指定された長さの文字配列を読み込む        |
+| `nextStrings(int n)`             | `String[]`  | 指定された長さの文字列配列を読み込む       |
+| `nextIntMat(int h, int w)`       | `int[][]`   | 指定された行数・列数の整数2次元配列を読み込む  |
+| `nextLongMat(int h, int w)`      | `long[][]`  | 指定された行数・列数の長整数2次元配列を読み込む |
+| `nextCharMat(int h, int w)`      | `char[][]`  | 指定された行数・列数の文字2次元配列を読み込む  |
+| `nextInt3D(int x, int y, int z)` | `int[][][]` | 指定されたサイズの整数3次元配列を読み込む    |
+
+### ソート済み・累積和・逆写像
+
+| メソッド                             | 戻り値の型     | 説明                       |
+|----------------------------------|-----------|--------------------------|
+| `nextSortedInt(int n)`           | `int[]`   | 整数配列を読み込み、ソートして返す        |
+| `nextIntPrefixSum(int n)`        | `int[]`   | 整数の累積和配列を読み込む            |
+| `nextIntPrefixSum(int h, int w)` | `int[][]` | 整数の2次元累積和配列を読み込む         |
+| `nextIntInverseMapping(int n)`   | `int[]`   | 1-indexedの整数に対する逆写像を生成する |
+
+### コレクション・マルチセット入力
+
+| メソッド                            | 戻り値の型                       | 説明                          |
+|---------------------------------|-----------------------------|-----------------------------|
+| `nextIntAL(int n)`              | `ArrayList<Integer>`        | 整数ArrayListを読み込む            |
+| `nextIntHS(int n)`              | `HashSet<Integer>`          | 整数HashSetを読み込む              |
+| `nextIntMultisetHM(int n)`      | `HashMap<Integer, Integer>` | 整数のマルチセットをHashMapで読み込む      |
+| `nextIntMultiset(int n, int m)` | `int[]`                     | 整数のマルチセットをint[]で読み込む（0〜m-1） |
 
 ### ユーティリティ/状態確認メソッド
 
@@ -46,62 +75,26 @@
 | `hasNext()` | `boolean` | 入力ストリームに読み取り可能なトークンが残っているかを確認します。             |
 | `peek()`    | `char`    | 次の非空白文字を読み込まずに返します。ストリームの終端に達した場合は `0` を返します。 |
 
-### コンストラクタ
-
-| コンストラクタ                                       | 説明                                   |
-|-----------------------------------------------|--------------------------------------|
-| `FastScanner()`                               | デフォルト設定（`System.in`、バッファサイズ65536バイト） |
-| `FastScanner(InputStream in)`                 | 指定された入力ストリームを使用                      |
-| `FastScanner(int bufferSize)`                 | 指定されたバッファサイズを使用（`System.in`）         |
-| `FastScanner(InputStream in, int bufferSize)` | 指定された入力ストリームとバッファサイズを使用              |
-
 ## 利用例
 
 ```java
-// 基本的な使用例
 try (FastScanner sc = new FastScanner()) {
     int n = sc.nextInt();
-    long m = sc.nextLong();
-    double d = sc.nextDouble();
-    String s = sc.next();
-    String line = sc.nextLine();
-    // 処理
-} 
-
-// hasNext を用いたEOFまでの読み取り
-try (FastScanner sc = new FastScanner()) {
-    while (sc.hasNext()) {
-        int val = sc.nextInt();
-        // val を使った処理
+    int[] a = sc.nextInt(n); // 配列の一括読み込み
+    
+    int[][] mat = sc.nextIntMat(3, 3); // 行列の読み込み
+    
+    if (sc.hasNext()) {
+        String s = sc.next();
     }
-}
-
-// peek を用いた次の文字の確認
-try (FastScanner sc = new FastScanner()) {
-    char nextChar = sc.peek();
-    if (Character.isDigit(nextChar)) {
-        int num = sc.nextInt();
-        // ...
-    }
-}
-
-// カスタムストリームとバッファサイズの指定
-try(FastScanner sc = new FastScanner(new FileInputStream("input.txt"), 8192)) {
-    // ファイルからの入力処理
 }
 ```
 
 ## 注意事項
 
 - `ASCII` 範囲外の文字は正しく処理できません。
-- 入力は半角スペースまたは改行で区切られていることを前提としています。
 - `hasNext()` や `peek()` は、次のトークンを見つけるために先行して空白文字を読み飛ばすことがあります。
-- 入力元が `System.in` の場合、`close()` メソッドはストリームを閉じません。
-
-## パフォーマンス特性
-
-- **計算量**: 読み込むトークン数に対して線形（`O(トークン数)`）です。
-- **空間計算量**: 指定したバッファサイズに依存します（デフォルト: 65536バイト）。
+- 統合に伴い、以前の `ContestScanner` は削除されました。
 
 ## バージョン情報
 
@@ -112,6 +105,7 @@ try(FastScanner sc = new FastScanner(new FileInputStream("input.txt"), 8192)) {
 | **バージョン 1.2** | 2025-06-09 | nextLine メソッドの改行文字処理を改善しました。                                                                         |
 | **バージョン 1.3** | 2025-06-25 | nextDouble メソッドの小数の構築処理を、ループ内の浮動小数点演算を削減する方式に変更。                                                     |
 | **バージョン 2.0** | 2025-09-22 | `hasNext` および `peek` メソッドを追加し、EOFハンドリングを改善。数値解析ロジックやバッファ操作を最適化し、パフォーマンスを向上。コメントフォーマットを統一し、可読性を高めました。 |
+| **バージョン 3.0** | 2026-02-15 | `ContestScanner` と `CompressedFastScanner` を統合。すべての拡張入力メソッドが `FastScanner` で利用可能になりました。              |
 
 ### バージョン管理について
 

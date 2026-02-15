@@ -3,8 +3,8 @@ import java.util.*;
 public final class Example {
 
 	// ------------------------ 定数 ------------------------
-	private static final ContestScanner sc = new ContestScanner();
-	private static final ContestPrinter out = new ContestPrinter();
+	private static final FastScanner sc = new FastScanner();
+	private static final FastPrinter out = new FastPrinter();
 
 	// ------------------------ メインロジック ------------------------
 	private static void solve() {

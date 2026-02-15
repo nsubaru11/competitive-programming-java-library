@@ -4,42 +4,52 @@
 
 `FastPrinter`は、競技プログラミング向けに設計された高速出力クラスです。  
 内部バッファと低レベルなバイト操作を利用して`OutputStream`への書き込みを効率化し、標準の`PrintStream`よりも高速な処理を実現します。
+`FastIO24`では、Java 24の `VarHandle` API を採用して最適化されています。
+以前の `ContestPrinter`の機能（配列やコレクションの一括出力、変換関数適用など）も統合されています。
 
 ## 特徴
 
-- **効率的な出力**: 内部バッファを利用して効率的に出力します 。
-- **高速性の重視**: Java 24の `VarHandle` API
-	を採用し、リフレクションを介さずにバッファへの高速なアクセスを実現しています。また、最適化された数値変換ロジックやループ展開など、最小限のオブジェクト生成でパフォーマンスを追求しています。
-- **動的なバッファ管理**: バッファが不足した場合、自動的に2の冪乗サイズに拡張されるため、大規模な出力でも `flush`
-	の頻度を抑え、パフォーマンスを維持します。
-- **文字コード**: `ASCII` 範囲内の文字出力のみをサポートします 。
-- **リソース管理**: `AutoCloseable` インターフェースを実装しており、`try-with-resources`構文に対応しています 。
-- **メソッドチェーン**: `print()`や`println()`が自身のインスタンスを返すため、`fp.print(a).print(" ").println(b)`
-	のようにメソッドを連結して記述できます。
-- **Object出力の最適化**: `Object` 型の引数に対して `switch` 式を使用し、主要なプリミティブ型や `String` などの型を効率的に処理します。
+- **効率的な出力**: 内部バッファを利用して効率的に出力します。
+- **高速性の重視**: Java 24の `VarHandle` API を採用し、リフレクションを介さずに高速なアクセスを実現しています。
+- **メソッドチェーン**: `print()`や`println()`が自身のインスタンスを返すため、`fp.print(a).print(" ").println(b)`のように記述できます。
+- **多機能出力**: プリミティブ型の配列、オブジェクト配列、`Iterable`、2次元配列など、多彩なデータ構造の出力に対応します。
+- **関数変換**: 出力する要素を、指定した関数でその場で変換しながら出力できます。
+- **動的なバッファ管理**: バッファが不足した場合、自動的に拡張されます。
+- **文字コード**: `ASCII` 範囲内の文字出力のみをサポートします。
 
 ## 依存関係
 
 - Java 標準の入出力ライブラリ（`OutputStream`）
 - `java.lang.invoke.VarHandle`
-- `java.util.Arrays`
+- `java.util.function.*`
 
-## 主な機能（メソッド一覧）
+## 主な機能
 
-### 出力メソッド
+### 基本的な出力メソッド
 
-`print()`および`println()`は、以下の型に対応しており、すべて`FastPrinter`インスタンスを返すためメソッドチェーンが可能です。
+| メソッド               | 説明                 |
+|--------------------|--------------------|
+| `print(value)`     | 指定された値を改行なしで出力します。 |
+| `println()`        | 改行のみを出力します。        |
+| `println(value)`   | 指定された値を改行付きで出力します。 |
+| `printf(fmt, ...)` | フォーマット付き出力を行います。   |
 
-- **プリミティブ型**: `boolean`, `byte`, `char`, `int`, `long`, `double`
-- **文字列**: `String`, `StringBuilder`
-- **オブジェクト**: `Object` (内部で `toString()` を呼び出し、または型に応じた最適化された処理)
-- **拡張数値型**: `BigInteger`, `BigDecimal`
+### 配列・コレクション出力
 
-| メソッド             | 説明                 |
-|------------------|--------------------|
-| `print(value)`   | 指定された値を改行なしで出力します。 |
-| `println()`      | 改行のみを出力します。        |
-| `println(value)` | 指定された値を改行付きで出力します。 |
+| メソッド                             | 説明                             |
+|----------------------------------|--------------------------------|
+| `print(int[] arr)`               | int配列を半角スペース区切りで出力（改行なし）       |
+| `println(int[] arr)`             | int配列を各要素改行区切りで出力（改行付き）        |
+| `println(int[][] arr2d)`         | 2次元int配列を行列形式で出力               |
+| `print(Iterable<T> iter)`        | Iterableの要素を半角スペース区切りで出力（改行なし） |
+| `print(U[] arr, char delimiter)` | 指定した区切り文字で配列を出力                |
+
+### 関数変換付き出力
+
+| メソッド                                          | 説明                       |
+|-----------------------------------------------|--------------------------|
+| `print(int[] arr, IntFunction<T> function)`   | 各要素を関数で変換して出力（半角スペース区切り） |
+| `println(Iterable<T> iter, Function<T, U> f)` | 各要素を関数で変換して出力（各要素改行付き）   |
 
 ### 制御メソッド
 
@@ -48,44 +58,25 @@
 | `flush()` | 内部バッファの内容を強制的に出力ストリームに書き込みます。                            |
 | `close()` | バッファをフラッシュした後、出力ストリームを閉じます（`try-with-resources`で自動呼び出し）。 |
 
-### コンストラクタ
-
-| コンストラクタ                                                            | 説明                                                              |
-|--------------------------------------------------------------------|-----------------------------------------------------------------|
-| `FastPrinter()`                                                    | デフォルト設定（バッファ64K、出力ストリーム `System.out`、`autoFlush=false`）で初期化します。 |
-| `FastPrinter(OutputStream out)`                                    | 指定した出力ストリームを利用して初期化します。                                         |
-| `FastPrinter(int bufferSize)`                                      | 指定サイズのバッファを使用して初期化します。                                          |
-| `FastPrinter(boolean autoFlush)`                                   | autoFlushを指定して初期化します。                                           |
-| `FastPrinter(OutputStream out, boolean autoFlush)`                 | バッファサイズとautoFlushを指定して初期化します。                                   |
-| `FastPrinter(int bufferSize, boolean autoFlush)`                   | 出力ストリームとautoFlushを指定して初期化します。                                   |
-| `FastPrinter(OutputStream out, int bufferSize)`                    | 出力ストリームとバッファサイズを指定して初期化します。                                     |
-| `FastPrinter(OutputStream out, int bufferSize, boolean autoFlush)` | 出力ストリーム、バッファサイズ、autoFlush設定をすべて指定して初期化します。                      |
-
 ## 利用例
-
-`try-with-resources` 構文を使用することで、処理の最後に自動的に `close()` (内部で `flush()` を呼び出し)
-が実行され、確実なリソース解放が保証されます。
 
 ```java
 try (FastPrinter fp = new FastPrinter()) {
-	fp.println("競技プログラミング用出力").print(12345);
-} catch (Exception e) {
-	throw new RuntimeException(e);
+    int[] a = {1, 2, 3};
+    fp.println("Result:").println(a); // 配列の出力
+    
+    fp.print(10).print(" ").println(20); // メソッドチェーン
+    
+    List<Integer> list = List.of(4, 5, 6);
+    fp.print(list, x -> x * 2); // 変換しながら出力
 }
 ```
 
 ## 注意事項
 
 - `ASCII` 範囲外の文字はサポートされていません。
-- 出力先 `OutputStream` を未指定の場合、`System.out` が使用されます。
-- `autoFlush`が`false`の場合（デフォルト）、バッファがいっぱいになるまで出力は行われません。`try-with-resources`
-	構文を使うか、最後に手動で`flush()`または`close()`を呼び出す必要があります。
-
-## パフォーマンス特性
-
-- **計算量**: 出力文字数に対して線形（`O(文字数)`）です。
-- **高速化の仕組み**: `java.lang.invoke.VarHandle`
-	を用いた直接的なメモリ操作、最適化された整数変換、ループ展開による文字列書き込み、動的なバッファ拡張により、システムコールの回数を削減し、高速な出力を実現しています。
+- `autoFlush`が`false`の場合（デフォルト）、最後に`flush()`または`close()`を呼び出す必要があります。
+- 統合に伴い、以前の `ContestPrinter` は削除されました。
 
 ## バージョン情報
 
@@ -98,6 +89,7 @@ try (FastPrinter fp = new FastPrinter()) {
 | **バージョン 4.0** | 2025-11-11 | `FastIO24`としてJava 24向けに全面的な刷新を実施。`sun.misc.Unsafe`から`VarHandle`への移行、動的バッファ拡張、`Object`出力の`switch`式化、`write(String s)`のループ展開による最適化など。 |
 | **バージョン 4.1** | 2025-11-12 | `ensureCapacity`にオーバーフロー対策と1GB制限を実装。大量出力時の安全性を向上させました。                                                                              |
 | **バージョン 4.2** | 2025-11-25 | `println(boolean b)`メソッド内で`ensureCapacity`の呼び出しを追加し、バッファオーバーフローのリスクを軽減。                                                             |
+| **バージョン 5.0** | 2026-02-15 | `FastIO24`において `ContestPrinter` 機能を統合。すべての拡張出力メソッドが `FastPrinter` で利用可能になりました。                                                      |
 
 ### バージョン管理について
 

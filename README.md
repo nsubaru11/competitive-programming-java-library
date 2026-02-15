@@ -7,56 +7,27 @@ author: <https://atcoder.jp/users/nsubaru>
 
 ## クラス一覧
 
-### [FastScanner](./Data%20Structures/FastIO/src/FastScanner.java)
+### [FastScanner (Java 17)](./Data%20Structures/FastIO17/src/FastScanner.java) / [FastScanner (Java 24)](./Data%20Structures/FastIO24/src/FastScanner.java)
 
 - **用途**
-	- 標準入力（`InputStream`）を高速に処理するクラス
+	- 標準入力（`InputStream`）を高速に処理するクラス。
 - **特徴**
-	- 内部バッファを使用して効率的に入力を読み込む
-	- ASCII 範囲外の文字には対応していない
-	- `AutoCloseable`を実装しているため、`try-with-resources`の利用が推奨される
+	- 内部バッファを使用して効率的に入力を読み込む。
+	- 競技プログラミングでよく使用される入力形式（配列、行列、コレクション等）の読み込みをサポート。
+	- `AutoCloseable`を実装しているため、`try-with-resources`の利用が推奨される。
+	- Java 17環境向けとJava 24環境向け（最新機能による最適化版）がある。
 
 ---
 
-### [FastPrinter](./Data%20Structures/FastIO/src/FastPrinter.java)
+### [FastPrinter (Java 17)](./Data%20Structures/FastIO17/src/FastPrinter.java) / [FastPrinter (Java 24)](./Data%20Structures/FastIO24/src/FastPrinter.java)
 
 - **用途**
-	- 標準出力（`OutputStream`）を高速に処理するクラス
+	- 標準出力（`OutputStream`）を高速に処理するクラス。
 - **特徴**
-	- 内部バッファに出力内容を蓄積し、バッファが満杯になったタイミングで指定の`OutputStream`に書き出す
-	- ASCII 範囲外の文字は取り扱わない
-	- `AutoCloseable`を実装しているため、`try-with-resources`の利用が推奨される
-
----
-
-### [ContestScanner](./Data%20Structures/FastIO/src/ContestScanner.java)
-
-- **用途**
-	- `FastScanner`を拡張し、競技プログラミングでよく使用される入力形式の処理をサポートするユーティリティクラス
-- **特徴**
-	- 以下の入力形式を高速に読み込む
-		- 一次元配列（整数、長整数、浮動小数点数、文字、文字列）
-		- 二次元・三次元配列
-		- ソート済み配列
-		- 累積和配列
-		- 逆写像配列（入力値に対応する元のインデックスを保持）
-		- 各種コレクション（`ArrayList`、`HashSet`、`BinarySearchTree`）
-		- MultiSet（入力値の出現回数を保持）（`HashMap`, `TreeMap`, `int[]`, `char[]`）
-	- 内部バッファを利用し、`FastScanner` 同様に効率的な入力処理が可能
-	- `AutoCloseable`を実装しているため、`try-with-resources`の利用が推奨される
-
----
-
-### [ContestPrinter](./Data%20Structures/FastIO/src/ContestPrinter.java)
-
-- **用途**
-	- `FastPrinter` を拡張し、競技プログラミングで頻繁に使用される出力形式の処理をサポートするユーティリティクラス
-- **特徴**
-	- 配列や 2 次元配列の出力を簡便に行える（各要素間にスペース、各行は改行で区切る）
-	- 任意のオブジェクトは `toString()` を利用して出力可能
-	- 変換処理を適用した出力（関数適用後の配列出力など）にも対応
-	- `null` チェックを導入しているため、`NullPointerException` の発生リスクを低減
-	- `AutoCloseable` を実装しているため、`try-with-resources` の利用が推奨される
+	- 内部バッファに出力内容を蓄積し、効率的に書き出す。
+	- 配列や行列の出力、メソッドチェーンによる記述をサポート。
+	- `AutoCloseable`を実装しているため、`try-with-resources`の利用が推奨される。
+	- Java 17環境向けとJava 24環境向け（最新機能による最適化版）がある。
 
 ---
 

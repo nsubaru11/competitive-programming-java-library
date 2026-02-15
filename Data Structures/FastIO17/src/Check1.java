@@ -941,7 +941,7 @@ public final class Check1 {
 			final int required = pos + additional;
 			if (required <= buffer.length) return;
 			if (required <= 1_000_000_000) {
-				buffer = Arrays.copyOf(buffer, roundUpToPowerOfTwo(required));
+				buffer = copyOf(buffer, roundUpToPowerOfTwo(required));
 			} else {
 				flush();
 			}

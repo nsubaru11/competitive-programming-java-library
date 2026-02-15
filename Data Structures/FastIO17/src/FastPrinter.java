@@ -4,76 +4,22 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import static java.lang.Math.*;
 
-/**
- * 競技プログラミング向けの高速出力クラスです。<br>
- * ※注意: 内部バッファが満杯になると自動的に指定の OutputStream に書き出します。<br>
- * 処理途中で結果をすぐに反映させる必要がある場合は、autoFlush を true にするか、明示的に {@link #flush()} を呼び出してください。
- * ASCII範囲外の文字は取り扱えません。
- */
 @SuppressWarnings("unused")
-public class FastPrinter implements AutoCloseable {
-
-	/* ------------------------ 定数 ------------------------ */
-
-	/**
-	 * int 型の値を文字列に変換した際に必要となる最大桁数（符号込み）<br>
-	 * 例: Integer.MIN_VALUE は "-2147483648"（11バイト）
-	 */
-	protected static final int MAX_INT_DIGITS = 11;
-
-	/**
-	 * long 型の値を文字列に変換した際に必要となる最大桁数（符号込み）<br>
-	 * 例: Long.MIN_VALUE は "-9223372036854775808"（20バイト）
-	 */
-	protected static final int MAX_LONG_DIGITS = 20;
-
-	/**
-	 * 改行文字（'\n'）のバイト表現
-	 */
-	protected static final byte LINE = '\n';
-
-	/**
-	 * 空白文字（' '）のバイト表現
-	 */
-	protected static final byte SPACE = ' ';
-
-	/**
-	 * ハイフン（'-'）のバイト表現
-	 */
-	protected static final byte HYPHEN = '-';
-
-	/**
-	 * ピリオド（'.'）のバイト表現
-	 */
-	protected static final byte PERIOD = '.';
-
-	/**
-	 * 数字のゼロ（'0'）のバイト表現
-	 */
-	protected static final byte ZERO = '0';
-
-	/**
-	 * 出力用内部バッファのデフォルトサイズ（バイト単位）<br>
-	 * ※64バイト未満の場合、内部的に64バイトに調整されます。
-	 */
+public final class FastPrinter implements AutoCloseable {
+	private static final int MAX_INT_DIGITS = 11;
+	private static final int MAX_LONG_DIGITS = 20;
 	private static final int DEFAULT_BUFFER_SIZE = 65536;
-
-	/**
-	 * boolean値がtrueの場合の出力文字列 "Yes" のバイト配列
-	 */
+	private static final byte LINE = '\n';
+	private static final byte SPACE = ' ';
+	private static final byte HYPHEN = '-';
+	private static final byte PERIOD = '.';
+	private static final byte ZERO = '0';
 	private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
-
-	/**
-	 * boolean値がfalseの場合の出力文字列 "No" のバイト配列
-	 */
 	private static final byte[] FALSE_BYTES = {'N', 'o'};
-
-	/**
-	 * 00～99 の1の位の数字を格納した配列
-	 */
 	private static final byte[] DigitOnes = {
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -86,10 +32,6 @@ public class FastPrinter implements AutoCloseable {
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	};
-
-	/**
-	 * 00～99 の10の位の数字を格納した配列
-	 */
 	private static final byte[] DigitTens = {
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
@@ -102,23 +44,16 @@ public class FastPrinter implements AutoCloseable {
 			'8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
 			'9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
 	};
-
-	/**
-	 * Unsafe を用いて、バイト配列の内容を直接書き換えるためのユーティリティメソッドです。
-	 */
+	private static final long[] POW10 = {
+			1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
+			1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
+			10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
+			10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
+	};
 	private static final Unsafe UNSAFE;
-
-	/**
-	 * String の value フィールドのオフセット値です。
-	 */
 	private static final long STRING_VALUE_OFFSET;
-
-	/**
-	 * AbstractStringBuilder の value フィールドのオフセット値です。
-	 */
 	private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
 
-	/* ------------------------ 初期化処理 ------------------------ */
 
 	static {
 		try {
@@ -133,130 +68,46 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	/* ------------------------ インスタンス変数 ------------------------ */
-
-	/**
-	 * 出力後に自動的にバッファを flush するかどうかを示すフラグです。<br>
-	 * true の場合、各出力操作後に自動的に {@link #flush()} が呼ばれます。
-	 */
-	protected final boolean autoFlush;
-
-	/**
-	 * 出力先の OutputStream です。デフォルトは {@code System.out} です。
-	 */
 	private final OutputStream out;
+	private final boolean autoFlush;
+	private byte[] buffer;
+	private int pos = 0;
 
-	/**
-	 * 出力先の内部バッファです。書き込みはこの配列に対して行い、必要に応じて {@link #flush()} で出力します。
-	 */
-	protected byte[] buffer;
-
-	/**
-	 * 現在のバッファ内での書き込み位置
-	 */
-	protected int pos = 0;
-
-	/* ------------------------ コンストラクタ ------------------------ */
-
-	/**
-	 * デフォルトの設定でFastPrinterを初期化します。<br>
-	 * バッファ容量: 65536 <br>
-	 * OutputStream: System.out <br>
-	 * autoFlush: false
-	 */
 	public FastPrinter() {
 		this(System.out, DEFAULT_BUFFER_SIZE, false);
 	}
 
-	/**
-	 * 指定されたOutputStreamを用いてFastPrinterを初期化します。<br>
-	 * バッファ容量: 65536 <br>
-	 * autoFlush: false
-	 *
-	 * @param out 出力先の OutputStream
-	 */
 	public FastPrinter(final OutputStream out) {
 		this(out, DEFAULT_BUFFER_SIZE, false);
 	}
 
-	/**
-	 * 指定されたバッファ容量でFastPrinterを初期化します。<br>
-	 * OutputStream: System.out <br>
-	 * autoFlush: false
-	 *
-	 * @param bufferSize 内部バッファの容量（バイト単位）。
-	 */
 	public FastPrinter(final int bufferSize) {
 		this(System.out, bufferSize, false);
 	}
 
-	/**
-	 * autoFlush を指定して FastPrinter を初期化します。<br>
-	 * バッファ容量: 65536 <br>
-	 * OutputStream: System.out
-	 *
-	 * @param autoFlush true の場合、各出力操作後に自動的に {@link #flush()} が呼ばれます。
-	 */
 	public FastPrinter(final boolean autoFlush) {
 		this(System.out, DEFAULT_BUFFER_SIZE, autoFlush);
 	}
 
-	/**
-	 * 指定された OutputStream と autoFlush 設定で FastPrinter を初期化します。<br>
-	 * バッファ容量: 65536
-	 *
-	 * @param out       出力先の OutputStream
-	 * @param autoFlush true を指定すると、各出力操作後に自動的に {@link #flush()} が呼ばれ、出力結果が即座に反映されます。
-	 */
 	public FastPrinter(final OutputStream out, final boolean autoFlush) {
 		this(out, DEFAULT_BUFFER_SIZE, autoFlush);
 	}
 
-	/**
-	 * 指定されたバッファ容量と autoFlush 設定で FastPrinter を初期化します。<br>
-	 * OutputStream: System.out
-	 *
-	 * @param bufferSize 内部バッファの初期容量（バイト単位）。64 バイト未満の場合、内部的に 64 バイトに調整されます。
-	 * @param autoFlush  true を指定すると、各出力操作後に自動的に {@link #flush()} が呼ばれ、出力結果が即座に反映されます。
-	 */
 	public FastPrinter(final int bufferSize, final boolean autoFlush) {
 		this(System.out, bufferSize, autoFlush);
 	}
 
-	/**
-	 * 指定されたバッファ容量と OutputStream で FastPrinter を初期化します。<br>
-	 * autoFlush: false
-	 *
-	 * @param out        出力先の OutputStream
-	 * @param bufferSize 内部バッファの初期容量（バイト単位）。64 バイト未満の場合、内部的に 64 バイトに調整されます。
-	 */
 	public FastPrinter(final OutputStream out, final int bufferSize) {
 		this(out, bufferSize, false);
 	}
 
-	/**
-	 * 指定されたバッファ容量、OutputStream、autoFlush 設定で FastPrinter を初期化します。
-	 *
-	 * @param out        出力先の OutputStream
-	 * @param bufferSize 内部バッファの初期容量（バイト単位）。64 バイト未満の場合、内部的に 64 バイトに調整されます。
-	 * @param autoFlush  true を指定すると、各出力操作後に自動的に {@link #flush()} が呼ばれ、出力結果が即座に反映されます。
-	 */
 	public FastPrinter(final OutputStream out, final int bufferSize, final boolean autoFlush) {
 		this.out = out;
 		this.buffer = new byte[max(64, roundUpToPowerOfTwo(bufferSize))];
 		this.autoFlush = autoFlush;
 	}
 
-	/* ------------------------ 静的メソッド ------------------------ */
-
-	/**
-	 * 指定された整数値の桁数を数えます。<br>
-	 * 与えられる数値は負の整数であることを前提とした実装です。
-	 *
-	 * @param i 負の整数値
-	 * @return 桁数（符号を除く）
-	 */
-	protected static int countDigits(final int i) {
+	private static int countDigits(final int i) {
 		if (i > -100000) {
 			if (i > -100) {
 				return i > -10 ? 1 : 2;
@@ -274,14 +125,7 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	/**
-	 * 指定された整数値の桁数を数えます。<br>
-	 * 与えられる数値は負の整数であることを前提とした実装です。
-	 *
-	 * @param l 負の整数値
-	 * @return 桁数（符号を除く）
-	 */
-	protected static int countDigits(final long l) {
+	private static int countDigits(final long l) {
 		if (l > -1000000000) {
 			if (l > -10000) {
 				if (l > -100) {
@@ -316,13 +160,6 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	/**
-	 * 指定された値を自身以上の最小の2の冪乗に切り上げます。<br>
-	 * バッファサイズの調整に使用します。
-	 *
-	 * @param x 切り上げる値
-	 * @return x 以上の最小の2の冪乗
-	 */
 	private static int roundUpToPowerOfTwo(int x) {
 		if (x <= 1) return 1;
 		x--;
@@ -334,16 +171,8 @@ public class FastPrinter implements AutoCloseable {
 		return x + 1;
 	}
 
-	/* ------------------------ オーバーライドメソッド ------------------------ */
-
-	/**
-	 * {@code flush()}を実行し、このOutputStreamを閉じます。<br>
-	 * 出力先が {@code System.out} の場合、閉じません。
-	 *
-	 * @throws RuntimeException 出力時のエラーが発生した場合
-	 */
 	@Override
-	public final void close() {
+	public void close() {
 		try {
 			flush();
 			if (out != System.out) out.close();
@@ -352,14 +181,7 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	/* ------------------------ 公開メソッド ------------------------ */
-
-	/**
-	 * 現在のバッファに保持しているすべてのデータを出力し、バッファをクリアします。
-	 *
-	 * @throws RuntimeException 出力時のエラーが発生した場合
-	 */
-	public final void flush() {
+	public void flush() {
 		if (pos == 0) return;
 		try {
 			out.write(buffer, 0, pos);
@@ -369,13 +191,6 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	/* ------------------------ println() 系メソッド ------------------------ */
-
-	/**
-	 * 改行のみ出力します。
-	 *
-	 * @return この {@code FastPrinter} インスタンス
-	 */
 	public FastPrinter println() {
 		ensureCapacity(1);
 		buffer[pos++] = LINE;
@@ -383,13 +198,7 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * boolean 値を出力します。（true は "Yes"、 false は "No"、改行付き）
-	 *
-	 * @param b 出力する boolean 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final boolean b) {
+	public FastPrinter println(final boolean b) {
 		write(b);
 		ensureCapacity(1);
 		buffer[pos++] = LINE;
@@ -397,13 +206,7 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * byte 値を出力します。（改行付き）
-	 *
-	 * @param b 出力する byte 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final byte b) {
+	public FastPrinter println(final byte b) {
 		ensureCapacity(2);
 		buffer[pos++] = b;
 		buffer[pos++] = LINE;
@@ -411,13 +214,7 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * char 値を出力します。（改行付き）
-	 *
-	 * @param c 出力する char 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final char c) {
+	public FastPrinter println(final char c) {
 		ensureCapacity(2);
 		buffer[pos++] = (byte) c;
 		buffer[pos++] = LINE;
@@ -425,13 +222,7 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * int 値を出力します。（改行付き）
-	 *
-	 * @param i 出力する int 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final int i) {
+	public FastPrinter println(final int i) {
 		ensureCapacity(MAX_INT_DIGITS + 1);
 		write(i);
 		buffer[pos++] = LINE;
@@ -439,13 +230,7 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * long 値を出力します。（改行付き）
-	 *
-	 * @param l 出力する long 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final long l) {
+	public FastPrinter println(final long l) {
 		ensureCapacity(MAX_LONG_DIGITS + 1);
 		write(l);
 		buffer[pos++] = LINE;
@@ -453,43 +238,19 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * double 値を {@code Double.toString(d)} で文字列化し出力します。（改行付き）
-	 *
-	 * @param d 出力する double 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final double d) {
+	public FastPrinter println(final double d) {
 		return println(Double.toString(d));
 	}
 
-	/**
-	 * BigInteger を {@code toString()} で文字列化し出力します。（改行付き）
-	 *
-	 * @param bi 出力する BigInteger
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final BigInteger bi) {
+	public FastPrinter println(final BigInteger bi) {
 		return println(bi.toString());
 	}
 
-	/**
-	 * BigDecimal を {@code toString()} で文字列化し出力します。（改行付き）
-	 *
-	 * @param bd 出力する BigDecimal
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final BigDecimal bd) {
+	public FastPrinter println(final BigDecimal bd) {
 		return println(bd.toString());
 	}
 
-	/**
-	 * String を出力します。（改行付き）
-	 *
-	 * @param s 出力する String 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final String s) {
+	public FastPrinter println(final String s) {
 		ensureCapacity(s.length() + 1);
 		write(s);
 		buffer[pos++] = LINE;
@@ -497,13 +258,7 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * StringBuilder を出力します。（改行付き）
-	 *
-	 * @param s 出力する StringBuilder 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter println(final StringBuilder s) {
+	public FastPrinter println(final StringBuilder s) {
 		ensureCapacity(s.length() + 1);
 		write(s);
 		buffer[pos++] = LINE;
@@ -511,15 +266,6 @@ public class FastPrinter implements AutoCloseable {
 		return this;
 	}
 
-	/**
-	 * Object を文字列化して出力します。（改行付き）<br>
-	 * {@code null} の場合は改行のみ出力します。<br>
-	 * 効率化のため、内部で {@code if}文 による型判定を行い、
-	 * 基本的な型（String, Integer, Long など）はそれぞれに最適化されたメソッドで処理します。
-	 *
-	 * @param o 出力するオブジェクト
-	 * @return この {@code FastPrinter} インスタンス
-	 */
 	public FastPrinter println(final Object o) {
 		if (o == null) return println();
 		else if (o instanceof Boolean b) {
@@ -540,142 +286,85 @@ public class FastPrinter implements AutoCloseable {
 			return println(bd.toString());
 		} else if (o instanceof String s) {
 			return println(s);
+		} else if (o instanceof boolean[] arr) {
+			return println(arr);
+		} else if (o instanceof char[] arr) {
+			return println(arr);
+		} else if (o instanceof int[] arr) {
+			return println(arr);
+		} else if (o instanceof long[] arr) {
+			return println(arr);
+		} else if (o instanceof double[] arr) {
+			return println(arr);
+		} else if (o instanceof String[] arr) {
+			return println(arr);
+		} else if (o instanceof Object[] arr) {
+			return println(arr);
 		} else {
 			return println(o.toString());
 		}
 	}
 
-	/* ------------------------ print() 系メソッド ------------------------ */
-
-	/**
-	 * boolean 値を出力します。（true は "Yes"、 false は "No"、改行無し）
-	 *
-	 * @param b 出力する boolean 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final boolean b) {
+	public FastPrinter print(final boolean b) {
 		write(b);
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * byte 値を出力します。（改行無し）
-	 *
-	 * @param b 出力する byte 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final byte b) {
+	public FastPrinter print(final byte b) {
 		ensureCapacity(1);
 		buffer[pos++] = b;
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * char 値を出力します。（改行無し）
-	 *
-	 * @param c 出力する char 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final char c) {
+	public FastPrinter print(final char c) {
 		ensureCapacity(1);
 		buffer[pos++] = (byte) c;
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * int 値を出力します。（改行無し）
-	 *
-	 * @param i 出力する int 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final int i) {
+	public FastPrinter print(final int i) {
 		ensureCapacity(MAX_INT_DIGITS);
 		write(i);
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * long 値を出力します。（改行無し）
-	 *
-	 * @param l 出力する long 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final long l) {
+	public FastPrinter print(final long l) {
 		ensureCapacity(MAX_LONG_DIGITS);
 		write(l);
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * double 値を {@code Double.toString(d)} で文字列化し出力します。（改行無し）
-	 *
-	 * @param d 出力する double 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final double d) {
+	public FastPrinter print(final double d) {
 		return print(Double.toString(d));
 	}
 
-	/**
-	 * BigInteger を {@code toString()} で文字列化し出力します。（改行無し）
-	 *
-	 * @param bi 出力する BigInteger
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final BigInteger bi) {
+	public FastPrinter print(final BigInteger bi) {
 		return print(bi.toString());
 	}
 
-	/**
-	 * BigDecimal を {@code toString()} で文字列化し出力します。（改行無し）
-	 *
-	 * @param bd 出力する BigDecimal
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final BigDecimal bd) {
+	public FastPrinter print(final BigDecimal bd) {
 		return print(bd.toString());
 	}
 
-	/**
-	 * String を出力します。（改行無し）
-	 *
-	 * @param s 出力する String 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final String s) {
+	public FastPrinter print(final String s) {
 		ensureCapacity(s.length());
 		write(s);
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * StringBuilder を出力します。（改行無し）
-	 *
-	 * @param s 出力する StringBuilder 値
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter print(final StringBuilder s) {
+	public FastPrinter print(final StringBuilder s) {
 		ensureCapacity(s.length());
 		write(s);
 		if (autoFlush) flush();
 		return this;
 	}
 
-	/**
-	 * Object を文字列化して出力します。（改行無し）<br>
-	 * {@code null} の場合は何も出力しません。<br>
-	 * 効率化のため、内部で {@code if}文 による型判定を行い、
-	 * 基本的な型（String, Integer, Long など）はそれぞれに最適化されたメソッドで処理します。
-	 *
-	 * @param o 出力するオブジェクト
-	 * @return この {@code FastPrinter} インスタンス
-	 */
 	public FastPrinter print(final Object o) {
 		if (o == null) return this;
 		else if (o instanceof Boolean b) {
@@ -696,45 +385,34 @@ public class FastPrinter implements AutoCloseable {
 			return print(bd.toString());
 		} else if (o instanceof String s) {
 			return print(s);
+		} else if (o instanceof boolean[] arr) {
+			return print(arr);
+		} else if (o instanceof char[] arr) {
+			return print(arr);
+		} else if (o instanceof int[] arr) {
+			return print(arr);
+		} else if (o instanceof long[] arr) {
+			return print(arr);
+		} else if (o instanceof double[] arr) {
+			return print(arr);
+		} else if (o instanceof String[] arr) {
+			return print(arr);
+		} else if (o instanceof Object[] arr) {
+			return print(arr);
 		} else {
 			return print(o.toString());
 		}
 	}
 
-	/* ------------------------ printf() 系メソッド ------------------------ */
-
-	/**
-	 * 指定されたフォーマットに従い文字列を生成して出力します。（改行無し）
-	 *
-	 * @param format 書式文字列
-	 * @param args   書式引数
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter printf(final String format, final Object... args) {
+	public FastPrinter printf(final String format, final Object... args) {
 		return print(String.format(format, args));
 	}
 
-	/**
-	 * 指定された言語環境で整形し、フォーマットに従い文字列を生成して出力します。（改行無し）
-	 *
-	 * @param locale 言語環境
-	 * @param format 書式文字列
-	 * @param args   書式引数
-	 * @return この {@code FastPrinter} インスタンス
-	 */
-	public final FastPrinter printf(final Locale locale, final String format, final Object... args) {
+	public FastPrinter printf(final Locale locale, final String format, final Object... args) {
 		return print(String.format(locale, format, args));
 	}
 
-	/* ------------------------ プライベートヘルパーメソッド ------------------------ */
-
-	/**
-	 * 指定されたバイト数のデータを出力するために必要な領域を保証します。<br>
-	 * バッファの残り容量が不足している場合、内部バッファを2の冪に丸めて拡張します。
-	 *
-	 * @param additional 出力予定のデータのバイト数
-	 */
-	protected final void ensureCapacity(final int additional) {
+	private void ensureCapacity(final int additional) {
 		final int required = pos + additional;
 		if (required <= buffer.length) return;
 		if (required <= 1_000_000_000) {
@@ -744,12 +422,7 @@ public class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	/**
-	 * 指定された boolean 値を文字列 ("Yes" または "No") に変換してバッファに格納します。
-	 *
-	 * @param b 出力する boolean 値
-	 */
-	protected final void write(final boolean b) {
+	private void write(final boolean b) {
 		final byte[] src = b ? TRUE_BYTES : FALSE_BYTES;
 		final int len = src.length;
 		ensureCapacity(len);
@@ -757,14 +430,7 @@ public class FastPrinter implements AutoCloseable {
 		pos += len;
 	}
 
-	/**
-	 * 指定された整数値を文字列に変換してバッファに格納します。<br>
-	 * 負の値の場合は先頭に '-' を付加します。<br>
-	 * 100単位でまとめて処理することで高速化を図っています。
-	 *
-	 * @param i 出力する整数値
-	 */
-	protected final void write(int i) {
+	private void write(int i) {
 		final byte[] buf = buffer;
 		int p = pos;
 		if (i >= 0) i = -i;
@@ -784,14 +450,7 @@ public class FastPrinter implements AutoCloseable {
 		pos = p + digits;
 	}
 
-	/**
-	 * 指定された整数値を文字列に変換してバッファに格納します。<br>
-	 * 負の値の場合は先頭に '-' を付加します。<br>
-	 * 100単位でまとめて処理することで高速化を図っています。
-	 *
-	 * @param l 出力する整数値
-	 */
-	protected final void write(long l) {
+	private void write(long l) {
 		final byte[] buf = buffer;
 		int p = pos;
 		if (l >= 0) l = -l;
@@ -811,25 +470,13 @@ public class FastPrinter implements AutoCloseable {
 		pos = p + digits;
 	}
 
-	/**
-	 * 指定された文字列をバッファに書き込みます。<br>
-	 * Unsafeを用いて内部バッファを取得しarraycopyを用いることで高速化を図っています。
-	 *
-	 * @param s 書き込む文字列
-	 */
-	protected final void write(final String s) {
+	private void write(final String s) {
 		final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
 		final int len = s.length();
 		System.arraycopy(src, 0, buffer, pos, len);
 		pos += len;
 	}
 
-	/**
-	 * 指定された文字列をバッファに書き込みます。<br>
-	 * Unsafeを用いて内部バッファを取得しarraycopyを用いることで高速化を図っています。
-	 *
-	 * @param s 書き込む文字列
-	 */
 	private void write(final StringBuilder s) {
 		final byte[] src = (byte[]) UNSAFE.getObject(s, ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
 		final int len = s.length();
@@ -837,4 +484,951 @@ public class FastPrinter implements AutoCloseable {
 		pos += len;
 	}
 
+	public FastPrinter println(final int a, final int b) {
+		return println(a, b, '\n');
+	}
+
+	public FastPrinter println(final int a, final long b) {
+		return println(a, b, '\n');
+	}
+
+	public FastPrinter println(final long a, final int b) {
+		return println(a, b, '\n');
+	}
+
+	public FastPrinter println(final long a, final long b) {
+		return println(a, b, '\n');
+	}
+
+	public FastPrinter println(final long a, final long b, final char delimiter) {
+		ensureCapacity((MAX_LONG_DIGITS << 1) + 2);
+		write(a);
+		buffer[pos++] = (byte) delimiter;
+		write(b);
+		buffer[pos++] = LINE;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter print(final int a, final int b) {
+		return print(a, b, ' ');
+	}
+
+	public FastPrinter print(final int a, final long b) {
+		return print(a, b, ' ');
+	}
+
+	public FastPrinter print(final long a, final int b) {
+		return print(a, b, ' ');
+	}
+
+	public FastPrinter print(final long a, final long b) {
+		return print(a, b, ' ');
+	}
+
+	public FastPrinter print(final long a, final long b, final char delimiter) {
+		ensureCapacity((MAX_LONG_DIGITS << 1) + 1);
+		write(a);
+		buffer[pos++] = (byte) delimiter;
+		write(b);
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter println(final double d, final int n) {
+		return print(d, n).println();
+	}
+
+	public FastPrinter print(double d, int n) {
+		if (n <= 0) return print(round(d));
+		if (d < 0) {
+			ensureCapacity(1);
+			buffer[pos++] = HYPHEN;
+			d = -d;
+		}
+		if (n > 18) n = 18;
+		final long intPart = (long) d;
+		final long fracPart = (long) ((d - intPart) * POW10[n]);
+		print(intPart);
+		int leadingZeros = n - countDigits(-fracPart);
+		ensureCapacity(leadingZeros + 1);
+		buffer[pos++] = PERIOD;
+		while (leadingZeros-- > 0) buffer[pos++] = ZERO;
+		print(fracPart);
+		return this;
+	}
+
+	public FastPrinter println(final boolean[] arr) {
+		return print(arr, 0, arr.length, '\n').println();
+	}
+
+	public FastPrinter println(final char[] arr) {
+		return print(arr, 0, arr.length, '\n').println();
+	}
+
+	public FastPrinter println(final int[] arr) {
+		return print(arr, 0, arr.length, '\n').println();
+	}
+
+	public FastPrinter println(final long[] arr) {
+		return print(arr, 0, arr.length, '\n').println();
+	}
+
+	public FastPrinter println(final double[] arr) {
+		return print(arr, 0, arr.length, '\n').println();
+	}
+
+	public FastPrinter println(final String[] arr) {
+		return print(arr, 0, arr.length, '\n').println();
+	}
+
+	public FastPrinter println(final Object... arr) {
+		for (final Object o : arr) println(o);
+		return this;
+	}
+
+	public FastPrinter println(final boolean[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter).println();
+	}
+
+	public FastPrinter println(final char[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter).println();
+	}
+
+	public FastPrinter println(final int[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter).println();
+	}
+
+	public FastPrinter println(final long[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter).println();
+	}
+
+	public FastPrinter println(final double[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter).println();
+	}
+
+	public FastPrinter println(final String[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter).println();
+	}
+
+	public FastPrinter println(final boolean[] arr, final int from, final int to) {
+		return print(arr, from, to, '\n').println();
+	}
+
+	public FastPrinter println(final char[] arr, final int from, final int to) {
+		return print(arr, from, to, '\n').println();
+	}
+
+	public FastPrinter println(final int[] arr, final int from, final int to) {
+		return print(arr, from, to, '\n').println();
+	}
+
+	public FastPrinter println(final long[] arr, final int from, final int to) {
+		return print(arr, from, to, '\n').println();
+	}
+
+	public FastPrinter println(final double[] arr, final int from, final int to) {
+		return print(arr, from, to, '\n').println();
+	}
+
+	public FastPrinter println(final String[] arr, final int from, final int to) {
+		return print(arr, from, to, '\n').println();
+	}
+
+	public FastPrinter println(final boolean[] arr, final int from, final int to, final char delimiter) {
+		return print(arr, from, to, delimiter).println();
+	}
+
+	public FastPrinter println(final char[] arr, final int from, final int to, final char delimiter) {
+		return print(arr, from, to, delimiter).println();
+	}
+
+	public FastPrinter println(final int[] arr, final int from, final int to, final char delimiter) {
+		return print(arr, from, to, delimiter).println();
+	}
+
+	public FastPrinter println(final long[] arr, final int from, final int to, final char delimiter) {
+		return print(arr, from, to, delimiter).println();
+	}
+
+	public FastPrinter println(final double[] arr, final int from, final int to, final char delimiter) {
+		return print(arr, from, to, delimiter).println();
+	}
+
+	public FastPrinter println(final String[] arr, final int from, final int to, final char delimiter) {
+		return print(arr, from, to, delimiter).println();
+	}
+
+	public FastPrinter print(final boolean[] arr) {
+		return print(arr, 0, arr.length, ' ');
+	}
+
+	public FastPrinter print(final char[] arr) {
+		return print(arr, 0, arr.length, ' ');
+	}
+
+	public FastPrinter print(final int[] arr) {
+		return print(arr, 0, arr.length, ' ');
+	}
+
+	public FastPrinter print(final long[] arr) {
+		return print(arr, 0, arr.length, ' ');
+	}
+
+	public FastPrinter print(final double[] arr) {
+		return print(arr, 0, arr.length, ' ');
+	}
+
+	public FastPrinter print(final String[] arr) {
+		return print(arr, 0, arr.length, ' ');
+	}
+
+	public FastPrinter print(final Object... arr) {
+		final int len = arr.length;
+		if (len > 0) print(arr[0]);
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(arr[i]);
+		}
+		return this;
+	}
+
+	public FastPrinter print(final boolean[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter);
+	}
+
+	public FastPrinter print(final char[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter);
+	}
+
+	public FastPrinter print(final int[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter);
+	}
+
+	public FastPrinter print(final long[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter);
+	}
+
+	public FastPrinter print(final double[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter);
+	}
+
+	public FastPrinter print(final String[] arr, final char delimiter) {
+		return print(arr, 0, arr.length, delimiter);
+	}
+
+	public FastPrinter print(final boolean[] arr, final int from, final int to) {
+		return print(arr, from, to, ' ');
+	}
+
+	public FastPrinter print(final char[] arr, final int from, final int to) {
+		return print(arr, from, to, ' ');
+	}
+
+	public FastPrinter print(final int[] arr, final int from, final int to) {
+		return print(arr, from, to, ' ');
+	}
+
+	public FastPrinter print(final long[] arr, final int from, final int to) {
+		return print(arr, from, to, ' ');
+	}
+
+	public FastPrinter print(final double[] arr, final int from, final int to) {
+		return print(arr, from, to, ' ');
+	}
+
+	public FastPrinter print(final String[] arr, final int from, final int to) {
+		return print(arr, from, to, ' ');
+	}
+
+	public FastPrinter print(final boolean[] arr, final int from, final int to, final char delimiter) {
+		if (from >= to) return this;
+		print(arr[from]);
+		for (int i = from + 1; i < to; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = (byte) delimiter;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter print(final char[] arr, final int from, final int to, final char delimiter) {
+		if (from >= to) return this;
+		ensureCapacity(((to - from) << 1) - 1);
+		byte[] buf = buffer;
+		int p = pos;
+		buf[p++] = (byte) arr[from];
+		for (int i = from + 1; i < to; i++) {
+			buf[p++] = (byte) delimiter;
+			buf[p++] = (byte) arr[i];
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter print(final int[] arr, final int from, final int to, final char delimiter) {
+		if (from >= to) return this;
+		final int len = to - from;
+		ensureCapacity(len * (MAX_INT_DIGITS + 1));
+		write(arr[from]);
+		for (int i = from + 1; i < to; i++) {
+			buffer[pos++] = (byte) delimiter;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter print(final long[] arr, final int from, final int to, final char delimiter) {
+		if (from >= to) return this;
+		final int len = to - from;
+		ensureCapacity(len * (MAX_LONG_DIGITS + 1));
+		write(arr[from]);
+		for (int i = from + 1; i < to; i++) {
+			buffer[pos++] = (byte) delimiter;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter print(final double[] arr, final int from, final int to, final char delimiter) {
+		if (from >= to) return this;
+		print(arr[from]);
+		for (int i = from + 1; i < to; i++) {
+			String s = Double.toString(arr[i]);
+			ensureCapacity(s.length() + 1);
+			buffer[pos++] = (byte) delimiter;
+			write(s);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter print(final String[] arr, final int from, final int to, final char delimiter) {
+		if (from >= to) return this;
+		print(arr[from]);
+		for (int i = from + 1; i < to; i++) {
+			ensureCapacity(arr[i].length() + 1);
+			buffer[pos++] = (byte) delimiter;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public <T> FastPrinter println(final boolean[] arr, final Function<Boolean, T> function) {
+		for (final boolean b : arr) println(function.apply(b));
+		return this;
+	}
+
+	public <T> FastPrinter println(final char[] arr, final IntFunction<T> function) {
+		for (final char c : arr) println(function.apply(c));
+		return this;
+	}
+
+	public <T> FastPrinter println(final int[] arr, final IntFunction<T> function) {
+		for (final int i : arr) println(function.apply(i));
+		return this;
+	}
+
+	public <T> FastPrinter println(final long[] arr, final LongFunction<T> function) {
+		for (final long l : arr) println(function.apply(l));
+		return this;
+	}
+
+	public <T> FastPrinter println(final double[] arr, final DoubleFunction<T> function) {
+		for (final double l : arr) println(function.apply(l));
+		return this;
+	}
+
+	public <T> FastPrinter println(final String[] arr, final Function<String, T> function) {
+		for (final String s : arr) println(function.apply(s));
+		return this;
+	}
+
+	public <T> FastPrinter print(final boolean[] arr, final Function<Boolean, T> function) {
+		final int len = arr.length;
+		if (len > 0) print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(function.apply(arr[i]));
+		}
+		return this;
+	}
+
+	public <T> FastPrinter print(final char[] arr, final IntFunction<T> function) {
+		final int len = arr.length;
+		if (len > 0) print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(function.apply(arr[i]));
+		}
+		return this;
+	}
+
+	public <T> FastPrinter print(final int[] arr, final IntFunction<T> function) {
+		final int len = arr.length;
+		if (len > 0) print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(function.apply(arr[i]));
+		}
+		return this;
+	}
+
+	public <T> FastPrinter print(final long[] arr, final LongFunction<T> function) {
+		final int len = arr.length;
+		if (len > 0) print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(function.apply(arr[i]));
+		}
+		return this;
+	}
+
+	public <T> FastPrinter print(final double[] arr, final DoubleFunction<T> function) {
+		final int len = arr.length;
+		if (len > 0) print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(function.apply(arr[i]));
+		}
+		return this;
+	}
+
+	public <T> FastPrinter print(final String[] arr, final Function<String, T> function) {
+		final int len = arr.length;
+		if (len > 0) print(function.apply(arr[0]));
+		for (int i = 1; i < len; i++) {
+			ensureCapacity(1);
+			buffer[pos++] = SPACE;
+			print(function.apply(arr[i]));
+		}
+		return this;
+	}
+
+	public FastPrinter println(final boolean[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final char[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final int[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final long[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final double[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final String[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final Object[][] arr2d) {
+		return println(arr2d, ' ');
+	}
+
+	public FastPrinter println(final boolean[][] arr2d, final char delimiter) {
+		for (final boolean[] arr : arr2d) println(arr, delimiter);
+		return this;
+	}
+
+	public FastPrinter println(final char[][] arr2d, final char delimiter) {
+		for (final char[] arr : arr2d) println(arr, delimiter);
+		return this;
+	}
+
+	public FastPrinter println(final int[][] arr2d, final char delimiter) {
+		for (final int[] arr : arr2d) println(arr, delimiter);
+		return this;
+	}
+
+	public FastPrinter println(final long[][] arr2d, final char delimiter) {
+		for (final long[] arr : arr2d) println(arr, delimiter);
+		return this;
+	}
+
+	public FastPrinter println(final double[][] arr2d, final char delimiter) {
+		for (final double[] arr : arr2d) println(arr, delimiter);
+		return this;
+	}
+
+	public FastPrinter println(final String[][] arr2d, final char delimiter) {
+		for (final String[] arr : arr2d) println(arr, delimiter);
+		return this;
+	}
+
+	public FastPrinter println(final Object[][] arr2d, final char delimiter) {
+		for (final Object[] arr : arr2d) {
+			final int len = arr.length;
+			if (len > 0) print(arr[0]);
+			for (int i = 1; i < len; i++) {
+				ensureCapacity(1);
+				buffer[pos++] = (byte) delimiter;
+				print(arr[i]);
+			}
+			println();
+		}
+		return this;
+	}
+
+	public <T> FastPrinter println(final boolean[][] arr2d, final Function<Boolean, T> function) {
+		for (final boolean[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	public <T> FastPrinter println(final char[][] arr2d, final IntFunction<T> function) {
+		for (final char[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	public <T> FastPrinter println(final int[][] arr2d, final IntFunction<T> function) {
+		for (final int[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	public <T> FastPrinter println(final long[][] arr2d, final LongFunction<T> function) {
+		for (final long[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	public <T> FastPrinter println(final double[][] arr2d, final DoubleFunction<T> function) {
+		for (final double[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	public <T> FastPrinter println(final String[][] arr2d, final Function<String, T> function) {
+		for (final String[] arr : arr2d) print(arr, function).println();
+		return this;
+	}
+
+	public FastPrinter printChars(final char[] arr) {
+		return printChars(arr, 0, arr.length);
+	}
+
+	public FastPrinter printChars(final char[] arr, final int from, final int to) {
+		final int len = to - from;
+		ensureCapacity(len);
+		final byte[] buf = buffer;
+		int p = pos, i = from;
+		final int limit8 = from + (len & ~7);
+		while (i < limit8) {
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+			buf[p++] = (byte) arr[i++];
+		}
+		while (i < to) buf[p++] = (byte) arr[i++];
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printChars(final char[] arr, final IntUnaryOperator function) {
+		final int len = arr.length;
+		ensureCapacity(len);
+		final byte[] buf = buffer;
+		int p = pos, i = 0;
+		final int limit = len & ~7;
+		while (i < limit) {
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+			buf[p++] = (byte) function.applyAsInt(arr[i++]);
+		}
+		while (i < len) buf[p++] = (byte) function.applyAsInt(arr[i++]);
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printChars(final char[][] arr2d) {
+		for (final char[] arr : arr2d) printChars(arr).println();
+		return this;
+	}
+
+	public FastPrinter printChars(final char[][] arr2d, final IntUnaryOperator function) {
+		for (final char[] arr : arr2d) printChars(arr, function).println();
+		return this;
+	}
+
+	public <T> FastPrinter println(final Iterable<T> iter) {
+		return print(iter, '\n').println();
+	}
+
+	public <T> FastPrinter println(final Iterable<T> iter, final char delimiter) {
+		return print(iter, delimiter).println();
+	}
+
+	public <T> FastPrinter print(final Iterable<T> iter) {
+		return print(iter, ' ');
+	}
+
+	public <T> FastPrinter print(final Iterable<T> iter, final char delimiter) {
+		final Iterator<T> it = iter.iterator();
+		if (it.hasNext()) print(it.next());
+		while (it.hasNext()) {
+			ensureCapacity(1);
+			buffer[pos++] = (byte) delimiter;
+			print(it.next());
+		}
+		return this;
+	}
+
+	public <T, U> FastPrinter println(final Iterable<T> iter, final Function<T, U> function) {
+		return print(iter, function, '\n').println();
+	}
+
+	public <T, U> FastPrinter println(final Iterable<T> iter, final Function<T, U> function, final char delimiter) {
+		return print(iter, function, delimiter).println();
+	}
+
+	public <T, U> FastPrinter print(final Iterable<T> iter, final Function<T, U> function) {
+		return print(iter, function, ' ');
+	}
+
+	public <T, U> FastPrinter print(final Iterable<T> iter, final Function<T, U> function, final char delimiter) {
+		final Iterator<T> it = iter.iterator();
+		if (it.hasNext()) print(function.apply(it.next()));
+		while (it.hasNext()) {
+			ensureCapacity(1);
+			buffer[pos++] = (byte) delimiter;
+			print(function.apply(it.next()));
+		}
+		return this;
+	}
+
+	public FastPrinter printRepeat(final char c, final int cnt) {
+		if (cnt <= 0) return this;
+		ensureCapacity(cnt);
+		final byte[] buf = buffer;
+		final byte b = (byte) c;
+		int p = pos;
+		buf[p++] = b;
+		int copied = 1;
+		while (copied << 1 <= cnt) {
+			System.arraycopy(buf, pos, buf, p, copied);
+			p += copied;
+			copied <<= 1;
+		}
+		final int remain = cnt - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain);
+			p += remain;
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printRepeat(final String s, final int cnt) {
+		if (cnt <= 0) return this;
+		final int len = s.length();
+		if (len == 0) return this;
+		final int total = len * cnt;
+		ensureCapacity(total);
+		final byte[] buf = buffer;
+		int p = pos, i = 0;
+		final int limit8 = len & ~7;
+		while (i < limit8) {
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+		}
+		while (i < len) buf[p++] = (byte) s.charAt(i++);
+		int copied = 1;
+		while (copied << 1 <= cnt) {
+			System.arraycopy(buf, pos, buf, p, copied * len);
+			p += copied * len;
+			copied <<= 1;
+		}
+		final int remain = cnt - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain * len);
+			p += remain * len;
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnRepeat(final char c, final int cnt) {
+		if (cnt <= 0) return this;
+		final int total = cnt << 1;
+		ensureCapacity(total);
+		final byte[] buf = buffer;
+		final byte b = (byte) c;
+		int p = pos;
+		buf[p++] = b;
+		buf[p++] = LINE;
+		int copied = 2;
+		while (copied << 1 <= total) {
+			System.arraycopy(buf, pos, buf, p, copied);
+			p += copied;
+			copied <<= 1;
+		}
+		final int remain = total - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain);
+			p += remain;
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnRepeat(final String s, final int cnt) {
+		if (cnt <= 0) return this;
+		final int sLen = s.length();
+		if (sLen == 0) return this;
+		final int unit = sLen + 1;
+		final int total = unit * cnt;
+		ensureCapacity(total);
+		final byte[] buf = buffer;
+		int p = pos;
+		int i = 0;
+		final int limit8 = sLen & ~7;
+		while (i < limit8) {
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+			buf[p++] = (byte) s.charAt(i++);
+		}
+		while (i < sLen) buf[p++] = (byte) s.charAt(i++);
+		buf[p++] = LINE;
+		int copied = 1;
+		while (copied << 1 <= cnt) {
+			System.arraycopy(buf, pos, buf, p, copied * unit);
+			p += copied * unit;
+			copied <<= 1;
+		}
+		final int remain = cnt - copied;
+		if (remain > 0) {
+			System.arraycopy(buf, pos, buf, p, remain * unit);
+			p += remain * unit;
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final boolean[] arr) {
+		final int len = arr.length;
+		final byte[] buf = buffer;
+		for (int i = len - 1; i >= 0; i--) {
+			write(arr[i]);
+			ensureCapacity(1);
+			buf[pos++] = LINE;
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final char[] arr) {
+		final int len = arr.length;
+		ensureCapacity(len << 1);
+		final byte[] buf = buffer;
+		int p = pos;
+		for (int i = len - 1; i >= 0; i--) {
+			buf[p++] = (byte) arr[i];
+			buf[p++] = LINE;
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final int[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		ensureCapacity(len * (MAX_INT_DIGITS + 1));
+		final byte[] buf = buffer;
+		for (int i = len - 1; i >= 0; i--) {
+			write(arr[i]);
+			buf[pos++] = LINE;
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final long[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		ensureCapacity(len * (MAX_LONG_DIGITS + 1));
+		final byte[] buf = buffer;
+		for (int i = len - 1; i >= 0; i--) {
+			write(arr[i]);
+			buf[pos++] = LINE;
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final double[] arr) {
+		final int len = arr.length;
+		final byte[] buf = buffer;
+		for (int i = len - 1; i >= 0; i--) {
+			String s = Double.toString(arr[i]);
+			ensureCapacity(s.length() + 1);
+			write(s);
+			buf[pos++] = LINE;
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final String[] arr) {
+		final int len = arr.length;
+		final byte[] buf = buffer;
+		for (int i = len - 1; i >= 0; i--) {
+			String s = arr[i];
+			ensureCapacity(s.length() + 1);
+			write(s);
+			buf[pos++] = LINE;
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printlnReverse(final Object[] arr) {
+		final int len = arr.length;
+		for (int i = len - 1; i >= 0; i--) println(arr[i]);
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final boolean[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		final byte[] buf = buffer;
+		write(arr[len - 1]);
+		for (int i = len - 2; i >= 0; i--) {
+			ensureCapacity(1);
+			buf[pos++] = SPACE;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final char[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		ensureCapacity((len << 1) - 1);
+		final byte[] buf = buffer;
+		int p = pos;
+		buf[p++] = (byte) arr[len - 1];
+		for (int i = len - 2; i >= 0; i--) {
+			buf[p++] = SPACE;
+			buf[p++] = (byte) arr[i];
+		}
+		pos = p;
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final int[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		ensureCapacity(len * (MAX_INT_DIGITS + 1) - 1);
+		final byte[] buf = buffer;
+		write(arr[len - 1]);
+		for (int i = len - 2; i >= 0; i--) {
+			buf[pos++] = SPACE;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final long[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		ensureCapacity(len * (MAX_LONG_DIGITS + 1) - 1);
+		final byte[] buf = buffer;
+		write(arr[len - 1]);
+		for (int i = len - 2; i >= 0; i--) {
+			buf[pos++] = SPACE;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final double[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		final byte[] buf = buffer;
+		print(arr[len - 1]);
+		for (int i = len - 2; i >= 0; i--) {
+			String s = Double.toString(arr[i]);
+			ensureCapacity(s.length() + 1);
+			buf[pos++] = SPACE;
+			write(s);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final String[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		final byte[] buf = buffer;
+		ensureCapacity(arr[len - 1].length());
+		write(arr[len - 1]);
+		for (int i = len - 2; i >= 0; i--) {
+			ensureCapacity(arr[i].length() + 1);
+			buf[pos++] = SPACE;
+			write(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
+
+	public FastPrinter printReverse(final Object[] arr) {
+		final int len = arr.length;
+		if (len == 0) return this;
+		final byte[] buf = buffer;
+		print(arr[len - 1]);
+		for (int i = len - 2; i >= 0; i--) {
+			ensureCapacity(1);
+			buf[pos++] = SPACE;
+			print(arr[i]);
+		}
+		if (autoFlush) flush();
+		return this;
+	}
 }

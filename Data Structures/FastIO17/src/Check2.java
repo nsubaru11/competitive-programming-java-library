@@ -4,7 +4,6 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.function.*;
 
 import static java.lang.Math.*;
@@ -942,7 +941,7 @@ public final class Check2 {
 			final int required = pos + additional;
 			if (required <= buffer.length) return;
 			if (required <= 1_000_000_000) {
-				buffer = Arrays.copyOf(buffer, roundUpToPowerOfTwo(required));
+				buffer = copyOf(buffer, roundUpToPowerOfTwo(required));
 			} else {
 				flush();
 			}
