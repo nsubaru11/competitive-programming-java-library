@@ -103,13 +103,15 @@ public final class Check1 {
 		}
 
 		public void set(final int i, final long e) {
-			final int idx = leafStart + i;
-			final long prev = tree[idx];
-			tree[idx] = e;
+			final int ls = leafStart, idx = ls + i;
+			final long[] t = tree;
+			final long prev = t[idx];
+			t[idx] = e;
 			final int p = (idx - 1) >> 1;
-			if (prev != e && p >= 0 && !isPending[p]) {
-				isPending[p] = true;
-				updateQueue[(queueHead + pendingCount++) & leafStart] = idx - ((idx & 1) ^ 1);
+			final boolean[] pending = isPending;
+			if (prev != e && p >= 0 && !pending[p]) {
+				pending[p] = true;
+				updateQueue[(queueHead + pendingCount++) & ls] = idx - ((idx & 1) ^ 1);
 			}
 		}
 
@@ -123,20 +125,26 @@ public final class Check1 {
 		}
 
 		public void setAll(final LongUnaryOperator func) {
-			for (int i = 0, idx = leafStart; i < elementCount; i++, idx++) tree[idx] = func.applyAsLong(tree[idx]);
+			final long[] t = tree;
+			for (int i = 0, idx = leafStart; i < elementCount; i++, idx++) t[idx] = func.applyAsLong(t[idx]);
 			buildAll();
 		}
 
-		public long query(int l, int r) {
+		public long query(final int l, final int r) {
+			final long id = identity;
+			if (l > r) return id;
 			if (pendingCount > 0) build();
-			l += leafStart;
-			r += leafStart;
-			long ans = identity;
-			while (l <= r) {
-				if ((l & 1) == 0) ans = operator.applyAsLong(ans, tree[l]);
-				if ((r & 1) == 1) ans = operator.applyAsLong(ans, tree[r]);
-				l >>= 1;
-				r = (r - 2) >> 1;
+			final long[] t = tree;
+			final int ls = leafStart;
+			if (l == r) return t[ls + l];
+			int cl = l + ls, cr = r + ls;
+			long ans = id;
+			final LongBinaryOperator op = operator;
+			while (cl <= cr) {
+				if ((cl & 1) == 0) ans = op.applyAsLong(ans, t[cl]);
+				if ((cr & 1) == 1) ans = op.applyAsLong(ans, t[cr]);
+				cl >>= 1;
+				cr = (cr - 2) >> 1;
 			}
 			return ans;
 		}
@@ -146,53 +154,60 @@ public final class Check1 {
 			return tree[0];
 		}
 
-		public int maxRight(int l, final LongPredicate tester) {
+		public int maxRight(final int l, final LongPredicate tester) {
 			if (pendingCount > 0) build();
-			if (l == elementCount) return elementCount;
+			final int n = elementCount;
+			if (l == n) return n;
+			final long[] t = tree;
+			final int ls = leafStart;
+			final LongBinaryOperator op = operator;
 			long ans = identity;
-			l += leafStart;
+			int cl = l + ls;
 			do {
-				while ((l & 1) == 1) l = (l - 1) >> 1;
-				long combined = operator.applyAsLong(ans, tree[l]);
+				while ((cl & 1) == 1) cl = (cl - 1) >> 1;
+				long combined = op.applyAsLong(ans, t[cl]);
 				if (!tester.test(combined)) {
-					while (l < leafStart) {
-						l = (l << 1) + 1;
-						combined = operator.applyAsLong(ans, tree[l]);
+					while (cl < ls) {
+						cl = (cl << 1) + 1;
+						combined = op.applyAsLong(ans, t[cl]);
 						if (tester.test(combined)) {
 							ans = combined;
-							l++;
+							cl++;
 						}
 					}
-					return l - leafStart;
+					return cl - ls;
 				}
 				ans = combined;
-				l++;
-			} while ((l & (l - 1)) != 0);
-			return elementCount;
+				cl++;
+			} while ((cl & (cl - 1)) != 0);
+			return n;
 		}
 
-		public int minLeft(int r, final LongPredicate tester) {
+		public int minLeft(final int r, final LongPredicate tester) {
 			if (pendingCount > 0) build();
 			if (r == 0) return 0;
+			final long[] t = tree;
+			final int ls = leafStart;
+			final LongBinaryOperator op = operator;
 			long ans = identity;
-			r += leafStart - 1;
+			int cr = r + ls - 1;
 			do {
-				while (r > 0 && (r & 1) == 0) r = (r - 2) >> 1;
-				long combined = operator.applyAsLong(tree[r], ans);
+				while (cr > 0 && (cr & 1) == 0) cr = (cr - 2) >> 1;
+				long combined = op.applyAsLong(t[cr], ans);
 				if (!tester.test(combined)) {
-					while (r < leafStart) {
-						r = (r << 1) + 2;
-						combined = operator.applyAsLong(tree[r], ans);
+					while (cr < ls) {
+						cr = (cr << 1) + 2;
+						combined = op.applyAsLong(t[cr], ans);
 						if (tester.test(combined)) {
 							ans = combined;
-							r--;
+							cr--;
 						}
 					}
-					return r - leafStart + 1;
+					return cr - ls + 1;
 				}
 				ans = combined;
-				r--;
-			} while (((r + 1) & r) != 0);
+				cr--;
+			} while (((cr + 1) & cr) != 0);
 			return 0;
 		}
 
@@ -201,39 +216,46 @@ public final class Check1 {
 		}
 
 		private void build() {
-			while (pendingCount-- > 0) {
-				final int pos = queueHead++ & leafStart;
-				final int left = updateQueue[pos];
-				final int right = left + 1;
+			final long[] t = tree;
+			final int ls = leafStart;
+			final int[] q = updateQueue;
+			final boolean[] pending = isPending;
+			final int treeLen = t.length;
+			int pc = pendingCount, qh = queueHead;
+			while (pc-- > 0) {
+				final int pos = qh++ & ls;
+				final int left = q[pos], right = left + 1;
 				final int parent = left >> 1;
-				final long old = tree[parent];
-				if (right < tree.length) {
-					tree[parent] = operator.applyAsLong(tree[left], tree[right]);
+				final long old = t[parent];
+				if (right < treeLen) {
+					t[parent] = operator.applyAsLong(t[left], t[right]);
 				} else {
-					tree[parent] = tree[left];
+					t[parent] = t[left];
 				}
-				isPending[parent] = false;
-				if (parent > 0 && tree[parent] != old) {
+				pending[parent] = false;
+				if (parent > 0 && t[parent] != old) {
 					final int p = (parent - 1) >> 1;
-					if (!isPending[p]) {
-						isPending[p] = true;
-						updateQueue[(queueHead + pendingCount++) & leafStart] = parent - ((parent & 1) ^ 1);
+					if (!pending[p]) {
+						pending[p] = true;
+						q[(qh + pc++) & ls] = parent - ((parent & 1) ^ 1);
 					}
 				}
 			}
 			pendingCount = 0;
+			queueHead = qh;
 		}
 
 		private void buildAll() {
-			final int len = tree.length;
+			final long[] t = tree;
+			final int len = t.length;
 			for (int i = leafStart - 1; i >= 0; i--) {
 				final int l = (i << 1) + 1, r = l + 1;
 				if (r < len) {
-					tree[i] = operator.applyAsLong(tree[l], tree[r]);
+					t[i] = operator.applyAsLong(t[l], t[r]);
 				} else if (l < len) {
-					tree[i] = tree[l];
+					t[i] = t[l];
 				} else {
-					tree[i] = identity;
+					t[i] = identity;
 				}
 			}
 			if (pendingCount > 0) {
