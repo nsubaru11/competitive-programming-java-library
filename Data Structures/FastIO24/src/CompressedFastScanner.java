@@ -50,7 +50,7 @@ public class CompressedFastScanner {
 	}
 
 	private static final class FastScanner implements AutoCloseable {
-		private static final int DEFAULT_BUFFER_SIZE = 65536;
+		private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
 		private final InputStream in;
 		private final byte[] buffer;
 		private int pos = 0, bufferLength = 0;
@@ -73,19 +73,22 @@ public class CompressedFastScanner {
 		}
 
 		private int skipSpaces() {
-			int b;
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength, b;
 			do {
-				if (pos >= bufferLength) {
+				if (p >= len) {
 					try {
-						bufferLength = in.read(buffer);
-						pos = 0;
+						len = in.read(buf);
+						p = 0;
 					} catch (final IOException e) {
 						throw new RuntimeException(e);
 					}
-					if (bufferLength <= 0) throw new NoSuchElementException();
+					if (len <= 0) throw new NoSuchElementException();
 				}
-				b = buffer[pos++];
+				b = buf[p++];
 			} while (b <= 32);
+			pos = p;
+			bufferLength = len;
 			return b;
 		}
 
@@ -131,18 +134,29 @@ public class CompressedFastScanner {
 				if (pos == bufferLength) hasNextByte();
 				b = buffer[pos++];
 			}
-			if (pos + 11 <= bufferLength) {
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			if (p + 11 <= len) {
 				do {
 					n = (n << 3) + (n << 1) + (b & 15);
-					b = buffer[pos++];
+					b = buf[p++];
 				} while (b > 32);
 			} else {
 				do {
 					n = (n << 3) + (n << 1) + (b & 15);
-					if (pos == bufferLength && !hasNextByte()) break;
-					b = buffer[pos++];
+					if (p == len) {
+						pos = p;
+						if (!hasNextByte()) {
+							p = pos;
+							break;
+						}
+						p = pos;
+						len = bufferLength;
+					}
+					b = buf[p++];
 				} while (b > 32);
 			}
+			pos = p;
 			return negative ? -n : n;
 		}
 
@@ -155,18 +169,29 @@ public class CompressedFastScanner {
 				if (pos == bufferLength) hasNextByte();
 				b = buffer[pos++];
 			}
-			if (pos + 20 <= bufferLength) {
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			if (p + 20 <= len) {
 				do {
 					n = (n << 3) + (n << 1) + (b & 15);
-					b = buffer[pos++];
+					b = buf[p++];
 				} while (b > 32);
 			} else {
 				do {
 					n = (n << 3) + (n << 1) + (b & 15);
-					if (pos == bufferLength && !hasNextByte()) break;
-					b = buffer[pos++];
+					if (p == len) {
+						pos = p;
+						if (!hasNextByte()) {
+							p = pos;
+							break;
+						}
+						p = pos;
+						len = bufferLength;
+					}
+					b = buf[p++];
 				} while (b > 32);
 			}
+			pos = p;
 			return negative ? -n : n;
 		}
 
@@ -179,26 +204,63 @@ public class CompressedFastScanner {
 				b = buffer[pos++];
 			}
 			long intPart = 0;
-			do {
-				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
-				if (pos == bufferLength && !hasNextByte()) {
-					b = -1;
-					break;
-				}
-				b = buffer[pos++];
-			} while (b >= '0' && b <= '9');
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			if (p + 20 <= len) {
+				do {
+					intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+					b = buf[p++];
+				} while ('0' <= b && b <= '9');
+			} else {
+				do {
+					intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+					if (p == len) {
+						pos = p;
+						if (!hasNextByte()) {
+							p = pos;
+							b = -1;
+							break;
+						}
+						p = pos;
+						len = bufferLength;
+					}
+					b = buf[p++];
+				} while ('0' <= b && b <= '9');
+			}
 			double result = intPart;
 			if (b == '.') {
-				if (pos == bufferLength) hasNextByte();
-				b = buffer[pos++];
+				if (p == len) {
+					pos = p;
+					hasNextByte();
+					p = pos;
+					len = bufferLength;
+				}
+				b = buf[p++];
 				double scale = 0.1;
-				do {
-					result += (b & 15) * scale;
-					scale *= 0.1;
-					if (pos == bufferLength && !hasNextByte()) break;
-					b = buffer[pos++];
-				} while (b >= '0' && b <= '9');
+				if (p + 20 <= len) {
+					do {
+						result += (b & 15) * scale;
+						scale *= 0.1;
+						b = buf[p++];
+					} while ('0' <= b && b <= '9');
+				} else {
+					do {
+						result += (b & 15) * scale;
+						scale *= 0.1;
+						if (p == len) {
+							pos = p;
+							if (!hasNextByte()) {
+								p = pos;
+								break;
+							}
+							p = pos;
+							len = bufferLength;
+						}
+						b = buf[p++];
+					} while ('0' <= b && b <= '9');
+				}
 			}
+			pos = p;
 			return negative ? -result : result;
 		}
 
@@ -208,35 +270,57 @@ public class CompressedFastScanner {
 
 		public StringBuilder nextStringBuilder() {
 			final StringBuilder sb = new StringBuilder();
-			int b = skipSpaces();
+			int b = skipSpaces(), p = pos, len = bufferLength;
 			do {
 				sb.append((char) b);
-				if (pos == bufferLength && !hasNextByte()) break;
-				b = buffer[pos++];
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buffer[p++];
 			} while (b > 32);
+			pos = p;
 			return sb;
 		}
 
 		public String nextLine() {
 			final StringBuilder sb = new StringBuilder();
 			if (pos == bufferLength && !hasNextByte()) return "";
-			int b = buffer[pos];
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength, b = buf[p];
 			while (b != '\n' && b != '\r') {
 				sb.append((char) b);
-				pos++;
-				if (pos == bufferLength && !hasNextByte()) {
-					b = -1;
-					break;
+				p++;
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						b = -1;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
 				}
-				b = buffer[pos];
+				b = buf[p];
 			}
 			if (b == '\n' || b == '\r') {
-				pos++;
+				p++;
 				if (b == '\r') {
-					if (pos == bufferLength) hasNextByte();
-					if (pos < bufferLength && buffer[pos] == '\n') pos++;
+					if (p == len) {
+						pos = p;
+						hasNextByte();
+						p = pos;
+						len = bufferLength;
+					}
+					if (p < len && buf[p] == '\n') p++;
 				}
 			}
+			pos = p;
 			return sb.toString();
 		}
 
@@ -263,6 +347,26 @@ public class CompressedFastScanner {
 		public double[] nextDouble(final int n) {
 			final double[] a = new double[n];
 			for (int i = 0; i < n; i++) a[i] = nextDouble();
+			return a;
+		}
+
+		public int nextInt0() {
+			return nextInt() - 1;
+		}
+
+		public long nextLong0() {
+			return nextLong() - 1;
+		}
+
+		public int[] nextInt0(final int n) {
+			final int[] a = new int[n];
+			for (int i = 0; i < n; i++) a[i] = nextInt() - 1;
+			return a;
+		}
+
+		public long[] nextLong0(final int n) {
+			final long[] a = new long[n];
+			for (int i = 0; i < n; i++) a[i] = nextLong() - 1;
 			return a;
 		}
 

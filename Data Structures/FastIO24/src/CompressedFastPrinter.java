@@ -75,7 +75,7 @@ public final class CompressedFastPrinter {
 		private static final VarHandle SHORT_HANDLE = MethodHandles.byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
 		private static final int MAX_INT_DIGITS = 11;
 		private static final int MAX_LONG_DIGITS = 20;
-		private static final int DEFAULT_BUFFER_SIZE = 65536;
+		private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
 		private static final byte LINE = '\n';
 		private static final byte SPACE = ' ';
 		private static final byte HYPHEN = '-';
@@ -209,7 +209,7 @@ public final class CompressedFastPrinter {
 		public void close() {
 			try {
 				flush();
-				if (out != System.out) out.close();
+				out.close();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -432,9 +432,8 @@ public final class CompressedFastPrinter {
 			pos += len;
 		}
 
-		private void write(int i) {
+		private int write(int i, int p) {
 			final byte[] buf = buffer;
-			int p = pos;
 			if (i >= 0) i = -i;
 			else BYTE_ARRAY_HANDLE.set(buf, p++, HYPHEN);
 			final int digits = countDigits(i);
@@ -449,12 +448,15 @@ public final class CompressedFastPrinter {
 			final int r = -i;
 			if (r >= 10) SHORT_HANDLE.set(buf, writePos - 2, DIGIT_PAIRS[r]);
 			else BYTE_ARRAY_HANDLE.set(buf, writePos - 1, (byte) (r + ZERO));
-			pos = p + digits;
+			return p + digits;
 		}
 
-		private void write(long l) {
+		private void write(int i) {
+			pos = write(i, pos);
+		}
+
+		private int write(long l, int p) {
 			final byte[] buf = buffer;
-			int p = pos;
 			if (l >= 0) l = -l;
 			else BYTE_ARRAY_HANDLE.set(buf, p++, HYPHEN);
 			final int digits = countDigits(l);
@@ -469,13 +471,17 @@ public final class CompressedFastPrinter {
 			final int r = (int) -l;
 			if (r >= 10) SHORT_HANDLE.set(buf, writePos - 2, DIGIT_PAIRS[r]);
 			else BYTE_ARRAY_HANDLE.set(buf, writePos - 1, (byte) (r + ZERO));
-			pos = p + digits;
+			return p + digits;
 		}
 
-		private void write(final String s) {
+		private void write(long l) {
+			pos = write(l, pos);
+		}
+
+		private int write(final String s, int p) {
 			final int len = s.length();
 			final byte[] buf = buffer;
-			int p = pos, i = 0;
+			int i = 0;
 			final int limit = len & ~7;
 			while (i < limit) {
 				BYTE_ARRAY_HANDLE.set(buf, p, (byte) s.charAt(i));
@@ -490,7 +496,11 @@ public final class CompressedFastPrinter {
 				i += 8;
 			}
 			while (i < len) BYTE_ARRAY_HANDLE.set(buf, p++, (byte) s.charAt(i++));
-			pos = p;
+			return p;
+		}
+
+		private void write(final String s) {
+			pos = write(s, pos);
 		}
 
 		public FastPrinter println(final int a, final int b) {
@@ -783,11 +793,15 @@ public final class CompressedFastPrinter {
 			if (from >= to) return this;
 			final int len = to - from;
 			ensureCapacity(len * (MAX_INT_DIGITS + 1));
-			write(arr[from]);
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
-				write(arr[i]);
+				BYTE_ARRAY_HANDLE.set(buf, p++, d);
+				p = write(arr[i], p);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -796,11 +810,15 @@ public final class CompressedFastPrinter {
 			if (from >= to) return this;
 			final int len = to - from;
 			ensureCapacity(len * (MAX_LONG_DIGITS + 1));
-			write(arr[from]);
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
-				write(arr[i]);
+				BYTE_ARRAY_HANDLE.set(buf, p++, d);
+				p = write(arr[i], p);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -808,24 +826,34 @@ public final class CompressedFastPrinter {
 		public FastPrinter print(final double[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
 			print(arr[from]);
+			int p = pos;
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				String s = Double.toString(arr[i]);
+				final String s = Double.toString(arr[i]);
+				pos = p;
 				ensureCapacity(s.length() + 1);
-				BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
-				write(s);
+				p = pos;
+				BYTE_ARRAY_HANDLE.set(buffer, p++, d);
+				p = write(s, p);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter print(final String[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
-			print(arr[from]);
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
+				pos = p;
 				ensureCapacity(arr[i].length() + 1);
-				BYTE_ARRAY_HANDLE.set(buffer, pos++, (byte) delimiter);
-				write(arr[i]);
+				p = pos;
+				BYTE_ARRAY_HANDLE.set(buffer, p++, d);
+				p = write(arr[i], p);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
