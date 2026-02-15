@@ -1,9 +1,7 @@
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
+import java.util.*;
 
-import static java.lang.Math.min;
-import static java.util.Arrays.fill;
-
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 /**
  * グラフアルゴリズム特化高性能インデックス付き優先度キュー
@@ -50,7 +48,7 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	// -------------- 公開メソッド --------------
 
 	/**
-	 * 要素を追加する。
+	 * 要素を追加する
 	 *
 	 * @param node 追加するノード
 	 * @param c    追加するノードのコスト
@@ -63,6 +61,34 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 		position[node] = size;
 		size++;
 		unsortedCount++;
+	}
+
+	/**
+	 * 全ての要素を追加する
+	 *
+	 * @param nodes 追加するノードの配列
+	 * @param costs 追加するコストの配列
+	 */
+	public void pushAll(final int[] nodes, final long[] costs) {
+		final int n = nodes.length;
+		if (isDescendingOrder) {
+			for (int i = 0; i < n; i++) {
+				final int node = nodes[i];
+				if (position[node] != -2) throw new IllegalArgumentException();
+				cost[node] = -costs[i];
+				heap[size] = node;
+				position[node] = size++;
+			}
+		} else {
+			for (int i = 0; i < n; i++) {
+				final int node = nodes[i];
+				if (position[node] != -2) throw new IllegalArgumentException();
+				cost[node] = costs[i];
+				heap[size] = node;
+				position[node] = size++;
+			}
+		}
+		unsortedCount += n;
 	}
 
 	/**
@@ -236,7 +262,7 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	}
 
 	/**
-	 * このインスタンスが保持する要素数を取得する
+	 * 要素数を取得する
 	 *
 	 * @return 要素数
 	 */
@@ -300,17 +326,17 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	// -------------- ヒープ構築（遅延評価） --------------
 
 	/**
-	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する。
+	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する
 	 * <p>
-	 * このメソッドは、未ソート要素が存在する場合に最適なアルゴリズムを自動選択して実行します。
+	 * このメソッドは、未ソート要素が存在する場合に最適なアルゴリズムを自動選択して実行します
 	 * <p><b>分岐点の決定：</b>
-	 * 両アルゴリズムの最大比較回数を計算し、コストが小さい方を実行する。
+	 * 両アルゴリズムの最大比較回数を計算し、コストが小さい方を実行する
 	 * (heapifyCost < incrementalCost なら heapify を選択)
 	 */
 	private void ensureHeapProperty() {
-		int log2N = 31 - Integer.numberOfLeadingZeros(size);
-		int heapifyCost = size * 2 - 2 * log2N;
-		int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
+		final int log2N = 31 - Integer.numberOfLeadingZeros(size);
+		final int heapifyCost = size * 2 - 2 * log2N;
+		final int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
 		if (heapifyCost < incrementalCost) {
 			heapify();
 		} else {
@@ -320,32 +346,32 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	}
 
 	/**
-	 * インクリメンタル構築の最大比較回数を厳密に計算する。
+	 * インクリメンタル構築の最大比較回数を厳密に計算する
 	 *
 	 * @return 最大比較回数の合計
 	 */
 	private int getIncrementalCostStrict() {
 		int totalCost = 0;
-		int sortedSize = size - unsortedCount;
+		final int sortedSize = size - unsortedCount;
 		for (int i = 1; i <= unsortedCount; i++) {
-			int currentHeapSize = sortedSize + i;
-			int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
+			final int currentHeapSize = sortedSize + i;
+			final int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
 			totalCost += depth;
 		}
 		return totalCost;
 	}
 
 	/**
-	 * インクリメンタル構築の最大比較回数を高速に近似計算する。
+	 * インクリメンタル構築の最大比較回数を高速に近似計算する
 	 * <p>コスト ≈ k * floor(log₂(平均ヒープサイズ))
 	 *
 	 * @return 最大比較回数の近似値
 	 */
 	private int getIncrementalCostApprox() {
-		int sortedSize = size - unsortedCount;
-		int avgHeapSize = sortedSize + (unsortedCount >> 1);
+		final int sortedSize = size - unsortedCount;
+		final int avgHeapSize = sortedSize + (unsortedCount >> 1);
 		if (avgHeapSize == 0) return 0;
-		int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
+		final int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
 		return unsortedCount * depthOfAvgSize;
 	}
 

@@ -1,8 +1,6 @@
-import static java.lang.Math.max;
+import java.util.*;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
+import static java.lang.Math.*;
 
 /**
  * 競技プログラミング向け優先度キュー（int型特化版）
@@ -51,7 +49,7 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	public IntPriorityQueue(int capacity, boolean isDescendingOrder) {
 		this.capacity = max(capacity, DEFAULT_INITIAL_CAPACITY);
 		this.isDescendingOrder = isDescendingOrder;
-		buf = new int[capacity];
+		buf = new int[this.capacity];
 		size = 0;
 		unsortedCount = 0;
 	}
@@ -59,16 +57,54 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	// -------------- 公開メソッド --------------
 
 	/**
-	 * 要素を追加する。
+	 * 要素を追加する
 	 *
 	 * @param v 追加する要素
 	 */
 	public void push(int v) {
-		if (isFull()) buf = Arrays.copyOf(buf, capacity <<= 1);
+		if (size == capacity) buf = Arrays.copyOf(buf, capacity <<= 1);
 		if (isDescendingOrder) v = -v;
-		buf[size] = v;
-		size++;
+		buf[size++] = v;
 		unsortedCount++;
+	}
+
+	/**
+	 * 全ての要素を追加する
+	 *
+	 * @param elements 追加する要素の配列
+	 */
+	public void addAll(final int[] elements) {
+		final int n = elements.length;
+		if (size + n > capacity) {
+			while (size + n > capacity) capacity <<= 1;
+			buf = Arrays.copyOf(buf, capacity);
+		}
+		if (isDescendingOrder) {
+			for (int i = 0; i < n; i++) buf[size + i] = -elements[i];
+		} else {
+			System.arraycopy(elements, 0, buf, size, n);
+		}
+		size += n;
+		unsortedCount += n;
+	}
+
+	/**
+	 * 全ての要素を追加する
+	 *
+	 * @param elements 追加する要素のイテラブル
+	 */
+	public void addAll(final Iterable<Integer> elements) {
+		if (elements instanceof final Collection<Integer> c) {
+			final int n = c.size();
+			if (size + n > capacity) {
+				while (size + n > capacity) capacity <<= 1;
+				buf = Arrays.copyOf(buf, capacity);
+			}
+			for (final int e : elements) buf[size++] = isDescendingOrder ? -e : e;
+			unsortedCount += n;
+		} else {
+			for (final int e : elements) push(e);
+		}
 	}
 
 	/**
@@ -112,7 +148,7 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	}
 
 	/**
-	 * このインスタンスが保持する要素数を取得する
+	 * 要素数を取得する
 	 *
 	 * @return 要素数
 	 */
@@ -135,15 +171,6 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	 */
 	public boolean isEmpty() {
 		return size == 0;
-	}
-
-	/**
-	 * ヒープが満杯かどうかを判定
-	 *
-	 * @return 満杯の場合はtrue
-	 */
-	private boolean isFull() {
-		return size == capacity;
 	}
 
 	/**
@@ -173,17 +200,17 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	// -------------- ヒープ構築（遅延評価） --------------
 
 	/**
-	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する。
+	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する
 	 * <p>
-	 * このメソッドは、未ソート要素が存在する場合に最適なアルゴリズムを自動選択して実行します。
+	 * このメソッドは、未ソート要素が存在する場合に最適なアルゴリズムを自動選択して実行します
 	 * <p><b>分岐点の決定：</b>
-	 * 両アルゴリズムの最大比較回数を計算し、コストが小さい方を実行する。
+	 * 両アルゴリズムの最大比較回数を計算し、コストが小さい方を実行する
 	 * (heapifyCost < incrementalCost なら heapify を選択)
 	 */
 	private void ensureHeapProperty() {
-		int log2N = 31 - Integer.numberOfLeadingZeros(size);
-		int heapifyCost = size * 2 - 2 * log2N;
-		int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
+		final int log2N = 31 - Integer.numberOfLeadingZeros(size);
+		final int heapifyCost = size * 2 - 2 * log2N;
+		final int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
 		if (heapifyCost < incrementalCost) {
 			heapify();
 		} else {
@@ -193,32 +220,32 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	}
 
 	/**
-	 * インクリメンタル構築の最大比較回数を厳密に計算する。
+	 * インクリメンタル構築の最大比較回数を厳密に計算する
 	 *
 	 * @return 最大比較回数の合計
 	 */
 	private int getIncrementalCostStrict() {
 		int totalCost = 0;
-		int sortedSize = size - unsortedCount;
+		final int sortedSize = size - unsortedCount;
 		for (int i = 1; i <= unsortedCount; i++) {
-			int currentHeapSize = sortedSize + i;
-			int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
+			final int currentHeapSize = sortedSize + i;
+			final int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
 			totalCost += depth;
 		}
 		return totalCost;
 	}
 
 	/**
-	 * インクリメンタル構築の最大比較回数を高速に近似計算する。
+	 * インクリメンタル構築の最大比較回数を高速に近似計算する
 	 * <p>コスト ≈ k * floor(log₂(平均ヒープサイズ))
 	 *
 	 * @return 最大比較回数の近似値
 	 */
 	private int getIncrementalCostApprox() {
-		int sortedSize = size - unsortedCount;
-		int avgHeapSize = sortedSize + (unsortedCount >> 1);
+		final int sortedSize = size - unsortedCount;
+		final int avgHeapSize = sortedSize + (unsortedCount >> 1);
 		if (avgHeapSize == 0) return 0;
-		int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
+		final int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
 		return unsortedCount * depthOfAvgSize;
 	}
 
@@ -234,14 +261,14 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	/**
 	 * siftUp操作 - O(log N)
 	 * <p>
-	 * 新要素を親と比較しながら上方向に移動（親 ≤ 子）。
+	 * 新要素を親と比較しながら上方向に移動（親 ≤ 子）
 	 *
 	 * @param v 移動させる要素
 	 * @param i 要素の現在位置
 	 */
-	private void siftUp(int v, int i) {
+	private void siftUp(final int v, int i) {
 		while (i > 0) {
-			int j = (i - 1) >> 1;
+			final int j = (i - 1) >> 1;
 			if (v >= buf[j]) break;
 			buf[i] = buf[j];
 			i = j;
@@ -252,14 +279,14 @@ public final class IntPriorityQueue implements Iterable<Integer> {
 	/**
 	 * siftDown操作 - O(log N)
 	 * <p>
-	 * 末尾要素を子と比較しながら下方向に移動（親 ≤ 子）。
-	 * 2つの子のうち小さい方と比較。
+	 * 末尾要素を子と比較しながら下方向に移動（親 ≤ 子）
+	 * 2つの子のうち小さい方と比較
 	 *
 	 * @param v 移動させる要素
 	 * @param i 要素の現在位置
 	 */
-	private void siftDown(int v, int i) {
-		int half = size >> 1;
+	private void siftDown(final int v, int i) {
+		final int half = size >> 1;
 		while (i < half) {
 			int child = (i << 1) + 1;
 			child += child + 1 < size && buf[child] > buf[child + 1] ? 1 : 0;
