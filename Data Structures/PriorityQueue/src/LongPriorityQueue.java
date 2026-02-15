@@ -75,16 +75,20 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 */
 	public void addAll(final long[] elements) {
 		final int n = elements.length;
-		if (size + n > capacity) {
-			while (size + n > capacity) capacity <<= 1;
-			buf = Arrays.copyOf(buf, capacity);
+		int s = size;
+		if (s + n > capacity) {
+			int newCap = capacity;
+			while (s + n > newCap) newCap <<= 1;
+			buf = Arrays.copyOf(buf, newCap);
+			capacity = newCap;
 		}
+		final long[] b = buf;
 		if (isDescendingOrder) {
-			for (int i = 0; i < n; i++) buf[size + i] = -elements[i];
+			for (int i = 0; i < n; i++) b[s + i] = -elements[i];
 		} else {
-			System.arraycopy(elements, 0, buf, size, n);
+			System.arraycopy(elements, 0, b, s, n);
 		}
-		size += n;
+		size = s + n;
 		unsortedCount += n;
 	}
 
@@ -96,11 +100,20 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	public void addAll(final Iterable<Long> elements) {
 		if (elements instanceof final Collection<Long> c) {
 			final int n = c.size();
-			if (size + n > capacity) {
-				while (size + n > capacity) capacity <<= 1;
-				buf = Arrays.copyOf(buf, capacity);
+			int s = size;
+			if (s + n > capacity) {
+				int newCap = capacity;
+				while (s + n > newCap) newCap <<= 1;
+				buf = Arrays.copyOf(buf, newCap);
+				capacity = newCap;
 			}
-			for (final long e : elements) buf[size++] = isDescendingOrder ? -e : e;
+			final long[] b = buf;
+			if (isDescendingOrder) {
+				for (final long e : c) b[s++] = -e;
+			} else {
+				for (final long e : c) b[s++] = e;
+			}
+			size = s;
 			unsortedCount += n;
 		} else {
 			for (final long e : elements) push(e);
@@ -267,13 +280,14 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @param i 要素の現在位置
 	 */
 	private void siftUp(final long v, int i) {
+		final long[] b = buf;
 		while (i > 0) {
 			final int j = (i - 1) >> 1;
-			if (v >= buf[j]) break;
-			buf[i] = buf[j];
+			if (v >= b[j]) break;
+			b[i] = b[j];
 			i = j;
 		}
-		buf[i] = v;
+		b[i] = v;
 	}
 
 	/**
@@ -286,14 +300,16 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @param i 要素の現在位置
 	 */
 	private void siftDown(final long v, int i) {
-		final int half = size >> 1;
+		final long[] b = buf;
+		final int n = size;
+		final int half = n >> 1;
 		while (i < half) {
 			int child = (i << 1) + 1;
-			child += child + 1 < size && buf[child] > buf[child + 1] ? 1 : 0;
-			if (v <= buf[child]) break;
-			buf[i] = buf[child];
+			if (child + 1 < n && b[child] > b[child + 1]) child++;
+			if (v <= b[child]) break;
+			b[i] = b[child];
 			i = child;
 		}
-		buf[i] = v;
+		b[i] = v;
 	}
 }

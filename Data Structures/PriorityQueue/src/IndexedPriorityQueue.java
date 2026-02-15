@@ -71,23 +71,28 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	 */
 	public void pushAll(final int[] nodes, final long[] costs) {
 		final int n = nodes.length;
+		int s = size;
+		final long[] cArr = cost;
+		final int[] hArr = heap;
+		final int[] pArr = position;
 		if (isDescendingOrder) {
 			for (int i = 0; i < n; i++) {
 				final int node = nodes[i];
-				if (position[node] != -2) throw new IllegalArgumentException();
-				cost[node] = -costs[i];
-				heap[size] = node;
-				position[node] = size++;
+				if (pArr[node] != -2) throw new IllegalArgumentException();
+				cArr[node] = -costs[i];
+				hArr[s] = node;
+				pArr[node] = s++;
 			}
 		} else {
 			for (int i = 0; i < n; i++) {
 				final int node = nodes[i];
-				if (position[node] != -2) throw new IllegalArgumentException();
-				cost[node] = costs[i];
-				heap[size] = node;
-				position[node] = size++;
+				if (pArr[node] != -2) throw new IllegalArgumentException();
+				cArr[node] = costs[i];
+				hArr[s] = node;
+				pArr[node] = s++;
 			}
 		}
+		size = s;
 		unsortedCount += n;
 	}
 
@@ -391,17 +396,20 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	 * @param i    ノードの現在位置
 	 */
 	private void siftUp(final int node, int i) {
-		long c = cost[node];
+		final long[] cArr = cost;
+		final int[] hArr = heap;
+		final int[] pArr = position;
+		final long c = cArr[node];
 		while (i > 0) {
-			int j = (i - 1) >> 1;
-			int parent = heap[j];
-			if (c >= cost[parent]) break;
-			heap[i] = parent;
-			position[parent] = i;
+			final int j = (i - 1) >> 1;
+			final int parent = hArr[j];
+			if (c >= cArr[parent]) break;
+			hArr[i] = parent;
+			pArr[parent] = i;
 			i = j;
 		}
-		heap[i] = node;
-		position[node] = i;
+		hArr[i] = node;
+		pArr[node] = i;
 	}
 
 	/**
@@ -411,18 +419,22 @@ public final class IndexedPriorityQueue implements Iterable<Long> {
 	 * @param i    ノードの現在位置
 	 */
 	private void siftDown(final int node, int i) {
-		long c = cost[node];
-		int half = size >> 1;
+		final long[] cArr = cost;
+		final int[] hArr = heap;
+		final int[] pArr = position;
+		final int n = size;
+		final long c = cArr[node];
+		final int half = n >> 1;
 		while (i < half) {
 			int child = (i << 1) + 1;
-			child += child + 1 < size && cost[heap[child]] > cost[heap[child + 1]] ? 1 : 0;
-			int childNode = heap[child];
-			if (c <= cost[childNode]) break;
-			heap[i] = childNode;
-			position[childNode] = i;
+			if (child + 1 < n && cArr[hArr[child]] > cArr[hArr[child + 1]]) child++;
+			final int childNode = hArr[child];
+			if (c <= cArr[childNode]) break;
+			hArr[i] = childNode;
+			pArr[childNode] = i;
 			i = child;
 		}
-		heap[i] = node;
-		position[node] = i;
+		hArr[i] = node;
+		pArr[node] = i;
 	}
 }

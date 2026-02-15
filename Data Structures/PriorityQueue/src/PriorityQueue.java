@@ -131,11 +131,16 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	public void addAll(final Iterable<T> elements) {
 		if (elements instanceof final Collection<T> c) {
 			final int n = c.size();
-			if (size + n > capacity) {
-				while (size + n > capacity) capacity <<= 1;
-				buf = Arrays.copyOf(buf, capacity);
+			int s = size;
+			if (s + n > capacity) {
+				int newCap = capacity;
+				while (s + n > newCap) newCap <<= 1;
+				buf = Arrays.copyOf(buf, newCap);
+				capacity = newCap;
 			}
-			for (final T e : elements) buf[size++] = e;
+			final T[] b = buf;
+			for (final T e : c) b[s++] = e;
+			size = s;
 			unsortedCount += n;
 		} else {
 			for (final T e : elements) push(e);
@@ -301,13 +306,14 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	 * @param i 要素の現在位置
 	 */
 	private void siftUp(final T v, int i) {
+		final T[] b = buf;
 		while (i > 0) {
 			final int j = (i - 1) >> 1;
-			if (comparator.compare(v, buf[j]) >= 0) break;
-			buf[i] = buf[j];
+			if (comparator.compare(v, b[j]) >= 0) break;
+			b[i] = b[j];
 			i = j;
 		}
-		buf[i] = v;
+		b[i] = v;
 	}
 
 	/**
@@ -320,14 +326,16 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	 * @param i 要素の現在位置
 	 */
 	private void siftDown(final T v, int i) {
-		final int half = size >> 1;
+		final T[] b = buf;
+		final int n = size;
+		final int half = n >> 1;
 		while (i < half) {
 			int child = (i << 1) + 1;
-			child += child + 1 < size && comparator.compare(buf[child], buf[child + 1]) > 0 ? 1 : 0;
-			if (comparator.compare(v, buf[child]) <= 0) break;
-			buf[i] = buf[child];
+			if (child + 1 < n && comparator.compare(b[child], b[child + 1]) > 0) child++;
+			if (comparator.compare(v, b[child]) <= 0) break;
+			b[i] = b[child];
 			i = child;
 		}
-		buf[i] = v;
+		b[i] = v;
 	}
 }
