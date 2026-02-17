@@ -3,7 +3,6 @@ import java.util.*;
 public class Example {
 
 	private static void solve(final FastScanner sc, final FastPrinter out) {
-		// ここから処理を書きます。
 		Object[] arr = {1, "21231", 3.14159265358979323846, new int[]{1, 2, 3, 4, 5}, new String[]{"a", "b", "c", "d", "e"}, null};
 		out.print(arr);
 		out.println();

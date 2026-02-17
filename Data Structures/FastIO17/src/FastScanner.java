@@ -7,13 +7,13 @@ import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class FastScanner implements AutoCloseable {
-	private static final int DEFAULT_BUFFER_SIZE = 65536;
+	private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
 	private final InputStream in;
 	private final byte[] buffer;
 	private int pos = 0, bufferLength = 0;
 
 	public FastScanner() {
-		this(System.in, DEFAULT_BUFFER_SIZE);
+		this(new FileInputStream(FileDescriptor.in), DEFAULT_BUFFER_SIZE);
 	}
 
 	public FastScanner(final InputStream in) {
@@ -21,7 +21,7 @@ public final class FastScanner implements AutoCloseable {
 	}
 
 	public FastScanner(final int bufferSize) {
-		this(System.in, bufferSize);
+		this(new FileInputStream(FileDescriptor.in), bufferSize);
 	}
 
 	public FastScanner(final InputStream in, final int bufferSize) {
@@ -30,76 +30,126 @@ public final class FastScanner implements AutoCloseable {
 	}
 
 	private int skipSpaces() {
-		int b = read();
-		while (b <= 32) b = read();
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength, b;
+		do {
+			if (p >= len) {
+				try {
+					len = in.read(buf);
+					p = 0;
+				} catch (final IOException e) {
+					throw new RuntimeException(e);
+				}
+				if (len <= 0) throw new NoSuchElementException();
+			}
+			b = buf[p++];
+		} while (b <= 32);
+		pos = p;
+		bufferLength = len;
 		return b;
 	}
 
 	@Override
 	public void close() {
 		try {
-			if (in != System.in) in.close();
-			pos = 0;
-			bufferLength = 0;
+			in.close();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private int read() {
-		if (pos >= bufferLength) {
-			try {
-				bufferLength = in.read(buffer, pos = 0, buffer.length);
-			} catch (final IOException e) {
-				throw new RuntimeException(e);
-			}
-			if (bufferLength <= 0) throw new RuntimeException(new EOFException());
-		}
-		return buffer[pos++] & 0xFF;
-	}
-
-	public int peek() {
+	private boolean hasNextByte() {
+		if (pos < bufferLength) return true;
+		pos = 0;
 		try {
-			int b = skipSpaces();
-			pos--;
-			return b;
-		} catch (final RuntimeException e) {
-			return 0;
+			bufferLength = in.read(buffer);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
+		return bufferLength > 0;
 	}
 
 	public boolean hasNext() {
-		return peek() != 0;
+		while (hasNextByte()) {
+			if (buffer[pos] > 32) return true;
+			pos++;
+		}
+		return false;
+	}
+
+	public char nextChar() {
+		if (!hasNext()) throw new NoSuchElementException();
+		return (char) buffer[pos++];
 	}
 
 	public int nextInt() {
 		int b = skipSpaces();
+		int n = 0;
 		boolean negative = false;
 		if (b == '-') {
 			negative = true;
-			b = read();
+			if (pos == bufferLength) hasNextByte();
+			b = buffer[pos++];
 		}
-		int result = 0;
-		do {
-			result = (result << 3) + (result << 1) + (b & 15);
-			b = read();
-		} while (b >= '0' && b <= '9');
-		return negative ? -result : result;
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength;
+		if (p + 11 <= len) {
+			do {
+				n = (n << 3) + (n << 1) + (b & 15);
+				b = buf[p++];
+			} while (b > 32);
+		} else {
+			do {
+				n = (n << 3) + (n << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buf[p++];
+			} while (b > 32);
+		}
+		pos = p;
+		return negative ? -n : n;
 	}
 
 	public long nextLong() {
 		int b = skipSpaces();
+		long n = 0;
 		boolean negative = false;
 		if (b == '-') {
 			negative = true;
-			b = read();
+			if (pos == bufferLength) hasNextByte();
+			b = buffer[pos++];
 		}
-		long result = 0;
-		do {
-			result = (result << 3) + (result << 1) + (b & 15);
-			b = read();
-		} while (b >= '0' && b <= '9');
-		return negative ? -result : result;
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength;
+		if (p + 20 <= len) {
+			do {
+				n = (n << 3) + (n << 1) + (b & 15);
+				b = buf[p++];
+			} while (b > 32);
+		} else {
+			do {
+				n = (n << 3) + (n << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buf[p++];
+			} while (b > 32);
+		}
+		pos = p;
+		return negative ? -n : n;
 	}
 
 	public double nextDouble() {
@@ -107,29 +157,70 @@ public final class FastScanner implements AutoCloseable {
 		boolean negative = false;
 		if (b == '-') {
 			negative = true;
-			b = read();
+			if (pos == bufferLength) hasNextByte();
+			b = buffer[pos++];
 		}
 		long intPart = 0;
-		do {
-			intPart = (intPart << 3) + (intPart << 1) + (b & 15);
-			b = read();
-		} while (b >= '0' && b <= '9');
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength;
+		if (p + 20 <= len) {
+			do {
+				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				b = buf[p++];
+			} while ('0' <= b && b <= '9');
+		} else {
+			do {
+				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						b = -1;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buf[p++];
+			} while ('0' <= b && b <= '9');
+		}
 		double result = intPart;
 		if (b == '.') {
-			b = read();
-			double scale = 0.1;
-			do {
-				result += (b & 15) * scale;
-				scale *= 0.1;
-				b = read();
-			} while (b >= '0' && b <= '9');
+			if (p == len) {
+				pos = p;
+				hasNextByte();
+				p = pos;
+				len = bufferLength;
+			}
+			b = buf[p++];
+			long fracPart = 0;
+			long divisor = 1;
+			if (p + 20 <= len) {
+				do {
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
+					b = buf[p++];
+				} while ('0' <= b && b <= '9');
+			} else {
+				do {
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
+					if (p == len) {
+						pos = p;
+						if (!hasNextByte()) {
+							p = pos;
+							break;
+						}
+						p = pos;
+						len = bufferLength;
+					}
+					b = buf[p++];
+				} while ('0' <= b && b <= '9');
+			}
+			result += (double) fracPart / divisor;
 		}
+		pos = p;
 		return negative ? -result : result;
-	}
-
-	public char nextChar() {
-		int b = skipSpaces();
-		return (char) b;
 	}
 
 	public String next() {
@@ -138,25 +229,57 @@ public final class FastScanner implements AutoCloseable {
 
 	public StringBuilder nextStringBuilder() {
 		final StringBuilder sb = new StringBuilder();
-		int b = skipSpaces();
+		int b = skipSpaces(), p = pos, len = bufferLength;
 		do {
 			sb.append((char) b);
-			b = read();
+			if (p == len) {
+				pos = p;
+				if (!hasNextByte()) {
+					p = pos;
+					break;
+				}
+				p = pos;
+				len = bufferLength;
+			}
+			b = buffer[p++];
 		} while (b > 32);
+		pos = p;
 		return sb;
 	}
 
 	public String nextLine() {
 		final StringBuilder sb = new StringBuilder();
-		int b = read();
-		while (b != 0 && b != '\n' && b != '\r') {
+		if (pos == bufferLength && !hasNextByte()) return "";
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength, b = buf[p];
+		while (b != '\n' && b != '\r') {
 			sb.append((char) b);
-			b = read();
+			p++;
+			if (p == len) {
+				pos = p;
+				if (!hasNextByte()) {
+					p = pos;
+					b = -1;
+					break;
+				}
+				p = pos;
+				len = bufferLength;
+			}
+			b = buf[p];
 		}
-		if (b == '\r') {
-			int c = read();
-			if (c != '\n') pos--;
+		if (b == '\n' || b == '\r') {
+			p++;
+			if (b == '\r') {
+				if (p == len) {
+					pos = p;
+					hasNextByte();
+					p = pos;
+					len = bufferLength;
+				}
+				if (p < len && buf[p] == '\n') p++;
+			}
 		}
+		pos = p;
 		return sb.toString();
 	}
 
@@ -183,6 +306,26 @@ public final class FastScanner implements AutoCloseable {
 	public double[] nextDouble(final int n) {
 		final double[] a = new double[n];
 		for (int i = 0; i < n; i++) a[i] = nextDouble();
+		return a;
+	}
+
+	public int nextInt0() {
+		return nextInt() - 1;
+	}
+
+	public long nextLong0() {
+		return nextLong() - 1;
+	}
+
+	public int[] nextInt0(final int n) {
+		final int[] a = new int[n];
+		for (int i = 0; i < n; i++) a[i] = nextInt() - 1;
+		return a;
+	}
+
+	public long[] nextLong0(final int n) {
+		final long[] a = new long[n];
+		for (int i = 0; i < n; i++) a[i] = nextLong() - 1;
 		return a;
 	}
 

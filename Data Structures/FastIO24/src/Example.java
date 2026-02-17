@@ -1,13 +1,8 @@
 import java.util.*;
 
-public final class Example {
+public class Example {
 
-	// ------------------------ 定数 ------------------------
-	private static final FastScanner sc = new FastScanner();
-	private static final FastPrinter out = new FastPrinter();
-
-	// ------------------------ メインロジック ------------------------
-	private static void solve() {
+	private static void solve(final FastScanner sc, final FastPrinter out) {
 		Object[] arr = {1, "21231", 3.14159265358979323846, new int[]{1, 2, 3, 4, 5}, new String[]{"a", "b", "c", "d", "e"}, null};
 		out.print(arr);
 		out.println();
@@ -16,15 +11,12 @@ public final class Example {
 		out.print(list, i -> i * i);
 	}
 
-	// ------------------------ main() 関数 ------------------------
-	public static void main(final String[] args) {
-		try {
-			solve();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		} finally {
-			sc.close();
-			out.close();
+	public static void main(String[] args) {
+		try (final FastScanner sc = new FastScanner();
+		     final FastPrinter out = new FastPrinter()) {
+			solve(sc, out);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 

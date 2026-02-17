@@ -193,17 +193,18 @@ public final class FastScanner implements AutoCloseable {
 				len = bufferLength;
 			}
 			b = buf[p++];
-			double scale = 0.1;
+			long fracPart = 0;
+			long divisor = 1;
 			if (p + 20 <= len) {
 				do {
-					result += (b & 15) * scale;
-					scale *= 0.1;
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
 					b = buf[p++];
 				} while ('0' <= b && b <= '9');
 			} else {
 				do {
-					result += (b & 15) * scale;
-					scale *= 0.1;
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
 					if (p == len) {
 						pos = p;
 						if (!hasNextByte()) {
@@ -216,6 +217,7 @@ public final class FastScanner implements AutoCloseable {
 					b = buf[p++];
 				} while ('0' <= b && b <= '9');
 			}
+			result += (double) fracPart / divisor;
 		}
 		pos = p;
 		return negative ? -result : result;
