@@ -55,7 +55,7 @@ public final class FastPrinter implements AutoCloseable {
 
 	public FastPrinter(final OutputStream out, final int bufferSize, final boolean autoFlush) {
 		this.out = out;
-		this.buffer = new byte[max(64, roundUpToPowerOfTwo(bufferSize))];
+		this.buffer = new byte[bufferSize(bufferSize)];
 		this.autoFlush = autoFlush;
 	}
 
@@ -112,15 +112,8 @@ public final class FastPrinter implements AutoCloseable {
 		}
 	}
 
-	private static int roundUpToPowerOfTwo(int x) {
-		if (x <= 1) return 1;
-		x--;
-		x |= x >>> 1;
-		x |= x >>> 2;
-		x |= x >>> 4;
-		x |= x >>> 8;
-		x |= x >>> 16;
-		return x + 1;
+	private static int bufferSize(int x) {
+		return x <= 64 ? 64 : 1 << (32 - Integer.numberOfLeadingZeros(x - 1));
 	}
 
 	@Override
@@ -381,7 +374,7 @@ public final class FastPrinter implements AutoCloseable {
 		final int bufferLength = buffer.length;
 		if (required <= bufferLength) return;
 		flush();
-		if (additional > bufferLength) buffer = new byte[roundUpToPowerOfTwo(additional)];
+		if (additional > bufferLength) buffer = new byte[bufferSize(additional)];
 	}
 
 	private int write(final boolean b, int p) {
