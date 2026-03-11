@@ -3,6 +3,7 @@ import sun.misc.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -227,6 +228,7 @@ public final class Check1 {
 		} finally {
 			sc.close();
 			out.close();
+			Runtime.getRuntime().halt(0);
 		}
 	}
 
@@ -273,6 +275,7 @@ public final class Check1 {
 						throw new RuntimeException(e);
 					}
 					if (len <= 0) throw new NoSuchElementException();
+					if (len < buf.length) buf[len] = 32;
 				}
 				b = buf[p++];
 			} while (b <= 32);
@@ -295,7 +298,8 @@ public final class Check1 {
 			pos = 0;
 			try {
 				bufferLength = in.read(buffer);
-			} catch (IOException e) {
+				if (bufferLength > 0 && bufferLength < buffer.length) buffer[bufferLength] = 32;
+			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 			return bufferLength > 0;
@@ -316,70 +320,122 @@ public final class Check1 {
 
 		public int nextInt() {
 			int b = skipSpaces();
-			int n = 0;
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				if (pos == bufferLength) hasNextByte();
+				if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 				b = buffer[pos++];
 			}
+			return pos + 10 <= bufferLength ? nextIntFast(b, negative) : nextIntSlow(b, negative);
+		}
+
+		private int nextIntFast(int b, final boolean negative) {
 			final byte[] buf = buffer;
-			int p = pos, len = bufferLength;
-			if (p + 11 <= len) {
-				do {
-					n = (n << 3) + (n << 1) + (b & 15);
-					b = buf[p++];
-				} while (b > 32);
-			} else {
-				do {
-					n = (n << 3) + (n << 1) + (b & 15);
-					if (p == len) {
-						pos = p;
-						if (!hasNextByte()) {
-							p = pos;
-							break;
-						}
-						p = pos;
-						len = bufferLength;
-					}
-					b = buf[p++];
-				} while (b > 32);
+			int p = pos, n = 0;
+			final Unsafe unsafe = Handles.UNSAFE;
+			final long arrayByteBaseOffset = Handles.ARRAY_BYTE_BASE_OFFSET;
+			long v = unsafe.getLong(buf, arrayByteBaseOffset + p - 1);
+			long a = v ^ 0x3030303030303030L;
+			long check = a & 0xF0F0F0F0F0F0F0F0L;
+			if (check == 0) {
+				a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
+				a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
+				a = (a * 10000 + (a >>> 32)) & 0x00000000FFFFFFFFL;
+				n = (int) a;
+				p += 7;
+				b = buf[p++];
 			}
+			while (b > 32) {
+				n = (n << 3) + (n << 1) + (b & 15);
+				b = buf[p++];
+			}
+			pos = p;
+			return negative ? -n : n;
+		}
+
+		private int nextIntSlow(int b, final boolean negative) {
+			int p = pos, len = bufferLength;
+			int n = 0;
+			do {
+				n = (n << 3) + (n << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buffer[p++];
+			} while (b > 32);
 			pos = p;
 			return negative ? -n : n;
 		}
 
 		public long nextLong() {
 			int b = skipSpaces();
-			long n = 0;
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				if (pos == bufferLength) hasNextByte();
+				if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 				b = buffer[pos++];
 			}
+			return pos + 20 <= bufferLength ? nextLongFast(b, negative) : nextLongSlow(b, negative);
+		}
+
+		private long nextLongFast(int b, final boolean negative) {
 			final byte[] buf = buffer;
-			int p = pos, len = bufferLength;
-			if (p + 20 <= len) {
-				do {
-					n = (n << 3) + (n << 1) + (b & 15);
+			int p = pos;
+			long n = 0;
+			final Unsafe unsafe = Handles.UNSAFE;
+			final long arrayByteBaseOffset = Handles.ARRAY_BYTE_BASE_OFFSET;
+			long v = unsafe.getLong(buf, arrayByteBaseOffset + p - 1);
+			long a = v ^ 0x3030303030303030L;
+			long check = a & 0xF0F0F0F0F0F0F0F0L;
+			if (check == 0) {
+				a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
+				a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
+				a = (a * 10000 + (a >>> 32)) & 0x00000000FFFFFFFFL;
+				n = a;
+				p += 7;
+				b = buf[p++];
+				long v2 = unsafe.getLong(buf, arrayByteBaseOffset + p - 1);
+				long a2 = v2 ^ 0x3030303030303030L;
+				long check2 = a2 & 0xF0F0F0F0F0F0F0F0L;
+				if (check2 == 0) {
+					a2 = (a2 * 10 + (a2 >>> 8)) & 0x00FF00FF00FF00FFL;
+					a2 = (a2 * 100 + (a2 >>> 16)) & 0x0000FFFF0000FFFFL;
+					a2 = (a2 * 10000 + (a2 >>> 32)) & 0x00000000FFFFFFFFL;
+					n = n * 100000000L + a2;
+					p += 7;
 					b = buf[p++];
-				} while (b > 32);
-			} else {
-				do {
-					n = (n << 3) + (n << 1) + (b & 15);
-					if (p == len) {
-						pos = p;
-						if (!hasNextByte()) {
-							p = pos;
-							break;
-						}
-						p = pos;
-						len = bufferLength;
-					}
-					b = buf[p++];
-				} while (b > 32);
+				}
 			}
+			while (b > 32) {
+				n = (n << 3) + (n << 1) + (b & 15);
+				b = buf[p++];
+			}
+			pos = p;
+			return negative ? -n : n;
+		}
+
+		private long nextLongSlow(int b, final boolean negative) {
+			int p = pos, len = bufferLength;
+			long n = 0;
+			do {
+				n = (n << 3) + (n << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buffer[p++];
+			} while (b > 32);
 			pos = p;
 			return negative ? -n : n;
 		}
@@ -389,25 +445,74 @@ public final class Check1 {
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				if (pos == bufferLength) hasNextByte();
+				if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 				b = buffer[pos++];
 			}
-			long intPart = 0;
+			return pos + 20 <= bufferLength ? nextDoubleFast(b, negative) : nextDoubleSlow(b, negative);
+		}
+
+		private double nextDoubleFast(int b, final boolean negative) {
 			final byte[] buf = buffer;
 			int p = pos, len = bufferLength;
+			long intPart = 0;
+			do {
+				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				b = buf[p++];
+			} while ('0' <= b && b <= '9');
+			double result = intPart;
+			if (b == '.') result += parseFracPart(p, len, buf);
+			else pos = p;
+			return negative ? -result : result;
+		}
+
+		private double nextDoubleSlow(int b, final boolean negative) {
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			long intPart = 0;
+			do {
+				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						b = -1;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buf[p++];
+			} while ('0' <= b && b <= '9');
+
+			double result = intPart;
+			if (b == '.') result += parseFracPart(p, len, buf);
+			else pos = p;
+			return negative ? -result : result;
+		}
+
+		private double parseFracPart(int p, int len, final byte[] buf) {
+			if (p == len) {
+				pos = p;
+				hasNextByte();
+				p = pos;
+				len = bufferLength;
+			}
+			int b = buf[p++];
+			long fracPart = 0, divisor = 1;
 			if (p + 20 <= len) {
 				do {
-					intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
 					b = buf[p++];
 				} while ('0' <= b && b <= '9');
 			} else {
 				do {
-					intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
 					if (p == len) {
 						pos = p;
 						if (!hasNextByte()) {
 							p = pos;
-							b = -1;
 							break;
 						}
 						p = pos;
@@ -416,47 +521,39 @@ public final class Check1 {
 					b = buf[p++];
 				} while ('0' <= b && b <= '9');
 			}
-			double result = intPart;
-			if (b == '.') {
-				if (p == len) {
-					pos = p;
-					hasNextByte();
-					p = pos;
-					len = bufferLength;
-				}
-				b = buf[p++];
-				long fracPart = 0;
-				long divisor = 1;
-				if (p + 20 <= len) {
-					do {
-						fracPart = fracPart * 10 + (b & 15);
-						divisor *= 10;
-						b = buf[p++];
-					} while ('0' <= b && b <= '9');
-				} else {
-					do {
-						fracPart = fracPart * 10 + (b & 15);
-						divisor *= 10;
-						if (p == len) {
-							pos = p;
-							if (!hasNextByte()) {
-								p = pos;
-								break;
-							}
-							p = pos;
-							len = bufferLength;
-						}
-						b = buf[p++];
-					} while ('0' <= b && b <= '9');
-				}
-				result += (double) fracPart / divisor;
-			}
 			pos = p;
-			return negative ? -result : result;
+			return (double) fracPart / divisor;
 		}
 
 		public String next() {
-			return nextStringBuilder().toString();
+			skipSpaces();
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			final int start = p - 1;
+			while (p < len && buf[p] > 32) p++;
+			if (p < len) {
+				final String s = new String(buf, start, p - start, StandardCharsets.US_ASCII);
+				pos = p + 1;
+				return s;
+			}
+			final StringBuilder sb = new StringBuilder(len - start + 16);
+			for (int i = start; i < len; i++) sb.append((char) buf[i]);
+			while (true) {
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				final int b = buf[p++];
+				if (b <= 32) break;
+				sb.append((char) b);
+			}
+			pos = p;
+			return sb.toString();
 		}
 
 		public StringBuilder nextStringBuilder() {
@@ -480,39 +577,60 @@ public final class Check1 {
 		}
 
 		public String nextLine() {
-			final StringBuilder sb = new StringBuilder();
-			if (pos == bufferLength && !hasNextByte()) return "";
+			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			final byte[] buf = buffer;
-			int p = pos, len = bufferLength, b = buf[p];
-			while (b != '\n' && b != '\r') {
-				sb.append((char) b);
-				p++;
-				if (p == len) {
+			int p = pos, len = bufferLength;
+			final int start = p;
+			while (p < len) {
+				final int b = buf[p];
+				if (b == '\n' || b == '\r') {
+					final String s = new String(buf, start, p - start, StandardCharsets.US_ASCII);
+					p++;
+					if (b == '\r') {
+						if (p == len) {
+							pos = p;
+							hasNextByte();
+							p = pos;
+							len = bufferLength;
+						}
+						if (p < len && buf[p] == '\n') p++;
+					}
 					pos = p;
-					if (!hasNextByte()) {
-						p = pos;
-						b = -1;
-						break;
-					}
-					p = pos;
-					len = bufferLength;
+					return s;
 				}
-				b = buf[p];
-			}
-			if (b == '\n' || b == '\r') {
 				p++;
-				if (b == '\r') {
-					if (p == len) {
+			}
+
+			final StringBuilder sb = new StringBuilder();
+			for (int i = start; i < len; i++) sb.append((char) buf[i]);
+			while (true) {
+				pos = len;
+				if (!hasNextByte()) {
+					pos = len;
+					return sb.toString();
+				}
+				p = pos;
+				len = bufferLength;
+				while (p < len) {
+					final int b = buf[p];
+					if (b == '\n' || b == '\r') {
+						p++;
+						if (b == '\r') {
+							if (p == len) {
+								pos = p;
+								hasNextByte();
+								p = pos;
+								len = bufferLength;
+							}
+							if (p < len && buf[p] == '\n') p++;
+						}
 						pos = p;
-						hasNextByte();
-						p = pos;
-						len = bufferLength;
+						return sb.toString();
 					}
-					if (p < len && buf[p] == '\n') p++;
+					sb.append((char) b);
+					p++;
 				}
 			}
-			pos = p;
-			return sb.toString();
 		}
 
 		public BigInteger nextBigInteger() {
@@ -850,6 +968,22 @@ public final class Check1 {
 			}
 			return multiset;
 		}
+
+		private static final class Handles {
+			private static final Unsafe UNSAFE;
+			private static final long ARRAY_BYTE_BASE_OFFSET;
+
+			static {
+				try {
+					final Field f = Unsafe.class.getDeclaredField("theUnsafe");
+					f.setAccessible(true);
+					UNSAFE = (Unsafe) f.get(null);
+					ARRAY_BYTE_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
+				} catch (final Exception e) {
+					throw new RuntimeException("Unsafe initialization failed", e);
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -863,55 +997,6 @@ public final class Check1 {
 		private static final byte HYPHEN = '-';
 		private static final byte PERIOD = '.';
 		private static final byte ZERO = '0';
-		private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
-		private static final byte[] FALSE_BYTES = {'N', 'o'};
-		private static final byte[] DigitOnes = {
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		};
-		private static final byte[] DigitTens = {
-				'0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-				'1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
-				'2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
-				'3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
-				'4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
-				'5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
-				'6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
-				'7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
-				'8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
-				'9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
-		};
-		private static final long[] POW10 = {
-				1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
-				1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
-				10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
-				10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
-		};
-		private static final Unsafe UNSAFE;
-		private static final long STRING_VALUE_OFFSET;
-		private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
-
-		static {
-			try {
-				final Field f = Unsafe.class.getDeclaredField("theUnsafe");
-				f.setAccessible(true);
-				UNSAFE = (Unsafe) f.get(null);
-				STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
-				final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
-				ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
-			} catch (final Exception e) {
-				throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
-			}
-		}
-
 		private final OutputStream out;
 		private final boolean autoFlush;
 		private byte[] buffer;
@@ -1277,7 +1362,7 @@ public final class Check1 {
 		}
 
 		private int write(final boolean b, int p) {
-			final byte[] src = b ? TRUE_BYTES : FALSE_BYTES;
+			final byte[] src = b ? Cache.TRUE_BYTES : Cache.FALSE_BYTES;
 			final int len = src.length;
 			System.arraycopy(src, 0, buffer, p, len);
 			return p + len;
@@ -1285,53 +1370,100 @@ public final class Check1 {
 
 		private int write(int i, int p) {
 			final byte[] buf = buffer;
+			final Unsafe unsafe = Cache.UNSAFE;
+			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			final short[] digits2 = Cache.DIGITS_2;
+			final int[] digits4 = Cache.DIGITS_4;
 			if (i >= 0) i = -i;
 			else buf[p++] = HYPHEN;
 			final int digits = countDigits(i);
 			int writePos = p + digits;
-			while (i <= -100) {
+			if (i <= -100000000) {
+				final int q = i / 100000000;
+				final int r = (q * 100000000) - i;
+				final int hi = r / 10000;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				writePos -= 8;
+				i = q;
+			}
+			if (i <= -10000) {
+				final int q = i / 10000;
+				final int r = (q * 10000) - i;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+				writePos -= 4;
+				i = q;
+			}
+			if (i <= -100) {
 				final int q = i / 100;
-				final int r = (q << 6) + (q << 5) + (q << 2) - i;
-				buf[writePos - 1] = DigitOnes[r];
-				buf[writePos - 2] = DigitTens[r];
+				final int r = (q * 100) - i;
+				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
 				writePos -= 2;
 				i = q;
 			}
 			final int r = -i;
-			buf[writePos - 1] = DigitOnes[r];
-			if (r >= 10) buf[writePos - 2] = DigitTens[r];
+			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+			else buf[writePos - 1] = (byte) (r + ZERO);
 			return p + digits;
 		}
 
 		private int write(long l, int p) {
 			final byte[] buf = buffer;
+			final Unsafe unsafe = Cache.UNSAFE;
+			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			final short[] digits2 = Cache.DIGITS_2;
+			final int[] digits4 = Cache.DIGITS_4;
 			if (l >= 0) l = -l;
 			else buf[p++] = HYPHEN;
 			final int digits = countDigits(l);
 			int writePos = p + digits;
-			while (l <= -100) {
+			if (l <= -100000000L) {
+				long q = l / 100000000L;
+				int r = (int) ((q * 100000000L) - l);
+				int hi = r / 10000;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				writePos -= 8;
+				l = q;
+				if (l <= -100000000L) {
+					q = l / 100000000L;
+					r = (int) ((q * 100000000L) - l);
+					hi = r / 10000;
+					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+					writePos -= 8;
+					l = q;
+				}
+			}
+			if (l <= -10000) {
+				final long q = l / 10000;
+				final int r = (int) ((q * 10000) - l);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+				writePos -= 4;
+				l = q;
+			}
+			if (l <= -100) {
 				final long q = l / 100;
-				final int r = (int) ((q << 6) + (q << 5) + (q << 2) - l);
-				buf[writePos - 1] = DigitOnes[r];
-				buf[writePos - 2] = DigitTens[r];
+				final int r = (int) ((q * 100) - l);
+				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
 				writePos -= 2;
 				l = q;
 			}
 			final int r = (int) -l;
-			buf[writePos - 1] = DigitOnes[r];
-			if (r >= 10) buf[writePos - 2] = DigitTens[r];
+			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+			else buf[writePos - 1] = (byte) (r + ZERO);
 			return p + digits;
 		}
 
 		private int write(final String s, int p) {
-			final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
+			final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.STRING_VALUE_OFFSET);
 			final int len = s.length();
 			System.arraycopy(src, 0, buffer, p, len);
 			return p + len;
 		}
 
 		private int write(final StringBuilder s, int p) {
-			final byte[] src = (byte[]) UNSAFE.getObject(s, ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
+			final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
 			final int len = s.length();
 			System.arraycopy(src, 0, buffer, p, len);
 			return p + len;
@@ -1408,12 +1540,13 @@ public final class Check1 {
 			}
 			if (n > 18) n = 18;
 			final long intPart = (long) d;
-			final long fracPart = (long) ((d - intPart) * POW10[n]);
+			final long fracPart = (long) ((d - intPart) * Cache.POW10[n]);
 			p = write(intPart, p);
 			buf[p++] = PERIOD;
 			int leadingZeros = n - countDigits(-fracPart);
 			fill(buf, p, p + leadingZeros, ZERO);
 			pos = write(fracPart, p + leadingZeros);
+			if (autoFlush) flush();
 			return this;
 		}
 
@@ -2280,6 +2413,54 @@ public final class Check1 {
 			}
 			if (autoFlush) flush();
 			return this;
+		}
+
+		private static final class Cache {
+			private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
+			private static final byte[] FALSE_BYTES = {'N', 'o'};
+			private static final long[] POW10 = {
+					1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
+					1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
+					10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
+					10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
+			};
+			private static final short[] DIGITS_2 = new short[100];
+			private static final int[] DIGITS_4 = new int[10000];
+			private static final Unsafe UNSAFE;
+			private static final long BYTE_ARRAY_BASE_OFFSET;
+			private static final long STRING_VALUE_OFFSET;
+			private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
+
+			static {
+				try {
+					final Field f = Unsafe.class.getDeclaredField("theUnsafe");
+					f.setAccessible(true);
+					UNSAFE = (Unsafe) f.get(null);
+					BYTE_ARRAY_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
+					STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
+					final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
+					ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
+					final byte[] tmp = new byte[2];
+					int idx2 = 0;
+					for (int i = '0'; i <= '9'; i++) {
+						for (int j = '0'; j <= '9'; j++) {
+							tmp[0] = (byte) i;
+							tmp[1] = (byte) j;
+							DIGITS_2[idx2++] = UNSAFE.getShort(tmp, BYTE_ARRAY_BASE_OFFSET);
+						}
+					}
+					int idx4 = 0;
+					for (int i = 0; i < 100; i++) {
+						final int hi = DIGITS_2[i] & 0xFFFF;
+						for (int j = 0; j < 100; j++) {
+							final int lo = DIGITS_2[j] & 0xFFFF;
+							DIGITS_4[idx4++] = (lo << 16) | hi;
+						}
+					}
+				} catch (final Exception e) {
+					throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
+				}
+			}
 		}
 	}
 	// endregion

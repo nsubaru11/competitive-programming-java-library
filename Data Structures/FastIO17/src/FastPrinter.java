@@ -20,55 +20,6 @@ public final class FastPrinter implements AutoCloseable {
 	private static final byte HYPHEN = '-';
 	private static final byte PERIOD = '.';
 	private static final byte ZERO = '0';
-	private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
-	private static final byte[] FALSE_BYTES = {'N', 'o'};
-	private static final byte[] DigitOnes = {
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-	};
-	private static final byte[] DigitTens = {
-			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-			'1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
-			'2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
-			'3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
-			'4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
-			'5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
-			'6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
-			'7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
-			'8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
-			'9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
-	};
-	private static final long[] POW10 = {
-			1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
-			1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
-			10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
-			10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
-	};
-	private static final Unsafe UNSAFE;
-	private static final long STRING_VALUE_OFFSET;
-	private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
-
-	static {
-		try {
-			final Field f = Unsafe.class.getDeclaredField("theUnsafe");
-			f.setAccessible(true);
-			UNSAFE = (Unsafe) f.get(null);
-			STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
-			final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
-			ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
-		} catch (final Exception e) {
-			throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
-		}
-	}
-
 	private final OutputStream out;
 	private final boolean autoFlush;
 	private byte[] buffer;
@@ -434,7 +385,7 @@ public final class FastPrinter implements AutoCloseable {
 	}
 
 	private int write(final boolean b, int p) {
-		final byte[] src = b ? TRUE_BYTES : FALSE_BYTES;
+		final byte[] src = b ? Cache.TRUE_BYTES : Cache.FALSE_BYTES;
 		final int len = src.length;
 		System.arraycopy(src, 0, buffer, p, len);
 		return p + len;
@@ -442,53 +393,100 @@ public final class FastPrinter implements AutoCloseable {
 
 	private int write(int i, int p) {
 		final byte[] buf = buffer;
+		final Unsafe unsafe = Cache.UNSAFE;
+		final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+		final short[] digits2 = Cache.DIGITS_2;
+		final int[] digits4 = Cache.DIGITS_4;
 		if (i >= 0) i = -i;
 		else buf[p++] = HYPHEN;
 		final int digits = countDigits(i);
 		int writePos = p + digits;
-		while (i <= -100) {
+		if (i <= -100000000) {
+			final int q = i / 100000000;
+			final int r = (q * 100000000) - i;
+			final int hi = r / 10000;
+			unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+			unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+			writePos -= 8;
+			i = q;
+		}
+		if (i <= -10000) {
+			final int q = i / 10000;
+			final int r = (q * 10000) - i;
+			unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+			writePos -= 4;
+			i = q;
+		}
+		if (i <= -100) {
 			final int q = i / 100;
-			final int r = (q << 6) + (q << 5) + (q << 2) - i;
-			buf[writePos - 1] = DigitOnes[r];
-			buf[writePos - 2] = DigitTens[r];
+			final int r = (q * 100) - i;
+			unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
 			writePos -= 2;
 			i = q;
 		}
 		final int r = -i;
-		buf[writePos - 1] = DigitOnes[r];
-		if (r >= 10) buf[writePos - 2] = DigitTens[r];
+		if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+		else buf[writePos - 1] = (byte) (r + ZERO);
 		return p + digits;
 	}
 
 	private int write(long l, int p) {
 		final byte[] buf = buffer;
+		final Unsafe unsafe = Cache.UNSAFE;
+		final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+		final short[] digits2 = Cache.DIGITS_2;
+		final int[] digits4 = Cache.DIGITS_4;
 		if (l >= 0) l = -l;
 		else buf[p++] = HYPHEN;
 		final int digits = countDigits(l);
 		int writePos = p + digits;
-		while (l <= -100) {
+		if (l <= -100000000L) {
+			long q = l / 100000000L;
+			int r = (int) ((q * 100000000L) - l);
+			int hi = r / 10000;
+			unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+			unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+			writePos -= 8;
+			l = q;
+			if (l <= -100000000L) {
+				q = l / 100000000L;
+				r = (int) ((q * 100000000L) - l);
+				hi = r / 10000;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				writePos -= 8;
+				l = q;
+			}
+		}
+		if (l <= -10000) {
+			final long q = l / 10000;
+			final int r = (int) ((q * 10000) - l);
+			unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+			writePos -= 4;
+			l = q;
+		}
+		if (l <= -100) {
 			final long q = l / 100;
-			final int r = (int) ((q << 6) + (q << 5) + (q << 2) - l);
-			buf[writePos - 1] = DigitOnes[r];
-			buf[writePos - 2] = DigitTens[r];
+			final int r = (int) ((q * 100) - l);
+			unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
 			writePos -= 2;
 			l = q;
 		}
 		final int r = (int) -l;
-		buf[writePos - 1] = DigitOnes[r];
-		if (r >= 10) buf[writePos - 2] = DigitTens[r];
+		if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+		else buf[writePos - 1] = (byte) (r + ZERO);
 		return p + digits;
 	}
 
 	private int write(final String s, int p) {
-		final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
+		final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.STRING_VALUE_OFFSET);
 		final int len = s.length();
 		System.arraycopy(src, 0, buffer, p, len);
 		return p + len;
 	}
 
 	private int write(final StringBuilder s, int p) {
-		final byte[] src = (byte[]) UNSAFE.getObject(s, ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
+		final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
 		final int len = s.length();
 		System.arraycopy(src, 0, buffer, p, len);
 		return p + len;
@@ -565,12 +563,13 @@ public final class FastPrinter implements AutoCloseable {
 		}
 		if (n > 18) n = 18;
 		final long intPart = (long) d;
-		final long fracPart = (long) ((d - intPart) * POW10[n]);
+		final long fracPart = (long) ((d - intPart) * Cache.POW10[n]);
 		p = write(intPart, p);
 		buf[p++] = PERIOD;
 		int leadingZeros = n - countDigits(-fracPart);
 		fill(buf, p, p + leadingZeros, ZERO);
 		pos = write(fracPart, p + leadingZeros);
+		if (autoFlush) flush();
 		return this;
 	}
 
@@ -1437,5 +1436,53 @@ public final class FastPrinter implements AutoCloseable {
 		}
 		if (autoFlush) flush();
 		return this;
+	}
+
+	private static final class Cache {
+		private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
+		private static final byte[] FALSE_BYTES = {'N', 'o'};
+		private static final long[] POW10 = {
+				1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
+				1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
+				10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
+				10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
+		};
+		private static final short[] DIGITS_2 = new short[100];
+		private static final int[] DIGITS_4 = new int[10000];
+		private static final Unsafe UNSAFE;
+		private static final long BYTE_ARRAY_BASE_OFFSET;
+		private static final long STRING_VALUE_OFFSET;
+		private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
+
+		static {
+			try {
+				final Field f = Unsafe.class.getDeclaredField("theUnsafe");
+				f.setAccessible(true);
+				UNSAFE = (Unsafe) f.get(null);
+				BYTE_ARRAY_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
+				STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
+				final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
+				ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
+				final byte[] tmp = new byte[2];
+				int idx2 = 0;
+				for (int i = '0'; i <= '9'; i++) {
+					for (int j = '0'; j <= '9'; j++) {
+						tmp[0] = (byte) i;
+						tmp[1] = (byte) j;
+						DIGITS_2[idx2++] = UNSAFE.getShort(tmp, BYTE_ARRAY_BASE_OFFSET);
+					}
+				}
+				int idx4 = 0;
+				for (int i = 0; i < 100; i++) {
+					final int hi = DIGITS_2[i] & 0xFFFF;
+					for (int j = 0; j < 100; j++) {
+						final int lo = DIGITS_2[j] & 0xFFFF;
+						DIGITS_4[idx4++] = (lo << 16) | hi;
+					}
+				}
+			} catch (final Exception e) {
+				throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
+			}
+		}
 	}
 }

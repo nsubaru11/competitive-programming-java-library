@@ -1,5 +1,8 @@
 import java.io.*;
+import java.lang.invoke.*;
 import java.math.*;
+import java.nio.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -41,6 +44,7 @@ public final class FastScanner implements AutoCloseable {
 					throw new RuntimeException(e);
 				}
 				if (len <= 0) throw new NoSuchElementException();
+				if (len < buf.length) buf[len] = 32;
 			}
 			b = buf[p++];
 		} while (b <= 32);
@@ -63,7 +67,8 @@ public final class FastScanner implements AutoCloseable {
 		pos = 0;
 		try {
 			bufferLength = in.read(buffer);
-		} catch (IOException e) {
+			if (bufferLength > 0 && bufferLength < buffer.length) buffer[bufferLength] = 32;
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 		return bufferLength > 0;
@@ -84,70 +89,115 @@ public final class FastScanner implements AutoCloseable {
 
 	public int nextInt() {
 		int b = skipSpaces();
-		int n = 0;
 		boolean negative = false;
 		if (b == '-') {
 			negative = true;
-			if (pos == bufferLength) hasNextByte();
+			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			b = buffer[pos++];
 		}
+		return pos + 10 <= bufferLength ? nextIntFast(b, negative) : nextIntSlow(b, negative);
+	}
+
+	private int nextIntFast(int b, final boolean negative) {
 		final byte[] buf = buffer;
-		int p = pos, len = bufferLength;
-		if (p + 11 <= len) {
-			do {
-				n = (n << 3) + (n << 1) + (b & 15);
-				b = buf[p++];
-			} while (b > 32);
-		} else {
-			do {
-				n = (n << 3) + (n << 1) + (b & 15);
-				if (p == len) {
-					pos = p;
-					if (!hasNextByte()) {
-						p = pos;
-						break;
-					}
-					p = pos;
-					len = bufferLength;
-				}
-				b = buf[p++];
-			} while (b > 32);
+		int p = pos, n = 0;
+		long a = (long) Handles.LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
+		long check = a & 0xF0F0F0F0F0F0F0F0L;
+		if (check == 0) {
+			a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
+			a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
+			a = (a * 10000 + (a >>> 32)) & 0x00000000FFFFFFFFL;
+			n = (int) a;
+			p += 7;
+			b = buf[p++];
 		}
+		while (b > 32) {
+			n = (n << 3) + (n << 1) + (b & 15);
+			b = buf[p++];
+		}
+		pos = p;
+		return negative ? -n : n;
+	}
+
+	private int nextIntSlow(int b, final boolean negative) {
+		int p = pos, len = bufferLength;
+		int n = 0;
+		do {
+			n = (n << 3) + (n << 1) + (b & 15);
+			if (p == len) {
+				pos = p;
+				if (!hasNextByte()) {
+					p = pos;
+					break;
+				}
+				p = pos;
+				len = bufferLength;
+			}
+			b = buffer[p++];
+		} while (b > 32);
 		pos = p;
 		return negative ? -n : n;
 	}
 
 	public long nextLong() {
 		int b = skipSpaces();
-		long n = 0;
 		boolean negative = false;
 		if (b == '-') {
 			negative = true;
-			if (pos == bufferLength) hasNextByte();
+			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			b = buffer[pos++];
 		}
+		return pos + 20 <= bufferLength ? nextLongFast(b, negative) : nextLongSlow(b, negative);
+	}
+
+	private long nextLongFast(int b, final boolean negative) {
 		final byte[] buf = buffer;
-		int p = pos, len = bufferLength;
-		if (p + 20 <= len) {
-			do {
-				n = (n << 3) + (n << 1) + (b & 15);
+		int p = pos;
+		long n = 0;
+		long a = (long) Handles.LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
+		long check = a & 0xF0F0F0F0F0F0F0F0L;
+		if (check == 0) {
+			a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
+			a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
+			a = (a * 10000 + (a >>> 32)) & 0x00000000FFFFFFFFL;
+			n = a;
+			p += 7;
+			b = buf[p++];
+			long a2 = (long) Handles.LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
+			long check2 = a2 & 0xF0F0F0F0F0F0F0F0L;
+			if (check2 == 0) {
+				a2 = (a2 * 10 + (a2 >>> 8)) & 0x00FF00FF00FF00FFL;
+				a2 = (a2 * 100 + (a2 >>> 16)) & 0x0000FFFF0000FFFFL;
+				a2 = (a2 * 10000 + (a2 >>> 32)) & 0x00000000FFFFFFFFL;
+				n = n * 100000000L + a2;
+				p += 7;
 				b = buf[p++];
-			} while (b > 32);
-		} else {
-			do {
-				n = (n << 3) + (n << 1) + (b & 15);
-				if (p == len) {
-					pos = p;
-					if (!hasNextByte()) {
-						p = pos;
-						break;
-					}
-					p = pos;
-					len = bufferLength;
-				}
-				b = buf[p++];
-			} while (b > 32);
+			}
 		}
+		while (b > 32) {
+			n = (n << 3) + (n << 1) + (b & 15);
+			b = buf[p++];
+		}
+		pos = p;
+		return negative ? -n : n;
+	}
+
+	private long nextLongSlow(int b, final boolean negative) {
+		int p = pos, len = bufferLength;
+		long n = 0;
+		do {
+			n = (n << 3) + (n << 1) + (b & 15);
+			if (p == len) {
+				pos = p;
+				if (!hasNextByte()) {
+					p = pos;
+					break;
+				}
+				p = pos;
+				len = bufferLength;
+			}
+			b = buffer[p++];
+		} while (b > 32);
 		pos = p;
 		return negative ? -n : n;
 	}
@@ -157,25 +207,74 @@ public final class FastScanner implements AutoCloseable {
 		boolean negative = false;
 		if (b == '-') {
 			negative = true;
-			if (pos == bufferLength) hasNextByte();
+			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			b = buffer[pos++];
 		}
-		long intPart = 0;
+		return pos + 20 <= bufferLength ? nextDoubleFast(b, negative) : nextDoubleSlow(b, negative);
+	}
+
+	private double nextDoubleFast(int b, final boolean negative) {
 		final byte[] buf = buffer;
 		int p = pos, len = bufferLength;
+		long intPart = 0;
+		do {
+			intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+			b = buf[p++];
+		} while ('0' <= b && b <= '9');
+		double result = intPart;
+		if (b == '.') result += parseFracPart(p, len, buf);
+		else pos = p;
+		return negative ? -result : result;
+	}
+
+	private double nextDoubleSlow(int b, final boolean negative) {
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength;
+		long intPart = 0;
+		do {
+			intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+			if (p == len) {
+				pos = p;
+				if (!hasNextByte()) {
+					p = pos;
+					b = -1;
+					break;
+				}
+				p = pos;
+				len = bufferLength;
+			}
+			b = buf[p++];
+		} while ('0' <= b && b <= '9');
+
+		double result = intPart;
+		if (b == '.') result += parseFracPart(p, len, buf);
+		else pos = p;
+		return negative ? -result : result;
+	}
+
+	private double parseFracPart(int p, int len, final byte[] buf) {
+		if (p == len) {
+			pos = p;
+			hasNextByte();
+			p = pos;
+			len = bufferLength;
+		}
+		int b = buf[p++];
+		long fracPart = 0, divisor = 1;
 		if (p + 20 <= len) {
 			do {
-				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				fracPart = fracPart * 10 + (b & 15);
+				divisor *= 10;
 				b = buf[p++];
 			} while ('0' <= b && b <= '9');
 		} else {
 			do {
-				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				fracPart = fracPart * 10 + (b & 15);
+				divisor *= 10;
 				if (p == len) {
 					pos = p;
 					if (!hasNextByte()) {
 						p = pos;
-						b = -1;
 						break;
 					}
 					p = pos;
@@ -184,47 +283,39 @@ public final class FastScanner implements AutoCloseable {
 				b = buf[p++];
 			} while ('0' <= b && b <= '9');
 		}
-		double result = intPart;
-		if (b == '.') {
-			if (p == len) {
-				pos = p;
-				hasNextByte();
-				p = pos;
-				len = bufferLength;
-			}
-			b = buf[p++];
-			long fracPart = 0;
-			long divisor = 1;
-			if (p + 20 <= len) {
-				do {
-					fracPart = fracPart * 10 + (b & 15);
-					divisor *= 10;
-					b = buf[p++];
-				} while ('0' <= b && b <= '9');
-			} else {
-				do {
-					fracPart = fracPart * 10 + (b & 15);
-					divisor *= 10;
-					if (p == len) {
-						pos = p;
-						if (!hasNextByte()) {
-							p = pos;
-							break;
-						}
-						p = pos;
-						len = bufferLength;
-					}
-					b = buf[p++];
-				} while ('0' <= b && b <= '9');
-			}
-			result += (double) fracPart / divisor;
-		}
 		pos = p;
-		return negative ? -result : result;
+		return (double) fracPart / divisor;
 	}
 
 	public String next() {
-		return nextStringBuilder().toString();
+		skipSpaces();
+		final byte[] buf = buffer;
+		int p = pos, len = bufferLength;
+		final int start = p - 1;
+		while (p < len && buf[p] > 32) p++;
+		if (p < len) {
+			final String s = new String(buf, start, p - start, StandardCharsets.US_ASCII);
+			pos = p + 1;
+			return s;
+		}
+		final StringBuilder sb = new StringBuilder(len - start + 16);
+		for (int i = start; i < len; i++) sb.append((char) buf[i]);
+		while (true) {
+			if (p == len) {
+				pos = p;
+				if (!hasNextByte()) {
+					p = pos;
+					break;
+				}
+				p = pos;
+				len = bufferLength;
+			}
+			final int b = buf[p++];
+			if (b <= 32) break;
+			sb.append((char) b);
+		}
+		pos = p;
+		return sb.toString();
 	}
 
 	public StringBuilder nextStringBuilder() {
@@ -248,39 +339,60 @@ public final class FastScanner implements AutoCloseable {
 	}
 
 	public String nextLine() {
-		final StringBuilder sb = new StringBuilder();
-		if (pos == bufferLength && !hasNextByte()) return "";
+		if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 		final byte[] buf = buffer;
-		int p = pos, len = bufferLength, b = buf[p];
-		while (b != '\n' && b != '\r') {
-			sb.append((char) b);
-			p++;
-			if (p == len) {
+		int p = pos, len = bufferLength;
+		final int start = p;
+		while (p < len) {
+			final int b = buf[p];
+			if (b == '\n' || b == '\r') {
+				final String s = new String(buf, start, p - start, StandardCharsets.US_ASCII);
+				p++;
+				if (b == '\r') {
+					if (p == len) {
+						pos = p;
+						hasNextByte();
+						p = pos;
+						len = bufferLength;
+					}
+					if (p < len && buf[p] == '\n') p++;
+				}
 				pos = p;
-				if (!hasNextByte()) {
-					p = pos;
-					b = -1;
-					break;
-				}
-				p = pos;
-				len = bufferLength;
+				return s;
 			}
-			b = buf[p];
-		}
-		if (b == '\n' || b == '\r') {
 			p++;
-			if (b == '\r') {
-				if (p == len) {
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		for (int i = start; i < len; i++) sb.append((char) buf[i]);
+		while (true) {
+			pos = len;
+			if (!hasNextByte()) {
+				pos = len;
+				return sb.toString();
+			}
+			p = pos;
+			len = bufferLength;
+			while (p < len) {
+				final int b = buf[p];
+				if (b == '\n' || b == '\r') {
+					p++;
+					if (b == '\r') {
+						if (p == len) {
+							pos = p;
+							hasNextByte();
+							p = pos;
+							len = bufferLength;
+						}
+						if (p < len && buf[p] == '\n') p++;
+					}
 					pos = p;
-					hasNextByte();
-					p = pos;
-					len = bufferLength;
+					return sb.toString();
 				}
-				if (p < len && buf[p] == '\n') p++;
+				sb.append((char) b);
+				p++;
 			}
 		}
-		pos = p;
-		return sb.toString();
 	}
 
 	public BigInteger nextBigInteger() {
@@ -617,5 +729,9 @@ public final class FastScanner implements AutoCloseable {
 			multiset[c]++;
 		}
 		return multiset;
+	}
+
+	private static final class Handles {
+		private static final VarHandle LONG_HANDLE = MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
 	}
 }
