@@ -16,7 +16,7 @@ public final class FastScanner implements AutoCloseable {
 	private int pos = 0, bufferLength = 0;
 
 	public FastScanner() {
-		this(new FileInputStream(FileDescriptor.in), DEFAULT_BUFFER_SIZE);
+		this(System.in, DEFAULT_BUFFER_SIZE);
 	}
 
 	public FastScanner(final InputStream in) {
@@ -24,7 +24,7 @@ public final class FastScanner implements AutoCloseable {
 	}
 
 	public FastScanner(final int bufferSize) {
-		this(new FileInputStream(FileDescriptor.in), bufferSize);
+		this(System.in, bufferSize);
 	}
 
 	public FastScanner(final InputStream in, final int bufferSize) {

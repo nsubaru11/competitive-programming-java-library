@@ -26,7 +26,7 @@ public final class FastPrinter implements AutoCloseable {
 	private int pos;
 
 	public FastPrinter() {
-		this(new FileOutputStream(FileDescriptor.out), DEFAULT_BUFFER_SIZE, false);
+		this(System.out, DEFAULT_BUFFER_SIZE, false);
 	}
 
 	public FastPrinter(final OutputStream out) {
@@ -34,11 +34,11 @@ public final class FastPrinter implements AutoCloseable {
 	}
 
 	public FastPrinter(final int bufferSize) {
-		this(new FileOutputStream(FileDescriptor.out), bufferSize, false);
+		this(System.out, bufferSize, false);
 	}
 
 	public FastPrinter(final boolean autoFlush) {
-		this(new FileOutputStream(FileDescriptor.out), DEFAULT_BUFFER_SIZE, autoFlush);
+		this(System.out, DEFAULT_BUFFER_SIZE, autoFlush);
 	}
 
 	public FastPrinter(final OutputStream out, final boolean autoFlush) {
@@ -46,7 +46,7 @@ public final class FastPrinter implements AutoCloseable {
 	}
 
 	public FastPrinter(final int bufferSize, final boolean autoFlush) {
-		this(new FileOutputStream(FileDescriptor.out), bufferSize, autoFlush);
+		this(System.out, bufferSize, autoFlush);
 	}
 
 	public FastPrinter(final OutputStream out, final int bufferSize) {
