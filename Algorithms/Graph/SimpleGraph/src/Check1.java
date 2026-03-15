@@ -3,6 +3,7 @@ import sun.misc.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -13,22 +14,13 @@ import static java.util.Arrays.*;
 public final class Check1 {
 
 	// region < Constants & Globals >
-	private static final boolean DEBUG;
-	private static final int MOD;
-	private static final int[] di;
-	private static final int[] dj;
-	private static final FastScanner sc;
-	private static final FastPrinter out;
-
-	static {
-		DEBUG = true;
-		MOD = 998244353;
-		// MOD = 1_000_000_007;
-		di = new int[]{0, -1, 0, 1, -1, -1, 1, 1};
-		dj = new int[]{-1, 0, 1, 0, -1, 1, 1, -1};
-		sc = new FastScanner(System.in);
-		out = new FastPrinter(System.out);
-	}
+	private static final boolean DEBUG = true;
+	private static final int MOD = 998244353;
+	// private static final int MOD = 1_000_000_007;
+	private static final int[] di = new int[]{0, -1, 0, 1, -1, -1, 1, 1};
+	private static final int[] dj = new int[]{-1, 0, 1, 0, -1, 1, 1, -1};
+	private static final FastScanner sc = new FastScanner();
+	private static final FastPrinter out = new FastPrinter();
 	// endregion
 
 	private static void solve() {
@@ -47,13 +39,207 @@ public final class Check1 {
 		}
 	}
 
+	// region < Utility Methods >
+	private static boolean isValidRange(final int i, final int from, final int to) {
+		return ((i - from) | (to - 1 - i)) >= 0;
+	}
+
+	private static boolean isValidRange(final int i, final int j, final int h, final int w) {
+		return ((i | j | (h - 1 - i) | (w - 1 - j)) >>> 31) == 0;
+	}
+
+	private static void swap(final char[] a, final int i, final int j) {
+		final char tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+	}
+
+	private static void swap(final int[] a, final int i, final int j) {
+		final int tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+	}
+
+	private static void swap(final long[] a, final int i, final int j) {
+		final long tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+	}
+
+	private static boolean chmin(final char[] a, final int i, final char v) {
+		if (a[i] <= v) return false;
+		a[i] = v;
+		return true;
+	}
+
+	private static boolean chmin(final int[] a, final int i, final int v) {
+		if (a[i] <= v) return false;
+		a[i] = v;
+		return true;
+	}
+
+	private static boolean chmin(final long[] a, final int i, final long v) {
+		if (a[i] <= v) return false;
+		a[i] = v;
+		return true;
+	}
+
+	private static boolean chmax(final char[] a, final int i, final char v) {
+		if (a[i] >= v) return false;
+		a[i] = v;
+		return true;
+	}
+
+	private static boolean chmax(final int[] a, final int i, final int v) {
+		if (a[i] >= v) return false;
+		a[i] = v;
+		return true;
+	}
+
+	private static boolean chmax(final long[] a, final int i, final long v) {
+		if (a[i] >= v) return false;
+		a[i] = v;
+		return true;
+	}
+
+	private static int min(int... a) {
+		int len = a.length;
+		int min = a[0];
+		for (int i = 1; i < len; i++) if (min > a[i]) min = a[i];
+		return min;
+	}
+
+	private static int max(int... a) {
+		int len = a.length;
+		int max = a[0];
+		for (int i = 1; i < len; i++) if (max < a[i]) max = a[i];
+		return max;
+	}
+
+	private static long min(long... a) {
+		int len = a.length;
+		long min = a[0];
+		for (int i = 1; i < len; i++) if (min > a[i]) min = a[i];
+		return min;
+	}
+
+	private static long max(long... a) {
+		int len = a.length;
+		long max = a[0];
+		for (int i = 1; i < len; i++) if (max < a[i]) max = a[i];
+		return max;
+	}
+
+	private static double min(double... a) {
+		int len = a.length;
+		double min = a[0];
+		for (int i = 1; i < len; i++) if (min > a[i]) min = a[i];
+		return min;
+	}
+
+	private static double max(double... a) {
+		int len = a.length;
+		double max = a[0];
+		for (int i = 1; i < len; i++) if (max < a[i]) max = a[i];
+		return max;
+	}
+
+	private static long lModPow(long a, long b, final long mod) {
+		if (b == 0) return 1;
+		long ans = 1;
+		for (a %= mod; b > 1; b >>= 1) {
+			if ((b & 1) == 1) ans = ans * a % mod;
+			a = a * a % mod;
+		}
+		return ans * a % mod;
+	}
+
+	private static int iModPow(int a, int b, final int mod) {
+		if (b == 0) return 1;
+		int ans = 1;
+		for (a %= mod; b > 1; b >>= 1) {
+			if ((b & 1) == 1) ans = (int) ((long) ans * a % mod);
+			a = (int) ((long) a * a % mod);
+		}
+		return (int) ((long) ans * a % mod);
+	}
+
+	private static long lcmLong(final long x, final long y) {
+		return x == 0 || y == 0 ? 0 : x / gcdLong(x, y) * y;
+	}
+
+	private static int lcmInt(final int x, final int y) {
+		return x == 0 || y == 0 ? 0 : x / gcdInt(x, y) * y;
+	}
+
+	private static long gcdLong(long a, long b) {
+		a = abs(a);
+		b = abs(b);
+		if (a == 0) return b;
+		if (b == 0) return a;
+		int commonShift = Long.numberOfTrailingZeros(a | b);
+		a >>= Long.numberOfTrailingZeros(a);
+		while (b != 0) {
+			b >>= Long.numberOfTrailingZeros(b);
+			if (a > b) {
+				long tmp = a;
+				a = b;
+				b = tmp;
+			}
+			b -= a;
+		}
+		return a << commonShift;
+	}
+
+	private static int gcdInt(int a, int b) {
+		a = abs(a);
+		b = abs(b);
+		if (a == 0) return b;
+		if (b == 0) return a;
+		int commonShift = Integer.numberOfTrailingZeros(a | b);
+		a >>= Integer.numberOfTrailingZeros(a);
+		while (b != 0) {
+			b >>= Integer.numberOfTrailingZeros(b);
+			if (a > b) {
+				int tmp = a;
+				a = b;
+				b = tmp;
+			}
+			b -= a;
+		}
+		return a << commonShift;
+	}
+	// endregion
+
+	// region < I/O & Debug >
+	public static void main(final String[] args) {
+		try {
+			solve();
+		} catch (final Throwable e) {
+			e.printStackTrace();
+		} finally {
+			sc.close();
+			out.close();
+		}
+	}
+
+	private static void debug(final Object... args) {
+		if (DEBUG) {
+			out.flush();
+			System.err.println(deepToString(args));
+		}
+	}
+
 	/**
 	 * 無向辺・自己ループを含まない有向連結グラフ管理用ライブラリ
+	 * <p>
+	 * 辺は追加順に0始まりの辺IDが割り当てられます。
+	 * {@link #adjEdgeIds(int)} で取得した辺IDは {@link #to(int)} と {@link #cost(int)} にそのまま渡せます。
 	 */
 	@SuppressWarnings("unused")
 	private static final class DirectedGraph {
-		// -------------- フィールド --------------
 		private final int[] dest, next, first, inDegree, outDegree;
+		private final long[] cost;
 		private final int n;
 		private int edgeCount = 0;
 
@@ -65,26 +251,40 @@ public final class Check1 {
 			fill(first, -1);
 			inDegree = new int[n];
 			outDegree = new int[n];
+			cost = new long[m];
 		}
 
 		public void add(final int i, final int j) {
+			add(i, j, 1);
+		}
+
+		public void add(final int i, final int j, long c) {
 			dest[edgeCount] = j;
 			next[edgeCount] = first[i];
+			cost[edgeCount] = c;
 			first[i] = edgeCount++;
 			outDegree[i]++;
 			inDegree[j]++;
 		}
 
-		public int getDegree(final int i) {
+		public int degree(final int i) {
 			return inDegree[i] + outDegree[i];
 		}
 
-		public int getInDegree(final int i) {
+		public int inDegree(final int i) {
 			return inDegree[i];
 		}
 
-		public int getOutDegree(final int i) {
+		public int outDegree(final int i) {
 			return outDegree[i];
+		}
+
+		public long cost(final int e) {
+			return cost[e];
+		}
+
+		public int to(final int e) {
+			return dest[e];
 		}
 
 		public int[] topologicalSort() {
@@ -129,6 +329,16 @@ public final class Check1 {
 			return count < n;
 		}
 
+		/**
+		 * 強連結成分分解（SCC）を行います。
+		 *
+		 * @return 2次元配列 {@code sccs}。
+		 * {@code sccs[i]} が i 番目の強連結成分に属する頂点配列を表します。
+		 * 各頂点はちょうど1回だけいずれかの {@code sccs[i]} に現れます。
+		 * 成分同士の並びは縮約グラフのトポロジカル順です。
+		 * すなわち、異なる成分 {@code a -> b} への辺が存在するなら、返却配列では {@code a} の方が前に現れます。
+		 * 各成分内の頂点順はDFSの探索順（辺の追加順と頂点番号順）に依存します。
+		 */
 		public int[][] scc() {
 			int[] ord = new int[n];
 			int[] low = new int[n];
@@ -150,43 +360,44 @@ public final class Check1 {
 			int[] sep = new int[n + 1];
 			int sepPtr = 0;
 			sep[sepPtr++] = 0;
-			for (int i = 0; i < n; i++) if (ord[i] == 0) {
-				stack[stackPtr++] = i;
-				outer:
-				while (stackPtr > 0) {
-					int u = stack[stackPtr - 1];
-					if (ord[u] == 0) {
-						ord[u] = low[u] = timer++;
-						sccStack[sccPtr++] = u;
-						onSccStack[u] = true;
-					}
-					while (edgeIter[u] != -1) {
-						int e = edgeIter[u];
-						int v = dest[e];
-						edgeIter[u] = next[e];
-						if (ord[v] == 0) {
-							stack[stackPtr++] = v;
-							continue outer;
-						} else if (onSccStack[v]) {
-							low[u] = min(low[u], ord[v]);
+			for (int i = 0; i < n; i++)
+				if (ord[i] == 0) {
+					stack[stackPtr++] = i;
+					outer:
+					while (stackPtr > 0) {
+						int u = stack[stackPtr - 1];
+						if (ord[u] == 0) {
+							ord[u] = low[u] = timer++;
+							sccStack[sccPtr++] = u;
+							onSccStack[u] = true;
 						}
-					}
-					if (stackPtr > 1) {
-						int p = stack[stackPtr - 2];
-						low[p] = min(low[p], low[u]);
-					}
-					if (low[u] == ord[u]) {
-						while (true) {
-							int v = sccStack[--sccPtr];
-							onSccStack[v] = false;
-							sccList[listPtr++] = v;
-							if (u == v) break;
+						while (edgeIter[u] != -1) {
+							int e = edgeIter[u];
+							int v = dest[e];
+							edgeIter[u] = next[e];
+							if (ord[v] == 0) {
+								stack[stackPtr++] = v;
+								continue outer;
+							} else if (onSccStack[v]) {
+								low[u] = min(low[u], ord[v]);
+							}
 						}
-						sep[sepPtr++] = listPtr;
+						if (stackPtr > 1) {
+							int p = stack[stackPtr - 2];
+							low[p] = min(low[p], low[u]);
+						}
+						if (low[u] == ord[u]) {
+							while (true) {
+								int v = sccStack[--sccPtr];
+								onSccStack[v] = false;
+								sccList[listPtr++] = v;
+								if (u == v) break;
+							}
+							sep[sepPtr++] = listPtr;
+						}
+						stackPtr--;
 					}
-					stackPtr--;
 				}
-			}
 			int groupCount = sepPtr - 1;
 			int[][] result = new int[groupCount][];
 			for (int i = 0, end = sep[groupCount]; i < groupCount; i++) {
@@ -200,22 +411,20 @@ public final class Check1 {
 			return result;
 		}
 
-		public Iterable<Integer> adj(final int u) {
-			return () -> new PrimitiveIterator.OfInt() {
-				private int e = first[u];
+		public int[] adj(final int u) {
+			int[] adj = new int[outDegree[u]];
+			for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
+				adj[i] = dest[e];
+			}
+			return adj;
+		}
 
-				@Override
-				public boolean hasNext() {
-					return e != -1;
-				}
-
-				@Override
-				public int nextInt() {
-					int v = dest[e];
-					e = next[e];
-					return v;
-				}
-			};
+		public int[] adjEdgeIds(final int u) {
+			int[] ids = new int[outDegree[u]];
+			for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
+				ids[i] = e;
+			}
+			return ids;
 		}
 
 		public Iterable<Integer> bfs(final int s) {
@@ -322,81 +531,9 @@ public final class Check1 {
 
 	}
 
-	// region < Utility Methods >
-	private static boolean isValidRange(final int i, final int j, final int h, final int w) {
-		return 0 <= i && i < h && 0 <= j && j < w;
-	}
-
-	private static long modPow(long a, long b, final long mod) {
-		long ans = 1;
-		for (a %= mod; b > 0; a = a * a % mod, b >>= 1) {
-			if ((b & 1) == 1) ans = ans * a % mod;
-		}
-		return ans;
-	}
-
-	private static long floorLong(final long a, final long b) {
-		return a < 0 ? (a - b + 1) / b : a / b;
-	}
-
-	private static int floorInt(final int a, final int b) {
-		return a < 0 ? (a - b + 1) / b : a / b;
-	}
-
-	private static long ceilLong(final long a, final long b) {
-		return a < 0 ? a / b : (a + b - 1) / b;
-	}
-
-	private static long ceilInt(final int a, final int b) {
-		return a < 0 ? a / b : (a + b - 1) / b;
-	}
-
-	private static long LCM(final long x, final long y) {
-		return x == 0 || y == 0 ? 0 : x * (y / GCD(x, y));
-	}
-
-	public static long GCD(long a, long b) {
-		a = abs(a);
-		b = abs(b);
-		if (a == 0) return b;
-		if (b == 0) return a;
-		int commonShift = Long.numberOfTrailingZeros(a | b);
-		a >>= Long.numberOfTrailingZeros(a);
-		while (b != 0) {
-			b >>= Long.numberOfTrailingZeros(b);
-			if (a > b) {
-				long tmp = a;
-				a = b;
-				b = tmp;
-			}
-			b -= a;
-		}
-		return a << commonShift;
-	}
-	// endregion
-
-	// region < I/O & Debug >
-	public static void main(final String[] args) {
-		try {
-			solve();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		} finally {
-			sc.close();
-			out.close();
-		}
-	}
-
-	private static void debug(final Object... args) {
-		if (DEBUG) {
-			out.flush();
-			System.err.println(deepToString(args));
-		}
-	}
-
 	@SuppressWarnings("unused")
 	private static final class FastScanner implements AutoCloseable {
-		private static final int DEFAULT_BUFFER_SIZE = 65536;
+		private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
 		private final InputStream in;
 		private final byte[] buffer;
 		private int pos = 0, bufferLength = 0;
@@ -419,46 +556,58 @@ public final class Check1 {
 		}
 
 		private int skipSpaces() {
-			int b = read();
-			while (b <= 32) b = read();
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength, b;
+			do {
+				if (p >= len) {
+					try {
+						len = in.read(buf);
+						p = 0;
+					} catch (final IOException e) {
+						throw new RuntimeException(e);
+					}
+					if (len <= 0) throw new NoSuchElementException();
+					if (len < buf.length) buf[len] = 32;
+				}
+				b = buf[p++];
+			} while (b <= 32);
+			pos = p;
+			bufferLength = len;
 			return b;
 		}
 
 		@Override
 		public void close() {
 			try {
-				if (in != System.in) in.close();
-				pos = 0;
-				bufferLength = 0;
+				in.close();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		private int read() {
-			if (pos >= bufferLength) {
-				try {
-					bufferLength = in.read(buffer, pos = 0, buffer.length);
-				} catch (final IOException e) {
-					throw new RuntimeException(e);
-				}
-				if (bufferLength <= 0) throw new RuntimeException(new EOFException());
-			}
-			return buffer[pos++] & 0xFF;
-		}
-
-		public int peek() {
+		private boolean hasNextByte() {
+			if (pos < bufferLength) return true;
+			pos = 0;
 			try {
-				int b = skipSpaces();
-				pos--;
-				return b;
-			} catch (final RuntimeException e) {
-				return 0;
+				bufferLength = in.read(buffer);
+				if (bufferLength > 0 && bufferLength < buffer.length) buffer[bufferLength] = 32;
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
 			}
+			return bufferLength > 0;
 		}
 
 		public boolean hasNext() {
-			return peek() != 0;
+			while (hasNextByte()) {
+				if (buffer[pos] > 32) return true;
+				pos++;
+			}
+			return false;
+		}
+
+		public char nextChar() {
+			if (!hasNext()) throw new NoSuchElementException();
+			return (char) buffer[pos++];
 		}
 
 		public int nextInt() {
@@ -466,14 +615,54 @@ public final class Check1 {
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				b = read();
+				if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
+				b = buffer[pos++];
 			}
-			int result = 0;
+			return pos + 10 <= bufferLength ? nextIntFast(b, negative) : nextIntSlow(b, negative);
+		}
+
+		private int nextIntFast(int b, final boolean negative) {
+			final byte[] buf = buffer;
+			int p = pos, n = 0;
+			final Unsafe unsafe = Handles.UNSAFE;
+			final long arrayByteBaseOffset = Handles.ARRAY_BYTE_BASE_OFFSET;
+			long v = unsafe.getLong(buf, arrayByteBaseOffset + p - 1);
+			long a = v ^ 0x3030303030303030L;
+			long check = a & 0xF0F0F0F0F0F0F0F0L;
+			if (check == 0) {
+				a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
+				a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
+				a = (a * 10000 + (a >>> 32)) & 0x00000000FFFFFFFFL;
+				n = (int) a;
+				p += 7;
+				b = buf[p++];
+			}
+			while (b > 32) {
+				n = (n << 3) + (n << 1) + (b & 15);
+				b = buf[p++];
+			}
+			pos = p;
+			return negative ? -n : n;
+		}
+
+		private int nextIntSlow(int b, final boolean negative) {
+			int p = pos, len = bufferLength;
+			int n = 0;
 			do {
-				result = (result << 3) + (result << 1) + (b & 15);
-				b = read();
-			} while (b >= '0' && b <= '9');
-			return negative ? -result : result;
+				n = (n << 3) + (n << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buffer[p++];
+			} while (b > 32);
+			pos = p;
+			return negative ? -n : n;
 		}
 
 		public long nextLong() {
@@ -481,14 +670,66 @@ public final class Check1 {
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				b = read();
+				if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
+				b = buffer[pos++];
 			}
-			long result = 0;
+			return pos + 20 <= bufferLength ? nextLongFast(b, negative) : nextLongSlow(b, negative);
+		}
+
+		private long nextLongFast(int b, final boolean negative) {
+			final byte[] buf = buffer;
+			int p = pos;
+			long n = 0;
+			final Unsafe unsafe = Handles.UNSAFE;
+			final long arrayByteBaseOffset = Handles.ARRAY_BYTE_BASE_OFFSET;
+			long v = unsafe.getLong(buf, arrayByteBaseOffset + p - 1);
+			long a = v ^ 0x3030303030303030L;
+			long check = a & 0xF0F0F0F0F0F0F0F0L;
+			if (check == 0) {
+				a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
+				a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
+				a = (a * 10000 + (a >>> 32)) & 0x00000000FFFFFFFFL;
+				n = a;
+				p += 7;
+				b = buf[p++];
+				long v2 = unsafe.getLong(buf, arrayByteBaseOffset + p - 1);
+				long a2 = v2 ^ 0x3030303030303030L;
+				long check2 = a2 & 0xF0F0F0F0F0F0F0F0L;
+				if (check2 == 0) {
+					a2 = (a2 * 10 + (a2 >>> 8)) & 0x00FF00FF00FF00FFL;
+					a2 = (a2 * 100 + (a2 >>> 16)) & 0x0000FFFF0000FFFFL;
+					a2 = (a2 * 10000 + (a2 >>> 32)) & 0x00000000FFFFFFFFL;
+					n = n * 100000000L + a2;
+					p += 7;
+					b = buf[p++];
+				}
+			}
+			while (b > 32) {
+				n = (n << 3) + (n << 1) + (b & 15);
+				b = buf[p++];
+			}
+			pos = p;
+			return negative ? -n : n;
+		}
+
+		private long nextLongSlow(int b, final boolean negative) {
+			int p = pos, len = bufferLength;
+			long n = 0;
 			do {
-				result = (result << 3) + (result << 1) + (b & 15);
-				b = read();
-			} while (b >= '0' && b <= '9');
-			return negative ? -result : result;
+				n = (n << 3) + (n << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buffer[p++];
+			} while (b > 32);
+			pos = p;
+			return negative ? -n : n;
 		}
 
 		public double nextDouble() {
@@ -496,57 +737,192 @@ public final class Check1 {
 			boolean negative = false;
 			if (b == '-') {
 				negative = true;
-				b = read();
+				if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
+				b = buffer[pos++];
 			}
+			return pos + 20 <= bufferLength ? nextDoubleFast(b, negative) : nextDoubleSlow(b, negative);
+		}
+
+		private double nextDoubleFast(int b, final boolean negative) {
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
 			long intPart = 0;
 			do {
 				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
-				b = read();
-			} while (b >= '0' && b <= '9');
+				b = buf[p++];
+			} while ('0' <= b && b <= '9');
 			double result = intPart;
-			if (b == '.') {
-				b = read();
-				double scale = 0.1;
-				do {
-					result += (b & 15) * scale;
-					scale *= 0.1;
-					b = read();
-				} while (b >= '0' && b <= '9');
-			}
+			if (b == '.') result += parseFracPart(p, len, buf);
+			else pos = p;
 			return negative ? -result : result;
 		}
 
-		public char nextChar() {
-			int b = skipSpaces();
-			return (char) b;
+		private double nextDoubleSlow(int b, final boolean negative) {
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			long intPart = 0;
+			do {
+				intPart = (intPart << 3) + (intPart << 1) + (b & 15);
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						b = -1;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buf[p++];
+			} while ('0' <= b && b <= '9');
+
+			double result = intPart;
+			if (b == '.') result += parseFracPart(p, len, buf);
+			else pos = p;
+			return negative ? -result : result;
+		}
+
+		private double parseFracPart(int p, int len, final byte[] buf) {
+			if (p == len) {
+				pos = p;
+				hasNextByte();
+				p = pos;
+				len = bufferLength;
+			}
+			int b = buf[p++];
+			long fracPart = 0, divisor = 1;
+			if (p + 20 <= len) {
+				do {
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
+					b = buf[p++];
+				} while ('0' <= b && b <= '9');
+			} else {
+				do {
+					fracPart = fracPart * 10 + (b & 15);
+					divisor *= 10;
+					if (p == len) {
+						pos = p;
+						if (!hasNextByte()) {
+							p = pos;
+							break;
+						}
+						p = pos;
+						len = bufferLength;
+					}
+					b = buf[p++];
+				} while ('0' <= b && b <= '9');
+			}
+			pos = p;
+			return (double) fracPart / divisor;
 		}
 
 		public String next() {
-			return nextStringBuilder().toString();
+			skipSpaces();
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			final int start = p - 1;
+			while (p < len && buf[p] > 32) p++;
+			if (p < len) {
+				final String s = new String(buf, start, p - start, StandardCharsets.US_ASCII);
+				pos = p + 1;
+				return s;
+			}
+			final StringBuilder sb = new StringBuilder(len - start + 16);
+			for (int i = start; i < len; i++) sb.append((char) buf[i]);
+			while (true) {
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				final int b = buf[p++];
+				if (b <= 32) break;
+				sb.append((char) b);
+			}
+			pos = p;
+			return sb.toString();
 		}
 
 		public StringBuilder nextStringBuilder() {
 			final StringBuilder sb = new StringBuilder();
-			int b = skipSpaces();
+			int b = skipSpaces(), p = pos, len = bufferLength;
 			do {
 				sb.append((char) b);
-				b = read();
+				if (p == len) {
+					pos = p;
+					if (!hasNextByte()) {
+						p = pos;
+						break;
+					}
+					p = pos;
+					len = bufferLength;
+				}
+				b = buffer[p++];
 			} while (b > 32);
+			pos = p;
 			return sb;
 		}
 
 		public String nextLine() {
+			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
+			final byte[] buf = buffer;
+			int p = pos, len = bufferLength;
+			final int start = p;
+			while (p < len) {
+				final int b = buf[p];
+				if (b == '\n' || b == '\r') {
+					final String s = new String(buf, start, p - start, StandardCharsets.US_ASCII);
+					p++;
+					if (b == '\r') {
+						if (p == len) {
+							pos = p;
+							hasNextByte();
+							p = pos;
+							len = bufferLength;
+						}
+						if (p < len && buf[p] == '\n') p++;
+					}
+					pos = p;
+					return s;
+				}
+				p++;
+			}
+
 			final StringBuilder sb = new StringBuilder();
-			int b = read();
-			while (b != 0 && b != '\n' && b != '\r') {
-				sb.append((char) b);
-				b = read();
+			for (int i = start; i < len; i++) sb.append((char) buf[i]);
+			while (true) {
+				pos = len;
+				if (!hasNextByte()) {
+					pos = len;
+					return sb.toString();
+				}
+				p = pos;
+				len = bufferLength;
+				while (p < len) {
+					final int b = buf[p];
+					if (b == '\n' || b == '\r') {
+						p++;
+						if (b == '\r') {
+							if (p == len) {
+								pos = p;
+								hasNextByte();
+								p = pos;
+								len = bufferLength;
+							}
+							if (p < len && buf[p] == '\n') p++;
+						}
+						pos = p;
+						return sb.toString();
+					}
+					sb.append((char) b);
+					p++;
+				}
 			}
-			if (b == '\r') {
-				int c = read();
-				if (c != '\n') pos--;
-			}
-			return sb.toString();
 		}
 
 		public BigInteger nextBigInteger() {
@@ -572,6 +948,26 @@ public final class Check1 {
 		public double[] nextDouble(final int n) {
 			final double[] a = new double[n];
 			for (int i = 0; i < n; i++) a[i] = nextDouble();
+			return a;
+		}
+
+		public int nextInt0() {
+			return nextInt() - 1;
+		}
+
+		public long nextLong0() {
+			return nextLong() - 1;
+		}
+
+		public int[] nextInt0(final int n) {
+			final int[] a = new int[n];
+			for (int i = 0; i < n; i++) a[i] = nextInt() - 1;
+			return a;
+		}
+
+		public long[] nextLong0(final int n) {
+			final long[] a = new long[n];
+			for (int i = 0; i < n; i++) a[i] = nextLong() - 1;
 			return a;
 		}
 
@@ -864,72 +1260,39 @@ public final class Check1 {
 			}
 			return multiset;
 		}
+
+		private static final class Handles {
+			private static final Unsafe UNSAFE;
+			private static final long ARRAY_BYTE_BASE_OFFSET;
+
+			static {
+				try {
+					final Field f = Unsafe.class.getDeclaredField("theUnsafe");
+					f.setAccessible(true);
+					UNSAFE = (Unsafe) f.get(null);
+					ARRAY_BYTE_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
+				} catch (final Exception e) {
+					throw new RuntimeException("Unsafe initialization failed", e);
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unused")
 	private static final class FastPrinter implements AutoCloseable {
 		private static final int MAX_INT_DIGITS = 11;
 		private static final int MAX_LONG_DIGITS = 20;
-		private static final int DEFAULT_BUFFER_SIZE = 65536;
+		private static final int MAX_BOOL_DIGITS = 3;
+		private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
 		private static final byte LINE = '\n';
 		private static final byte SPACE = ' ';
 		private static final byte HYPHEN = '-';
 		private static final byte PERIOD = '.';
 		private static final byte ZERO = '0';
-		private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
-		private static final byte[] FALSE_BYTES = {'N', 'o'};
-		private static final byte[] DigitOnes = {
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		};
-		private static final byte[] DigitTens = {
-				'0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-				'1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
-				'2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
-				'3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
-				'4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
-				'5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
-				'6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
-				'7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
-				'8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
-				'9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
-		};
-		private static final long[] POW10 = {
-				1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
-				1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
-				10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
-				10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
-		};
-		private static final Unsafe UNSAFE;
-		private static final long STRING_VALUE_OFFSET;
-		private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
-
-
-		static {
-			try {
-				final Field f = Unsafe.class.getDeclaredField("theUnsafe");
-				f.setAccessible(true);
-				UNSAFE = (Unsafe) f.get(null);
-				STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
-				final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
-				ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
-			} catch (final Exception e) {
-				throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
-			}
-		}
-
 		private final OutputStream out;
 		private final boolean autoFlush;
 		private byte[] buffer;
-		private int pos = 0;
+		private int pos;
 
 		public FastPrinter() {
 			this(System.out, DEFAULT_BUFFER_SIZE, false);
@@ -1019,21 +1382,14 @@ public final class Check1 {
 		}
 
 		private static int roundUpToPowerOfTwo(int x) {
-			if (x <= 1) return 1;
-			x--;
-			x |= x >>> 1;
-			x |= x >>> 2;
-			x |= x >>> 4;
-			x |= x >>> 8;
-			x |= x >>> 16;
-			return x + 1;
+			return x <= 1 ? 1 : 1 << (32 - Integer.numberOfLeadingZeros(x - 1));
 		}
 
 		@Override
 		public void close() {
 			try {
 				flush();
-				if (out != System.out) out.close();
+				out.close();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -1057,41 +1413,50 @@ public final class Check1 {
 		}
 
 		public FastPrinter println(final boolean b) {
-			write(b);
-			ensureCapacity(1);
-			buffer[pos++] = LINE;
+			ensureCapacity(MAX_BOOL_DIGITS + 1);
+			final int p = write(b, pos);
+			buffer[p] = LINE;
+			pos = p + 1;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter println(final byte b) {
 			ensureCapacity(2);
-			buffer[pos++] = b;
-			buffer[pos++] = LINE;
+			final byte[] buf = buffer;
+			final int p = pos;
+			buf[p] = b;
+			buf[p + 1] = LINE;
+			pos = p + 2;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter println(final char c) {
 			ensureCapacity(2);
-			buffer[pos++] = (byte) c;
-			buffer[pos++] = LINE;
+			final byte[] buf = buffer;
+			final int p = pos;
+			buf[p] = (byte) c;
+			buf[p + 1] = LINE;
+			pos = p + 2;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter println(final int i) {
 			ensureCapacity(MAX_INT_DIGITS + 1);
-			write(i);
-			buffer[pos++] = LINE;
+			final int p = write(i, pos);
+			buffer[p] = LINE;
+			pos = p + 1;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter println(final long l) {
 			ensureCapacity(MAX_LONG_DIGITS + 1);
-			write(l);
-			buffer[pos++] = LINE;
+			final int p = write(l, pos);
+			buffer[p] = LINE;
+			pos = p + 1;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1110,16 +1475,18 @@ public final class Check1 {
 
 		public FastPrinter println(final String s) {
 			ensureCapacity(s.length() + 1);
-			write(s);
-			buffer[pos++] = LINE;
+			final int p = write(s, pos);
+			buffer[p] = LINE;
+			pos = p + 1;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter println(final StringBuilder s) {
 			ensureCapacity(s.length() + 1);
-			write(s);
-			buffer[pos++] = LINE;
+			final int p = write(s, pos);
+			buffer[p] = LINE;
+			pos = p + 1;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1164,7 +1531,8 @@ public final class Check1 {
 		}
 
 		public FastPrinter print(final boolean b) {
-			write(b);
+			ensureCapacity(MAX_BOOL_DIGITS);
+			pos = write(b, pos);
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1185,14 +1553,14 @@ public final class Check1 {
 
 		public FastPrinter print(final int i) {
 			ensureCapacity(MAX_INT_DIGITS);
-			write(i);
+			pos = write(i, pos);
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter print(final long l) {
 			ensureCapacity(MAX_LONG_DIGITS);
-			write(l);
+			pos = write(l, pos);
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1211,14 +1579,14 @@ public final class Check1 {
 
 		public FastPrinter print(final String s) {
 			ensureCapacity(s.length());
-			write(s);
+			pos = write(s, pos);
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter print(final StringBuilder s) {
 			ensureCapacity(s.length());
-			write(s);
+			pos = write(s, pos);
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1272,74 +1640,118 @@ public final class Check1 {
 
 		private void ensureCapacity(final int additional) {
 			final int required = pos + additional;
-			if (required <= buffer.length) return;
-			if (required <= 1_000_000_000) {
-				buffer = copyOf(buffer, roundUpToPowerOfTwo(required));
-			} else {
-				flush();
-			}
+			final int bufferLength = buffer.length;
+			if (required <= bufferLength) return;
+			flush();
+			if (additional > bufferLength) buffer = new byte[roundUpToPowerOfTwo(additional)];
 		}
 
-		private void write(final boolean b) {
-			final byte[] src = b ? TRUE_BYTES : FALSE_BYTES;
+		private int write(final boolean b, int p) {
+			final byte[] src = b ? Cache.TRUE_BYTES : Cache.FALSE_BYTES;
 			final int len = src.length;
-			ensureCapacity(len);
-			System.arraycopy(src, 0, buffer, pos, len);
-			pos += len;
+			System.arraycopy(src, 0, buffer, p, len);
+			return p + len;
 		}
 
-		private void write(int i) {
+		private int write(int i, int p) {
 			final byte[] buf = buffer;
-			int p = pos;
+			final Unsafe unsafe = Cache.UNSAFE;
+			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			final short[] digits2 = Cache.DIGITS_2;
+			final int[] digits4 = Cache.DIGITS_4;
 			if (i >= 0) i = -i;
 			else buf[p++] = HYPHEN;
 			final int digits = countDigits(i);
 			int writePos = p + digits;
-			while (i <= -100) {
+			if (i <= -100000000) {
+				final int q = i / 100000000;
+				final int r = (q * 100000000) - i;
+				final int hi = r / 10000;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				writePos -= 8;
+				i = q;
+			}
+			if (i <= -10000) {
+				final int q = i / 10000;
+				final int r = (q * 10000) - i;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+				writePos -= 4;
+				i = q;
+			}
+			if (i <= -100) {
 				final int q = i / 100;
-				final int r = (q << 6) + (q << 5) + (q << 2) - i;
-				buf[--writePos] = DigitOnes[r];
-				buf[--writePos] = DigitTens[r];
+				final int r = (q * 100) - i;
+				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+				writePos -= 2;
 				i = q;
 			}
 			final int r = -i;
-			buf[--writePos] = DigitOnes[r];
-			if (r >= 10) buf[--writePos] = DigitTens[r];
-			pos = p + digits;
+			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+			else buf[writePos - 1] = (byte) (r + ZERO);
+			return p + digits;
 		}
 
-		private void write(long l) {
+		private int write(long l, int p) {
 			final byte[] buf = buffer;
-			int p = pos;
+			final Unsafe unsafe = Cache.UNSAFE;
+			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			final short[] digits2 = Cache.DIGITS_2;
+			final int[] digits4 = Cache.DIGITS_4;
 			if (l >= 0) l = -l;
 			else buf[p++] = HYPHEN;
 			final int digits = countDigits(l);
 			int writePos = p + digits;
-			while (l <= -100) {
+			if (l <= -100000000L) {
+				long q = l / 100000000L;
+				int r = (int) ((q * 100000000L) - l);
+				int hi = r / 10000;
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				writePos -= 8;
+				l = q;
+				if (l <= -100000000L) {
+					q = l / 100000000L;
+					r = (int) ((q * 100000000L) - l);
+					hi = r / 10000;
+					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
+					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+					writePos -= 8;
+					l = q;
+				}
+			}
+			if (l <= -10000) {
+				final long q = l / 10000;
+				final int r = (int) ((q * 10000) - l);
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+				writePos -= 4;
+				l = q;
+			}
+			if (l <= -100) {
 				final long q = l / 100;
-				final int r = (int) ((q << 6) + (q << 5) + (q << 2) - l);
-				buf[--writePos] = DigitOnes[r];
-				buf[--writePos] = DigitTens[r];
+				final int r = (int) ((q * 100) - l);
+				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+				writePos -= 2;
 				l = q;
 			}
 			final int r = (int) -l;
-			buf[--writePos] = DigitOnes[r];
-			if (r >= 10) buf[--writePos] = DigitTens[r];
-			pos = p + digits;
+			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+			else buf[writePos - 1] = (byte) (r + ZERO);
+			return p + digits;
 		}
 
-		private void write(final String s) {
-			final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
+		private int write(final String s, int p) {
+			final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.STRING_VALUE_OFFSET);
 			final int len = s.length();
-			System.arraycopy(src, 0, buffer, pos, len);
-			pos += len;
+			System.arraycopy(src, 0, buffer, p, len);
+			return p + len;
 		}
 
-		private void write(final StringBuilder s) {
-			final byte[] src = (byte[]) UNSAFE.getObject(s, ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
+		private int write(final StringBuilder s, int p) {
+			final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
 			final int len = s.length();
-			System.arraycopy(src, 0, buffer, pos, len);
-			pos += len;
+			System.arraycopy(src, 0, buffer, p, len);
+			return p + len;
 		}
 
 		public FastPrinter println(final int a, final int b) {
@@ -1360,10 +1772,13 @@ public final class Check1 {
 
 		public FastPrinter println(final long a, final long b, final char delimiter) {
 			ensureCapacity((MAX_LONG_DIGITS << 1) + 2);
-			write(a);
-			buffer[pos++] = (byte) delimiter;
-			write(b);
-			buffer[pos++] = LINE;
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(a, p);
+			buf[p] = (byte) delimiter;
+			p = write(b, p + 1);
+			buf[p] = LINE;
+			pos = p + 1;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1386,9 +1801,11 @@ public final class Check1 {
 
 		public FastPrinter print(final long a, final long b, final char delimiter) {
 			ensureCapacity((MAX_LONG_DIGITS << 1) + 1);
-			write(a);
-			buffer[pos++] = (byte) delimiter;
-			write(b);
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(a, p);
+			buf[p] = (byte) delimiter;
+			pos = write(b, p + 1);
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1399,20 +1816,22 @@ public final class Check1 {
 
 		public FastPrinter print(double d, int n) {
 			if (n <= 0) return print(round(d));
+			ensureCapacity(MAX_LONG_DIGITS + n + 2);
+			final byte[] buf = buffer;
+			int p = pos;
 			if (d < 0) {
-				ensureCapacity(1);
-				buffer[pos++] = HYPHEN;
+				buf[p++] = HYPHEN;
 				d = -d;
 			}
 			if (n > 18) n = 18;
 			final long intPart = (long) d;
-			final long fracPart = (long) ((d - intPart) * POW10[n]);
-			print(intPart);
+			final long fracPart = (long) ((d - intPart) * Cache.POW10[n]);
+			p = write(intPart, p);
+			buf[p++] = PERIOD;
 			int leadingZeros = n - countDigits(-fracPart);
-			ensureCapacity(leadingZeros + 1);
-			buffer[pos++] = PERIOD;
-			while (leadingZeros-- > 0) buffer[pos++] = ZERO;
-			print(fracPart);
+			fill(buf, p, p + leadingZeros, ZERO);
+			pos = write(fracPart, p + leadingZeros);
+			if (autoFlush) flush();
 			return this;
 		}
 
@@ -1602,12 +2021,16 @@ public final class Check1 {
 
 		public FastPrinter print(final boolean[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
-			print(arr[from]);
+			ensureCapacity((to - from) * (MAX_BOOL_DIGITS + 1));
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = (byte) delimiter;
-				write(arr[i]);
+				buf[p] = d;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1615,12 +2038,14 @@ public final class Check1 {
 		public FastPrinter print(final char[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
 			ensureCapacity(((to - from) << 1) - 1);
-			byte[] buf = buffer;
+			final byte[] buf = buffer;
 			int p = pos;
 			buf[p++] = (byte) arr[from];
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				buf[p++] = (byte) delimiter;
-				buf[p++] = (byte) arr[i];
+				buf[p] = d;
+				buf[p + 1] = (byte) arr[i];
+				p += 2;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -1629,26 +2054,32 @@ public final class Check1 {
 
 		public FastPrinter print(final int[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
-			final int len = to - from;
-			ensureCapacity(len * (MAX_INT_DIGITS + 1));
-			write(arr[from]);
+			ensureCapacity((to - from) * (MAX_INT_DIGITS + 1));
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				buffer[pos++] = (byte) delimiter;
-				write(arr[i]);
+				buf[p] = d;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter print(final long[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
-			final int len = to - from;
-			ensureCapacity(len * (MAX_LONG_DIGITS + 1));
-			write(arr[from]);
+			ensureCapacity((to - from) * (MAX_LONG_DIGITS + 1));
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				buffer[pos++] = (byte) delimiter;
-				write(arr[i]);
+				buf[p] = d;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1656,11 +2087,10 @@ public final class Check1 {
 		public FastPrinter print(final double[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
 			print(arr[from]);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				String s = Double.toString(arr[i]);
-				ensureCapacity(s.length() + 1);
-				buffer[pos++] = (byte) delimiter;
-				write(s);
+				print(d);
+				print(arr[i]);
 			}
 			if (autoFlush) flush();
 			return this;
@@ -1668,12 +2098,19 @@ public final class Check1 {
 
 		public FastPrinter print(final String[] arr, final int from, final int to, final char delimiter) {
 			if (from >= to) return this;
-			print(arr[from]);
+			int totalLen = 0;
+			for (int i = from; i < to; i++) totalLen += arr[i].length();
+			ensureCapacity(totalLen + (to - from - 1));
+
+			final byte[] buf = buffer;
+			int p = pos;
+			p = write(arr[from], p);
+			final byte d = (byte) delimiter;
 			for (int i = from + 1; i < to; i++) {
-				ensureCapacity(arr[i].length() + 1);
-				buffer[pos++] = (byte) delimiter;
-				write(arr[i]);
+				buf[p] = d;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -1712,8 +2149,7 @@ public final class Check1 {
 			final int len = arr.length;
 			if (len > 0) print(function.apply(arr[0]));
 			for (int i = 1; i < len; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = SPACE;
+				print(SPACE);
 				print(function.apply(arr[i]));
 			}
 			return this;
@@ -1723,8 +2159,7 @@ public final class Check1 {
 			final int len = arr.length;
 			if (len > 0) print(function.apply(arr[0]));
 			for (int i = 1; i < len; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = SPACE;
+				print(SPACE);
 				print(function.apply(arr[i]));
 			}
 			return this;
@@ -1734,8 +2169,7 @@ public final class Check1 {
 			final int len = arr.length;
 			if (len > 0) print(function.apply(arr[0]));
 			for (int i = 1; i < len; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = SPACE;
+				print(SPACE);
 				print(function.apply(arr[i]));
 			}
 			return this;
@@ -1745,8 +2179,7 @@ public final class Check1 {
 			final int len = arr.length;
 			if (len > 0) print(function.apply(arr[0]));
 			for (int i = 1; i < len; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = SPACE;
+				print(SPACE);
 				print(function.apply(arr[i]));
 			}
 			return this;
@@ -1756,8 +2189,7 @@ public final class Check1 {
 			final int len = arr.length;
 			if (len > 0) print(function.apply(arr[0]));
 			for (int i = 1; i < len; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = SPACE;
+				print(SPACE);
 				print(function.apply(arr[i]));
 			}
 			return this;
@@ -1767,8 +2199,7 @@ public final class Check1 {
 			final int len = arr.length;
 			if (len > 0) print(function.apply(arr[0]));
 			for (int i = 1; i < len; i++) {
-				ensureCapacity(1);
-				buffer[pos++] = SPACE;
+				print(SPACE);
 				print(function.apply(arr[i]));
 			}
 			return this;
@@ -1837,8 +2268,7 @@ public final class Check1 {
 				final int len = arr.length;
 				if (len > 0) print(arr[0]);
 				for (int i = 1; i < len; i++) {
-					ensureCapacity(1);
-					buffer[pos++] = (byte) delimiter;
+					print(delimiter);
 					print(arr[i]);
 				}
 				println();
@@ -1887,14 +2317,16 @@ public final class Check1 {
 			int p = pos, i = from;
 			final int limit8 = from + (len & ~7);
 			while (i < limit8) {
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
-				buf[p++] = (byte) arr[i++];
+				buf[p] = (byte) arr[i];
+				buf[p + 1] = (byte) arr[i + 1];
+				buf[p + 2] = (byte) arr[i + 2];
+				buf[p + 3] = (byte) arr[i + 3];
+				buf[p + 4] = (byte) arr[i + 4];
+				buf[p + 5] = (byte) arr[i + 5];
+				buf[p + 6] = (byte) arr[i + 6];
+				buf[p + 7] = (byte) arr[i + 7];
+				p += 8;
+				i += 8;
 			}
 			while (i < to) buf[p++] = (byte) arr[i++];
 			pos = p;
@@ -1909,14 +2341,16 @@ public final class Check1 {
 			int p = pos, i = 0;
 			final int limit = len & ~7;
 			while (i < limit) {
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
-				buf[p++] = (byte) function.applyAsInt(arr[i++]);
+				buf[p] = (byte) function.applyAsInt(arr[i]);
+				buf[p + 1] = (byte) function.applyAsInt(arr[i + 1]);
+				buf[p + 2] = (byte) function.applyAsInt(arr[i + 2]);
+				buf[p + 3] = (byte) function.applyAsInt(arr[i + 3]);
+				buf[p + 4] = (byte) function.applyAsInt(arr[i + 4]);
+				buf[p + 5] = (byte) function.applyAsInt(arr[i + 5]);
+				buf[p + 6] = (byte) function.applyAsInt(arr[i + 6]);
+				buf[p + 7] = (byte) function.applyAsInt(arr[i + 7]);
+				p += 8;
+				i += 8;
 			}
 			while (i < len) buf[p++] = (byte) function.applyAsInt(arr[i++]);
 			pos = p;
@@ -1950,8 +2384,7 @@ public final class Check1 {
 			final Iterator<T> it = iter.iterator();
 			if (it.hasNext()) print(it.next());
 			while (it.hasNext()) {
-				ensureCapacity(1);
-				buffer[pos++] = (byte) delimiter;
+				print(delimiter);
 				print(it.next());
 			}
 			return this;
@@ -1973,8 +2406,7 @@ public final class Check1 {
 			final Iterator<T> it = iter.iterator();
 			if (it.hasNext()) print(function.apply(it.next()));
 			while (it.hasNext()) {
-				ensureCapacity(1);
-				buffer[pos++] = (byte) delimiter;
+				print(delimiter);
 				print(function.apply(it.next()));
 			}
 			return this;
@@ -1984,21 +2416,9 @@ public final class Check1 {
 			if (cnt <= 0) return this;
 			ensureCapacity(cnt);
 			final byte[] buf = buffer;
-			final byte b = (byte) c;
-			int p = pos;
-			buf[p++] = b;
-			int copied = 1;
-			while (copied << 1 <= cnt) {
-				System.arraycopy(buf, pos, buf, p, copied);
-				p += copied;
-				copied <<= 1;
-			}
-			final int remain = cnt - copied;
-			if (remain > 0) {
-				System.arraycopy(buf, pos, buf, p, remain);
-				p += remain;
-			}
-			pos = p;
+			final int p = pos;
+			fill(buf, p, p + cnt, (byte) c);
+			pos = p + cnt;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -2010,28 +2430,17 @@ public final class Check1 {
 			final int total = len * cnt;
 			ensureCapacity(total);
 			final byte[] buf = buffer;
-			int p = pos, i = 0;
-			final int limit8 = len & ~7;
-			while (i < limit8) {
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-			}
-			while (i < len) buf[p++] = (byte) s.charAt(i++);
+			final int origPos = pos;
+			int p = write(s, origPos);
 			int copied = 1;
 			while (copied << 1 <= cnt) {
-				System.arraycopy(buf, pos, buf, p, copied * len);
+				System.arraycopy(buf, origPos, buf, p, copied * len);
 				p += copied * len;
 				copied <<= 1;
 			}
 			final int remain = cnt - copied;
 			if (remain > 0) {
-				System.arraycopy(buf, pos, buf, p, remain * len);
+				System.arraycopy(buf, origPos, buf, p, remain * len);
 				p += remain * len;
 			}
 			pos = p;
@@ -2045,18 +2454,19 @@ public final class Check1 {
 			ensureCapacity(total);
 			final byte[] buf = buffer;
 			final byte b = (byte) c;
-			int p = pos;
-			buf[p++] = b;
-			buf[p++] = LINE;
+			final int origPos = pos;
+			buf[origPos] = b;
+			buf[origPos + 1] = LINE;
+			int p = origPos + 2;
 			int copied = 2;
 			while (copied << 1 <= total) {
-				System.arraycopy(buf, pos, buf, p, copied);
+				System.arraycopy(buf, origPos, buf, p, copied);
 				p += copied;
 				copied <<= 1;
 			}
 			final int remain = total - copied;
 			if (remain > 0) {
-				System.arraycopy(buf, pos, buf, p, remain);
+				System.arraycopy(buf, origPos, buf, p, remain);
 				p += remain;
 			}
 			pos = p;
@@ -2066,37 +2476,24 @@ public final class Check1 {
 
 		public FastPrinter printlnRepeat(final String s, final int cnt) {
 			if (cnt <= 0) return this;
-			final int sLen = s.length();
-			if (sLen == 0) return this;
-			final int unit = sLen + 1;
-			final int total = unit * cnt;
-			ensureCapacity(total);
+			final int len = s.length();
+			if (len == 0) return this;
+			final int unitLen = len + 1;
+			ensureCapacity(unitLen * cnt);
 			final byte[] buf = buffer;
-			int p = pos;
-			int i = 0;
-			final int limit8 = sLen & ~7;
-			while (i < limit8) {
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-				buf[p++] = (byte) s.charAt(i++);
-			}
-			while (i < sLen) buf[p++] = (byte) s.charAt(i++);
+			final int origPos = pos;
+			int p = write(s, origPos);
 			buf[p++] = LINE;
 			int copied = 1;
 			while (copied << 1 <= cnt) {
-				System.arraycopy(buf, pos, buf, p, copied * unit);
-				p += copied * unit;
+				System.arraycopy(buf, origPos, buf, p, copied * unitLen);
+				p += copied * unitLen;
 				copied <<= 1;
 			}
 			final int remain = cnt - copied;
 			if (remain > 0) {
-				System.arraycopy(buf, pos, buf, p, remain * unit);
-				p += remain * unit;
+				System.arraycopy(buf, origPos, buf, p, remain * unitLen);
+				p += remain * unitLen;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -2105,24 +2502,29 @@ public final class Check1 {
 
 		public FastPrinter printlnReverse(final boolean[] arr) {
 			final int len = arr.length;
+			if (len == 0) return this;
+			ensureCapacity(len * (MAX_BOOL_DIGITS + 1));
 			final byte[] buf = buffer;
+			int p = pos;
 			for (int i = len - 1; i >= 0; i--) {
-				write(arr[i]);
-				ensureCapacity(1);
-				buf[pos++] = LINE;
+				p = write(arr[i], p);
+				buf[p++] = LINE;
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter printlnReverse(final char[] arr) {
 			final int len = arr.length;
+			if (len == 0) return this;
 			ensureCapacity(len << 1);
 			final byte[] buf = buffer;
 			int p = pos;
 			for (int i = len - 1; i >= 0; i--) {
-				buf[p++] = (byte) arr[i];
-				buf[p++] = LINE;
+				buf[p] = (byte) arr[i];
+				buf[p + 1] = LINE;
+				p += 2;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -2134,10 +2536,12 @@ public final class Check1 {
 			if (len == 0) return this;
 			ensureCapacity(len * (MAX_INT_DIGITS + 1));
 			final byte[] buf = buffer;
+			int p = pos;
 			for (int i = len - 1; i >= 0; i--) {
-				write(arr[i]);
-				buf[pos++] = LINE;
+				p = write(arr[i], p);
+				buf[p++] = LINE;
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -2147,22 +2551,23 @@ public final class Check1 {
 			if (len == 0) return this;
 			ensureCapacity(len * (MAX_LONG_DIGITS + 1));
 			final byte[] buf = buffer;
+			int p = pos;
 			for (int i = len - 1; i >= 0; i--) {
-				write(arr[i]);
-				buf[pos++] = LINE;
+				p = write(arr[i], p);
+				buf[p++] = LINE;
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
 
 		public FastPrinter printlnReverse(final double[] arr) {
 			final int len = arr.length;
-			final byte[] buf = buffer;
 			for (int i = len - 1; i >= 0; i--) {
-				String s = Double.toString(arr[i]);
+				final String s = Double.toString(arr[i]);
 				ensureCapacity(s.length() + 1);
-				write(s);
-				buf[pos++] = LINE;
+				pos = write(s, pos);
+				buffer[pos++] = LINE;
 			}
 			if (autoFlush) flush();
 			return this;
@@ -2170,12 +2575,11 @@ public final class Check1 {
 
 		public FastPrinter printlnReverse(final String[] arr) {
 			final int len = arr.length;
-			final byte[] buf = buffer;
 			for (int i = len - 1; i >= 0; i--) {
-				String s = arr[i];
+				final String s = arr[i];
 				ensureCapacity(s.length() + 1);
-				write(s);
-				buf[pos++] = LINE;
+				pos = write(s, pos);
+				buffer[pos++] = LINE;
 			}
 			if (autoFlush) flush();
 			return this;
@@ -2191,13 +2595,15 @@ public final class Check1 {
 		public FastPrinter printReverse(final boolean[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
+			ensureCapacity(len * (MAX_BOOL_DIGITS + 1) - 1);
 			final byte[] buf = buffer;
-			write(arr[len - 1]);
+			int p = pos;
+			p = write(arr[len - 1], p);
 			for (int i = len - 2; i >= 0; i--) {
-				ensureCapacity(1);
-				buf[pos++] = SPACE;
-				write(arr[i]);
+				buf[p] = SPACE;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -2210,8 +2616,9 @@ public final class Check1 {
 			int p = pos;
 			buf[p++] = (byte) arr[len - 1];
 			for (int i = len - 2; i >= 0; i--) {
-				buf[p++] = SPACE;
-				buf[p++] = (byte) arr[i];
+				buf[p] = SPACE;
+				buf[p + 1] = (byte) arr[i];
+				p += 2;
 			}
 			pos = p;
 			if (autoFlush) flush();
@@ -2223,11 +2630,13 @@ public final class Check1 {
 			if (len == 0) return this;
 			ensureCapacity(len * (MAX_INT_DIGITS + 1) - 1);
 			final byte[] buf = buffer;
-			write(arr[len - 1]);
+			int p = pos;
+			p = write(arr[len - 1], p);
 			for (int i = len - 2; i >= 0; i--) {
-				buf[pos++] = SPACE;
-				write(arr[i]);
+				buf[p] = SPACE;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -2237,11 +2646,13 @@ public final class Check1 {
 			if (len == 0) return this;
 			ensureCapacity(len * (MAX_LONG_DIGITS + 1) - 1);
 			final byte[] buf = buffer;
-			write(arr[len - 1]);
+			int p = pos;
+			p = write(arr[len - 1], p);
 			for (int i = len - 2; i >= 0; i--) {
-				buf[pos++] = SPACE;
-				write(arr[i]);
+				buf[p] = SPACE;
+				p = write(arr[i], p + 1);
 			}
+			pos = p;
 			if (autoFlush) flush();
 			return this;
 		}
@@ -2249,13 +2660,14 @@ public final class Check1 {
 		public FastPrinter printReverse(final double[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			final byte[] buf = buffer;
-			print(arr[len - 1]);
+			final String s0 = Double.toString(arr[len - 1]);
+			ensureCapacity(s0.length());
+			pos = write(s0, pos);
 			for (int i = len - 2; i >= 0; i--) {
-				String s = Double.toString(arr[i]);
+				final String s = Double.toString(arr[i]);
 				ensureCapacity(s.length() + 1);
-				buf[pos++] = SPACE;
-				write(s);
+				buffer[pos] = SPACE;
+				pos = write(s, pos + 1);
 			}
 			if (autoFlush) flush();
 			return this;
@@ -2264,13 +2676,12 @@ public final class Check1 {
 		public FastPrinter printReverse(final String[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			final byte[] buf = buffer;
 			ensureCapacity(arr[len - 1].length());
-			write(arr[len - 1]);
+			pos = write(arr[len - 1], pos);
 			for (int i = len - 2; i >= 0; i--) {
 				ensureCapacity(arr[i].length() + 1);
-				buf[pos++] = SPACE;
-				write(arr[i]);
+				buffer[pos] = SPACE;
+				pos = write(arr[i], pos + 1);
 			}
 			if (autoFlush) flush();
 			return this;
@@ -2279,15 +2690,62 @@ public final class Check1 {
 		public FastPrinter printReverse(final Object[] arr) {
 			final int len = arr.length;
 			if (len == 0) return this;
-			final byte[] buf = buffer;
 			print(arr[len - 1]);
 			for (int i = len - 2; i >= 0; i--) {
 				ensureCapacity(1);
-				buf[pos++] = SPACE;
+				buffer[pos++] = SPACE;
 				print(arr[i]);
 			}
 			if (autoFlush) flush();
 			return this;
+		}
+
+		private static final class Cache {
+			private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
+			private static final byte[] FALSE_BYTES = {'N', 'o'};
+			private static final long[] POW10 = {
+					1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
+					1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
+					10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
+					10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
+			};
+			private static final short[] DIGITS_2 = new short[100];
+			private static final int[] DIGITS_4 = new int[10000];
+			private static final Unsafe UNSAFE;
+			private static final long BYTE_ARRAY_BASE_OFFSET;
+			private static final long STRING_VALUE_OFFSET;
+			private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
+
+			static {
+				try {
+					final Field f = Unsafe.class.getDeclaredField("theUnsafe");
+					f.setAccessible(true);
+					UNSAFE = (Unsafe) f.get(null);
+					BYTE_ARRAY_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
+					STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
+					final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
+					ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
+					final byte[] tmp = new byte[2];
+					int idx2 = 0;
+					for (int i = '0'; i <= '9'; i++) {
+						for (int j = '0'; j <= '9'; j++) {
+							tmp[0] = (byte) i;
+							tmp[1] = (byte) j;
+							DIGITS_2[idx2++] = UNSAFE.getShort(tmp, BYTE_ARRAY_BASE_OFFSET);
+						}
+					}
+					int idx4 = 0;
+					for (int i = 0; i < 100; i++) {
+						final int hi = DIGITS_2[i] & 0xFFFF;
+						for (int j = 0; j < 100; j++) {
+							final int lo = DIGITS_2[j] & 0xFFFF;
+							DIGITS_4[idx4++] = (lo << 16) | hi;
+						}
+					}
+				} catch (final Exception e) {
+					throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
+				}
+			}
 		}
 	}
 	// endregion

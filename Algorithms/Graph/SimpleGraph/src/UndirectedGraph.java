@@ -4,11 +4,19 @@ import static java.util.Arrays.*;
 
 /**
  * 自己ループを含まない連結無向グラフ管理用ライブラリ
+ * <p>
+ * 無向辺は追加順に0始まりの辺IDが割り当てられます。
+ * 内部表現では1本の無向辺を2本の内部辺として保持しますが、
+ * 外部には無向辺IDとして公開します。
+ * <p>
+ * {@link #adjEdgeIds(int)} で取得した辺IDは {@link #to(int, int)} と
+ * {@link #cost(int)} にそのまま渡せます。
+ * {@link #to(int, int)} は「頂点 {@code u} から見た接続先頂点」を返します。
  */
 @SuppressWarnings("unused")
 public final class UndirectedGraph {
-	// -------------- フィールド --------------
 	private final int[] dest, next, first, degree;
+	private final long[] cost;
 	private final int n;
 	private int edgeCount = 0;
 
@@ -20,21 +28,28 @@ public final class UndirectedGraph {
 		first = new int[n];
 		fill(first, -1);
 		degree = new int[n];
+		cost = new long[m2];
 	}
 
 	public void add(final int i, final int j) {
+		add(i, j, 1);
+	}
+
+	public void add(final int i, final int j, final long c) {
 		dest[edgeCount] = j;
 		next[edgeCount] = first[i];
+		cost[edgeCount] = c;
 		first[i] = edgeCount++;
 		degree[i]++;
 
 		dest[edgeCount] = i;
 		next[edgeCount] = first[j];
+		cost[edgeCount] = c;
 		first[j] = edgeCount++;
 		degree[j]++;
 	}
 
-	public int getDegree(final int i) {
+	public int degree(final int i) {
 		return degree[i];
 	}
 
@@ -49,6 +64,7 @@ public final class UndirectedGraph {
 			for (int e = first[u]; e != -1; e = next[e]) {
 				int v = dest[e];
 				if (color[v] == color[u]) return false;
+				if (color[v] != 0) continue;
 				color[v] = -color[u];
 				q[tail++] = v;
 			}
@@ -56,22 +72,30 @@ public final class UndirectedGraph {
 		return true;
 	}
 
-	public Iterable<Integer> adj(final int u) {
-		return () -> new PrimitiveIterator.OfInt() {
-			private int e = first[u];
+	public int to(final int u, final int e) {
+		int v1 = dest[e << 1];
+		int v2 = dest[e << 1 | 1];
+		return u != v1 ? v1 : v2;
+	}
 
-			@Override
-			public boolean hasNext() {
-				return e != -1;
-			}
+	public long cost(final int e) {
+		return cost[e << 1];
+	}
 
-			@Override
-			public int nextInt() {
-				int v = dest[e];
-				e = next[e];
-				return v;
-			}
-		};
+	public int[] adj(final int u) {
+		int[] adj = new int[degree[u]];
+		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
+			adj[i] = dest[e];
+		}
+		return adj;
+	}
+
+	public int[] adjEdgeIds(final int u) {
+		int[] ids = new int[degree[u]];
+		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
+			ids[i] = e >> 1;
+		}
+		return ids;
 	}
 
 	public Iterable<Integer> bfs(final int s) {

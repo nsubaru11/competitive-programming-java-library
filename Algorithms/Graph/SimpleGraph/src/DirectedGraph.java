@@ -5,11 +5,14 @@ import static java.util.Arrays.*;
 
 /**
  * 無向辺・自己ループを含まない有向連結グラフ管理用ライブラリ
+ * <p>
+ * 辺は追加順に0始まりの辺IDが割り当てられます。
+ * {@link #adjEdgeIds(int)} で取得した辺IDは {@link #to(int)} と {@link #cost(int)} にそのまま渡せます。
  */
 @SuppressWarnings("unused")
 public final class DirectedGraph {
-	// -------------- フィールド --------------
 	private final int[] dest, next, first, inDegree, outDegree;
+	private final long[] cost;
 	private final int n;
 	private int edgeCount = 0;
 
@@ -21,26 +24,40 @@ public final class DirectedGraph {
 		fill(first, -1);
 		inDegree = new int[n];
 		outDegree = new int[n];
+		cost = new long[m];
 	}
 
 	public void add(final int i, final int j) {
+		add(i, j, 1);
+	}
+
+	public void add(final int i, final int j, long c) {
 		dest[edgeCount] = j;
 		next[edgeCount] = first[i];
+		cost[edgeCount] = c;
 		first[i] = edgeCount++;
 		outDegree[i]++;
 		inDegree[j]++;
 	}
 
-	public int getDegree(final int i) {
+	public int degree(final int i) {
 		return inDegree[i] + outDegree[i];
 	}
 
-	public int getInDegree(final int i) {
+	public int inDegree(final int i) {
 		return inDegree[i];
 	}
 
-	public int getOutDegree(final int i) {
+	public int outDegree(final int i) {
 		return outDegree[i];
+	}
+
+	public long cost(final int e) {
+		return cost[e];
+	}
+
+	public int to(final int e) {
+		return dest[e];
 	}
 
 	public int[] topologicalSort() {
@@ -85,6 +102,16 @@ public final class DirectedGraph {
 		return count < n;
 	}
 
+	/**
+	 * 強連結成分分解（SCC）を行います。
+	 *
+	 * @return 2次元配列 {@code sccs}。
+	 * {@code sccs[i]} が i 番目の強連結成分に属する頂点配列を表します。
+	 * 各頂点はちょうど1回だけいずれかの {@code sccs[i]} に現れます。
+	 * 成分同士の並びは縮約グラフのトポロジカル順です。
+	 * すなわち、異なる成分 {@code a -> b} への辺が存在するなら、返却配列では {@code a} の方が前に現れます。
+	 * 各成分内の頂点順はDFSの探索順（辺の追加順と頂点番号順）に依存します。
+	 */
 	public int[][] scc() {
 		int[] ord = new int[n];
 		int[] low = new int[n];
@@ -156,22 +183,20 @@ public final class DirectedGraph {
 		return result;
 	}
 
-	public Iterable<Integer> adj(final int u) {
-		return () -> new PrimitiveIterator.OfInt() {
-			private int e = first[u];
+	public int[] adj(final int u) {
+		int[] adj = new int[outDegree[u]];
+		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
+			adj[i] = dest[e];
+		}
+		return adj;
+	}
 
-			@Override
-			public boolean hasNext() {
-				return e != -1;
-			}
-
-			@Override
-			public int nextInt() {
-				int v = dest[e];
-				e = next[e];
-				return v;
-			}
-		};
+	public int[] adjEdgeIds(final int u) {
+		int[] ids = new int[outDegree[u]];
+		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
+			ids[i] = e;
+		}
+		return ids;
 	}
 
 	public Iterable<Integer> bfs(final int s) {
