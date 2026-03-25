@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
 import java.nio.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -14,6 +15,9 @@ public final class FastPrinter implements AutoCloseable {
 	private static final int MAX_LONG_DIGITS = 20;
 	private static final int MAX_BOOL_DIGITS = 3;
 	private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
+	private static final Charset ASCII = StandardCharsets.US_ASCII;
+	private static final int YES = 0x736559;
+	private static final short NO = 0x6F4E;
 	private static final byte LINE = '\n';
 	private static final byte SPACE = ' ';
 	private static final byte HYPHEN = '-';
@@ -205,7 +209,7 @@ public final class FastPrinter implements AutoCloseable {
 
 	public FastPrinter println(final String s) {
 		ensureCapacity(s.length() + 1);
-		final int p = write(s, pos);
+		final int p = write(s.getBytes(ASCII), pos);
 		buffer[p] = LINE;
 		pos = p + 1;
 		if (autoFlush) flush();
@@ -214,7 +218,7 @@ public final class FastPrinter implements AutoCloseable {
 
 	public FastPrinter println(final StringBuilder s) {
 		ensureCapacity(s.length() + 1);
-		final int p = write(s, pos);
+		final int p = write(s.toString().getBytes(ASCII), pos);
 		buffer[p] = LINE;
 		pos = p + 1;
 		if (autoFlush) flush();
@@ -293,14 +297,14 @@ public final class FastPrinter implements AutoCloseable {
 
 	public FastPrinter print(final String s) {
 		ensureCapacity(s.length());
-		pos = write(s, pos);
+		pos = write(s.getBytes(ASCII), pos);
 		if (autoFlush) flush();
 		return this;
 	}
 
 	public FastPrinter print(final StringBuilder s) {
 		ensureCapacity(s.length());
-		pos = write(s, pos);
+		pos = write(s.toString().getBytes(ASCII), pos);
 		if (autoFlush) flush();
 		return this;
 	}
@@ -337,18 +341,21 @@ public final class FastPrinter implements AutoCloseable {
 	}
 
 	private void ensureCapacity(final int additional) {
-		final int required = pos + additional;
+		final int required = pos + additional + 4;
 		final int bufferLength = buffer.length;
 		if (required <= bufferLength) return;
 		flush();
-		if (additional > bufferLength) buffer = new byte[bufferSize(additional)];
+		if (additional + 4 > bufferLength) buffer = new byte[bufferSize(additional + 4)];
 	}
 
 	private int write(final boolean b, int p) {
-		final byte[] src = b ? Cache.TRUE_BYTES : Cache.FALSE_BYTES;
-		final int len = src.length;
-		System.arraycopy(src, 0, buffer, p, len);
-		return p + len;
+		final byte[] buf = buffer;
+		if (b) {
+			Cache.INT_HANDLE.set(buf, p, YES);
+			return p + 3;
+		}
+		Cache.SHORT_HANDLE.set(buf, p, NO);
+		return p + 2;
 	}
 
 	private int write(int i, int p) {
@@ -356,37 +363,49 @@ public final class FastPrinter implements AutoCloseable {
 		final VarHandle shortHandle = Cache.SHORT_HANDLE;
 		final VarHandle intHandle = Cache.INT_HANDLE;
 		final short[] digits2 = Cache.DIGITS_2;
-		final int[] digits4 = Cache.DIGITS_4;
+		final int[] digits3 = Cache.DIGITS_3;
 		if (i >= 0) i = -i;
 		else buf[p++] = HYPHEN;
 		final int digits = countDigits(i);
-		int writePos = p + digits;
-		if (i <= -100000000) {
-			final int q = i / 100000000;
-			final int r = (q * 100000000) - i;
-			final int hi = r / 10000;
-			intHandle.set(buf, writePos - 8, digits4[hi]);
-			intHandle.set(buf, writePos - 4, digits4[r - hi * 10000]);
-			writePos -= 8;
+		int writePos = p;
+
+		int c1 = -1, c2 = -1, c3 = -1;
+		if (i <= -1000) {
+			final int q = i / 1000;
+			c1 = (q * 1000) - i;
 			i = q;
 		}
-		if (i <= -10000) {
-			final int q = i / 10000;
-			final int r = (q * 10000) - i;
-			intHandle.set(buf, writePos - 4, digits4[r]);
-			writePos -= 4;
+		if (i <= -1000) {
+			final int q = i / 1000;
+			c2 = (q * 1000) - i;
 			i = q;
 		}
-		if (i <= -100) {
-			final int q = i / 100;
-			final int r = (q * 100) - i;
-			shortHandle.set(buf, writePos - 2, digits2[r]);
-			writePos -= 2;
+		if (i <= -1000) {
+			final int q = i / 1000;
+			c3 = (q * 1000) - i;
 			i = q;
 		}
-		final int r = -i;
-		if (r >= 10) shortHandle.set(buf, writePos - 2, digits2[r]);
-		else buf[writePos - 1] = (byte) (r + ZERO);
+
+		i = -i;
+		if (i >= 100) {
+			intHandle.set(buf, writePos, digits3[i]);
+			writePos += 3;
+		} else if (i >= 10) {
+			shortHandle.set(buf, writePos, digits2[i]);
+			writePos += 2;
+		} else {
+			buf[writePos++] = (byte) (i + ZERO);
+		}
+
+		if (c3 != -1) {
+			intHandle.set(buf, writePos, digits3[c3]);
+			writePos += 3;
+		}
+		if (c2 != -1) {
+			intHandle.set(buf, writePos, digits3[c2]);
+			writePos += 3;
+		}
+		if (c1 != -1) intHandle.set(buf, writePos, digits3[c1]);
 		return p + digits;
 	}
 
@@ -395,68 +414,84 @@ public final class FastPrinter implements AutoCloseable {
 		final VarHandle shortHandle = Cache.SHORT_HANDLE;
 		final VarHandle intHandle = Cache.INT_HANDLE;
 		final short[] digits2 = Cache.DIGITS_2;
-		final int[] digits4 = Cache.DIGITS_4;
+		final int[] digits3 = Cache.DIGITS_3;
 		if (l >= 0) l = -l;
 		else buf[p++] = HYPHEN;
 		final int digits = countDigits(l);
-		int writePos = p + digits;
-		if (l <= -100000000L) {
-			long q = l / 100000000L;
-			int r = (int) ((q * 100000000L) - l);
-			int hi = r / 10000;
-			intHandle.set(buf, writePos - 8, digits4[hi]);
-			intHandle.set(buf, writePos - 4, digits4[r - hi * 10000]);
-			writePos -= 8;
-			l = q;
-			if (l <= -100000000L) {
-				q = l / 100000000L;
-				r = (int) ((q * 100000000L) - l);
-				hi = r / 10000;
-				intHandle.set(buf, writePos - 8, digits4[hi]);
-				intHandle.set(buf, writePos - 4, digits4[r - hi * 10000]);
-				writePos -= 8;
-				l = q;
-			}
-		}
-		if (l <= -10000) {
-			final long q = l / 10000;
-			final int r = (int) ((q * 10000) - l);
-			intHandle.set(buf, writePos - 4, digits4[r]);
-			writePos -= 4;
+		int writePos = p;
+
+		int c1 = -1, c2 = -1, c3 = -1, c4 = -1, c5 = -1, c6 = -1;
+		if (l <= -1000L) {
+			final long q = l / 1000L;
+			c1 = (int) ((q * 1000L) - l);
 			l = q;
 		}
-		if (l <= -100) {
-			final long q = l / 100;
-			final int r = (int) ((q * 100) - l);
-			shortHandle.set(buf, writePos - 2, digits2[r]);
-			writePos -= 2;
+		if (l <= -1000L) {
+			final long q = l / 1000L;
+			c2 = (int) ((q * 1000L) - l);
 			l = q;
 		}
-		final int r = (int) -l;
-		if (r >= 10) shortHandle.set(buf, writePos - 2, digits2[r]);
-		else buf[writePos - 1] = (byte) (r + ZERO);
+		if (l <= -1000L) {
+			final long q = l / 1000L;
+			c3 = (int) ((q * 1000L) - l);
+			l = q;
+		}
+		if (l <= -1000L) {
+			final long q = l / 1000L;
+			c4 = (int) ((q * 1000L) - l);
+			l = q;
+		}
+		if (l <= -1000L) {
+			final long q = l / 1000L;
+			c5 = (int) ((q * 1000L) - l);
+			l = q;
+		}
+		if (l <= -1000L) {
+			final long q = l / 1000L;
+			c6 = (int) ((q * 1000L) - l);
+			l = q;
+		}
+
+		final int rem = (int) -l;
+		if (rem >= 100) {
+			intHandle.set(buf, writePos, digits3[rem]);
+			writePos += 3;
+		} else if (rem >= 10) {
+			shortHandle.set(buf, writePos, digits2[rem]);
+			writePos += 2;
+		} else {
+			buf[writePos++] = (byte) (rem + ZERO);
+		}
+
+		if (c6 != -1) {
+			intHandle.set(buf, writePos, digits3[c6]);
+			writePos += 3;
+		}
+		if (c5 != -1) {
+			intHandle.set(buf, writePos, digits3[c5]);
+			writePos += 3;
+		}
+		if (c4 != -1) {
+			intHandle.set(buf, writePos, digits3[c4]);
+			writePos += 3;
+		}
+		if (c3 != -1) {
+			intHandle.set(buf, writePos, digits3[c3]);
+			writePos += 3;
+		}
+		if (c2 != -1) {
+			intHandle.set(buf, writePos, digits3[c2]);
+			writePos += 3;
+		}
+		if (c1 != -1) intHandle.set(buf, writePos, digits3[c1]);
 		return p + digits;
 	}
 
-	private int write(final CharSequence s, int p) {
-		final int len = s.length();
+	private int write(final byte[] s, int p) {
+		final int len = s.length;
 		final byte[] buf = buffer;
-		int i = 0;
-		final int limit = len & ~7;
-		while (i < limit) {
-			buf[p] = (byte) s.charAt(i);
-			buf[p + 1] = (byte) s.charAt(i + 1);
-			buf[p + 2] = (byte) s.charAt(i + 2);
-			buf[p + 3] = (byte) s.charAt(i + 3);
-			buf[p + 4] = (byte) s.charAt(i + 4);
-			buf[p + 5] = (byte) s.charAt(i + 5);
-			buf[p + 6] = (byte) s.charAt(i + 6);
-			buf[p + 7] = (byte) s.charAt(i + 7);
-			p += 8;
-			i += 8;
-		}
-		while (i < len) buf[p++] = (byte) s.charAt(i++);
-		return p;
+		System.arraycopy(s, 0, buf, p, len);
+		return p + len;
 	}
 
 	public FastPrinter println(final int a, final int b) {
@@ -809,11 +844,11 @@ public final class FastPrinter implements AutoCloseable {
 
 		final byte[] buf = buffer;
 		int p = pos;
-		p = write(arr[from], p);
+		p = write(arr[from].getBytes(ASCII), p);
 		final byte d = (byte) delimiter;
 		for (int i = from + 1; i < to; i++) {
 			buf[p] = d;
-			p = write(arr[i], p + 1);
+			p = write(arr[i].getBytes(ASCII), p + 1);
 		}
 		pos = p;
 		if (autoFlush) flush();
@@ -1136,7 +1171,7 @@ public final class FastPrinter implements AutoCloseable {
 		ensureCapacity(total);
 		final byte[] buf = buffer;
 		final int origPos = pos;
-		int p = write(s, origPos);
+		int p = write(s.getBytes(ASCII), origPos);
 		int copied = 1;
 		while (copied << 1 <= cnt) {
 			System.arraycopy(buf, origPos, buf, p, copied * len);
@@ -1187,7 +1222,7 @@ public final class FastPrinter implements AutoCloseable {
 		ensureCapacity(unitLen * cnt);
 		final byte[] buf = buffer;
 		final int origPos = pos;
-		int p = write(s, origPos);
+		int p = write(s.getBytes(ASCII), origPos);
 		buf[p++] = LINE;
 		int copied = 1;
 		while (copied << 1 <= cnt) {
@@ -1271,7 +1306,7 @@ public final class FastPrinter implements AutoCloseable {
 		for (int i = len - 1; i >= 0; i--) {
 			final String s = Double.toString(arr[i]);
 			ensureCapacity(s.length() + 1);
-			pos = write(s, pos);
+			pos = write(s.getBytes(ASCII), pos);
 			buffer[pos++] = LINE;
 		}
 		if (autoFlush) flush();
@@ -1283,7 +1318,7 @@ public final class FastPrinter implements AutoCloseable {
 		for (int i = len - 1; i >= 0; i--) {
 			final String s = arr[i];
 			ensureCapacity(s.length() + 1);
-			pos = write(s, pos);
+			pos = write(s.getBytes(ASCII), pos);
 			buffer[pos++] = LINE;
 		}
 		if (autoFlush) flush();
@@ -1367,12 +1402,12 @@ public final class FastPrinter implements AutoCloseable {
 		if (len == 0) return this;
 		final String s0 = Double.toString(arr[len - 1]);
 		ensureCapacity(s0.length());
-		pos = write(s0, pos);
+		pos = write(s0.getBytes(ASCII), pos);
 		for (int i = len - 2; i >= 0; i--) {
 			final String s = Double.toString(arr[i]);
 			ensureCapacity(s.length() + 1);
 			buffer[pos] = SPACE;
-			pos = write(s, pos + 1);
+			pos = write(s.getBytes(ASCII), pos + 1);
 		}
 		if (autoFlush) flush();
 		return this;
@@ -1382,11 +1417,11 @@ public final class FastPrinter implements AutoCloseable {
 		final int len = arr.length;
 		if (len == 0) return this;
 		ensureCapacity(arr[len - 1].length());
-		pos = write(arr[len - 1], pos);
+		pos = write(arr[len - 1].getBytes(ASCII), pos);
 		for (int i = len - 2; i >= 0; i--) {
 			ensureCapacity(arr[i].length() + 1);
 			buffer[pos] = SPACE;
-			pos = write(arr[i], pos + 1);
+			pos = write(arr[i].getBytes(ASCII), pos + 1);
 		}
 		if (autoFlush) flush();
 		return this;
@@ -1408,8 +1443,6 @@ public final class FastPrinter implements AutoCloseable {
 	private static final class Cache {
 		private static final VarHandle SHORT_HANDLE = MethodHandles.byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
 		private static final VarHandle INT_HANDLE = MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
-		private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
-		private static final byte[] FALSE_BYTES = {'N', 'o'};
 		private static final short[] DIGITS_2 = {
 				12336, 12592, 12848, 13104, 13360, 13616, 13872, 14128, 14384, 14640,
 				12337, 12593, 12849, 13105, 13361, 13617, 13873, 14129, 14385, 14641,
@@ -1422,7 +1455,7 @@ public final class FastPrinter implements AutoCloseable {
 				12344, 12600, 12856, 13112, 13368, 13624, 13880, 14136, 14392, 14648,
 				12345, 12601, 12857, 13113, 13369, 13625, 13881, 14137, 14393, 14649,
 		};
-		private static final int[] DIGITS_4 = new int[10000];
+		private static final int[] DIGITS_3 = new int[1000];
 		private static final long[] POW10 = {
 				1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
 				1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
@@ -1431,12 +1464,11 @@ public final class FastPrinter implements AutoCloseable {
 		};
 
 		static {
-			int idx4 = 0;
+			int idx = 0;
 			for (int i = 0; i < 100; i++) {
-				final int hi = DIGITS_2[i] & 0xFFFF;
-				for (int j = 0; j < 100; j++) {
-					final int lo = DIGITS_2[j] & 0xFFFF;
-					DIGITS_4[idx4++] = (lo << 16) | hi;
+				final int base = DIGITS_2[i];
+				for (int j = 0; j < 10; j++) {
+					DIGITS_3[idx++] = base | ((j + '0') << 16);
 				}
 			}
 		}

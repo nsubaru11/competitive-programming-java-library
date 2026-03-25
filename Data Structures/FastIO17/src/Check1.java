@@ -992,6 +992,8 @@ public final class Check1 {
 		private static final int MAX_LONG_DIGITS = 20;
 		private static final int MAX_BOOL_DIGITS = 3;
 		private static final int DEFAULT_BUFFER_SIZE = 1 << 20;
+		private static final int YES = 0x736559;
+		private static final short NO = 0x6F4E;
 		private static final byte LINE = '\n';
 		private static final byte SPACE = ' ';
 		private static final byte HYPHEN = '-';
@@ -1003,7 +1005,7 @@ public final class Check1 {
 		private int pos;
 
 		public FastPrinter() {
-			this(new FileOutputStream(FileDescriptor.out), DEFAULT_BUFFER_SIZE, false);
+			this(System.out, DEFAULT_BUFFER_SIZE, false);
 		}
 
 		public FastPrinter(final OutputStream out) {
@@ -1011,11 +1013,11 @@ public final class Check1 {
 		}
 
 		public FastPrinter(final int bufferSize) {
-			this(new FileOutputStream(FileDescriptor.out), bufferSize, false);
+			this(System.out, bufferSize, false);
 		}
 
 		public FastPrinter(final boolean autoFlush) {
-			this(new FileOutputStream(FileDescriptor.out), DEFAULT_BUFFER_SIZE, autoFlush);
+			this(System.out, DEFAULT_BUFFER_SIZE, autoFlush);
 		}
 
 		public FastPrinter(final OutputStream out, final boolean autoFlush) {
@@ -1023,7 +1025,7 @@ public final class Check1 {
 		}
 
 		public FastPrinter(final int bufferSize, final boolean autoFlush) {
-			this(new FileOutputStream(FileDescriptor.out), bufferSize, autoFlush);
+			this(System.out, bufferSize, autoFlush);
 		}
 
 		public FastPrinter(final OutputStream out, final int bufferSize) {
@@ -1032,72 +1034,28 @@ public final class Check1 {
 
 		public FastPrinter(final OutputStream out, final int bufferSize, final boolean autoFlush) {
 			this.out = out;
-			this.buffer = new byte[max(64, roundUpToPowerOfTwo(bufferSize))];
+			this.buffer = new byte[bufferSize(bufferSize)];
 			this.autoFlush = autoFlush;
 		}
 
-		private static int countDigits(final int i) {
-			if (i > -100000) {
-				if (i > -100) {
-					return i > -10 ? 1 : 2;
-				} else {
-					if (i > -10000) return i > -1000 ? 3 : 4;
-					else return 5;
-				}
-			} else {
-				if (i > -10000000) {
-					return i > -1000000 ? 6 : 7;
-				} else {
-					if (i > -1000000000) return i > -100000000 ? 8 : 9;
-					else return 10;
-				}
-			}
+		private static int countDigits(int i) {
+			if (i == 0) return 1;
+			if (i < 0) i = -i;
+			int d = ((31 - Integer.numberOfLeadingZeros(i)) * 1233 >>> 12) + 1;
+			if (d < 10 && i >= Cache.POW10[d]) d++;
+			return d;
 		}
 
-		private static int countDigits(final long l) {
-			if (l > -1000000000) {
-				if (l > -10000) {
-					if (l > -100) {
-						return l > -10 ? 1 : 2;
-					} else {
-						return l > -1000 ? 3 : 4;
-					}
-				} else {
-					if (l > -1000000) {
-						return l > -100000 ? 5 : 6;
-					} else {
-						if (l > -100000000) return l > -10000000 ? 7 : 8;
-						else return 9;
-					}
-				}
-			} else {
-				if (l > -10000000000000L) {
-					if (l > -100000000000L) {
-						return l > -10000000000L ? 10 : 11;
-					} else {
-						return l > -1000000000000L ? 12 : 13;
-					}
-				} else {
-					if (l > -10000000000000000L) {
-						if (l > -1000000000000000L) return l > -100000000000000L ? 14 : 15;
-						else return 16;
-					} else {
-						if (l > -1000000000000000000L) return l > -100000000000000000L ? 17 : 18;
-						else return 19;
-					}
-				}
-			}
+		private static int countDigits(long l) {
+			if (l == 0) return 1;
+			if (l < 0) l = -l;
+			int d = ((63 - Long.numberOfLeadingZeros(l)) * 1233 >>> 12) + 1;
+			if (d < 19 && l >= Cache.POW10[d]) d++;
+			return d;
 		}
 
-		private static int roundUpToPowerOfTwo(int x) {
-			if (x <= 1) return 1;
-			x--;
-			x |= x >>> 1;
-			x |= x >>> 2;
-			x |= x >>> 4;
-			x |= x >>> 8;
-			x |= x >>> 16;
-			return x + 1;
+		private static int bufferSize(int x) {
+			return x <= 64 ? 64 : 1 << (32 - Integer.numberOfLeadingZeros(x - 1));
 		}
 
 		@Override
@@ -1354,18 +1312,23 @@ public final class Check1 {
 		}
 
 		private void ensureCapacity(final int additional) {
-			final int required = pos + additional;
+			final int required = pos + additional + 4;
 			final int bufferLength = buffer.length;
 			if (required <= bufferLength) return;
 			flush();
-			if (additional > bufferLength) buffer = new byte[roundUpToPowerOfTwo(additional)];
+			if (additional + 4 > bufferLength) buffer = new byte[bufferSize(additional + 4)];
 		}
 
 		private int write(final boolean b, int p) {
-			final byte[] src = b ? Cache.TRUE_BYTES : Cache.FALSE_BYTES;
-			final int len = src.length;
-			System.arraycopy(src, 0, buffer, p, len);
-			return p + len;
+			final byte[] buf = buffer;
+			final Unsafe unsafe = Cache.UNSAFE;
+			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			if (b) {
+				unsafe.putInt(buf, byteArrayBaseOffset + p, YES);
+				return p + 3;
+			}
+			unsafe.putShort(buf, byteArrayBaseOffset + p, NO);
+			return p + 2;
 		}
 
 		private int write(int i, int p) {
@@ -1373,37 +1336,49 @@ public final class Check1 {
 			final Unsafe unsafe = Cache.UNSAFE;
 			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
 			final short[] digits2 = Cache.DIGITS_2;
-			final int[] digits4 = Cache.DIGITS_4;
+			final int[] digits3 = Cache.DIGITS_3;
 			if (i >= 0) i = -i;
 			else buf[p++] = HYPHEN;
 			final int digits = countDigits(i);
-			int writePos = p + digits;
-			if (i <= -100000000) {
-				final int q = i / 100000000;
-				final int r = (q * 100000000) - i;
-				final int hi = r / 10000;
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
-				writePos -= 8;
+			int writePos = p;
+
+			int c1 = -1, c2 = -1, c3 = -1;
+			if (i <= -1000) {
+				final int q = i / 1000;
+				c1 = (q * 1000) - i;
 				i = q;
 			}
-			if (i <= -10000) {
-				final int q = i / 10000;
-				final int r = (q * 10000) - i;
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
-				writePos -= 4;
+			if (i <= -1000) {
+				final int q = i / 1000;
+				c2 = (q * 1000) - i;
 				i = q;
 			}
-			if (i <= -100) {
-				final int q = i / 100;
-				final int r = (q * 100) - i;
-				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
-				writePos -= 2;
+			if (i <= -1000) {
+				final int q = i / 1000;
+				c3 = (q * 1000) - i;
 				i = q;
 			}
-			final int r = -i;
-			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
-			else buf[writePos - 1] = (byte) (r + ZERO);
+
+			i = -i;
+			if (i >= 100) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[i]);
+				writePos += 3;
+			} else if (i >= 10) {
+				unsafe.putShort(buf, byteArrayBaseOffset + writePos, digits2[i]);
+				writePos += 2;
+			} else {
+				buf[writePos++] = (byte) (i + ZERO);
+			}
+
+			if (c3 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c3]);
+				writePos += 3;
+			}
+			if (c2 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c2]);
+				writePos += 3;
+			}
+			if (c1 != -1) unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c1]);
 			return p + digits;
 		}
 
@@ -1412,46 +1387,76 @@ public final class Check1 {
 			final Unsafe unsafe = Cache.UNSAFE;
 			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
 			final short[] digits2 = Cache.DIGITS_2;
-			final int[] digits4 = Cache.DIGITS_4;
+			final int[] digits3 = Cache.DIGITS_3;
 			if (l >= 0) l = -l;
 			else buf[p++] = HYPHEN;
 			final int digits = countDigits(l);
-			int writePos = p + digits;
-			if (l <= -100000000L) {
-				long q = l / 100000000L;
-				int r = (int) ((q * 100000000L) - l);
-				int hi = r / 10000;
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
-				writePos -= 8;
-				l = q;
-				if (l <= -100000000L) {
-					q = l / 100000000L;
-					r = (int) ((q * 100000000L) - l);
-					hi = r / 10000;
-					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
-					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
-					writePos -= 8;
-					l = q;
-				}
-			}
-			if (l <= -10000) {
-				final long q = l / 10000;
-				final int r = (int) ((q * 10000) - l);
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
-				writePos -= 4;
+			int writePos = p;
+
+			int c1 = -1, c2 = -1, c3 = -1, c4 = -1, c5 = -1, c6 = -1;
+			if (l <= -1000L) {
+				final long q = l / 1000L;
+				c1 = (int) ((q * 1000L) - l);
 				l = q;
 			}
-			if (l <= -100) {
-				final long q = l / 100;
-				final int r = (int) ((q * 100) - l);
-				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
-				writePos -= 2;
+			if (l <= -1000L) {
+				final long q = l / 1000L;
+				c2 = (int) ((q * 1000L) - l);
 				l = q;
 			}
-			final int r = (int) -l;
-			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
-			else buf[writePos - 1] = (byte) (r + ZERO);
+			if (l <= -1000L) {
+				final long q = l / 1000L;
+				c3 = (int) ((q * 1000L) - l);
+				l = q;
+			}
+			if (l <= -1000L) {
+				final long q = l / 1000L;
+				c4 = (int) ((q * 1000L) - l);
+				l = q;
+			}
+			if (l <= -1000L) {
+				final long q = l / 1000L;
+				c5 = (int) ((q * 1000L) - l);
+				l = q;
+			}
+			if (l <= -1000L) {
+				final long q = l / 1000L;
+				c6 = (int) ((q * 1000L) - l);
+				l = q;
+			}
+
+			final int rem = (int) -l;
+			if (rem >= 100) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[rem]);
+				writePos += 3;
+			} else if (rem >= 10) {
+				unsafe.putShort(buf, byteArrayBaseOffset + writePos, digits2[rem]);
+				writePos += 2;
+			} else {
+				buf[writePos++] = (byte) (rem + ZERO);
+			}
+
+			if (c6 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c6]);
+				writePos += 3;
+			}
+			if (c5 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c5]);
+				writePos += 3;
+			}
+			if (c4 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c4]);
+				writePos += 3;
+			}
+			if (c3 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c3]);
+				writePos += 3;
+			}
+			if (c2 != -1) {
+				unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c2]);
+				writePos += 3;
+			}
+			if (c1 != -1) unsafe.putInt(buf, byteArrayBaseOffset + writePos, digits3[c1]);
 			return p + digits;
 		}
 
@@ -2416,16 +2421,14 @@ public final class Check1 {
 		}
 
 		private static final class Cache {
-			private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
-			private static final byte[] FALSE_BYTES = {'N', 'o'};
+			private static final short[] DIGITS_2 = new short[100];
+			private static final int[] DIGITS_3 = new int[1000];
 			private static final long[] POW10 = {
 					1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
 					1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
 					10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
 					10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
 			};
-			private static final short[] DIGITS_2 = new short[100];
-			private static final int[] DIGITS_4 = new int[10000];
 			private static final Unsafe UNSAFE;
 			private static final long BYTE_ARRAY_BASE_OFFSET;
 			private static final long STRING_VALUE_OFFSET;
@@ -2449,12 +2452,11 @@ public final class Check1 {
 							DIGITS_2[idx2++] = UNSAFE.getShort(tmp, BYTE_ARRAY_BASE_OFFSET);
 						}
 					}
-					int idx4 = 0;
+					int idx3 = 0;
 					for (int i = 0; i < 100; i++) {
-						final int hi = DIGITS_2[i] & 0xFFFF;
-						for (int j = 0; j < 100; j++) {
-							final int lo = DIGITS_2[j] & 0xFFFF;
-							DIGITS_4[idx4++] = (lo << 16) | hi;
+						final int base = DIGITS_2[i] & 0xFFFF;
+						for (int j = 0; j < 10; j++) {
+							DIGITS_3[idx3++] = base | ((j + '0') << 16);
 						}
 					}
 				} catch (final Exception e) {
