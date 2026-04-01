@@ -1,4 +1,4 @@
-import java.util.*;
+import static java.util.Arrays.*;
 
 /**
  * Kruskal法を用いた全域木（MST）問題のソルバー。
@@ -10,11 +10,12 @@ import java.util.*;
 public final class Kruskal {
 	private final int n;
 	private final boolean isMinimum;
-	private final int[] from, to;
+	private final int[] from, to, edges, path;
 	private final long[] cost;
-	private final Integer[] edges;
 	private final UnionFind uf;
 	private int edgeCnt = 0;
+	private long ans = 0;
+	private boolean solved = false;
 
 	/**
 	 * 指定された頂点数と最小/最大フラグでソルバーを初期化します。
@@ -28,9 +29,10 @@ public final class Kruskal {
 		this.isMinimum = isMinimum;
 		from = new int[m];
 		to = new int[m];
+		edges = new int[m];
+		path = new int[n - 1];
 		cost = new long[m];
 		uf = new UnionFind(n);
-		edges = new Integer[m];
 	}
 
 	/**
@@ -59,6 +61,77 @@ public final class Kruskal {
 	}
 
 	/**
+	 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。
+	 * Dual-Pivot Quicksortのエッセンスを採用したプリミティブ実装です。
+	 */
+	private static void sortEdges(int[] edges, long[] cost, int left, int right) {
+		int size = right - left;
+
+		if (size < 47) {
+			for (int i = left + 1; i < right; i++) {
+				int pivotEdge = edges[i];
+				long pivotCost = cost[pivotEdge];
+				int j = i - 1;
+				while (j >= left && cost[edges[j]] > pivotCost) {
+					edges[j + 1] = edges[j];
+					j--;
+				}
+				edges[j + 1] = pivotEdge;
+			}
+			return;
+		}
+
+		int step = (size >> 3) * 3 + 3;
+		int e1 = left + step;
+		int e5 = right - 1 - step;
+		int e3 = (left + right) >>> 1;
+		int e2 = (e1 + e3) >>> 1;
+		int e4 = (e3 + e5) >>> 1;
+
+		if (cost[edges[e5]] < cost[edges[e2]]) swap(edges, e2, e5);
+		if (cost[edges[e4]] < cost[edges[e1]]) swap(edges, e1, e4);
+		if (cost[edges[e5]] < cost[edges[e4]]) swap(edges, e4, e5);
+		if (cost[edges[e2]] < cost[edges[e1]]) swap(edges, e1, e2);
+		if (cost[edges[e4]] < cost[edges[e2]]) swap(edges, e2, e4);
+
+		int p1 = edges[e2], p2 = edges[e4];
+		long v1 = cost[p1], v2 = cost[p2];
+
+		int less = left, greater = right - 2;
+
+		edges[e2] = edges[left];
+		edges[e4] = edges[right - 1];
+		edges[left] = p1;
+		edges[right - 1] = p2;
+
+		for (int k = left + 1; k <= greater; k++) {
+			if (cost[edges[k]] < v1) {
+				swap(edges, k, ++less);
+			} else if (cost[edges[k]] > v2) {
+				while (k < greater && cost[edges[greater]] > v2) greater--;
+				swap(edges, k, greater--);
+				if (cost[edges[k]] >= v1) continue;
+				swap(edges, k, ++less);
+			}
+		}
+
+		edges[left] = edges[less];
+		edges[less] = p1;
+		edges[right - 1] = edges[greater + 1];
+		edges[greater + 1] = p2;
+
+		sortEdges(edges, cost, left, less);
+		if (v1 < v2) sortEdges(edges, cost, less + 1, greater + 1);
+		sortEdges(edges, cost, greater + 2, right);
+	}
+
+	private static void swap(int[] a, int i, int j) {
+		int t = a[i];
+		a[i] = a[j];
+		a[j] = t;
+	}
+
+	/**
 	 * Kruskal法を実行し、全域木の総コストを計算します。
 	 * 設定に応じて最小全域木または最大全域木を求めます。
 	 * グラフが連結でない場合は-1を返します。
@@ -66,21 +139,30 @@ public final class Kruskal {
 	 * @return 全域木の総コスト、または連結グラフでない場合は-1
 	 */
 	public long solve() {
-		long ans = 0;
-		int size = n;
-		Arrays.sort(edges, 0, edgeCnt, (i, j) -> Long.compare(cost[i], cost[j]));
-		for (int i = 0; i < edgeCnt; i++) {
-			int e = edges[i];
-			int u = from[e];
-			int v = to[e];
+		if (solved) return ans;
+		int size = 0;
+		sortEdges(edges, cost, 0, edgeCnt);
+		for (int i = 0; size < n - 1 && i < edgeCnt; i++) {
+			int e = edges[i], u = from[e], v = to[e];
 			long c = cost[e];
-			if (uf.find(u) != uf.find(v)) {
-				uf.union(u, v);
+			if (uf.union(u, v)) {
+				path[size++] = e;
 				ans += c;
-				size--;
 			}
 		}
-		return size > 1 ? -1 : isMinimum ? ans : -ans;
+		solved = true;
+		return ans = size < n - 1 ? -1 : isMinimum ? ans : -ans;
+	}
+
+	/**
+	 * 全域木を構成する辺のインデックスを取得します。
+	 * インデックスは addEdge で追加された順序（0-indexed）に対応します。
+	 *
+	 * @return 全域木を構成する辺のインデックス配列
+	 */
+	public int[] solvePath() {
+		if (!solved) solve();
+		return path;
 	}
 
 	private static final class UnionFind {
@@ -89,36 +171,24 @@ public final class Kruskal {
 		public UnionFind(final int size) {
 			root = new int[size];
 			rank = new int[size];
-			Arrays.setAll(root, i -> i);
+			setAll(root, i -> i);
 		}
 
 		public int find(final int x) {
-			int root = x;
-			while (root != this.root[root]) {
-				root = this.root[root];
-			}
-			int cur = x;
-			while (cur != root) {
-				int next = this.root[cur];
-				this.root[cur] = root;
-				cur = next;
-			}
-			return root;
+			return x == root[x] ? x : (root[x] = find(root[x]));
 		}
 
-		public void union(int x, int y) {
+		public boolean union(int x, int y) {
 			x = find(x);
 			y = find(y);
-			if (x != y) {
-				if (rank[x] > rank[y]) {
-					root[y] = x;
-				} else if (rank[x] < rank[y]) {
-					root[x] = y;
-				} else {
-					root[y] = x;
-					rank[x] += 1;
-				}
+			if (x == y) return false;
+			if (rank[x] < rank[y]) {
+				root[x] = y;
+			} else {
+				root[y] = x;
+				if (rank[x] == rank[y]) rank[x]++;
 			}
+			return true;
 		}
 	}
 }
