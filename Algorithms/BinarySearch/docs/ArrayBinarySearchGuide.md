@@ -5,8 +5,8 @@
 `ArrayBinarySearch`クラスは多様な型の配列（整数、長整数、倍精度浮動小数点数、および比較可能な型）に対する二分探索を効率的に実行するためのユーティリティクラスです。このクラスでは以下の3種類の探索アルゴリズムを提供します：
 
 1. **通常の二分探索（Normal Search）**：配列内で指定した目標値に一致する要素を検索。
-2. **下限探索（Lower Bound Search）**：配列内で目標値以下の最大の値を検索。
-3. **上限探索（Upper Bound Search）**：配列内で目標値以上の最小の値を検索。
+2. **下限探索（Lower Bound Search）**：配列内で目標値に一致する要素のうち左端（最小インデックス）を検索。
+3. **上限探索（Upper Bound Search）**：配列内で目標値に一致する要素のうち右端（最大インデックス）を検索。
 
 探索はソート済み配列で動作し、探索操作は全体または指定範囲内で行えます。
 
@@ -14,15 +14,13 @@
 
 - 静的メソッドのみを持つユーティリティクラスであり、インスタンス化を防ぐためにコンストラクタは`private`に設定されています。
 - 探索に失敗した場合、`-(挿入位置 + 1)`という形式で挿入位置を表す負の値を返します。
-- 各探索メソッドは配列が`null`である場合や探索範囲が論理的でない場合に例外をスローします。
+- 現在実装は高速化のため、明示的な引数検証や専用例外クラスを持たない軽量構成です。
 - 整数型 (`int`)、長整数型 (`long`)、倍精度浮動小数点型 (`double`)、および`Comparable`を実装した型の配列をサポートします。
 - 競技プログラミングでの使用に最適化されており、高速な実行が可能です。
 
 ## 依存関係
 
-`ArrayBinarySearch`クラスは、以下の依存関係を持ちます：
-
-- `BSException`：不正な操作（null配列の指定、不正範囲など）が発生した場合にスローされます。
+`ArrayBinarySearch`クラスは、外部依存を持たない単体ユーティリティです。
 
 ## 主な機能
 
@@ -77,17 +75,17 @@ public static int upperBoundSearch(double[] arr, int l, int r, double target)
 ### 比較可能な型（`Comparable<T>`）の配列の探索
 
 ```java
-public static <T extends Comparable<T>> int normalSearch(T[] arr, T target)
+public static <T extends Comparable<? super T>> int normalSearch(T[] arr, T target)
 
-public static <T extends Comparable<T>> int normalSearch(T[] arr, int l, int r, T target)
+public static <T extends Comparable<? super T>> int normalSearch(T[] arr, int l, int r, T target)
 
-public static <T extends Comparable<T>> int lowerBoundSearch(T[] arr, T target)
+public static <T extends Comparable<? super T>> int lowerBoundSearch(T[] arr, T target)
 
-public static <T extends Comparable<T>> int lowerBoundSearch(T[] arr, int l, int r, T target)
+public static <T extends Comparable<? super T>> int lowerBoundSearch(T[] arr, int l, int r, T target)
 
-public static <T extends Comparable<T>> int upperBoundSearch(T[] arr, T target)
+public static <T extends Comparable<? super T>> int upperBoundSearch(T[] arr, T target)
 
-public static <T extends Comparable<T>> int upperBoundSearch(T[] arr, int l, int r, T target)
+public static <T extends Comparable<? super T>> int upperBoundSearch(T[] arr, int l, int r, T target)
 ```
 
 ## メソッド詳細
@@ -102,15 +100,15 @@ public static <T extends Comparable<T>> int upperBoundSearch(T[] arr, int l, int
 
 ### 下限探索（Lower Bound Search）
 
-- **概要**：目標値以下の最大要素のインデックスを返します。
-- **戻り値**：条件を満たす値が存在する場合、そのインデックスを返します。見つからない場合、`-(挿入位置 + 1)`を返します。
-- **使用例**：目標値以下の最大値を探す場合や、配列内で目標値以下の要素の数を数える場合に使用します。
+- **概要**：目標値に一致する要素のうち最初（左端）のインデックスを返します。
+- **戻り値**：目標値が存在する場合は左端インデックスを返します。見つからない場合、`-(挿入位置 + 1)`を返します。
+- **使用例**：重複要素を含む配列で、目標値の出現開始位置を求める場合に使用します。
 
 ### 上限探索（Upper Bound Search）
 
-- **概要**：目標値以上の最小要素のインデックスを返します。
-- **戻り値**：条件を満たす値が存在する場合、そのインデックスを返します。見つからない場合、`-(挿入位置 + 1)`を返します。
-- **使用例**：目標値以上の最小値を探す場合や、配列内で目標値以上の要素の数を数える場合に使用します。
+- **概要**：目標値に一致する要素のうち最後（右端）のインデックスを返します。
+- **戻り値**：目標値が存在する場合は右端インデックスを返します。見つからない場合、`-(挿入位置 + 1)`を返します。
+- **使用例**：重複要素を含む配列で、目標値の出現終了位置を求める場合に使用します。
 
 ## 利用例
 
@@ -144,7 +142,8 @@ int rangeResult = ArrayBinarySearch.normalSearch(largeArray, 2, 5, 4);
 
 - **ソート済み配列が必須**：探索対象の配列はあらかじめ昇順でソートされている必要があります。
 - 探索実行前にはnullチェックを行ってください。
-- 範囲指定の際、`[l, r)`形式（左側は含むが右側は含まない）を使用してください。`l == r` の空区間は有効で、`l > r` の場合のみ `INVALID_BOUNDS` となります。
+- 範囲指定の際、`[l, r)`形式（左側は含むが右側は含まない）を使用してください。`l == r` の空区間は有効で、`l > r`
+  でも専用例外は送出されません。
 - 探索に失敗した場合の戻り値は`-(挿入位置 + 1)`となります。挿入位置を取得するには`-(戻り値) - 1`の計算が必要です。
 - 配列内に重複要素がある場合、通常の二分探索は任意の一致する要素のインデックスを返す可能性があります。
 
@@ -164,6 +163,7 @@ int rangeResult = ArrayBinarySearch.normalSearch(largeArray, 2, 5, 4);
 | **バージョン 2.0** | 2025-06-30 | 内部実装を最適化し、各探索タイプ（通常、上限、下限）に特化したメソッドを提供することでパフォーマンスを向上。SearchTypeの列挙型を削除し、コードをよりシンプルかつ効率的に改善。整数型と長整数型の配列では直接比較を行うことで比較メソッド呼び出しのオーバーヘッドを削減 |
 | **バージョン 2.1** | 2025-10-13 | 全メソッド引数、ローカル変数に`final`を追加し、不変性を向上                                                                                                        |
 | **バージョン 2.2** | 2026-01-06 | `validateRange` の境界判定を `l > r` のみ不正とし、空区間を有効化。ドキュメントを更新                                                                                  |
+| **バージョン 3.0** | 2026-04-17 | `BSException`/`validateRange` 前提の説明を削除し、軽量化された現行実装へ整合。`lowerBoundSearch` を一致左端、`upperBoundSearch` を一致右端として明確化                            |
 
 ### バージョン管理について
 

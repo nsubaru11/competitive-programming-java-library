@@ -39,15 +39,15 @@ public final class Example {
 		// 上限探索(Upper Bound)
 		target = 30;
 		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
-		System.out.println("上限探索: " + target + " 以上の最小値のインデックス = " + index + " → 値: " + sortedArray[index]);
+		System.out.println("上限探索: " + target + " と一致する右端インデックス = " + index + " → 値: " + sortedArray[index]);
 
 		target = 70;
 		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
-		System.out.println("上限探索: " + target + " 以上の最小値のインデックス = " + index + " → 値: " + sortedArray[index]);
+		System.out.println("上限探索: " + target + " と一致する右端インデックス = " + index + " → 値: " + sortedArray[index]);
 
 		target = 100;
 		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
-		System.out.print("上限探索: " + target + " 以上の最小値のインデックス = " + index);
+		System.out.print("上限探索: " + target + " と一致する右端インデックス = " + index);
 		if (index < 0) {
 			insertPos = -index - 1; // 挿入位置の計算
 			System.out.println(", 挿入位置 = " + insertPos + " (検索値が配列の最大値よりも大きい)");
@@ -59,15 +59,15 @@ public final class Example {
 		// 下限探索(Lower Bound)
 		target = 30;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, 0, sortedArray.length, target);
-		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index + " → 値: " + sortedArray[index]);
+		System.out.println("下限探索: " + target + " と一致する左端インデックス = " + index + " → 値: " + sortedArray[index]);
 
 		target = 70;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, 0, sortedArray.length, target);
-		System.out.println("下限探索: " + target + " 以下の最大値のインデックス = " + index + " → 値: " + sortedArray[index]);
+		System.out.println("下限探索: " + target + " と一致する左端インデックス = " + index + " → 値: " + sortedArray[index]);
 
 		target = 0;
 		index = ArrayBinarySearch.lowerBoundSearch(sortedArray, target);
-		System.out.print("下限探索: " + target + " 以下の最大値のインデックス = " + index);
+		System.out.print("下限探索: " + target + " と一致する左端インデックス = " + index);
 		if (index < 0) {
 			insertPos = -index - 1; // 挿入位置の計算
 			System.out.println(", 挿入位置 = " + insertPos + " (検索値が配列の最小値よりも小さい)");

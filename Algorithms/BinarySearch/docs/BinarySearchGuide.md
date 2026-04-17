@@ -14,6 +14,7 @@
 
 - 静的メソッドのみを持つユーティリティクラスであり、インスタンス化を防ぐためにコンストラクタは`private`に設定されています。
 - `CompareFunction`インターフェースを利用した柔軟な比較ロジックのカスタマイズ
+- `CompareFunction` は `int compare(long index)` のシグネチャを採用
 - 整数型(int)と長整数型(long)の両方の範囲に対応
 - 探索に失敗した場合は挿入位置の情報を含んだ負の値を返す（-(挿入位置 + 1)）
 - シンプルで効率的なアルゴリズム実装
@@ -22,7 +23,6 @@
 ## 依存関係
 
 - `CompareFunction` - 二分探索の比較ロジックを定義する関数型インターフェース
-- `BSException` - 不正な引数や条件が与えられた際に投げられる例外クラス
 
 ## 主な機能
 
@@ -55,7 +55,7 @@ public static int normalSearch(int l, int r, CompareFunction comparator)
 	- `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件にちょうど一致する整数。見つからない場合は-(挿入位置 + 1)
-- **例外**：`BSException` - comparatorがnullの場合、または範囲が不正な場合
+- **例外**：明示的な専用例外はありません（`comparator == null` の場合は実行時に `NullPointerException` が発生します）
 - **使用例**：特定の条件を満たす値を探索する場合に使用します。
 
 ``` java
@@ -68,7 +68,7 @@ public static long normalSearch(long l, long r, CompareFunction comparator)
 	- `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件にちょうど一致する長整数。見つからない場合は-(挿入位置 + 1)
-- **例外**：`BSException` - comparatorがnullの場合、または範囲が不正な場合
+- **例外**：明示的な専用例外はありません（`comparator == null` の場合は実行時に `NullPointerException` が発生します）
 - **使用例**：大きな数値範囲で特定の条件を満たす値を探索する場合に使用します。
 
 #### 上限探索（Upper Bound）
@@ -83,7 +83,7 @@ public static int upperBoundSearch(int l, int r, CompareFunction comparator)
 	- `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最大の整数。見つからない場合は-(挿入位置 + 1)
-- **例外**：`BSException` - comparatorがnullの場合、または範囲が不正な場合
+- **例外**：明示的な専用例外はありません（`comparator == null` の場合は実行時に `NullPointerException` が発生します）
 - **使用例**：条件を満たす最大の値を探索する場合に使用します。
 
 ``` java
@@ -96,7 +96,7 @@ public static long upperBoundSearch(long l, long r, CompareFunction comparator)
 	- `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最大の長整数。見つからない場合は-(挿入位置 + 1)
-- **例外**：`BSException` - comparatorがnullの場合、または範囲が不正な場合
+- **例外**：明示的な専用例外はありません（`comparator == null` の場合は実行時に `NullPointerException` が発生します）
 - **使用例**：大きな数値範囲で条件を満たす最大の値を探索する場合に使用します。
 
 #### 下限探索（Lower Bound）
@@ -111,7 +111,7 @@ public static int lowerBoundSearch(int l, int r, CompareFunction comparator)
 	- `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最小の整数。見つからない場合は-(挿入位置 + 1)
-- **例外**：`BSException` - comparatorがnullの場合、または範囲が不正な場合
+- **例外**：明示的な専用例外はありません（`comparator == null` の場合は実行時に `NullPointerException` が発生します）
 - **使用例**：条件を満たす最小の値を探索する場合に使用します。
 
 ``` java
@@ -124,7 +124,7 @@ public static long lowerBoundSearch(long l, long r, CompareFunction comparator)
 	- `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最小の長整数。見つからない場合は-(挿入位置 + 1)
-- **例外**：`BSException` - comparatorがnullの場合、または範囲が不正な場合
+- **例外**：明示的な専用例外はありません（`comparator == null` の場合は実行時に `NullPointerException` が発生します）
 - **使用例**：大きな数値範囲で条件を満たす最小の値を探索する場合に使用します。
 
 ## 利用例
@@ -169,7 +169,8 @@ double sqrtApprox = (double) sqrtResult / precision;
 	- 負の値: 対象の値が条件より小さい場合
 
 - 範囲の指定は左閉右開区間（`[l, r)`）で行われます
-- `l == r` の空区間も有効です。`l > r` の場合のみ `INVALID_BOUNDS` が送出されます
+- `l == r` の空区間は有効です（結果は探索失敗として `-(挿入位置 + 1)` になります）
+- 現在実装では `validateRange` を持たないため、`l > r` でも専用例外は送出されません
 - 探索に失敗した場合の戻り値は`-(挿入位置 + 1)`となります。挿入位置を取得するには`-(戻り値) - 1`の計算が必要です。
 - 比較関数内で例外が発生した場合、その例外はそのまま伝播されます。
 
@@ -188,6 +189,7 @@ double sqrtApprox = (double) sqrtResult / precision;
 | **バージョン 2.0** | 2025-06-30 | 内部実装を最適化し、各探索タイプ（通常、上限、下限）に特化したメソッドを提供することでパフォーマンスを向上。SearchTypeの列挙型を削除し、コードをよりシンプルかつ効率的に改善 |
 | **バージョン 2.1** | 2025-10-13 | 全メソッド引数、ローカル変数に`final`を追加し、不変性を向上                                                           |
 | **バージョン 2.2** | 2026-01-06 | `validateRange` の境界判定を `l > r` のみ不正とし、空区間を有効化。ドキュメントを更新                                     |
+| **バージョン 3.0** | 2026-04-17 | `CompareFunction` の戻り値型を `int` に統一し、`validateRange` と `BSException` の記載を削除して現行実装へ整合         |
 
 ### バージョン管理について
 
