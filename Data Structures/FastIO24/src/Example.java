@@ -12,8 +12,8 @@ public class Example {
 	}
 
 	public static void main(String[] args) {
-		try (final FastScanner sc = new FastScanner();
-		     final FastPrinter out = new FastPrinter()) {
+		try (final FastPrinter out = new FastPrinter()) {
+			final FastScanner sc = new FastScanner();
 			solve(sc, out);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
