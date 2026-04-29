@@ -1,21 +1,21 @@
 import java.util.*;
 import java.util.function.*;
 
-@SuppressWarnings({"unused", "unchecked"})
-public final class LazySegmentTree<T> implements Iterable<T> {
-	private final int n, size, log;
-	private final T identity;
-	private final BinaryOperator<T> operator, composition;
-	private final BiFunction<T, T, T> mapping;
-	private final T[] tree, lazy;
+@SuppressWarnings("unused")
+public final class IntLazySegmentTree implements Iterable<Integer> {
+	private static final IntBinaryOperator DEFAULT_MAPPING = (f, x) -> f;
+	private static final IntBinaryOperator DEFAULT_COMPOSITION = (f, g) -> f;
+	private final int n, size, log, identity;
+	private final IntBinaryOperator operator, mapping, composition;
+	private final int[] tree, lazy;
 	private final boolean[] hasLazy;
 
-	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity) {
-		this(n, operator, identity, (f, x) -> f, (f, g) -> f);
+	public IntLazySegmentTree(final int n, final IntBinaryOperator operator, final int identity) {
+		this(n, operator, identity, DEFAULT_MAPPING, DEFAULT_COMPOSITION);
 	}
 
-	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity,
-	                       final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
+	public IntLazySegmentTree(final int n, final IntBinaryOperator operator, final int identity,
+	                          final IntBinaryOperator mapping, final IntBinaryOperator composition) {
 		this.n = n;
 		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
 		this.identity = identity;
@@ -23,41 +23,41 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		this.mapping = mapping;
 		this.composition = composition;
 		log = Integer.numberOfTrailingZeros(size);
-		tree = (T[]) new Object[size << 1];
-		if (identity != null) Arrays.fill(tree, identity);
-		lazy = (T[]) new Object[size << 1];
+		tree = new int[size << 1];
+		if (identity != 0) Arrays.fill(tree, identity);
+		lazy = new int[size << 1];
 		hasLazy = new boolean[size << 1];
 	}
 
-	public LazySegmentTree(final T[] data, final BinaryOperator<T> operator, final T identity) {
-		this(data, operator, identity, (f, x) -> f, (f, g) -> f);
+	public IntLazySegmentTree(final int[] data, final IntBinaryOperator operator, final int identity) {
+		this(data, operator, identity, DEFAULT_MAPPING, DEFAULT_COMPOSITION);
 	}
 
-	public LazySegmentTree(final T[] data, final BinaryOperator<T> operator, final T identity,
-	                       final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
+	public IntLazySegmentTree(final int[] data, final IntBinaryOperator operator, final int identity,
+	                          final IntBinaryOperator mapping, final IntBinaryOperator composition) {
 		this(data.length, operator, identity, mapping, composition);
 		System.arraycopy(data, 0, tree, size, n);
 		buildAll();
 	}
 
-	public T get(final int i) {
+	public int get(final int i) {
 		final int idx = size + i;
 		pushPath(idx);
 		return tree[idx];
 	}
 
-	public void set(final int i, final T v) {
+	public void set(final int i, final int v) {
 		final int idx = size + i;
 		pushPath(idx);
 		tree[idx] = v;
 		for (int j = idx >> 1; j > 0; j >>= 1) update(j);
 	}
 
-	public void apply(final int i, final T v) {
+	public void apply(final int i, final int v) {
 		apply(i, i + 1, v);
 	}
 
-	public void apply(int l, int r, final T v) {
+	public void apply(int l, int r, final int v) {
 		if (l >= r) return;
 		l += size;
 		r += size;
@@ -70,46 +70,46 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		updateBoundaries(l2, r2);
 	}
 
-	public void fill(final T val) {
+	public void fill(final int val) {
 		Arrays.fill(tree, size, size + n, val);
 		buildAll();
 	}
 
-	public void setAll(final IntFunction<T> func) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.apply(i);
+	public void setAll(final IntUnaryOperator func) {
+		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.applyAsInt(i);
 		buildAll();
 	}
 
-	public T query(int l, int r) {
+	public int query(int l, int r) {
 		if (l >= r) return identity;
 		l += size;
 		r += size;
 		pushBoundaries(l, r);
-		T sml = identity, smr = identity;
+		int sml = identity, smr = identity;
 		for (; l < r; l >>= 1, r >>= 1) {
-			if ((l & 1) == 1) sml = operator.apply(sml, tree[l++]);
-			if ((r & 1) == 1) smr = operator.apply(tree[--r], smr);
+			if ((l & 1) == 1) sml = operator.applyAsInt(sml, tree[l++]);
+			if ((r & 1) == 1) smr = operator.applyAsInt(tree[--r], smr);
 		}
-		return operator.apply(sml, smr);
+		return operator.applyAsInt(sml, smr);
 	}
 
-	public T queryAll() {
+	public int queryAll() {
 		return tree[1];
 	}
 
-	public int maxRight(final int l, final Predicate<T> tester) {
+	public int maxRight(final int l, final IntPredicate tester) {
 		if (l == n) return n;
-		T ans = identity;
+		int ans = identity;
 		int cl = l + size;
 		pushPath(cl);
 		do {
 			cl >>= Integer.numberOfTrailingZeros(cl);
-			T combined = operator.apply(ans, tree[cl]);
+			int combined = operator.applyAsInt(ans, tree[cl]);
 			if (!tester.test(combined)) {
 				while (cl < size) {
 					push(cl);
 					cl <<= 1;
-					combined = operator.apply(ans, tree[cl]);
+					combined = operator.applyAsInt(ans, tree[cl]);
 					if (tester.test(combined)) {
 						ans = combined;
 						cl++;
@@ -123,19 +123,19 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		return n;
 	}
 
-	public int minLeft(final int r, final Predicate<T> tester) {
+	public int minLeft(final int r, final IntPredicate tester) {
 		if (r == 0) return 0;
-		T ans = identity;
+		int ans = identity;
 		int cr = r + size - 1;
 		pushPath(cr);
 		do {
 			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
-			T combined = operator.apply(tree[cr], ans);
+			int combined = operator.applyAsInt(tree[cr], ans);
 			if (!tester.test(combined)) {
 				while (cr < size) {
 					push(cr);
 					cr = (cr << 1) | 1;
-					combined = operator.apply(tree[cr], ans);
+					combined = operator.applyAsInt(tree[cr], ans);
 					if (tester.test(combined)) {
 						ans = combined;
 						cr--;
@@ -154,26 +154,14 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	private void buildAll() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.apply(tree[i << 1], tree[i << 1 | 1]);
+		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[i << 1 | 1]);
 		Arrays.fill(hasLazy, false);
 	}
 
-	private void update(final int i) {
-		tree[i] = operator.apply(tree[i << 1], tree[i << 1 | 1]);
-	}
-
-	private void push(final int i) {
-		if (!hasLazy[i]) return;
-		final T f = lazy[i];
-		allApply(i << 1, f);
-		allApply(i << 1 | 1, f);
-		hasLazy[i] = false;
-	}
-
-	private void allApply(final int i, final T f) {
-		tree[i] = mapping.apply(f, tree[i]);
+	private void allApply(final int i, final int f) {
+		tree[i] = mapping.applyAsInt(f, tree[i]);
 		if (i >= size) return;
-		lazy[i] = hasLazy[i] ? composition.apply(f, lazy[i]) : f;
+		lazy[i] = hasLazy[i] ? composition.applyAsInt(f, lazy[i]) : f;
 		hasLazy[i] = true;
 	}
 
@@ -188,6 +176,14 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		}
 	}
 
+	private void push(final int i) {
+		if (!hasLazy[i]) return;
+		final int f = lazy[i];
+		allApply(i << 1, f);
+		allApply(i << 1 | 1, f);
+		hasLazy[i] = false;
+	}
+
 	private void updateBoundaries(final int l, final int r) {
 		for (int i = 1; i <= log; i++) {
 			if (((l >> i) << i) != l) update(l >> i);
@@ -195,15 +191,19 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		}
 	}
 
-	public Iterator<T> iterator() {
-		return new Iterator<>() {
+	private void update(final int i) {
+		tree[i] = operator.applyAsInt(tree[i << 1], tree[i << 1 | 1]);
+	}
+
+	public PrimitiveIterator.OfInt iterator() {
+		return new PrimitiveIterator.OfInt() {
 			private int idx = 0;
 
 			public boolean hasNext() {
 				return idx < n;
 			}
 
-			public T next() {
+			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return tree[size + idx++];
 			}

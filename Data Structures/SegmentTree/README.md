@@ -2,45 +2,64 @@
 
 ## 概要
 
-Segment Tree（セグメント木）データ構造に関連するクラス群を提供します。
-このフォルダには、ジェネリック型に対応した汎用的な `SegmentTree` クラス、およびプリミティブ型に特化してパフォーマンスを向上させた
-`IntSegmentTree` と `LongSegmentTree` クラスが含まれています。
+Segment Tree（セグメント木）に関連するクラス群を提供します。  
+このフォルダでは、通常版セグメント木・遅延セグメント木・一次和/二乗和特化セグメント木を、ジェネリクス版とプリミティブ版の両方で利用できます。
 
 ## 実装クラス
 
-### [SegmentTree](src/SegmentTree.java)
+### [SegmentTree](src/SegmentTree.java) / [IntSegmentTree](src/IntSegmentTree.java) / [LongSegmentTree](src/LongSegmentTree.java)
 
-- **用途**：任意のオブジェクト型 `T` を扱う汎用的なセグメント木。
+- **用途**：点更新 + 範囲集約クエリ向けの標準セグメント木。
 - **特徴**：
-	- 集約ルールを定義する二項演算 `operator` とその単位元 `identity`
-	  をコンストラクタで指定でき、範囲合計、範囲最小値、範囲最大値、累積判定 (`maxRight`/`minLeft`) まで幅広く適用できます。
-	- 点更新 (`set`/`apply`) は都度親ノードへ反映され、常に最新状態で `query`/`queryAll`/境界探索を実行できます。
-	- `fill` や `setAll` を用意し、全要素の一括変更にも対応しています。
+	- `query` / `queryAll` / `maxRight` / `minLeft` に対応。
+	- `SegmentTree` は任意型、`IntSegmentTree` / `LongSegmentTree` は高速なプリミティブ特化。
+	- `add` / `multiply` / `apply(a, b)` など（プリミティブ版）を備え、点更新表現が豊富。
 - **時間計算量**：
-	- 初期化: $O(N)$
-	- 点更新 (`set`/`apply`): $O(\log N)$
-	- 範囲クエリ (`query`/`queryAll`/`maxRight`/`minLeft`): $O(\log N)$
+	- 構築: $O(N)$
+	- 更新 / クエリ / 境界探索: $O(\log N)$
 - **空間計算量**：$O(N)$
 
-### [IntSegmentTree](src/IntSegmentTree.java) / [LongSegmentTree](src/LongSegmentTree.java)
+### [LazySegmentTree](src/LazySegmentTree.java) / [IntLazySegmentTree](src/IntLazySegmentTree.java) / [LongLazySegmentTree](src/LongLazySegmentTree.java)
 
-- **用途**：`int` 型または `long` 型のデータに特化したセグメント木。
+- **用途**：区間更新 + 範囲集約クエリ向けの遅延セグメント木。
 - **特徴**：
-	- プリミティブ型を直接扱うことで、ジェネリック版の `SegmentTree` で生じるボクシング・アンボクシングのオーバーヘッドを解消し、より高いパフォーマンスを発揮します。
-	- 汎用版と同等の API（`set`/`apply`/`fill`/`setAll`/`query`/`queryAll`/`maxRight`/`minLeft`）を提供し、境界探索も同じ要領で利用できます。
-- **時間計算量**：`SegmentTree` と同様
-- **空間計算量**：`SegmentTree` と同様
+	- `apply(l, r, v)` で遅延更新を適用可能。
+	- `mapping` / `composition` により更新則を差し替え可能。
+	- `maxRight` / `minLeft` など探索 API も利用可能。
+- **時間計算量**：
+	- 構築: $O(N)$
+	- 区間更新 / 区間クエリ / 境界探索: $O(\log N)$
+- **空間計算量**：$O(N)$
+
+### [IntSquareSumSegmentTree](src/IntSquareSumSegmentTree.java) / [LongSquareSumSegmentTree](src/LongSquareSumSegmentTree.java)
+
+- **用途**：区間の一次和・二乗和を同時に扱う専用セグメント木。
+- **特徴**：
+	- `query`（一次和）と `query2`（二乗和）を提供。
+	- `add` / `multiply` / `set` / `apply(a, b)` を点・区間の両方に適用可能。
+	- すべて法 `mod`（既定値 `998244353`）で計算。
+- **時間計算量**：
+	- 構築: $O(N)$
+	- 各更新 / 各クエリ: $O(\log N)$
+- **空間計算量**：$O(N)$
 
 ## アルゴリズム（データ構造）選択ガイド
 
-- **`SegmentTree<T>`**:
-	- `Integer` や `Long` 以外のオブジェクト（例: `String`
-	  、カスタムオブジェクト）をセグメント木で扱いたい場合に選択します。柔軟性が高いですが、プリミティブ型を扱う場合は特化版に比べて若干のパフォーマンスオーバーヘッドがあります。
+- **標準集約（点更新中心）**:
+	- `SegmentTree` / `IntSegmentTree` / `LongSegmentTree`
+- **区間更新が必要**:
+	- `LazySegmentTree` / `IntLazySegmentTree` / `LongLazySegmentTree`
+- **一次和 + 二乗和を同時管理**:
+	- `IntSquareSumSegmentTree` / `LongSquareSumSegmentTree`
 
-- **`IntSegmentTree` / `LongSegmentTree`**:
-	- `int` 型または `long` 型の配列に対して、計算速度が要求される問題に取り組む場合に最適です。競技プログラミングなど、パフォーマンスが重要な場面での使用を推奨します。
+## Guide
+
+- [SegmentTree Guide](docs/SegmentTreeGuide.md)
+- [LazySegmentTree Guide](docs/LazySegmentTreeGuide.md)
+- [SquareSumSegmentTree Guide](docs/SquareSumSegmentTreeGuide.md)
 
 ## 注意事項
 
-- このライブラリの実装は、再帰を用いないボトムアップ形式のセグメント木です。
-- `query(l, r)` の範囲指定は、`l` 以上 `r` 未満の半開区間 `[l, r)` です。
+- すべて非再帰ボトムアップ実装です。
+- 区間指定は半開区間 `[l, r)` を採用しています。
+- `src/Check*.java` は検証用コードで、提出用ライブラリ本体とは用途が異なります。

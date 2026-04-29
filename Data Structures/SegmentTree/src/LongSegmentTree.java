@@ -32,15 +32,27 @@ public final class LongSegmentTree implements Iterable<Long> {
 		return tree[size + i];
 	}
 
-	public void set(final int i, final long e) {
-		final int idx = size + i;
-		if (tree[idx] == e) return;
-		tree[idx] = e;
-		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
+	public long set(final int i, final long e) {
+		return apply(i, 0, e);
 	}
 
-	public void apply(final int i, final long v, final LongBinaryOperator op) {
-		set(i, op.applyAsLong(tree[size + i], v));
+	public long add(final int i, final long d) {
+		return apply(i, 1, d);
+	}
+
+	public long multiply(final int i, final long a) {
+		return apply(i, a, 0);
+	}
+
+	public long apply(final int i, final long a, final long b) {
+		final int idx = size + i;
+		tree[idx] = tree[idx] * a + b;
+		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
+		return tree[idx];
+	}
+
+	public long apply(final int i, final long v, final LongBinaryOperator op) {
+		return apply(i, 0, op.applyAsLong(tree[size + i], v));
 	}
 
 	public void fill(final long val) {
@@ -96,8 +108,7 @@ public final class LongSegmentTree implements Iterable<Long> {
 		long ans = identity;
 		int cr = r + size - 1;
 		do {
-			cr >>= Integer.numberOfTrailingZeros(~cr);
-			if (cr == 0) cr = 1;
+			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
 			long combined = operator.applyAsLong(tree[cr], ans);
 			if (!tester.test(combined)) {
 				while (cr < size) {

@@ -32,15 +32,16 @@ public final class SegmentTree<T> implements Iterable<T> {
 		return tree[size + i];
 	}
 
-	public void set(final int i, final T e) {
+	public T set(final int i, final T e) {
 		final int idx = size + i;
-		if (tree[idx] == e) return;
+		if (Objects.equals(tree[idx], e)) return e;
 		tree[idx] = e;
 		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.apply(tree[j << 1], tree[(j << 1) | 1]);
+		return tree[idx];
 	}
 
-	public void apply(final int i, final T v, final BinaryOperator<T> op) {
-		set(i, op.apply(tree[size + i], v));
+	public T apply(final int i, final T v, final BinaryOperator<T> op) {
+		return set(i, op.apply(tree[size + i], v));
 	}
 
 	public void fill(final T val) {

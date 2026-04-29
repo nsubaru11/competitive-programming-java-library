@@ -2,21 +2,21 @@ import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 import java.io.*;
-import java.lang.reflect.*;
+import java.lang.invoke.*;
 import java.math.*;
+import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
-import sun.misc.*;
-
-// https://judge.yosupo.jp/problem/point_add_range_sum
-public final class Check3 {
+// https://atcoder.jp/contests/abc455/tasks/abc455_f
+public final class Check6 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
 	private static final int MOD = 998244353;
 	// private static final int MOD = 1_000_000_007;
+	private static final char[] op = new char[]{'L', 'U', 'R', 'D'};
 	private static final int[] di = new int[]{0, -1, 0, 1, -1, -1, 1, 1};
 	private static final int[] dj = new int[]{-1, 0, 1, 0, -1, 1, 1, -1};
 	private static final FastScanner sc = new FastScanner();
@@ -26,17 +26,15 @@ public final class Check3 {
 	private static void solve() {
 		int n = sc.nextInt();
 		int q = sc.nextInt();
-		LongSegmentTree s = new LongSegmentTree(n, Long::sum, 0);
-		s.setAll(i -> sc.nextInt());
+		IntSquareSumSegmentTree arr = new IntSquareSumSegmentTree(n);
+		int div = iModPow(2, MOD - 2, MOD);
 		while (q-- > 0) {
-			int t = sc.nextInt();
+			int l = sc.nextInt0();
+			int r = sc.nextInt();
 			int a = sc.nextInt();
-			int b = sc.nextInt();
-			if (t == 0) {
-				s.add(a, b);
-			} else {
-				out.println(s.query(a, b));
-			}
+			arr.add(l, r, a);
+			long a1 = arr.query(l, r), a2 = arr.query2(l, r);
+			out.println(((a1 * a1 % MOD - a2) * div % MOD + MOD) % MOD);
 		}
 	}
 
@@ -333,129 +331,143 @@ public final class Check3 {
 	}
 
 	@SuppressWarnings("unused")
-	private static final class LongSegmentTree implements Iterable<Long> {
-		private final int n, size;
-		private final long identity;
-		private final LongBinaryOperator operator;
-		private final long[] tree;
+	private static final class IntSquareSumSegmentTree implements Iterable<Integer> {
+		private static final long IDENTITY_LAZY = 1L << 32;
+		private static final int MOD = 998244353;
+		private final int n, size, mod, log;
+		private final int[] tree, tree2;
+		private final long[] lazy;
 
-		public LongSegmentTree(final int n, final LongBinaryOperator operator, final long identity) {
+		public IntSquareSumSegmentTree(final int n) {
+			this(n, MOD);
+		}
+
+		public IntSquareSumSegmentTree(final int n, final int mod) {
 			this.n = n;
 			size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-			this.identity = identity;
-			this.operator = operator;
-			tree = new long[size << 1];
-			if (identity != 0) Arrays.fill(tree, identity);
+			this.mod = mod;
+			log = Integer.numberOfTrailingZeros(size);
+			tree = new int[size << 1];
+			tree2 = new int[size << 1];
+			lazy = new long[size << 1];
+			Arrays.fill(lazy, IDENTITY_LAZY);
 		}
 
-		public LongSegmentTree(final long[] data, final LongBinaryOperator operator, final long identity) {
-			this.n = data.length;
-			size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-			this.identity = identity;
-			this.operator = operator;
-			tree = new long[size << 1];
-			System.arraycopy(data, 0, tree, size, n);
-			if (identity != 0) Arrays.fill(tree, size + n, size << 1, identity);
-			buildAll();
+		public IntSquareSumSegmentTree(final int[] data) {
+			this(data, MOD);
 		}
 
-		public long get(final int i) {
-			return tree[size + i];
-		}
-
-		public long set(final int i, final long e) {
-			return apply(i, 0, e);
-		}
-
-		public long add(final int i, final long d) {
-			return apply(i, 1, d);
-		}
-
-		public long multiply(final int i, final long a) {
-			return apply(i, a, 0);
-		}
-
-		public long apply(final int i, final long a, final long b) {
-			final int idx = size + i;
-			tree[idx] = tree[idx] * a + b;
-			for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
-			return tree[idx];
-		}
-
-		public long apply(final int i, final long v, final LongBinaryOperator op) {
-			return apply(i, 0, op.applyAsLong(tree[size + i], v));
-		}
-
-		public void fill(final long val) {
-			Arrays.fill(tree, size, size + n, val);
-			buildAll();
-		}
-
-		public void setAll(final LongUnaryOperator func) {
-			for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.applyAsLong(i);
-			buildAll();
-		}
-
-		public long query(final int l, final int r) {
-			if (l >= r) return identity;
-			long sml = identity, smr = identity;
-			for (int cl = l + size, cr = r + size; cl < cr; cl >>= 1, cr >>= 1) {
-				if ((cl & 1) == 1) sml = operator.applyAsLong(sml, tree[cl++]);
-				if ((cr & 1) == 1) smr = operator.applyAsLong(tree[--cr], smr);
+		public IntSquareSumSegmentTree(final int[] data, final int mod) {
+			this(data.length, mod);
+			for (int i = 0; i < n; i++) {
+				final int v = data[i] % mod;
+				tree[size + i] = v;
+				tree2[size + i] = (int) ((long) v * v % mod);
 			}
-			return operator.applyAsLong(sml, smr);
+			buildAll();
 		}
 
-		public long queryAll() {
-			return tree[1];
+		public int get(final int i) {
+			final int idx = size + i;
+			pushPath(idx);
+			final int v = tree[idx];
+			return v < 0 ? v + mod : v;
 		}
 
-		public int maxRight(final int l, final LongPredicate tester) {
-			if (l == n) return n;
-			long ans = identity;
-			int cl = l + size;
-			do {
-				cl >>= Integer.numberOfTrailingZeros(cl);
-				long combined = operator.applyAsLong(ans, tree[cl]);
-				if (!tester.test(combined)) {
-					while (cl < size) {
-						cl <<= 1;
-						combined = operator.applyAsLong(ans, tree[cl]);
-						if (tester.test(combined)) {
-							ans = combined;
-							cl++;
-						}
-					}
-					return cl - size;
-				}
-				ans = combined;
-				cl++;
-			} while ((cl & -cl) != cl);
-			return n;
+		public void add(final int i, final int v) {
+			apply(i, i + 1, 1, v);
 		}
 
-		public int minLeft(final int r, final LongPredicate tester) {
-			if (r == 0) return 0;
-			long ans = identity;
-			int cr = r + size - 1;
-			do {
-				while (cr > 1 && (cr & 1) == 1) cr >>= 1;
-				long combined = operator.applyAsLong(tree[cr], ans);
-				if (!tester.test(combined)) {
-					while (cr < size) {
-						cr = (cr << 1) | 1;
-						combined = operator.applyAsLong(tree[cr], ans);
-						if (tester.test(combined)) {
-							ans = combined;
-							cr--;
-						}
-					}
-					return cr - size + 1;
-				}
-				ans = combined;
-				cr--;
-			} while ((cr & -cr) != cr);
-			return 0;
+		public void add(int l, int r, final int v) {
+			apply(l, r, 1, v);
+		}
+
+		public void multiply(final int i, final int v) {
+			apply(i, i + 1, v, 0);
+		}
+
+		public void multiply(final int l, final int r, final int v) {
+			apply(l, r, v, 0);
+		}
+
+		public void set(final int i, final int v) {
+			apply(i, i + 1, 0, v);
+		}
+
+		public void set(final int l, final int r, final int v) {
+			apply(l, r, 0, v);
+		}
+
+		public void apply(final int i, final int a, final int b) {
+			apply(i, i + 1, a, b);
+		}
+
+		public void apply(int l, int r, final int a, final int b) {
+			if (l >= r) return;
+			l += size;
+			r += size;
+			pushBoundaries(l, r);
+			final int l2 = l, r2 = r;
+			final int ma = a % mod, mb = b % mod, ma2 = (int) ((long) ma * ma % mod), mb2 = (int) ((long) mb * mb % mod), mab2 = (int) (((long) ma * mb << 1) % mod);
+			for (int len = 1; l < r; l >>= 1, r >>= 1, len <<= 1) {
+				if ((l & 1) == 1) allApply(l++, ma, mb, ma2, mb2, mab2, len);
+				if ((r & 1) == 1) allApply(--r, ma, mb, ma2, mb2, mab2, len);
+			}
+			updateBoundaries(l2, r2);
+		}
+
+		public void fill(final int val) {
+			final int v = val % mod;
+			Arrays.fill(tree, size, size + n, v);
+			Arrays.fill(tree2, size, size + n, (int) ((long) v * v % mod));
+			buildAll();
+		}
+
+		public void setAll(final IntUnaryOperator func) {
+			for (int i = 0, idx = size; i < n; i++, idx++) {
+				final int v = func.applyAsInt(i) % mod;
+				tree[idx] = v;
+				tree2[idx] = (int) ((long) v * v % mod);
+			}
+			buildAll();
+		}
+
+		public int query(int l, int r) {
+			if (l >= r) return 0;
+			l += size;
+			r += size;
+			pushBoundaries(l, r);
+			long ans = 0;
+			for (; l < r; l >>= 1, r >>= 1) {
+				if ((l & 1) == 1) ans += tree[l++];
+				if ((r & 1) == 1) ans += tree[--r];
+			}
+			final int v = (int) (ans % mod);
+			return v < 0 ? v + mod : v;
+		}
+
+		public int query2(int l, int r) {
+			if (l >= r) return 0;
+			l += size;
+			r += size;
+			pushBoundaries(l, r);
+			long ans = 0;
+			for (; l < r; l >>= 1, r >>= 1) {
+				if ((l & 1) == 1) ans += tree2[l++];
+				if ((r & 1) == 1) ans += tree2[--r];
+			}
+			final int v = (int) (ans % mod);
+			return v < 0 ? v + mod : v;
+		}
+
+		public int queryAll() {
+			final int v = tree[1];
+			return v < 0 ? v + mod : v;
+		}
+
+		public int query2All() {
+			final int v = tree2[1];
+			return v < 0 ? v + mod : v;
 		}
 
 		public int size() {
@@ -463,20 +475,72 @@ public final class Check3 {
 		}
 
 		private void buildAll() {
-			for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsLong(tree[i << 1], tree[(i << 1) | 1]);
+			for (int i = size - 1; i > 0; i--) tree[i] = (int) (((long) tree[i << 1] + tree[i << 1 | 1]) % mod);
+			for (int i = size - 1; i > 0; i--) tree2[i] = (int) (((long) tree2[i << 1] + tree2[i << 1 | 1]) % mod);
+			Arrays.fill(lazy, IDENTITY_LAZY);
 		}
 
-		public PrimitiveIterator.OfLong iterator() {
-			return new PrimitiveIterator.OfLong() {
+		private void allApply(final int i, final int a, final int b, final int a2, final int b2, final int ab2, final int len) {
+			final int before = tree[i];
+			tree2[i] = (int) (((long) a2 * tree2[i] + (long) ab2 * before + (long) b2 * len) % mod);
+			tree[i] = (int) (((long) a * before + (long) b * len) % mod);
+			if (i >= size) return;
+			lazy[i] = compose(a, b, lazy[i]);
+		}
+
+		private void pushPath(final int idx) {
+			for (int i = log; i >= 1; i--) push(idx >> i, 1 << (i - 1));
+		}
+
+		private void pushBoundaries(final int l, final int r) {
+			for (int i = log; i >= 1; i--) {
+				final int len = 1 << (i - 1);
+				if (((l >> i) << i) != l) push(l >> i, len);
+				if (((r >> i) << i) != r) push((r - 1) >> i, len);
+			}
+		}
+
+		private void push(final int i, final int len) {
+			final long f = lazy[i];
+			final int a = (int) (f >>> 32), b = (int) f;
+			if (a == 1 && b == 0) return;
+			final int a2 = (int) ((long) a * a % mod), b2 = (int) ((long) b * b % mod), ab2 = (int) (((long) a * b << 1) % mod);
+			allApply(i << 1, a, b, a2, b2, ab2, len);
+			allApply(i << 1 | 1, a, b, a2, b2, ab2, len);
+			lazy[i] = IDENTITY_LAZY;
+		}
+
+		private void updateBoundaries(final int l, final int r) {
+			for (int i = 1; i <= log; i++) {
+				if (((l >> i) << i) != l) update(l >> i);
+				if (((r >> i) << i) != r) update((r - 1) >> i);
+			}
+		}
+
+		private void update(final int i) {
+			tree[i] = (int) (((long) tree[i << 1] + tree[i << 1 | 1]) % mod);
+			tree2[i] = (int) (((long) tree2[i << 1] + tree2[i << 1 | 1]) % mod);
+		}
+
+		private long compose(final int newA, final int newB, final long older) {
+			final int oldA = (int) (older >>> 32), oldB = (int) older;
+			final int composedA = (int) ((long) newA * oldA % mod);
+			final int composedB = (int) (((long) newA * oldB + newB) % mod);
+			return ((long) composedA << 32) | (composedB & 0xFFFFFFFFL);
+		}
+
+		public PrimitiveIterator.OfInt iterator() {
+			return new PrimitiveIterator.OfInt() {
 				private int idx = 0;
 
 				public boolean hasNext() {
 					return idx < n;
 				}
 
-				public long nextLong() {
+				public int nextInt() {
 					if (!hasNext()) throw new NoSuchElementException();
-					return tree[size + idx++];
+					final int v = tree[size + idx++];
+					return v < 0 ? v + mod : v;
 				}
 			};
 		}
@@ -484,15 +548,19 @@ public final class Check3 {
 		@Override
 		public String toString() {
 			final StringBuilder s = new StringBuilder();
-			s.append(tree[size]);
-			for (int i = size + 1; i < size + n; i++) s.append(' ').append(tree[i]);
+			int v = tree[size];
+			s.append(v < 0 ? v + mod : v);
+			for (int i = size + 1; i < size + n; i++) {
+				v = tree[i];
+				s.append(' ').append(v < 0 ? v + mod : v);
+			}
 			return s.toString();
 		}
-
 	}
 
 	@SuppressWarnings("unused")
 	private static final class FastScanner {
+		private static final VarHandle LONG_HANDLE = MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
 		private final byte[] buffer;
 		private final int bufferLength;
 		private int pos = 0;
@@ -539,9 +607,7 @@ public final class Check3 {
 			final byte[] buf = buffer;
 			int p = pos, n = 0;
 			if (negative) b = buf[p++];
-			final Unsafe unsafe = Handles.UNSAFE;
-			final long arrayByteBaseOffset = Handles.ARRAY_BYTE_BASE_OFFSET;
-			long a = unsafe.getLong(buf, arrayByteBaseOffset + p - 1) ^ 0x3030303030303030L;
+			long a = (long) LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
 			final long check = a & 0xF0F0F0F0F0F0F0F0L;
 			if (check == 0) {
 				a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
@@ -566,9 +632,7 @@ public final class Check3 {
 			int p = pos;
 			if (negative) b = buf[p++];
 			long n = 0;
-			final Unsafe unsafe = Handles.UNSAFE;
-			final long arrayByteBaseOffset = Handles.ARRAY_BYTE_BASE_OFFSET;
-			long a = unsafe.getLong(buf, arrayByteBaseOffset + p - 1) ^ 0x3030303030303030L;
+			long a = (long) LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
 			final long check = a & 0xF0F0F0F0F0F0F0F0L;
 			if (check == 0) {
 				a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
@@ -577,7 +641,7 @@ public final class Check3 {
 				n = a;
 				p += 7;
 				b = buf[p++];
-				long a2 = unsafe.getLong(buf, arrayByteBaseOffset + p - 1) ^ 0x3030303030303030L;
+				long a2 = (long) LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
 				final long check2 = a2 & 0xF0F0F0F0F0F0F0F0L;
 				if (check2 == 0) {
 					a2 = (a2 * 10 + (a2 >>> 8)) & 0x00FF00FF00FF00FFL;
@@ -999,21 +1063,6 @@ public final class Check3 {
 			return multiset;
 		}
 
-		private static final class Handles {
-			private static final Unsafe UNSAFE;
-			private static final long ARRAY_BYTE_BASE_OFFSET;
-
-			static {
-				try {
-					final Field f = Unsafe.class.getDeclaredField("theUnsafe");
-					f.setAccessible(true);
-					UNSAFE = (Unsafe) f.get(null);
-					ARRAY_BYTE_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
-				} catch (final Exception e) {
-					throw new RuntimeException("Unsafe initialization failed", e);
-				}
-			}
-		}
 	}
 
 	@SuppressWarnings("unused")
@@ -1062,7 +1111,7 @@ public final class Check3 {
 
 		public FastPrinter(final OutputStream out, final int bufferSize, final boolean autoFlush) {
 			this.out = out;
-			this.buffer = new byte[max(64, roundUpToPowerOfTwo(bufferSize))];
+			this.buffer = new byte[bufferSize(bufferSize)];
 			this.autoFlush = autoFlush;
 		}
 
@@ -1119,8 +1168,8 @@ public final class Check3 {
 			}
 		}
 
-		private static int roundUpToPowerOfTwo(int x) {
-			return x <= 1 ? 1 : 1 << (32 - Integer.numberOfLeadingZeros(x - 1));
+		private static int bufferSize(int x) {
+			return x <= 64 ? 64 : 1 << (32 - Integer.numberOfLeadingZeros(x - 1));
 		}
 
 		@Override
@@ -1230,42 +1279,26 @@ public final class Check3 {
 		}
 
 		public FastPrinter println(final Object o) {
-			if (o == null) return println();
-			else if (o instanceof Boolean b) {
-				return println(b.booleanValue());
-			} else if (o instanceof Byte b) {
-				return println(b.byteValue());
-			} else if (o instanceof Character c) {
-				return println(c.charValue());
-			} else if (o instanceof Integer i) {
-				return println(i.intValue());
-			} else if (o instanceof Long l) {
-				return println(l.longValue());
-			} else if (o instanceof Double d) {
-				return println(d.toString());
-			} else if (o instanceof BigInteger bi) {
-				return println(bi.toString());
-			} else if (o instanceof BigDecimal bd) {
-				return println(bd.toString());
-			} else if (o instanceof String s) {
-				return println(s);
-			} else if (o instanceof boolean[] arr) {
-				return println(arr);
-			} else if (o instanceof char[] arr) {
-				return println(arr);
-			} else if (o instanceof int[] arr) {
-				return println(arr);
-			} else if (o instanceof long[] arr) {
-				return println(arr);
-			} else if (o instanceof double[] arr) {
-				return println(arr);
-			} else if (o instanceof String[] arr) {
-				return println(arr);
-			} else if (o instanceof Object[] arr) {
-				return println(arr);
-			} else {
-				return println(o.toString());
-			}
+			return switch (o) {
+				case null -> println();
+				case Boolean b -> println(b.booleanValue());
+				case Byte b -> println(b.byteValue());
+				case Character c -> println(c.charValue());
+				case Integer i -> println(i.intValue());
+				case Long l -> println(l.longValue());
+				case Double d -> println(d.toString());
+				case BigInteger bi -> println(bi.toString());
+				case BigDecimal bd -> println(bd.toString());
+				case String s -> println(s);
+				case boolean[] arr -> println(arr);
+				case char[] arr -> println(arr);
+				case int[] arr -> println(arr);
+				case long[] arr -> println(arr);
+				case double[] arr -> println(arr);
+				case String[] arr -> println(arr);
+				case Object[] arr -> println(arr);
+				default -> println(o.toString());
+			};
 		}
 
 		public FastPrinter print(final boolean b) {
@@ -1330,42 +1363,26 @@ public final class Check3 {
 		}
 
 		public FastPrinter print(final Object o) {
-			if (o == null) return this;
-			else if (o instanceof Boolean b) {
-				return print(b.booleanValue());
-			} else if (o instanceof Byte b) {
-				return print(b.byteValue());
-			} else if (o instanceof Character c) {
-				return print(c.charValue());
-			} else if (o instanceof Integer i) {
-				return print(i.intValue());
-			} else if (o instanceof Long l) {
-				return print(l.longValue());
-			} else if (o instanceof Double d) {
-				return print(d.toString());
-			} else if (o instanceof BigInteger bi) {
-				return print(bi.toString());
-			} else if (o instanceof BigDecimal bd) {
-				return print(bd.toString());
-			} else if (o instanceof String s) {
-				return print(s);
-			} else if (o instanceof boolean[] arr) {
-				return print(arr);
-			} else if (o instanceof char[] arr) {
-				return print(arr);
-			} else if (o instanceof int[] arr) {
-				return print(arr);
-			} else if (o instanceof long[] arr) {
-				return print(arr);
-			} else if (o instanceof double[] arr) {
-				return print(arr);
-			} else if (o instanceof String[] arr) {
-				return print(arr);
-			} else if (o instanceof Object[] arr) {
-				return print(arr);
-			} else {
-				return print(o.toString());
-			}
+			return switch (o) {
+				case null -> this;
+				case Boolean b -> print(b.booleanValue());
+				case Byte b -> print(b.byteValue());
+				case Character c -> print(c.charValue());
+				case Integer i -> print(i.intValue());
+				case Long l -> print(l.longValue());
+				case Double d -> print(d.toString());
+				case BigInteger bi -> print(bi.toString());
+				case BigDecimal bd -> print(bd.toString());
+				case String s -> print(s);
+				case boolean[] arr -> print(arr);
+				case char[] arr -> print(arr);
+				case int[] arr -> print(arr);
+				case long[] arr -> print(arr);
+				case double[] arr -> print(arr);
+				case String[] arr -> print(arr);
+				case Object[] arr -> print(arr);
+				default -> print(o.toString());
+			};
 		}
 
 		public FastPrinter printf(final String format, final Object... args) {
@@ -1381,7 +1398,7 @@ public final class Check3 {
 			final int bufferLength = buffer.length;
 			if (required <= bufferLength) return;
 			flush();
-			if (additional > bufferLength) buffer = new byte[roundUpToPowerOfTwo(additional)];
+			if (additional > bufferLength) buffer = new byte[bufferSize(additional)];
 		}
 
 		private int write(final boolean b, int p) {
@@ -1393,8 +1410,8 @@ public final class Check3 {
 
 		private int write(int i, int p) {
 			final byte[] buf = buffer;
-			final Unsafe unsafe = Cache.UNSAFE;
-			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			final VarHandle shortHandle = Cache.SHORT_HANDLE;
+			final VarHandle intHandle = Cache.INT_HANDLE;
 			final short[] digits2 = Cache.DIGITS_2;
 			final int[] digits4 = Cache.DIGITS_4;
 			if (i >= 0) i = -i;
@@ -1405,35 +1422,35 @@ public final class Check3 {
 				final int q = i / 100000000;
 				final int r = (q * 100000000) - i;
 				final int hi = r / 10000;
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				intHandle.set(buf, writePos - 8, digits4[hi]);
+				intHandle.set(buf, writePos - 4, digits4[r - hi * 10000]);
 				writePos -= 8;
 				i = q;
 			}
 			if (i <= -10000) {
 				final int q = i / 10000;
 				final int r = (q * 10000) - i;
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+				intHandle.set(buf, writePos - 4, digits4[r]);
 				writePos -= 4;
 				i = q;
 			}
 			if (i <= -100) {
 				final int q = i / 100;
 				final int r = (q * 100) - i;
-				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+				shortHandle.set(buf, writePos - 2, digits2[r]);
 				writePos -= 2;
 				i = q;
 			}
 			final int r = -i;
-			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+			if (r >= 10) shortHandle.set(buf, writePos - 2, digits2[r]);
 			else buf[writePos - 1] = (byte) (r + ZERO);
 			return p + digits;
 		}
 
 		private int write(long l, int p) {
 			final byte[] buf = buffer;
-			final Unsafe unsafe = Cache.UNSAFE;
-			final long byteArrayBaseOffset = Cache.BYTE_ARRAY_BASE_OFFSET;
+			final VarHandle shortHandle = Cache.SHORT_HANDLE;
+			final VarHandle intHandle = Cache.INT_HANDLE;
 			final short[] digits2 = Cache.DIGITS_2;
 			final int[] digits4 = Cache.DIGITS_4;
 			if (l >= 0) l = -l;
@@ -1444,16 +1461,16 @@ public final class Check3 {
 				long q = l / 100000000L;
 				int r = (int) ((q * 100000000L) - l);
 				int hi = r / 10000;
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+				intHandle.set(buf, writePos - 8, digits4[hi]);
+				intHandle.set(buf, writePos - 4, digits4[r - hi * 10000]);
 				writePos -= 8;
 				l = q;
 				if (l <= -100000000L) {
 					q = l / 100000000L;
 					r = (int) ((q * 100000000L) - l);
 					hi = r / 10000;
-					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 8, digits4[hi]);
-					unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r - hi * 10000]);
+					intHandle.set(buf, writePos - 8, digits4[hi]);
+					intHandle.set(buf, writePos - 4, digits4[r - hi * 10000]);
 					writePos -= 8;
 					l = q;
 				}
@@ -1461,35 +1478,42 @@ public final class Check3 {
 			if (l <= -10000) {
 				final long q = l / 10000;
 				final int r = (int) ((q * 10000) - l);
-				unsafe.putInt(buf, byteArrayBaseOffset + writePos - 4, digits4[r]);
+				intHandle.set(buf, writePos - 4, digits4[r]);
 				writePos -= 4;
 				l = q;
 			}
 			if (l <= -100) {
 				final long q = l / 100;
 				final int r = (int) ((q * 100) - l);
-				unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+				shortHandle.set(buf, writePos - 2, digits2[r]);
 				writePos -= 2;
 				l = q;
 			}
 			final int r = (int) -l;
-			if (r >= 10) unsafe.putShort(buf, byteArrayBaseOffset + writePos - 2, digits2[r]);
+			if (r >= 10) shortHandle.set(buf, writePos - 2, digits2[r]);
 			else buf[writePos - 1] = (byte) (r + ZERO);
 			return p + digits;
 		}
 
-		private int write(final String s, int p) {
-			final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.STRING_VALUE_OFFSET);
+		private int write(final CharSequence s, int p) {
 			final int len = s.length();
-			System.arraycopy(src, 0, buffer, p, len);
-			return p + len;
-		}
-
-		private int write(final StringBuilder s, int p) {
-			final byte[] src = (byte[]) Cache.UNSAFE.getObject(s, Cache.ABSTRACT_STRING_BUILDER_VALUE_OFFSET);
-			final int len = s.length();
-			System.arraycopy(src, 0, buffer, p, len);
-			return p + len;
+			final byte[] buf = buffer;
+			int i = 0;
+			final int limit = len & ~7;
+			while (i < limit) {
+				buf[p] = (byte) s.charAt(i);
+				buf[p + 1] = (byte) s.charAt(i + 1);
+				buf[p + 2] = (byte) s.charAt(i + 2);
+				buf[p + 3] = (byte) s.charAt(i + 3);
+				buf[p + 4] = (byte) s.charAt(i + 4);
+				buf[p + 5] = (byte) s.charAt(i + 5);
+				buf[p + 6] = (byte) s.charAt(i + 6);
+				buf[p + 7] = (byte) s.charAt(i + 7);
+				p += 8;
+				i += 8;
+			}
+			while (i < len) buf[p++] = (byte) s.charAt(i++);
+			return p;
 		}
 
 		public FastPrinter println(final int a, final int b) {
@@ -2439,49 +2463,38 @@ public final class Check3 {
 		}
 
 		private static final class Cache {
+			private static final VarHandle SHORT_HANDLE = MethodHandles.byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
+			private static final VarHandle INT_HANDLE = MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
 			private static final byte[] TRUE_BYTES = {'Y', 'e', 's'};
 			private static final byte[] FALSE_BYTES = {'N', 'o'};
+			private static final short[] DIGITS_2 = {
+					12336, 12592, 12848, 13104, 13360, 13616, 13872, 14128, 14384, 14640,
+					12337, 12593, 12849, 13105, 13361, 13617, 13873, 14129, 14385, 14641,
+					12338, 12594, 12850, 13106, 13362, 13618, 13874, 14130, 14386, 14642,
+					12339, 12595, 12851, 13107, 13363, 13619, 13875, 14131, 14387, 14643,
+					12340, 12596, 12852, 13108, 13364, 13620, 13876, 14132, 14388, 14644,
+					12341, 12597, 12853, 13109, 13365, 13621, 13877, 14133, 14389, 14645,
+					12342, 12598, 12854, 13110, 13366, 13622, 13878, 14134, 14390, 14646,
+					12343, 12599, 12855, 13111, 13367, 13623, 13879, 14135, 14391, 14647,
+					12344, 12600, 12856, 13112, 13368, 13624, 13880, 14136, 14392, 14648,
+					12345, 12601, 12857, 13113, 13369, 13625, 13881, 14137, 14393, 14649,
+			};
+			private static final int[] DIGITS_4 = new int[10000];
 			private static final long[] POW10 = {
 					1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
 					1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
 					10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
 					10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
 			};
-			private static final short[] DIGITS_2 = new short[100];
-			private static final int[] DIGITS_4 = new int[10000];
-			private static final Unsafe UNSAFE;
-			private static final long BYTE_ARRAY_BASE_OFFSET;
-			private static final long STRING_VALUE_OFFSET;
-			private static final long ABSTRACT_STRING_BUILDER_VALUE_OFFSET;
 
 			static {
-				try {
-					final Field f = Unsafe.class.getDeclaredField("theUnsafe");
-					f.setAccessible(true);
-					UNSAFE = (Unsafe) f.get(null);
-					BYTE_ARRAY_BASE_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
-					STRING_VALUE_OFFSET = UNSAFE.objectFieldOffset(String.class.getDeclaredField("value"));
-					final Class<?> asbClass = Class.forName("java.lang.AbstractStringBuilder");
-					ABSTRACT_STRING_BUILDER_VALUE_OFFSET = UNSAFE.objectFieldOffset(asbClass.getDeclaredField("value"));
-					final byte[] tmp = new byte[2];
-					int idx2 = 0;
-					for (int i = '0'; i <= '9'; i++) {
-						for (int j = '0'; j <= '9'; j++) {
-							tmp[0] = (byte) i;
-							tmp[1] = (byte) j;
-							DIGITS_2[idx2++] = UNSAFE.getShort(tmp, BYTE_ARRAY_BASE_OFFSET);
-						}
+				int idx4 = 0;
+				for (int i = 0; i < 100; i++) {
+					final int hi = DIGITS_2[i] & 0xFFFF;
+					for (int j = 0; j < 100; j++) {
+						final int lo = DIGITS_2[j] & 0xFFFF;
+						DIGITS_4[idx4++] = (lo << 16) | hi;
 					}
-					int idx4 = 0;
-					for (int i = 0; i < 100; i++) {
-						final int hi = DIGITS_2[i] & 0xFFFF;
-						for (int j = 0; j < 100; j++) {
-							final int lo = DIGITS_2[j] & 0xFFFF;
-							DIGITS_4[idx4++] = (lo << 16) | hi;
-						}
-					}
-				} catch (final Exception e) {
-					throw new RuntimeException("Unsafe initialization failed. Check Java version and environment.", e);
 				}
 			}
 		}

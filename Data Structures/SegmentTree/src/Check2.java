@@ -357,15 +357,27 @@ public final class Check2 {
 			return tree[size + i];
 		}
 
-		public void set(final int i, final int e) {
-			final int idx = size + i;
-			if (tree[idx] == e) return;
-			tree[idx] = e;
-			for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsInt(tree[j << 1], tree[(j << 1) | 1]);
+		public int set(final int i, final int e) {
+			return apply(i, 0, e);
 		}
 
-		public void apply(final int i, final int v, final IntBinaryOperator op) {
-			set(i, op.applyAsInt(tree[size + i], v));
+		public int add(final int i, final int d) {
+			return apply(i, 1, d);
+		}
+
+		public int multiply(final int i, final int a) {
+			return apply(i, a, 0);
+		}
+
+		public int apply(final int i, final int a, final int b) {
+			final int idx = size + i;
+			tree[idx] = tree[idx] * a + b;
+			for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsInt(tree[j << 1], tree[(j << 1) | 1]);
+			return tree[idx];
+		}
+
+		public int apply(final int i, final int v, final IntBinaryOperator op) {
+			return apply(i, 0, op.applyAsInt(tree[size + i], v));
 		}
 
 		public void fill(final int val) {
