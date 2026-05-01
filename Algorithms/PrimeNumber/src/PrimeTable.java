@@ -27,6 +27,7 @@ public final class PrimeTable implements Iterable<Long> {
 
 	public boolean isPrime(final long n) {
 		if (MAX_VALUE < n) throw new IllegalArgumentException();
+		if (n == 1) return false;
 		if ((n & 1) == 0) return n == 2;
 		return !isCompositeOdd(n);
 	}
