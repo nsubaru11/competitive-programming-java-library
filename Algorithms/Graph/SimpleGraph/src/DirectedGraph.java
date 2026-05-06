@@ -1,10 +1,10 @@
-import java.util.*;
-
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
+import java.util.function.*;
+
 /**
- * 無向辺・自己ループを含まない有向連結グラフ管理用ライブラリ
+ * 無向辺・自己ループを含まない有向グラフ管理用ライブラリ
  * <p>
  * 辺は追加順に0始まりの辺IDが割り当てられます。
  * {@link #adjEdgeIds(int)} で取得した辺IDは {@link #to(int)} と {@link #cost(int)} にそのまま渡せます。
@@ -31,13 +31,21 @@ public final class DirectedGraph {
 		add(i, j, 1);
 	}
 
-	public void add(final int i, final int j, long c) {
+	public void add(final int i, final int j, final long c) {
 		dest[edgeCount] = j;
 		next[edgeCount] = first[i];
 		cost[edgeCount] = c;
 		first[i] = edgeCount++;
 		outDegree[i]++;
 		inDegree[j]++;
+	}
+
+	public void addAll(int m, final IntSupplier u, final IntSupplier v) {
+		while (m-- > 0) add(u.getAsInt(), v.getAsInt());
+	}
+
+	public void addAll(int m, final IntSupplier u, final IntSupplier v, final LongSupplier cost) {
+		while (m-- > 0) add(u.getAsInt(), v.getAsInt(), cost.getAsLong());
 	}
 
 	public int degree(final int i) {
@@ -61,45 +69,35 @@ public final class DirectedGraph {
 	}
 
 	public int[] topologicalSort() {
-		int[] degree = new int[n];
+		final int[] degree = new int[n];
 		System.arraycopy(inDegree, 0, degree, 0, n);
-		int[] q = new int[n];
-		int head = 0, tail = 0;
-		for (int i = 0; i < n; i++) {
-			if (degree[i] == 0) q[tail++] = i;
-		}
-		int[] res = new int[n];
-		int idx = 0;
-		while (head < tail) {
-			int u = q[head++];
-			res[idx++] = u;
+		final int[] q = new int[n];
+		int tail = 0;
+		for (int i = 0; i < n; i++) if (degree[i] == 0) q[tail++] = i;
+		for (int head = 0; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
-				degree[v]--;
-				if (degree[v] == 0) q[tail++] = v;
-			}
-		}
-		return idx == n ? res : null;
-	}
-
-	public boolean hasCycle() {
-		int count = 0;
-		int[] degree = new int[n];
-		System.arraycopy(inDegree, 0, degree, 0, n);
-		int[] q = new int[n];
-		int head = 0, tail = 0;
-		for (int i = 0; i < n; i++) {
-			if (degree[i] == 0) q[tail++] = i;
-		}
-		while (head < tail) {
-			int u = q[head++];
-			count++;
-			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
+				final int v = dest[e];
 				if (--degree[v] == 0) q[tail++] = v;
 			}
 		}
-		return count < n;
+		return tail == n ? q : null;
+	}
+
+	public boolean hasCycle() {
+		final int[] degree = new int[n];
+		System.arraycopy(inDegree, 0, degree, 0, n);
+		final int[] q = new int[n];
+		int tail = 0;
+		for (int i = 0; i < n; i++) if (degree[i] == 0) q[tail++] = i;
+		for (int head = 0; head < tail; head++) {
+			final int u = q[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (--degree[v] == 0) q[tail++] = v;
+			}
+		}
+		return tail < n;
 	}
 
 	/**
@@ -113,39 +111,30 @@ public final class DirectedGraph {
 	 * 各成分内の頂点順はDFSの探索順（辺の追加順と頂点番号順）に依存します。
 	 */
 	public int[][] scc() {
-		int[] ord = new int[n];
-		int[] low = new int[n];
-
-		int[] edgeIter = new int[n];
+		final int[] ord = new int[n];
+		final int[] low = new int[n];
+		final int[] edgeIter = new int[n];
 		System.arraycopy(first, 0, edgeIter, 0, n);
-
-		int[] stack = new int[n];
-		int stackPtr = 0;
-
-		int[] sccStack = new int[n];
-		int sccPtr = 0;
-		boolean[] onSccStack = new boolean[n];
-
-		int timer = 1;
-
-		int[] sccList = new int[n];
-		int listPtr = 0;
-		int[] sep = new int[n + 1];
-		int sepPtr = 0;
-		sep[sepPtr++] = 0;
-		for (int i = 0; i < n; i++) if (ord[i] == 0) {
+		final int[] stack = new int[n];
+		final int[] sccStack = new int[n];
+		final boolean[] onSccStack = new boolean[n];
+		final int[] sccList = new int[n];
+		final int[] sep = new int[n + 1];
+		int sepPtr = 1;
+		for (int i = 0, stackPtr = 0, sccPtr = 0, timer = 1, listPtr = 0; i < n; i++)
+			if (ord[i] == 0) {
 			stack[stackPtr++] = i;
 			outer:
 			while (stackPtr > 0) {
-				int u = stack[stackPtr - 1];
+				final int u = stack[stackPtr - 1];
 				if (ord[u] == 0) {
 					ord[u] = low[u] = timer++;
 					sccStack[sccPtr++] = u;
 					onSccStack[u] = true;
 				}
 				while (edgeIter[u] != -1) {
-					int e = edgeIter[u];
-					int v = dest[e];
+					final int e = edgeIter[u];
+					final int v = dest[e];
 					edgeIter[u] = next[e];
 					if (ord[v] == 0) {
 						stack[stackPtr++] = v;
@@ -155,12 +144,12 @@ public final class DirectedGraph {
 					}
 				}
 				if (stackPtr > 1) {
-					int p = stack[stackPtr - 2];
+					final int p = stack[stackPtr - 2];
 					low[p] = min(low[p], low[u]);
 				}
 				if (low[u] == ord[u]) {
 					while (true) {
-						int v = sccStack[--sccPtr];
+						final int v = sccStack[--sccPtr];
 						onSccStack[v] = false;
 						sccList[listPtr++] = v;
 						if (u == v) break;
@@ -170,12 +159,12 @@ public final class DirectedGraph {
 				stackPtr--;
 			}
 		}
-		int groupCount = sepPtr - 1;
-		int[][] result = new int[groupCount][];
+		final int groupCount = sepPtr - 1;
+		final int[][] result = new int[groupCount][];
 		for (int i = 0, end = sep[groupCount]; i < groupCount; i++) {
-			int start = sep[groupCount - i - 1];
-			int len = end - start;
-			int[] grp = new int[len];
+			final int start = sep[groupCount - i - 1];
+			final int len = end - start;
+			final int[] grp = new int[len];
 			System.arraycopy(sccList, start, grp, 0, len);
 			result[i] = grp;
 			end = start;
@@ -184,7 +173,7 @@ public final class DirectedGraph {
 	}
 
 	public int[] adj(final int u) {
-		int[] adj = new int[outDegree[u]];
+		final int[] adj = new int[outDegree[u]];
 		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
 			adj[i] = dest[e];
 		}
@@ -192,86 +181,62 @@ public final class DirectedGraph {
 	}
 
 	public int[] adjEdgeIds(final int u) {
-		int[] ids = new int[outDegree[u]];
+		final int[] ids = new int[outDegree[u]];
 		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
 			ids[i] = e;
 		}
 		return ids;
 	}
 
-	public Iterable<Integer> bfs(final int s) {
-		return () -> new PrimitiveIterator.OfInt() {
-			private final int[] q = new int[n];
-			private final boolean[] visited = new boolean[n];
-			private int head, tail;
-
-			{
-				q[tail++] = s;
-				visited[s] = true;
+	public int[] bfs(final int s) {
+		final boolean[] visited = new boolean[n];
+		visited[s] = true;
+		final int[] bfs = new int[n];
+		fill(bfs, 1, n, -1);
+		bfs[0] = s;
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = bfs[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (visited[v]) continue;
+				bfs[tail++] = v;
+				visited[v] = true;
 			}
-
-			@Override
-			public boolean hasNext() {
-				return head < tail;
-			}
-
-			@Override
-			public int nextInt() {
-				int u = q[head++];
-				for (int e = first[u]; e != -1; e = next[e]) {
-					int v = dest[e];
-					if (visited[v]) continue;
-					q[tail++] = v;
-					visited[v] = true;
-				}
-				return u;
-			}
-		};
+		}
+		return bfs;
 	}
 
-	public Iterable<Integer> bfs(final int... s) {
-		return () -> new PrimitiveIterator.OfInt() {
-			private final int[] q = new int[n];
-			private final boolean[] visited = new boolean[n];
-			private int head, tail;
-
-			{
-				for (int s1 : s) {
-					q[tail++] = s1;
-					visited[s1] = true;
-				}
+	public int[] bfs(final int... s) {
+		final boolean[] visited = new boolean[n];
+		final int[] bfs = new int[n];
+		int tail = 0;
+		for (final int si : s) {
+			bfs[tail++] = si;
+			visited[si] = true;
+		}
+		fill(bfs, tail, n, -1);
+		for (int head = 0; head < tail; head++) {
+			final int u = bfs[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (visited[v]) continue;
+				bfs[tail++] = v;
+				visited[v] = true;
 			}
-
-			@Override
-			public boolean hasNext() {
-				return head < tail;
-			}
-
-			@Override
-			public int nextInt() {
-				int u = q[head++];
-				for (int e = first[u]; e != -1; e = next[e]) {
-					int v = dest[e];
-					if (visited[v]) continue;
-					q[tail++] = v;
-					visited[v] = true;
-				}
-				return u;
-			}
-		};
+		}
+		return bfs;
 	}
 
 	public int[] dist(final int s) {
-		int[] dist = new int[n];
+		final int[] dist = new int[n];
 		fill(dist, -1);
 		dist[s] = 0;
-		int[] q = new int[n];
-		int head = 0, tail = 0;
-		q[tail++] = s;
-		while (head < tail) {
-			int u = q[head++];
+		final int[] q = new int[n];
+		q[0] = s;
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
+				final int v = dest[e];
 				if (dist[v] != -1) continue;
 				dist[v] = dist[u] + 1;
 				q[tail++] = v;
@@ -281,18 +246,18 @@ public final class DirectedGraph {
 	}
 
 	public int[] dist(final int... s) {
-		int[] dist = new int[n];
+		final int[] dist = new int[n];
 		fill(dist, -1);
-		int[] q = new int[n];
-		int head = 0, tail = 0;
-		for (int s1 : s) {
+		final int[] q = new int[n];
+		int tail = 0;
+		for (final int s1 : s) {
 			dist[s1] = 0;
 			q[tail++] = s1;
 		}
-		while (head < tail) {
-			int u = q[head++];
+		for (int head = 0; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
+				final int v = dest[e];
 				if (dist[v] != -1) continue;
 				dist[v] = dist[u] + 1;
 				q[tail++] = v;

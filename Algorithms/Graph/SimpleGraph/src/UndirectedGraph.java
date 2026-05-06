@@ -1,9 +1,9 @@
-import java.util.*;
-
 import static java.util.Arrays.*;
 
+import java.util.function.*;
+
 /**
- * 自己ループを含まない連結無向グラフ管理用ライブラリ
+ * 自己ループを含まない無向グラフ管理用ライブラリ
  * <p>
  * 無向辺は追加順に0始まりの辺IDが割り当てられます。
  * 内部表現では1本の無向辺を2本の内部辺として保持しますが、
@@ -22,7 +22,7 @@ public final class UndirectedGraph {
 
 	public UndirectedGraph(final int n, final int m) {
 		this.n = n;
-		int m2 = m * 2;
+		final int m2 = m << 1;
 		dest = new int[m2];
 		next = new int[m2];
 		first = new int[n];
@@ -49,20 +49,26 @@ public final class UndirectedGraph {
 		degree[j]++;
 	}
 
+	public void addAll(int m, final IntSupplier u, final IntSupplier v) {
+		while (m-- > 0) add(u.getAsInt(), v.getAsInt());
+	}
+
+	public void addAll(int m, final IntSupplier u, final IntSupplier v, final LongSupplier cost) {
+		while (m-- > 0) add(u.getAsInt(), v.getAsInt(), cost.getAsLong());
+	}
+
 	public int degree(final int i) {
 		return degree[i];
 	}
 
 	public boolean isBipartite() {
-		int[] color = new int[n];
-		int[] q = new int[n];
-		int head = 0, tail = 0;
+		final int[] color = new int[n];
+		final int[] q = new int[n];
 		color[0] = 1;
-		q[tail++] = 0;
-		while (head < tail) {
-			int u = q[head++];
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
+				final int v = dest[e];
 				if (color[v] == color[u]) return false;
 				if (color[v] != 0) continue;
 				color[v] = -color[u];
@@ -73,8 +79,8 @@ public final class UndirectedGraph {
 	}
 
 	public int to(final int u, final int e) {
-		int v1 = dest[e << 1];
-		int v2 = dest[e << 1 | 1];
+		final int v1 = dest[e << 1];
+		final int v2 = dest[e << 1 | 1];
 		return u != v1 ? v1 : v2;
 	}
 
@@ -83,7 +89,7 @@ public final class UndirectedGraph {
 	}
 
 	public int[] adj(final int u) {
-		int[] adj = new int[degree[u]];
+		final int[] adj = new int[degree[u]];
 		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
 			adj[i] = dest[e];
 		}
@@ -91,86 +97,62 @@ public final class UndirectedGraph {
 	}
 
 	public int[] adjEdgeIds(final int u) {
-		int[] ids = new int[degree[u]];
+		final int[] ids = new int[degree[u]];
 		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
 			ids[i] = e >> 1;
 		}
 		return ids;
 	}
 
-	public Iterable<Integer> bfs(final int s) {
-		return () -> new PrimitiveIterator.OfInt() {
-			private final int[] q = new int[n];
-			private final boolean[] visited = new boolean[n];
-			private int head, tail;
-
-			{
-				q[tail++] = s;
-				visited[s] = true;
+	public int[] bfs(final int s) {
+		final boolean[] visited = new boolean[n];
+		visited[s] = true;
+		final int[] bfs = new int[n];
+		fill(bfs, 1, n, -1);
+		bfs[0] = s;
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = bfs[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (visited[v]) continue;
+				bfs[tail++] = v;
+				visited[v] = true;
 			}
-
-			@Override
-			public boolean hasNext() {
-				return head < tail;
-			}
-
-			@Override
-			public int nextInt() {
-				int u = q[head++];
-				for (int e = first[u]; e != -1; e = next[e]) {
-					int v = dest[e];
-					if (visited[v]) continue;
-					q[tail++] = v;
-					visited[v] = true;
-				}
-				return u;
-			}
-		};
+		}
+		return bfs;
 	}
 
-	public Iterable<Integer> bfs(final int... s) {
-		return () -> new PrimitiveIterator.OfInt() {
-			private final int[] q = new int[n];
-			private final boolean[] visited = new boolean[n];
-			private int head, tail;
-
-			{
-				for (int s1 : s) {
-					q[tail++] = s1;
-					visited[s1] = true;
-				}
+	public int[] bfs(final int... s) {
+		final boolean[] visited = new boolean[n];
+		final int[] bfs = new int[n];
+		int tail = 0;
+		for (final int si : s) {
+			bfs[tail++] = si;
+			visited[si] = true;
+		}
+		fill(bfs, tail, n, -1);
+		for (int head = 0; head < tail; head++) {
+			final int u = bfs[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (visited[v]) continue;
+				bfs[tail++] = v;
+				visited[v] = true;
 			}
-
-			@Override
-			public boolean hasNext() {
-				return head < tail;
-			}
-
-			@Override
-			public int nextInt() {
-				int u = q[head++];
-				for (int e = first[u]; e != -1; e = next[e]) {
-					int v = dest[e];
-					if (visited[v]) continue;
-					q[tail++] = v;
-					visited[v] = true;
-				}
-				return u;
-			}
-		};
+		}
+		return bfs;
 	}
 
 	public int[] dist(final int s) {
-		int[] dist = new int[n];
+		final int[] dist = new int[n];
 		fill(dist, -1);
 		dist[s] = 0;
-		int[] q = new int[n];
-		int head = 0, tail = 0;
-		q[tail++] = s;
-		while (head < tail) {
-			int u = q[head++];
+		final int[] q = new int[n];
+		q[0] = s;
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
+				final int v = dest[e];
 				if (dist[v] != -1) continue;
 				dist[v] = dist[u] + 1;
 				q[tail++] = v;
@@ -180,18 +162,18 @@ public final class UndirectedGraph {
 	}
 
 	public int[] dist(final int... s) {
-		int[] dist = new int[n];
+		final int[] dist = new int[n];
 		fill(dist, -1);
-		int[] q = new int[n];
-		int head = 0, tail = 0;
-		for (int s1 : s) {
+		final int[] q = new int[n];
+		int tail = 0;
+		for (final int s1 : s) {
 			dist[s1] = 0;
 			q[tail++] = s1;
 		}
-		while (head < tail) {
-			int u = q[head++];
+		for (int head = 0; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
-				int v = dest[e];
+				final int v = dest[e];
 				if (dist[v] != -1) continue;
 				dist[v] = dist[u] + 1;
 				q[tail++] = v;
