@@ -152,4 +152,4 @@ public final class CombinatoricsUtils {
 //		return bell[n][0];
 		return (long) Math.pow(Math.E, Math.pow(Math.E, n) - 1);
 	}
-} 
+}
