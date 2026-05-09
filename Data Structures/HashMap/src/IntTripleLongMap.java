@@ -69,33 +69,59 @@ public final class IntTripleLongMap {
 		return baseMap.isEmpty();
 	}
 
-	public void forEach(IntTripleLongConsumer action) {
+	public void forEach(final IntTripleLongConsumer action) {
 		baseMap.forEach((key, value) -> {
-			int a = (int) (key >>> 42);
-			int b = (int) ((key >>> 21) & MASK);
-			int c = (int) (key & MASK);
+			final int a = (int) (key >>> 42);
+			final int b = (int) (key >>> 21 & MASK);
+			final int c = (int) (key & MASK);
 			action.accept(a, b, c, value);
 		});
 	}
 
-	public void forEachKey(IntTripleConsumer action) {
+	public void forEachKey(final IntTripleConsumer action) {
 		baseMap.forEachKey(key -> {
-			int a = (int) (key >>> 42);
-			int b = (int) ((key >>> 21) & MASK);
-			int c = (int) (key & MASK);
+			final int a = (int) (key >>> 42);
+			final int b = (int) (key >>> 21 & MASK);
+			final int c = (int) (key & MASK);
 			action.accept(a, b, c);
 		});
 	}
 
-	public void forEachValue(LongConsumer action) {
+	public void forEachValue(final LongConsumer action) {
 		baseMap.forEachValue(action);
 	}
 
+	public long reduce(final long identity, final EntryToLongAccumulator accumulator) {
+		return baseMap.reduce(identity, (acc, key, value) -> {
+			final int a = (int) (key >>> 42);
+			final int b = (int) (key >>> 21 & MASK);
+			final int c = (int) (key & MASK);
+			return accumulator.apply(acc, a, b, c, value);
+		});
+	}
+
+	public long reduceKeys(final long identity, final KeysToLongAccumulator accumulator) {
+		return baseMap.reduceKeys(identity, (acc, key) -> {
+			final int a = (int) (key >>> 42);
+			final int b = (int) (key >>> 21 & MASK);
+			final int c = (int) (key & MASK);
+			return accumulator.apply(acc, a, b, c);
+		});
+	}
+
+	public long reduceValues(final long identity, final LongBinaryOperator accumulator) {
+		return baseMap.reduceValues(identity, accumulator);
+	}
+
 	public int[][] keys() {
-		int[][] res = new int[3][baseMap.size()];
-		long[] keys = baseMap.keys();
-		for (int i = 0; i < keys.length; i++) {
-			int a = (int) (keys[i] >>> 42), b = (int) ((keys[i] >>> 21) & MASK), c = (int) (keys[i] & MASK);
+		final int size = baseMap.size();
+		final int[][] res = new int[3][size];
+		final long[] keys = baseMap.keys();
+		for (int i = 0; i < size; i++) {
+			final long key = keys[i];
+			final int a = (int) (key >>> 42);
+			final int b = (int) (key >>> 21 & MASK);
+			final int c = (int) (key & MASK);
 			res[0][i] = a;
 			res[1][i] = b;
 			res[2][i] = c;
@@ -108,16 +134,28 @@ public final class IntTripleLongMap {
 	}
 
 	public long[][] entries() {
-		long[][] res = new long[4][baseMap.size()];
-		long[][] entries = baseMap.entries();
-		for (int i = 0; i < baseMap.size(); i++) {
-			int a = (int) (entries[0][i] >>> 42), b = (int) ((entries[0][i] >>> 21) & MASK), c = (int) (entries[0][i] & MASK);
+		final int size = baseMap.size();
+		final long[][] res = new long[4][size];
+		final long[][] entries = baseMap.entries();
+		for (int i = 0; i < size; i++) {
+			final long key = entries[0][i], value = entries[1][i];
+			final int a = (int) (key >>> 42);
+			final int b = (int) (key >>> 21 & MASK);
+			final int c = (int) (key & MASK);
 			res[0][i] = a;
 			res[1][i] = b;
 			res[2][i] = c;
-			res[3][i] = entries[1][i];
+			res[3][i] = value;
 		}
 		return res;
+	}
+
+	public interface KeysToLongAccumulator {
+		long apply(long accumulator, int key1, int key2, int key3);
+	}
+
+	public interface EntryToLongAccumulator {
+		long apply(long accumulator, int key1, int key2, int key3, long value);
 	}
 
 	public interface IntTripleLongConsumer {

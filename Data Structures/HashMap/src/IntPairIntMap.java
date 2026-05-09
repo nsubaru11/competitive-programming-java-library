@@ -69,31 +69,49 @@ public final class IntPairIntMap {
 		return baseMap.isEmpty();
 	}
 
-	public void forEach(IntPairIntConsumer action) {
+	public void forEach(final IntPairIntConsumer action) {
 		baseMap.forEach((key, value) -> {
-			int a = (int) (key >>> 32);
-			int b = (int) key;
+			final int a = (int) (key >>> 32), b = (int) key;
 			action.accept(a, b, value);
 		});
 	}
 
-	public void forEachKey(IntPairConsumer action) {
+	public void forEachKey(final IntPairConsumer action) {
 		baseMap.forEachKey(key -> {
-			int a = (int) (key >>> 32);
-			int b = (int) key;
+			final int a = (int) (key >>> 32), b = (int) key;
 			action.accept(a, b);
 		});
 	}
 
-	public void forEachValue(IntConsumer action) {
+	public void forEachValue(final IntConsumer action) {
 		baseMap.forEachValue(action);
 	}
 
+	public long reduce(final long identity, final EntryToLongAccumulator accumulator) {
+		return baseMap.reduce(identity, (acc, key, value) -> {
+			final int a = (int) (key >>> 32), b = (int) key;
+			return accumulator.apply(acc, a, b, value);
+		});
+	}
+
+	public long reduceKeys(final long identity, final KeysToLongAccumulator accumulator) {
+		return baseMap.reduceKeys(identity, (acc, key) -> {
+			final int a = (int) (key >>> 32), b = (int) key;
+			return accumulator.apply(acc, a, b);
+		});
+	}
+
+	public long reduceValues(final long identity, final LongBinaryOperator accumulator) {
+		return baseMap.reduceValues(identity, accumulator);
+	}
+
 	public int[][] keys() {
-		int[][] res = new int[2][baseMap.size()];
-		long[] keys = baseMap.keys();
-		for (int i = 0; i < keys.length; i++) {
-			int a = (int) (keys[i] >>> 32), b = (int) keys[i];
+		final int size = baseMap.size();
+		final int[][] res = new int[2][size];
+		final long[] keys = baseMap.keys();
+		for (int i = 0; i < size; i++) {
+			final long key = keys[i];
+			final int a = (int) (key >>> 32), b = (int) key;
 			res[0][i] = a;
 			res[1][i] = b;
 		}
@@ -105,15 +123,25 @@ public final class IntPairIntMap {
 	}
 
 	public int[][] entries() {
-		int[][] res = new int[3][baseMap.size()];
-		long[][] entries = baseMap.entries();
-		for (int i = 0; i < baseMap.size(); i++) {
-			int a = (int) (entries[0][i] >>> 32), b = (int) entries[0][i];
+		final int size = baseMap.size();
+		final int[][] res = new int[3][size];
+		final long[][] entries = baseMap.entries();
+		for (int i = 0; i < size; i++) {
+			final long key = entries[0][i], value = entries[1][i];
+			final int a = (int) (key >>> 32), b = (int) key;
 			res[0][i] = a;
 			res[1][i] = b;
-			res[2][i] = (int) entries[1][i];
+			res[2][i] = (int) value;
 		}
 		return res;
+	}
+
+	public interface KeysToLongAccumulator {
+		long apply(long accumulator, int key1, int key2);
+	}
+
+	public interface EntryToLongAccumulator {
+		long apply(long accumulator, int key1, int key2, int value);
 	}
 
 	public interface IntPairIntConsumer {

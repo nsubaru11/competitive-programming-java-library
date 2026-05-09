@@ -13,6 +13,7 @@
 - **特徴**：
 	- 墓石（tombstone）付きオープンアドレス法
 	- `put`/`add`/`merge`/`putIfAbsent` をサポート
+	- `reduce`/`reduceKeys`/`reduceValues` をサポート
 - **時間計算量**：
 	- 平均: 参照・更新ともに $O(1)$
 	- 最悪: $O(N)$
@@ -25,6 +26,7 @@
 - **特徴**：
 	- `long` キーを直接扱えるため、複合キーのパック先として使いやすい
 	- `forEach`/`keys`/`entries` などの走査 API を提供
+	- `reduce`/`reduceKeys`/`reduceValues` をサポート
 - **時間計算量**：`BaseIntIntMap` と同様
 - **空間計算量**：`BaseIntIntMap` と同様
 - **ガイド**：[BaseMapGuide](docs/BaseMapGuide.md)
@@ -35,6 +37,7 @@
 - **特徴**：
 	- `long` 値のカウンタや重み管理にそのまま使える
 	- `LongBinaryOperator` による `merge` を利用可能
+	- `reduce`/`reduceKeys`/`reduceValues` をサポート
 - **時間計算量**：`BaseIntIntMap` と同様
 - **空間計算量**：`BaseIntIntMap` と同様
 - **ガイド**：[BaseMapGuide](docs/BaseMapGuide.md)
@@ -45,6 +48,7 @@
 - **特徴**：
 	- 2つの `int` を `long` にパックしてベース実装に委譲
 	- API は `a, b` を直接受け取るため、呼び出し側の可読性が高い
+	- `reduce`/`reduceKeys`/`reduceValues` による集約をサポート
 - **時間計算量**：ベース実装と同様
 - **空間計算量**：ベース実装と同様
 - **ガイド**：[PairMapGuide](docs/PairMapGuide.md)
@@ -55,6 +59,7 @@
 - **特徴**：
 	- 各キーを 21bit でパックして `long` 化（`MASK = 0x1FFFFF`）
 	- `forEach`/`forEachKey` で自動的に 3 要素へ復元して処理可能
+	- `reduce`/`reduceKeys`/`reduceValues` による集約をサポート
 - **時間計算量**：ベース実装と同様
 - **空間計算量**：ベース実装と同様
 - **ガイド**：[TripleMapGuide](docs/TripleMapGuide.md)
