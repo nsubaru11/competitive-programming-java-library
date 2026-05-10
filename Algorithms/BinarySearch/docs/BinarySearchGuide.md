@@ -190,6 +190,7 @@ double sqrtApprox = (double) sqrtResult / precision;
 | **バージョン 2.1** | 2025-10-13 | 全メソッド引数、ローカル変数に`final`を追加し、不変性を向上                                                           |
 | **バージョン 2.2** | 2026-01-06 | `validateRange` の境界判定を `l > r` のみ不正とし、空区間を有効化。ドキュメントを更新                                     |
 | **バージョン 3.0** | 2026-04-17 | `CompareFunction` の戻り値型を `int` に統一し、`validateRange` と `BSException` の記載を削除して現行実装へ整合         |
+| **バージョン 3.1** | 2026-05-10 | `lowerBound`, `upperBound` の内部メソッドにおいて、バグを修正                                                |
 
 ### バージョン管理について
 

@@ -53,6 +53,7 @@ public final class BinarySearch {
 	}
 
 	private static long binarySearchUpperBound(long l, long r, final CompareFunction comparator) {
+		boolean found = false;
 		long ans = l - 1;
 		while (l <= r) {
 			final long m = (l & r) + ((l ^ r) >> 1);
@@ -60,14 +61,18 @@ public final class BinarySearch {
 			if (c > 0) {
 				r = m - 1;
 			} else {
-				if (c == 0) ans = m;
+				if (c == 0) {
+					ans = m;
+					found = true;
+				}
 				l = m + 1;
 			}
 		}
-		return ans != l - 1 ? ans : ~l;
+		return found ? ans : ~l;
 	}
 
 	private static long binarySearchLowerBound(long l, long r, final CompareFunction comparator) {
+		boolean found = false;
 		long ans = l - 1;
 		while (l <= r) {
 			final long m = (l & r) + ((l ^ r) >> 1);
@@ -75,11 +80,14 @@ public final class BinarySearch {
 			if (c < 0) {
 				l = m + 1;
 			} else {
-				if (c == 0) ans = m;
+				if (c == 0) {
+					ans = m;
+					found = true;
+				}
 				r = m - 1;
 			}
 		}
-		return ans != l - 1 ? ans : ~l;
+		return found ? ans : ~l;
 	}
 	// endregion
 
