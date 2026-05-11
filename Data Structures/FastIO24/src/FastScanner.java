@@ -1,3 +1,5 @@
+import static java.util.Arrays.*;
+
 import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
@@ -5,8 +7,6 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
-
-import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class FastScanner {
@@ -44,6 +44,38 @@ public final class FastScanner {
 			pos++;
 		}
 		return false;
+	}
+
+	public boolean nextBoolean() {
+		int b = skipSpaces();
+		boolean flag = b == 't' || b == 'T';
+		if (flag) pos += 3;
+		else pos += 4;
+		return flag;
+	}
+
+	public boolean nextBoolean(final char c) {
+		return nextChar() == c;
+	}
+
+	public boolean nextBoolean(final int i) {
+		return nextInt() == i;
+	}
+
+	public boolean nextBoolean(final long l) {
+		return nextLong() == l;
+	}
+
+	public boolean nextBoolean(final CharPredicate p) {
+		return p.test(nextChar());
+	}
+
+	public boolean nextBoolean(final IntPredicate p) {
+		return p.test(nextInt());
+	}
+
+	public boolean nextBoolean(final LongPredicate p) {
+		return p.test(nextLong());
 	}
 
 	public char nextChar() {
@@ -175,6 +207,42 @@ public final class FastScanner {
 		return new BigDecimal(next());
 	}
 
+	public boolean[] nextBoolean(final int n, final char c) {
+		final boolean[] a = new boolean[n];
+		for (int i = 0; i < n; i++) a[i] = nextBoolean(c);
+		return a;
+	}
+
+	public boolean[] nextBoolean(final int n, final int i) {
+		final boolean[] a = new boolean[n];
+		for (int j = 0; j < n; j++) a[j] = nextBoolean(i);
+		return a;
+	}
+
+	public boolean[] nextBoolean(final int n, final long l) {
+		final boolean[] a = new boolean[n];
+		for (int i = 0; i < n; i++) a[i] = nextBoolean(l);
+		return a;
+	}
+
+	public boolean[] nextBoolean(final int n, final CharPredicate p) {
+		final boolean[] a = new boolean[n];
+		for (int i = 0; i < n; i++) a[i] = nextBoolean(p);
+		return a;
+	}
+
+	public boolean[] nextBoolean(final int n, final IntPredicate p) {
+		final boolean[] a = new boolean[n];
+		for (int i = 0; i < n; i++) a[i] = nextBoolean(p);
+		return a;
+	}
+
+	public boolean[] nextBoolean(final int n, final LongPredicate p) {
+		final boolean[] a = new boolean[n];
+		for (int i = 0; i < n; i++) a[i] = nextBoolean(p);
+		return a;
+	}
+
 	public int[] nextInt(final int n) {
 		final int[] a = new int[n];
 		for (int i = 0; i < n; i++) a[i] = nextInt();
@@ -237,6 +305,54 @@ public final class FastScanner {
 		final String[] s = new String[n];
 		for (int i = 0; i < n; i++) s[i] = next();
 		return s;
+	}
+
+	public boolean[][] nextBooleanMat(final int h, final int w, final char c) {
+		final boolean[][] a = new boolean[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextBoolean(c);
+		return a;
+	}
+
+	public boolean[][] nextBooleanMat(final int h, final int w, final int n) {
+		final boolean[][] a = new boolean[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextBoolean(n);
+		return a;
+	}
+
+	public boolean[][] nextBooleanMat(final int h, final int w, final long l) {
+		final boolean[][] a = new boolean[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextBoolean(l);
+		return a;
+	}
+
+	public boolean[][] nextBooleanMat(final int h, final int w, final CharPredicate p) {
+		final boolean[][] a = new boolean[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextBoolean(p);
+		return a;
+	}
+
+	public boolean[][] nextBooleanMat(final int h, final int w, final IntPredicate p) {
+		final boolean[][] a = new boolean[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextBoolean(p);
+		return a;
+	}
+
+	public boolean[][] nextBooleanMat(final int h, final int w, final LongPredicate p) {
+		final boolean[][] a = new boolean[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextBoolean(p);
+		return a;
 	}
 
 	public int[][] nextIntMat(final int h, final int w) {
@@ -513,4 +629,7 @@ public final class FastScanner {
 		return multiset;
 	}
 
+	public interface CharPredicate {
+		boolean test(char value);
+	}
 }

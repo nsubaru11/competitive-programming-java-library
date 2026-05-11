@@ -15,6 +15,7 @@
 - **0-index 補助**: `nextInt0()` / `nextLong0()` とその配列版で、1-indexed 入力を即座に 0-indexed 化できます。
 - **EOF/状態確認**: `hasNext()` と `peek()` により、終端判定や先読みが可能です。
 - **行入力対応**: `nextLine()` は `LF` / `CRLF` の両改行形式を処理します。
+- **真偽値入力の拡張**: `nextBoolean` 系で、文字/数値の単一値一致・述語判定・配列/行列入力に対応します。
 - **文字コード**: `ASCII` 範囲内の文字入力を前提としています。
 - **リソース管理**: `AutoCloseable` を実装しており、`try-with-resources` に対応します。
 
@@ -66,6 +67,30 @@
 | `nextCharMat(int h, int w)`      | `char[][]`   | `h × w` の文字行列を読み込みます。          |
 | `nextInt3D(int x, int y, int z)` | `int[][][]`  | `x × y × z` の 3 次元整数配列を読み込みます。 |
 
+### 真偽値入力メソッド
+
+| メソッド                                            | 戻り値の型         | 説明                                               |
+|-------------------------------------------------|---------------|--------------------------------------------------|
+| `nextBoolean()`                                 | `boolean`     | 次トークンを `true/false` として読み込みます（先頭文字で判定）。          |
+| `nextBoolean(char c)`                           | `boolean`     | 次の 1 文字が `c` と一致する場合に `true` を返します。              |
+| `nextBoolean(int i)`                            | `boolean`     | 次の整数が `i` と一致する場合に `true` を返します。                 |
+| `nextBoolean(long l)`                           | `boolean`     | 次の長整数が `l` と一致する場合に `true` を返します。                |
+| `nextBoolean(CharPredicate p)`                  | `boolean`     | 次の 1 文字を `CharPredicate` で判定します。                 |
+| `nextBoolean(IntPredicate p)`                   | `boolean`     | 次の整数を `IntPredicate` で判定します。                     |
+| `nextBoolean(LongPredicate p)`                  | `boolean`     | 次の長整数を `LongPredicate` で判定します。                   |
+| `nextBoolean(int n, char c)`                    | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `char` 一致判定で生成します。       |
+| `nextBoolean(int n, int i)`                     | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `int` 一致判定で生成します。        |
+| `nextBoolean(int n, long l)`                    | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `long` 一致判定で生成します。       |
+| `nextBoolean(int n, CharPredicate p)`           | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `CharPredicate` で判定します。  |
+| `nextBoolean(int n, IntPredicate p)`            | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `IntPredicate` で判定します。   |
+| `nextBoolean(int n, LongPredicate p)`           | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `LongPredicate` で判定します。  |
+| `nextBooleanMat(int h, int w, char c)`          | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `char` 一致判定で生成します。      |
+| `nextBooleanMat(int h, int w, int n)`           | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `int` 一致判定で生成します。       |
+| `nextBooleanMat(int h, int w, long l)`          | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `long` 一致判定で生成します。      |
+| `nextBooleanMat(int h, int w, CharPredicate p)` | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `CharPredicate` で判定します。 |
+| `nextBooleanMat(int h, int w, IntPredicate p)`  | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `IntPredicate` で判定します。  |
+| `nextBooleanMat(int h, int w, LongPredicate p)` | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `LongPredicate` で判定します。 |
+
 ### ソート済み・累積和・逆写像
 
 | メソッド                             | 戻り値の型     | 説明                         |
@@ -106,6 +131,13 @@ try (FastScanner sc = new FastScanner()) {
     char head = sc.peek();
     String token = sc.next();
   }
+
+  // 単一値一致で true 判定
+  boolean isYes = sc.nextBoolean('Y');
+
+  // 配列・行列を述語で判定
+  boolean[] nonNegative = sc.nextBoolean(n, x -> x >= 0);
+  boolean[][] isWall = sc.nextBooleanMat(n, m, '#');
 }
 ```
 
@@ -131,6 +163,7 @@ try (FastScanner sc = new FastScanner()) {
 | **バージョン 5.0** | 2026-02-18 | `nextInt0` / `nextLong0` とその配列版を追加。`next()` / `nextLine()` / `nextDouble()` の内部処理を見直し、Java 24 版の高速パスと API 説明を現状実装に合わせて整理しました。 |
 | **バージョン 5.1** | 2026-03-12 | 機能の拡張とリファクタリング                                                                                                                |
 | **バージョン 6.0** | 2026-04-18 | 一括読み込み用と、インタラクティブ用に分割し、分岐の削減および最適化                                                                                            |
+| **バージョン 7.0** | 2026-05-11 | `nextBoolean` 系 API（単一値一致・述語判定・1次元配列・2次元配列）を追加し、`InteractiveScanner` と同等の真偽値入力機能に揃えました。                                       |
 
 ### バージョン管理について
 
