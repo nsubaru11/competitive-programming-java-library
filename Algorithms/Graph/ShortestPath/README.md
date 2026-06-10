@@ -29,7 +29,7 @@
 - **時間計算量**: O(V * E)、ここでVは頂点数、Eは辺数
 - **空間計算量**: O(V + E)
 
-### [Warshallfroyd](./src/Warshallfroyd.java)
+### [WarshallFloyd](./src/WarshallFloyd.java)
 
 - **用途**: 全点対間の最短経路問題を解くアルゴリズム（Floyd-Warshallアルゴリズム）
 - **特徴**:

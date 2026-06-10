@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  * 素数に関するクラス
  */
 @SuppressWarnings("unused")
-public final class PrimeNative {
+public final class PrimeNaive {
 	private static final int INF = Integer.MAX_VALUE;
 
 	/**

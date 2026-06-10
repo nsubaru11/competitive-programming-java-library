@@ -42,7 +42,7 @@ public class Example {
 		System.out.println();
 		solveBellmanFord(v, e, edges);
 		System.out.println();
-		solveWarshallfroyd(v, edges);
+		solveWarshallFloyd(v, edges);
 	}
 
 	private static void solveDijkstra(int v, int[][] edges) {
@@ -81,8 +81,8 @@ public class Example {
 		System.out.println(sj);
 	}
 
-	private static void solveWarshallfroyd(int v, int[][] edges) {
-		Warshallfroyd warshallfroyd = new Warshallfroyd(v);
+	private static void solveWarshallFloyd(int v, int[][] edges) {
+		WarshallFloyd warshallfroyd = new WarshallFloyd(v);
 		for (int[] edge : edges) {
 			warshallfroyd.addEdge(edge[0], edge[1], edge[2]);
 		}

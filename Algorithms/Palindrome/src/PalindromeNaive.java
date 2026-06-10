@@ -1,5 +1,5 @@
 @SuppressWarnings("unused")
-public final class PalindromeNative {
+public final class PalindromeNaive {
 
 	/**
 	 * 文字列が回文かどうかの判定をします。

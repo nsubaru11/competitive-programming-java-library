@@ -9,7 +9,7 @@ import static java.util.Arrays.fill;
  * ※ 隣接行列を用いるため、頂点数が大きい場合はメモリや計算量の観点で注意が必要。
  */
 @SuppressWarnings("unused")
-public final class Warshallfroyd {
+public final class WarshallFloyd {
 	private static final long INF = Long.MAX_VALUE;
 	private final int v;
 	private final long[][] dist;
@@ -21,7 +21,7 @@ public final class Warshallfroyd {
 	 *
 	 * @param v 頂点数
 	 */
-	public Warshallfroyd(final int v) {
+	public WarshallFloyd(final int v) {
 		this.v = v;
 		dist = new long[v][v];
 		for (int i = 0; i < v; i++) {
