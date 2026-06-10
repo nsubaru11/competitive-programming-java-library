@@ -42,12 +42,13 @@
 	- `javac -encoding UTF-8 -cp out -d out Main.java`
 	- `java -cp out Main`
 - For module smoke checks, compile module `src/*.java` and run its `Example` class.
-- Benchmark/profiling entrypoint is `run_tests_24.sh` (Linux/WSL bash); it compiles FastIO24 benchmark classes, runs
-  repeated measurements, and emits `benchmark_results.csv` plus logs.
+- Benchmark/profiling entrypoint is `Data Structures/FastIO24/Benchmark/run_tests_24.sh` (Linux/WSL bash; `.bat` for
+  Windows); it compiles FastIO24 benchmark classes, runs repeated measurements, and emits CSV/logs under
+  `Benchmark/work/` (gitignored). See `Data Structures/FastIO24/Benchmark/README.md`.
 
 ## Integration Points and Maintenance Rules
 
-- Static analysis is configured in `qodana.yaml` (`jetbrains/qodana-jvm:2025.2`, `projectJDK: "17"`).
+- Static analysis is configured in `qodana.yaml` (`jetbrains/qodana-jvm:2025.2`, `projectJDK: "24"`).
 - Contribution metadata is standardized via `.github/ISSUE_TEMPLATE/` and `.github/PULL_REQUEST_TEMPLATE/`.
 - When API behavior changes, update both code and docs:
 	- module `README.md` (format guided by `README_TEMPLATE.md`)

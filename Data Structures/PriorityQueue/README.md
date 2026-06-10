@@ -189,7 +189,7 @@
 | `LongPriorityQueue`    | 約8MB   | プリミティブ配列         |
 | `IndexedPriorityQueue` | 約16MB  | 3配列管理            |
 
-### 実測性能例（Java 17、100万要素）
+### 実測性能例（Java 24、100万要素）
 
 | 操作             | PriorityQueue<T> | IntPriorityQueue | 性能比    |
 |----------------|------------------|------------------|--------|

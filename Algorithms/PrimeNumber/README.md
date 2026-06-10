@@ -7,7 +7,7 @@
 
 ## 実装クラス
 
-### [PrecomputedPrimes](src/PrecomputedPrimes.java)
+### [PrimeTable](src/PrimeTable.java)
 
 - **用途**: 指定された上限までの素数を事前計算し、様々な素数関連の操作を提供するクラス
 - **特徴**:
@@ -20,7 +20,7 @@
 - **時間計算量**: 初期化 O(N log log N)、クエリ O(1)〜O(log N)
 - **空間計算量**: O(N)（実際はビット配列により約N/128バイト）
 
-### [PrimeUtils](src/PrimeUtils.java)
+### [PrimeNaive](src/PrimeNaive.java)
 
 - **用途**: 素数に関する様々なユーティリティメソッドを提供する静的クラス
 - **特徴**:
@@ -34,7 +34,7 @@
 
 ## アルゴリズム（データ構造）選択ガイド
 
-### PrecomputedPrimesを選ぶべき場合
+### PrimeTableを選ぶべき場合
 
 - 同じ範囲で複数回の素数判定やクエリを行う場合
 - 素数の範囲検索（ceiling, floor等）が必要な場合
@@ -43,7 +43,7 @@
 - 素数を順次列挙したい場合
 - 推奨範囲: N ≤ 10^8（メモリ約100MB、初期化約1秒）
 
-### PrimeUtilsを選ぶべき場合
+### PrimeNaiveを選ぶべき場合
 
 - 一度だけの素数判定や範囲列挙を行う場合
 - メモリ使用量を最小限に抑えたい場合
@@ -53,7 +53,7 @@
 
 ## 注意事項
 
-- PrecomputedPrimesは指定された上限までの素数を事前計算するため、メモリ使用量に注意が必要です
-- 非常に大きな数値の素数判定には、PrimeUtils.isProbablePrimeを使用することを検討してください
-- PrecomputedPrimesの素因数分解は、事前計算された素数の範囲内でのみ動作します
-- PrimeUtilsの範囲指定メソッドはInt型の範囲内（約2×10^9）の素数のみ扱えます
+- PrimeTableは指定された上限までの素数を事前計算するため、メモリ使用量に注意が必要です
+- 非常に大きな数値の素数判定には、PrimeNaive.isProbablePrimeを使用することを検討してください
+- PrimeTableの素因数分解は、√n が事前計算の上限以下であれば動作します（n ≤ 上限値² まで対応）
+- PrimeNaiveの範囲指定メソッドはInt型の範囲内（約2×10^9）の素数のみ扱えます

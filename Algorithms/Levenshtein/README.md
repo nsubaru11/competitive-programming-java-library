@@ -14,3 +14,13 @@
 	- 複数のデータ型（String、char[]、int[]）に対応
 	- 最大距離を指定して早期終了する最適化バージョンを提供
 	- 空間効率のために2行のDPテーブルのみを使用
+
+### [Myers](src/Myers.java)（未実装）
+
+- **用途**: Myers のビットパラレル法による編集距離計算（O(n*m/w)）
+- LevenshteinDP と同形の API を提供する予定です
+
+### [Wu](src/Wu.java)（未実装）
+
+- **用途**: Wu–Manber 法（O(NP)アルゴリズム）による編集距離計算
+- LevenshteinDP と同形の API を提供する予定です
