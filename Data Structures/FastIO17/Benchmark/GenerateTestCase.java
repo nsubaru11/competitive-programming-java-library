@@ -1,8 +1,8 @@
-import java.io.FileOutputStream;
-import java.nio.file.Path;
-import java.util.SplittableRandom;
+import static java.lang.Math.*;
 
-import static java.lang.Math.abs;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 public final class GenerateTestCase {
 	private static final long DEFAULT_COUNT = 10_000_0000L;

@@ -1,5 +1,4 @@
-import java.util.HashSet;
-import java.util.TreeSet;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public final class Advance {

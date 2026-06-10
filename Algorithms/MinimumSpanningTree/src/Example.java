@@ -1,5 +1,3 @@
-import java.util.*;
-
 public final class Example {
 
 	public static void main(String[] args) {

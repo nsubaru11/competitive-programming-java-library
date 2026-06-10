@@ -1,3 +1,6 @@
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
+
 import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
@@ -5,9 +8,6 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
-
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class FastPrinter implements AutoCloseable {

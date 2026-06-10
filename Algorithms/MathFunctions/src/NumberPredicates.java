@@ -1,7 +1,6 @@
-import java.util.HashSet;
-import java.util.Set;
-
 import static java.lang.Math.*;
+
+import java.util.*;
 
 /**
  * 数値判定関連のユーティリティクラス

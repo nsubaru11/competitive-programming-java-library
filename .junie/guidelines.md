@@ -10,12 +10,12 @@
 
 - Algorithms
 	- Basic, BinarySearch, DP, Factorial, Levenshtein, MathFunctions,
-		MinimumSpanningTree, Palindrome, Permutation, PrimeNumber,
-		ShortestPath, Sort, StringSearch, UnimodalUtils
+	  MinimumSpanningTree, Palindrome, Permutation, PrimeNumber,
+	  ShortestPath, Sort, StringSearch, UnimodalUtils
 - Data Structures
 	- ArrayUtils, BinaryIndexedTree, BinarySearchTree, FastIO17, FastIO24,
-		ModNumbers, PriorityQueue, RingBuffer, SegmentTree,
-		SparseTable, Trie, UnionFind
+	  ModNumbers, PriorityQueue, RingBuffer, SegmentTree,
+	  SparseTable, Trie, UnionFind
 - .junie/guidelines.md（本ファイル）
 - README.md / README_TEMPLATE.md（概要・テンプレート）
 - GuideTemplate.md（ドキュメントテンプレート）
@@ -37,11 +37,11 @@
 
 - 最小例（Windows/PowerShell）：
 	1) コンパイル
-		 javac -encoding UTF-8 -d out "Data Structures\FastIO17\src\FastScanner.java" "Data
-		 Structures\FastIO17\src\FastPrinter.java"
+	   javac -encoding UTF-8 -d out "Data Structures\FastIO17\src\FastScanner.java" "Data
+	   Structures\FastIO17\src\FastPrinter.java"
 	2) 利用（Main を自作した場合）
-		 javac -encoding UTF-8 -cp out -d out Main.java
-		 java -cp out Main
+	   javac -encoding UTF-8 -cp out -d out Main.java
+	   java -cp out Main
 
 - 注意
 	- パッケージ宣言が無いので、クラスパス上で同一ディレクトリに置かれる前提です。

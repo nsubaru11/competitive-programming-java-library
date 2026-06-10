@@ -1,12 +1,7 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.stream.LongStream;
+import static java.util.Arrays.*;
 
-import static java.util.Arrays.binarySearch;
-import static java.util.Arrays.copyOf;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  * エラトステネスの篩を用いて最大Integer.MAXVALUEの値

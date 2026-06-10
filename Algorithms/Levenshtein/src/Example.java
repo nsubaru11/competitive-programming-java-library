@@ -1,4 +1,4 @@
-import static java.lang.System.out;
+import static java.lang.System.*;
 
 /**
  * Levenshteinクラスの使用例を示すサンプルコードです。

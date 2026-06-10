@@ -149,7 +149,7 @@ public final class GeometryUtils {
 	 * </ul>
 	 */
 	public static int crossLine3D(double x11, double y11, double z11, double x12, double y12, double z12,
-								  double x21, double y21, double z21, double x22, double y22, double z22) {
+	                              double x21, double y21, double z21, double x22, double y22, double z22) {
 
 		double dx1 = x12 - x11, dy1 = y12 - y11, dz1 = z12 - z11;
 		double dx2 = x22 - x21, dy2 = y22 - y21, dz2 = z22 - z21;
@@ -413,7 +413,7 @@ public final class GeometryUtils {
 	 * </ul>
 	 */
 	public static int crossRect3D(double x11, double y11, double z11, double x12, double y12, double z12,
-								  double x21, double y21, double z21, double x22, double y22, double z22) {
+	                              double x21, double y21, double z21, double x22, double y22, double z22) {
 		if (x11 > x12) {
 			double temp = x11;
 			x11 = x12;

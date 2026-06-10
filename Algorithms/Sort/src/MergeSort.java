@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class MergeSort {

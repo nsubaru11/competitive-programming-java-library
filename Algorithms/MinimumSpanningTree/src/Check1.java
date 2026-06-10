@@ -1,11 +1,11 @@
+import static java.util.Arrays.*;
+
 import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
-
-import static java.util.Arrays.*;
 
 // https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/2/GRL_2_A
 public final class Check1 {
@@ -84,21 +84,6 @@ public final class Check1 {
 		}
 
 		/**
-		 * グラフに辺を追加します。
-		 *
-		 * @param u 辺の始点（0からv-1までの値）
-		 * @param v 辺の終点（0からv-1までの値）
-		 * @param c 辺の重み
-		 */
-		public void addEdge(final int u, final int v, final long c) {
-			from[edgeCnt] = u;
-			to[edgeCnt] = v;
-			cost[edgeCnt] = isMinimum ? c : -c;
-			edges[edgeCnt] = edgeCnt;
-			edgeCnt++;
-		}
-
-		/**
 		 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。
 		 * Dual-Pivot Quicksortのエッセンスを採用したプリミティブ実装です。
 		 */
@@ -167,6 +152,21 @@ public final class Check1 {
 			int t = a[i];
 			a[i] = a[j];
 			a[j] = t;
+		}
+
+		/**
+		 * グラフに辺を追加します。
+		 *
+		 * @param u 辺の始点（0からv-1までの値）
+		 * @param v 辺の終点（0からv-1までの値）
+		 * @param c 辺の重み
+		 */
+		public void addEdge(final int u, final int v, final long c) {
+			from[edgeCnt] = u;
+			to[edgeCnt] = v;
+			cost[edgeCnt] = isMinimum ? c : -c;
+			edges[edgeCnt] = edgeCnt;
+			edgeCnt++;
 		}
 
 		/**

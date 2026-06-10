@@ -1,7 +1,7 @@
-import java.util.*;
-
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
+
+import java.util.*;
 
 /**
  * Prim法を用いた全域木（MST）問題のソルバー。

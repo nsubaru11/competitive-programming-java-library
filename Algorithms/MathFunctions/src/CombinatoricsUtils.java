@@ -1,4 +1,4 @@
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 /**
  * 組み合わせ論関連のユーティリティクラス

@@ -1,18 +1,8 @@
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.StringJoiner;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import static java.lang.Math.*;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
 @SuppressWarnings({"unused", "unchecked"})
 public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {

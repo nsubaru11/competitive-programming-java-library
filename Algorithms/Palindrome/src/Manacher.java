@@ -1,6 +1,6 @@
-import java.nio.CharBuffer;
+import static java.lang.Math.*;
 
-import static java.lang.Math.max;
+import java.nio.*;
 
 /**
  * Manacher'sアルゴリズムに基づいて文字列内の回文情報を計算するクラス。

@@ -123,42 +123,42 @@ public final class DirectedGraph {
 		int sepPtr = 1;
 		for (int i = 0, stackPtr = 0, sccPtr = 0, timer = 1, listPtr = 0; i < n; i++)
 			if (ord[i] == 0) {
-			stack[stackPtr++] = i;
-			outer:
-			while (stackPtr > 0) {
-				final int u = stack[stackPtr - 1];
-				if (ord[u] == 0) {
-					ord[u] = low[u] = timer++;
-					sccStack[sccPtr++] = u;
-					onSccStack[u] = true;
-				}
-				while (edgeIter[u] != -1) {
-					final int e = edgeIter[u];
-					final int v = dest[e];
-					edgeIter[u] = next[e];
-					if (ord[v] == 0) {
-						stack[stackPtr++] = v;
-						continue outer;
-					} else if (onSccStack[v]) {
-						low[u] = min(low[u], ord[v]);
+				stack[stackPtr++] = i;
+				outer:
+				while (stackPtr > 0) {
+					final int u = stack[stackPtr - 1];
+					if (ord[u] == 0) {
+						ord[u] = low[u] = timer++;
+						sccStack[sccPtr++] = u;
+						onSccStack[u] = true;
 					}
-				}
-				if (stackPtr > 1) {
-					final int p = stack[stackPtr - 2];
-					low[p] = min(low[p], low[u]);
-				}
-				if (low[u] == ord[u]) {
-					while (true) {
-						final int v = sccStack[--sccPtr];
-						onSccStack[v] = false;
-						sccList[listPtr++] = v;
-						if (u == v) break;
+					while (edgeIter[u] != -1) {
+						final int e = edgeIter[u];
+						final int v = dest[e];
+						edgeIter[u] = next[e];
+						if (ord[v] == 0) {
+							stack[stackPtr++] = v;
+							continue outer;
+						} else if (onSccStack[v]) {
+							low[u] = min(low[u], ord[v]);
+						}
 					}
-					sep[sepPtr++] = listPtr;
+					if (stackPtr > 1) {
+						final int p = stack[stackPtr - 2];
+						low[p] = min(low[p], low[u]);
+					}
+					if (low[u] == ord[u]) {
+						while (true) {
+							final int v = sccStack[--sccPtr];
+							onSccStack[v] = false;
+							sccList[listPtr++] = v;
+							if (u == v) break;
+						}
+						sep[sepPtr++] = listPtr;
+					}
+					stackPtr--;
 				}
-				stackPtr--;
 			}
-		}
 		final int groupCount = sepPtr - 1;
 		final int[][] result = new int[groupCount][];
 		for (int i = 0, end = sep[groupCount]; i < groupCount; i++) {

@@ -1,6 +1,6 @@
-import java.util.Arrays;
+import static java.lang.System.*;
 
-import static java.lang.System.out;
+import java.util.*;
 
 public final class Example {
 

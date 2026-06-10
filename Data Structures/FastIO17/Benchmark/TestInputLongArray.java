@@ -1,7 +1,6 @@
-import java.io.IOException;
-import java.io.InputStream;
+import static java.util.Arrays.*;
 
-import static java.util.Arrays.setAll;
+import java.io.*;
 
 public class TestInputLongArray {
 

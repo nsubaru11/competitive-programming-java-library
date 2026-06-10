@@ -68,8 +68,9 @@ Set（重複なし）とMultiset（重複あり）の両方を提供します。
 
 - **ジェネリック型 vs プリミティブ型**:
 	- `Integer` や `Long` などのオブジェクトを扱う場合は `AVLSet` や `AVLMultiset` を使用します。
-	- `int` や `long` などのプリミティブ型を扱う場合は、パフォーマンスとメモリ効率の観点から `IntAVLSet`, `IntAVLMultiset`,
-		`LongAVLSet`, `LongAVLMultiset` の使用を推奨します。
+	- `int` や `long` などのプリミティブ型を扱う場合は、パフォーマンスとメモリ効率の観点から `IntAVLSet`,
+	  `IntAVLMultiset`,
+	  `LongAVLSet`, `LongAVLMultiset` の使用を推奨します。
 - **Set vs Multiset**:
 	- コレクション内の要素が一意である必要がある場合は `Set` を選択します。
 	- コレクションに同じ要素が複数含まれる可能性がある場合は `Multiset` を選択します。

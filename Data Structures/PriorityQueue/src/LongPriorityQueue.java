@@ -1,6 +1,6 @@
-import java.util.*;
-
 import static java.lang.Math.*;
+
+import java.util.*;
 
 /**
  * 競技プログラミング向け優先度キュー（long型特化版）

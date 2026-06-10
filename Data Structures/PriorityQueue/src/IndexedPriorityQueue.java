@@ -1,7 +1,7 @@
-import java.util.*;
-
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
+
+import java.util.*;
 
 /**
  * グラフアルゴリズム特化高性能インデックス付き優先度キュー

@@ -85,17 +85,17 @@
 各要素を挿入する時点でのヒープサイズから個別に計算：
 
 - **少数の場合（k ≤ 100）**: 厳密に計算
-	```
-	incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
-	```
-	各挿入時点の実際のヒープサイズの対数を合計
+  ```
+  incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
+  ```
+  各挿入時点の実際のヒープサイズの対数を合計
 
 - **多数の場合（k > 100）**: 効率化のため近似値を使用
-	```
-	avgHeapSize = sortedSize + k / 2
-	incrementalCost = k × log₂(avgHeapSize)
-	```
-	対数の平均値を利用した高速計算
+  ```
+  avgHeapSize = sortedSize + k / 2
+  incrementalCost = k × log₂(avgHeapSize)
+  ```
+  対数の平均値を利用した高速計算
 
 #### 3. アルゴリズム選択
 
@@ -163,9 +163,9 @@ System.out.println(pq.size());      // 2
 - **頂点IDの範囲**: 0 ≤ node < n の範囲内である必要があります
 - **重複追加の禁止**: 同じ頂点を2回pushすると`IllegalArgumentException`がスローされます
 - **存在しない頂点への操作**: `getCost`, `updateCost`, `remove`を存在しない頂点に対して呼び出すと
-	`NoSuchElementException`がスローされます
+  `NoSuchElementException`がスローされます
 - **poll後の取得**: `pollNode()`で取り出した頂点は削除されるため、その後`getCost()`で取得できません（必要なら先に`peek()`
-	を使用）
+  を使用）
 - **整列のタイミング**: `poll`, `peek`, `updateCost`, `remove`などを呼び出すと、必要に応じて自動的にヒープ化を実行します
 
 ## パフォーマンス特性

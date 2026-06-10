@@ -46,21 +46,6 @@ public final class Kruskal {
 	}
 
 	/**
-	 * グラフに辺を追加します。
-	 *
-	 * @param u 辺の始点（0からv-1までの値）
-	 * @param v 辺の終点（0からv-1までの値）
-	 * @param c 辺の重み
-	 */
-	public void addEdge(final int u, final int v, final long c) {
-		from[edgeCnt] = u;
-		to[edgeCnt] = v;
-		cost[edgeCnt] = isMinimum ? c : -c;
-		edges[edgeCnt] = edgeCnt;
-		edgeCnt++;
-	}
-
-	/**
 	 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。
 	 * Dual-Pivot Quicksortのエッセンスを採用したプリミティブ実装です。
 	 */
@@ -129,6 +114,21 @@ public final class Kruskal {
 		int t = a[i];
 		a[i] = a[j];
 		a[j] = t;
+	}
+
+	/**
+	 * グラフに辺を追加します。
+	 *
+	 * @param u 辺の始点（0からv-1までの値）
+	 * @param v 辺の終点（0からv-1までの値）
+	 * @param c 辺の重み
+	 */
+	public void addEdge(final int u, final int v, final long c) {
+		from[edgeCnt] = u;
+		to[edgeCnt] = v;
+		cost[edgeCnt] = isMinimum ? c : -c;
+		edges[edgeCnt] = edgeCnt;
+		edgeCnt++;
 	}
 
 	/**

@@ -1,5 +1,5 @@
-import static java.lang.Math.min;
-import static java.util.Arrays.fill;
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 /**
  * Warshall-Floyd アルゴリズムを実装するクラス。

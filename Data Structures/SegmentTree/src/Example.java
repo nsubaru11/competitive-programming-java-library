@@ -1,7 +1,7 @@
+import static java.util.Arrays.*;
+
 import java.io.*;
 import java.util.*;
-
-import static java.util.Arrays.*;
 
 public final class Example {
 

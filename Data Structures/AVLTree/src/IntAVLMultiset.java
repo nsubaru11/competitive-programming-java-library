@@ -1,16 +1,7 @@
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.StringJoiner;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
+import static java.lang.Math.*;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
+import java.util.*;
+import java.util.stream.*;
 
 @SuppressWarnings("unused")
 public final class IntAVLMultiset implements Iterable<Integer> {

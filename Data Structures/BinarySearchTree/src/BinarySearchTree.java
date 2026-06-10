@@ -1,7 +1,6 @@
-import java.lang.reflect.Array;
+import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> {

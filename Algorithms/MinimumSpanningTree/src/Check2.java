@@ -1,12 +1,12 @@
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
+
 import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
-
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
 
 // https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/2/GRL_2_A
 public final class Check2 {

@@ -1,5 +1,4 @@
-import static java.lang.Math.pow;
-import static java.lang.Math.round;
+import static java.lang.Math.*;
 
 /**
  * 数値フォーマット関連のユーティリティクラス

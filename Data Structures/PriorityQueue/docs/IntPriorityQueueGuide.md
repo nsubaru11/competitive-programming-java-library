@@ -72,17 +72,17 @@
 各要素を挿入する時点でのヒープサイズから個別に計算：
 
 - **少数の場合（k ≤ 100）**: 厳密に計算
-	```
-	incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
-	```
-	各挿入時点の実際のヒープサイズの対数を合計
+  ```
+  incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
+  ```
+  各挿入時点の実際のヒープサイズの対数を合計
 
 - **多数の場合（k > 100）**: 効率化のため近似値を使用
-	```
-	avgHeapSize = sortedSize + k / 2
-	incrementalCost = k × log₂(avgHeapSize)
-	```
-	対数の平均値を利用した高速計算
+  ```
+  avgHeapSize = sortedSize + k / 2
+  incrementalCost = k × log₂(avgHeapSize)
+  ```
+  対数の平均値を利用した高速計算
 
 #### 3. アルゴリズム選択
 

@@ -1,7 +1,7 @@
+import static java.lang.Math.*;
+
 import java.io.*;
 import java.util.*;
-
-import static java.lang.Math.*;
 
 public class Frog {
 
@@ -31,7 +31,7 @@ public class Frog {
 
 	public static void main(String[] args) {
 		try (final Scanner sc = new Scanner(System.in);
-			 final PrintWriter out = new PrintWriter(System.out)) {
+		     final PrintWriter out = new PrintWriter(System.out)) {
 			solve(sc, out);
 		} catch (Exception e) {
 			e.printStackTrace();

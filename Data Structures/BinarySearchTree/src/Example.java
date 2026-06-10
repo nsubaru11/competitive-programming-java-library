@@ -1,14 +1,15 @@
-import sun.misc.Unsafe;
-
-import java.io.*;
-import java.util.*;
-import java.math.*;
-import java.util.stream.*;
-import java.util.function.*;
-import java.lang.reflect.Field;
-
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
+
+import java.io.*;
+import java.lang.reflect.*;
+import java.math.*;
+import java.util.*;
+import java.util.ArrayList;
+import java.util.function.*;
+import java.util.stream.*;
+
+import sun.misc.*;
 
 public final class Example {
 
@@ -40,6 +41,15 @@ public final class Example {
 					out.println(floor == null ? -1 : floor);
 					break;
 			}
+		}
+	}
+
+	public static void main(String[] args) {
+		try (final FastScanner sc = new FastScanner();
+		     final FastPrinter out = new FastPrinter()) {
+			solve(sc, out);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -446,15 +456,6 @@ public final class Example {
 			private int rightSize() {
 				return right == null ? 0 : right.size;
 			}
-		}
-	}
-
-	public static void main(String[] args) {
-		try (final FastScanner sc = new FastScanner();
-			 final FastPrinter out = new FastPrinter()) {
-			solve(sc, out);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

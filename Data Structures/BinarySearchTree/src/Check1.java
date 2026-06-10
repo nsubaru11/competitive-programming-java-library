@@ -1,4 +1,5 @@
-import sun.misc.*;
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -8,8 +9,7 @@ import java.util.ArrayList;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
+import sun.misc.*;
 
 // https://judge.yosupo.jp/problem/predecessor_problem
 public final class Check1 {

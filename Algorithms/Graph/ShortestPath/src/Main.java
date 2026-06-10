@@ -1,9 +1,9 @@
-import java.io.*;
-import java.util.*;
-import java.math.*;
-
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
+
+import java.io.*;
+import java.math.*;
+import java.util.*;
 
 // AOJ GRL_1_A
 public final class Main {
@@ -21,7 +21,7 @@ public final class Main {
 
 	public static void main(String[] args) {
 		try (final FastScanner sc = new FastScanner();
-			 final FastPrinter out = new FastPrinter()) {
+		     final FastPrinter out = new FastPrinter()) {
 			solve(sc, out);
 		} catch (Exception e) {
 			e.printStackTrace();

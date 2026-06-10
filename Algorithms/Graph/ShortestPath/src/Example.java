@@ -1,5 +1,4 @@
-import java.util.Scanner;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * 各アルゴリズム（Dijkstra, Bellman-Ford, Warshall-Floyd）による最短経路計算の例。

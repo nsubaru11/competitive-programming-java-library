@@ -1,5 +1,5 @@
-import java.io.PrintStream;
-import java.util.Arrays;
+import java.io.*;
+import java.util.*;
 
 public class Example {
 

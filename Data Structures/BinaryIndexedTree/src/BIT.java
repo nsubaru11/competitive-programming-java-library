@@ -1,6 +1,6 @@
-import java.util.function.*;
-
 import static java.util.Arrays.*;
+
+import java.util.function.*;
 
 /**
  * 競技プログラミング向け Binary Indexed Tree（Fenwick Tree）

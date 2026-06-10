@@ -1,5 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class RadixTrie {
 	private final Node root = new Node("", false);

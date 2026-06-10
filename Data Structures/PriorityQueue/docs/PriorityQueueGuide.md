@@ -16,7 +16,7 @@ Java標準ライブラリの`java.util.PriorityQueue`から不要な機能を排
 ## 依存関係
 
 - Java標準ライブラリのみ（`java.util.Arrays`, `java.util.Comparator`, `java.util.Iterator`,
-	`java.util.NoSuchElementException`）
+  `java.util.NoSuchElementException`）
 - 外部依存なし
 
 ## 主な機能（メソッド一覧）
@@ -76,17 +76,17 @@ Java標準ライブラリの`java.util.PriorityQueue`から不要な機能を排
 各要素を挿入する時点でのヒープサイズから個別に計算：
 
 - **少数の場合（k ≤ 100）**: 厳密に計算
-	```
-	incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
-	```
-	各挿入時点の実際のヒープサイズの対数を合計
+  ```
+  incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
+  ```
+  各挿入時点の実際のヒープサイズの対数を合計
 
 - **多数の場合（k > 100）**: 効率化のため近似値を使用
-	```
-	avgHeapSize = sortedSize + k / 2
-	incrementalCost = k × log₂(avgHeapSize)
-	```
-	対数の平均値を利用した高速計算
+  ```
+  avgHeapSize = sortedSize + k / 2
+  incrementalCost = k × log₂(avgHeapSize)
+  ```
+  対数の平均値を利用した高速計算
 
 #### 3. アルゴリズム選択
 
@@ -156,7 +156,7 @@ System.out.println(strPq.poll());   // "pie"（最短）
 - **イテレータの順序**: `iterator()`で取得されるイテレータは内部配列の順序で要素を返すため、優先度順ではありません
 - **型制約**: ジェネリック型`T`は`Comparable<T>`を実装している必要があります（Comparatorを明示的に指定する場合を除く）
 - **オートボクシング**: プリミティブ型（int, long）を扱う場合、オートボクシングのオーバーヘッドが発生します。大量のデータを扱う場合は
-	`IntPriorityQueue`または`LongPriorityQueue`の使用を推奨
+  `IntPriorityQueue`または`LongPriorityQueue`の使用を推奨
 
 ## パフォーマンス特性
 

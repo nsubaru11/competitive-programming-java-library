@@ -1,5 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class DoubleArrayTrie {
 	private int[] base;  // BASE配列

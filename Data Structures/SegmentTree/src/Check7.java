@@ -7,6 +7,7 @@ import java.math.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
+import java.util.ArrayList;
 import java.util.function.*;
 
 // https://atcoder.jp/contests/practice2/tasks/practice2_l

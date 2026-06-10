@@ -1,11 +1,6 @@
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
+import java.math.*;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * 素数に関するクラス
