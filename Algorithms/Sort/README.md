@@ -107,7 +107,7 @@
 - **時間計算量**: O(n²)
 - **空間計算量**: O(1)
 
-### [Odd_EvenSort](./src/Odd_EvenSort.java)
+### [OddEvenSort](./src/OddEvenSort.java)
 
 - **用途**: 奇数インデックスと偶数インデックスを交互に処理するソートアルゴリズム
 - **特徴**:

@@ -1,5 +1,5 @@
 @SuppressWarnings("unused")
-public final class PalindromeNative {
+public final class PalindromeNaive {
 
 	/**
 	 * 文字列が回文かどうかの判定をします。
@@ -126,14 +126,15 @@ public final class PalindromeNative {
 	 */
 	public static String makePalindrome(String s) {
 		if (s == null || s.isEmpty() || isPalindrome(s)) return s;
-		int maxPreLen = 0;
-		for (int i = 0; i < s.length(); i++) {
-			if (isPalindromeRange(s, 0, i + 1)) {
-				maxPreLen = i + 1;
+		int sufStart = s.length() - 1;
+		for (int i = 1; i < s.length(); i++) {
+			if (isPalindromeRange(s, i, s.length())) {
+				sufStart = i;
+				break;
 			}
 		}
 		StringBuilder result = new StringBuilder(s);
-		for (int i = s.length() - maxPreLen - 1; i >= 0; i--) {
+		for (int i = sufStart - 1; i >= 0; i--) {
 			result.append(s.charAt(i));
 		}
 		return result.toString();

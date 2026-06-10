@@ -68,14 +68,21 @@ public final class PrimeTable implements Iterable<Long> {
 	public Map<Long, Integer> primeFactorize(long n) {
 		if (n < 0) throw new IllegalArgumentException();
 		Map<Long, Integer> factors = new HashMap<>();
-		int i = 0;
-		while (n > 1) {
-			if (i >= cnt) throw new IllegalArgumentException();
-			long prime = primes[i++];
+		boolean covered = false;
+		for (int i = 0; i < cnt && n > 1; i++) {
+			final long prime = primes[i];
+			if (prime * prime > n) {
+				covered = true;
+				break;
+			}
 			while (n % prime == 0) {
-				factors.put(prime, factors.getOrDefault(prime, 0) + 1);
+				factors.merge(prime, 1, Integer::sum);
 				n /= prime;
 			}
+		}
+		if (n > 1) {
+			if (!covered && n / MAX_VALUE > MAX_VALUE) throw new IllegalArgumentException();
+			factors.merge(n, 1, Integer::sum);
 		}
 		return factors;
 	}

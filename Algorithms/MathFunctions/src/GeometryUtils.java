@@ -170,7 +170,7 @@ public final class GeometryUtils {
 			// 2つの線分が同一直線上にあるか (collinear) を判定
 			double dx1_21 = x11 - x21, dy1_21 = y11 - y21, dz1_21 = z11 - z21;
 			double collinearCheck = (dy1 * dz1_21 - dz1 * dy1_21) * (dy1 * dz1_21 - dz1 * dy1_21) +
-					(dz1 * dx1_21 - dx1 * dz1_21) * (dz1 * dx1_21 - dx1 * dx1_21) +
+					(dz1 * dx1_21 - dx1 * dz1_21) * (dz1 * dx1_21 - dx1 * dz1_21) +
 					(dx1 * dy1_21 - dy1 * dx1_21) * (dx1 * dy1_21 - dy1 * dx1_21);
 
 			// 同一直線上にない場合（平行で離れている）

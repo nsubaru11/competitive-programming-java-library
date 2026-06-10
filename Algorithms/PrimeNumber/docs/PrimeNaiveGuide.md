@@ -1,4 +1,4 @@
-# PrimeNative 利用ガイド
+# PrimeNaive 利用ガイド
 
 ## 概要
 
@@ -60,25 +60,25 @@
 
 ```java
 // 単一の素数判定（試し割り法）
-System.out.println(PrimeNative.isPrime(97));  // true
-System.out.println(PrimeNative.isPrime(100)); // false
+System.out.println(PrimeNaive.isPrime(97));  // true
+System.out.println(PrimeNaive.isPrime(100)); // false
 
 // 大きな数の確率的素数判定（Miller-Rabin）
 long bigNum = 1000000007L;
-System.out.println(PrimeNative.isProbablePrime(bigNum, 20));  // true
+System.out.println(PrimeNaive.isProbablePrime(bigNum, 20));  // true
 
 // 100以下の素数の個数
-System.out.println(PrimeNative.elements(100));  // 25
+System.out.println(PrimeNaive.elements(100));  // 25
 
 // 50以上100以下の素数の個数
-System.out.println(PrimeNative.elements(50, 100));  // 10
+System.out.println(PrimeNaive.elements(50, 100));  // 10
 
 // 30以下の素数をSetで取得
-Set<Integer> primeSet = PrimeNative.getPrimeSet(30);
+Set<Integer> primeSet = PrimeNaive.getPrimeSet(30);
 // {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
 
 // 20以上50以下の素数をListで取得
-List<Integer> primeList = PrimeNative.getPrimeList(20, 50);
+List<Integer> primeList = PrimeNaive.getPrimeList(20, 50);
 // [23, 29, 31, 37, 41, 43, 47]
 ```
 
@@ -103,7 +103,7 @@ List<Integer> primeList = PrimeNative.getPrimeList(20, 50);
 | バージョン番号       | 年月日        | 詳細                              |
 |:--------------|:-----------|:--------------------------------|
 | **バージョン 1.0** | 2025-10-13 | 初回作成                            |
-| **バージョン 1.1** | 2025-10-14 | クラス名をPrimeUtilsからPrimeNativeに変更 |
+| **バージョン 1.1** | 2025-10-14 | クラス名をPrimeUtilsからPrimeNaiveに変更 |
 
 ### バージョン管理について
 

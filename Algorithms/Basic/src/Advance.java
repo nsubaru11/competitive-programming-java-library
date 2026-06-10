@@ -1,8 +1,6 @@
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import static java.lang.Math.sqrt;
-
 @SuppressWarnings("unused")
 public final class Advance {
 
@@ -26,7 +24,7 @@ public final class Advance {
 	 */
 	public static long modPow(long n, long k, final long mod) {
 		long modPow = 1;
-		for (n %= mod, k %= mod; k > 0; k >>= 1, n = n * n % mod) {
+		for (n %= mod; k > 0; k >>= 1, n = n * n % mod) {
 			if ((k & 1) == 1) modPow = modPow * n % mod;
 		}
 		return modPow;
@@ -177,12 +175,12 @@ public final class Advance {
 	/**
 	 * 約数のHashSet
 	 */
-	public static HashSet<Integer> factorsHashSet(final long n) {
-		final HashSet<Integer> hs = new HashSet<>();
-		for (int i = 1, sqrt = (int) sqrt(n) + 1; i < sqrt; i++) {
+	public static HashSet<Long> factorsHashSet(final long n) {
+		final HashSet<Long> hs = new HashSet<>();
+		for (long i = 1; i * i <= n; i++) {
 			if (n % i == 0) {
 				hs.add(i);
-				hs.add((int) (n / i));
+				hs.add(n / i);
 			}
 		}
 		return hs;
@@ -191,12 +189,12 @@ public final class Advance {
 	/**
 	 * 約数のTreeSet
 	 */
-	public static TreeSet<Integer> factorsTreeSet(final long n) {
-		final TreeSet<Integer> hs = new TreeSet<>();
-		for (int i = 1, sqrt = (int) sqrt(n) + 1; i < sqrt; i++) {
+	public static TreeSet<Long> factorsTreeSet(final long n) {
+		final TreeSet<Long> hs = new TreeSet<>();
+		for (long i = 1; i * i <= n; i++) {
 			if (n % i == 0) {
 				hs.add(i);
-				hs.add((int) (n / i));
+				hs.add(n / i);
 			}
 		}
 		return hs;

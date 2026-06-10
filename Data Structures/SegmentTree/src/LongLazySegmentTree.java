@@ -206,7 +206,7 @@ public final class LongLazySegmentTree implements Iterable<Long> {
 
 			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + idx++];
+				return get(idx++);
 			}
 		};
 	}
@@ -214,8 +214,8 @@ public final class LongLazySegmentTree implements Iterable<Long> {
 	@Override
 	public String toString() {
 		final StringBuilder s = new StringBuilder();
-		s.append(tree[size]);
-		for (int i = size + 1; i < size + n; i++) s.append(' ').append(tree[i]);
+		s.append(get(0));
+		for (int i = 1; i < n; i++) s.append(' ').append(get(i));
 		return s.toString();
 	}
 }

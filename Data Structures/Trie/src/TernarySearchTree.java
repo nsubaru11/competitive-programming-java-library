@@ -46,7 +46,7 @@ public final class TernarySearchTree {
 	// プレフィックス検索
 	public int countPrefix(String prefix) {
 		Node node = search(root, prefix, 0);
-		return node == null ? 0 : countNodes(node.mid);
+		return node == null ? 0 : (node.end ? 1 : 0) + countNodes(node.mid);
 	}
 
 	private int countNodes(Node node) {
