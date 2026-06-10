@@ -1,13 +1,7 @@
+/**
+ * BM法（Boyer–Moore）に基づいて、文字列探索を行います。
+ */
 @SuppressWarnings("unused")
 public final class BM {
-	// todo: BM法の実装を行う
-
-	private static boolean bm(String s, String m) {
-		int sLen = s.length(), mLen = m.length();
-		if (sLen < mLen) return false;
-		boolean b = false;
-		int[] table = new int[sLen];
-		return b;
-	}
-
+	// TODO: BM法（不一致文字規則・良い接尾辞規則）の実装を行う
 }

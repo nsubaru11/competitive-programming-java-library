@@ -134,31 +134,33 @@ public final class Convolution {
 	// endregion
 
 	// region private transform methods
-	private static void transformNtt(long[] a, boolean isInverse, int mod) { /* ... */ }
+	// TODO: 以下の内部変換ロジックはすべて未実装。実装完了まで公開メソッドは正しい結果を返さない
+	private static void transformNtt(long[] a, boolean isInverse, int mod) { /* TODO: NTT（数論変換）の実装 */ }
 
-	private static void transformFft(double[] real, double[] imag, boolean isInverse) { /* ... */ }
+	private static void transformFft(double[] real, double[] imag, boolean isInverse) { /* TODO: FFT（高速フーリエ変換）の実装 */ }
 
-	private static void transformFwht(long[] a, boolean isInverse, int mod) { /* ... */ }
+	private static void transformFwht(long[] a, boolean isInverse, int mod) { /* TODO: FWHT（高速ウォルシュ・アダマール変換）の実装 */ }
 
-	private static void transformSubsetZeta(long[] a, int mod) { /* ... */ }
+	private static void transformSubsetZeta(long[] a, int mod) { /* TODO: 下位集合ゼータ変換の実装 */ }
 
-	private static void transformSubsetMobius(long[] a, int mod) { /* ... */ }
+	private static void transformSubsetMobius(long[] a, int mod) { /* TODO: 下位集合メビウス変換の実装 */ }
 
-	private static void transformSupersetZeta(long[] a, int mod) { /* ... */ }
+	private static void transformSupersetZeta(long[] a, int mod) { /* TODO: 上位集合ゼータ変換の実装 */ }
 
-	private static void transformSupersetMobius(long[] a, int mod) { /* ... */ }
+	private static void transformSupersetMobius(long[] a, int mod) { /* TODO: 上位集合メビウス変換の実装 */ }
 
-	private static void transformMultipleZeta(long[] a, int mod) { /* ... */ }
+	private static void transformMultipleZeta(long[] a, int mod) { /* TODO: 倍数ゼータ変換の実装 */ }
 
-	private static void transformMultipleMobius(long[] a, int mod) { /* ... */ }
+	private static void transformMultipleMobius(long[] a, int mod) { /* TODO: 倍数メビウス変換の実装 */ }
 
-	private static void transformDivisorZeta(long[] a, int mod) { /* ... */ }
+	private static void transformDivisorZeta(long[] a, int mod) { /* TODO: 約数ゼータ変換の実装 */ }
 
-	private static void transformDivisorMobius(long[] a, int mod) { /* ... */ }
+	private static void transformDivisorMobius(long[] a, int mod) { /* TODO: 約数メビウス変換の実装 */ }
 	// endregion
 
 	// region private helper methods
 	private static long[] garnerProcess(long[] a, long[] b, long[] c, int mod) {
+		// TODO: Garnerのアルゴリズムによる3素数CRT復元の実装
 		long[] d = new long[a.length];
 		return d;
 	}

@@ -1,6 +1,7 @@
 /**
- * 最小/最大全域有向木を求めることができます。
+ * 最小/最大全域有向木（Arborescence）を求めることができます。
  */
+@SuppressWarnings("unused")
 public final class Edmonds {
-	// todo: 有効木の最小全域木の実装
+	// TODO: Edmondsのアルゴリズム（Chu–Liu/Edmonds）による最小全域有向木の実装を行う
 }
