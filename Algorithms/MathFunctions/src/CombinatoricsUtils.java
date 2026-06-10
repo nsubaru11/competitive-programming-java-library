@@ -7,27 +7,23 @@ import static java.lang.Math.min;
 public final class CombinatoricsUtils {
 
 	/**
-	 * nCrを求めます。
+	 * nCrをmodで割った余りを求めます。
+	 * modは素数である必要があります。
 	 *
-	 * @param n 二項係数を求めるのに用いる値
-	 * @param r 二項係数を求めるのに用いる値
-	 * @return nCr
+	 * @param n   二項係数を求めるのに用いる値
+	 * @param r   二項係数を求めるのに用いる値
+	 * @param mod 法とする整数(素数)
+	 * @return nCr % mod
 	 */
 	public static long comb(int n, int r, final long mod) {
 		if (n < r || n < 0 || r < 0) return 0;
 		r = min(n - r, r);
-		long ans = 1;
-		long[] x = new long[1], y = new long[1];
+		long ans = 1, denom = 1;
 		for (int i = 1; i <= r; i++) {
-			ans = ans * (n - i + 1) % mod;
-			if (NumberTheoryUtils.GCD(i, mod) != 1) {
-				NumberTheoryUtils.exGCD(i, mod, x, y);
-				ans = ans * ((x[0] % mod + mod) % mod) % mod;
-			} else {
-				ans = ans * (PowerUtils.modPow(i, mod - 2, mod)) % mod;
-			}
+			ans = ans * ((n - i + 1) % mod) % mod;
+			denom = denom * (i % mod) % mod;
 		}
-		return ans;
+		return ans * PowerUtils.modPow(denom, mod - 2, mod) % mod;
 	}
 
 	/**
@@ -41,12 +37,11 @@ public final class CombinatoricsUtils {
 	public static long modComb(int n, int r, final long mod) {
 		if (n < r || n < 0 || r < 0) return 0;
 		r = min(n - r, r);
-		long numer = 1, denom = 1;
+		long ans = 1;
 		for (int i = 1; i <= r; i++) {
-			numer *= n - i + 1;
-			denom *= i;
+			ans = ans * (n - i + 1) / i;
 		}
-		return (numer / denom) % mod;
+		return ans % mod;
 	}
 
 	/**
@@ -149,7 +144,6 @@ public final class CombinatoricsUtils {
 			}
 		}
 
-//		return bell[n][0];
-		return (long) Math.pow(Math.E, Math.pow(Math.E, n) - 1);
+		return bell[n][0];
 	}
 }

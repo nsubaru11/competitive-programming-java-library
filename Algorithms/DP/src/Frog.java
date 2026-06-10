@@ -18,13 +18,13 @@ public class Frog {
 		for (int i = 1; i < min(n, k); i++) dp[i] = abs(h[i] - h[0]);
 		for (int i = k; i < n; i++) {
 			int idx = i % k;
-			int cost = abs(h[i] - h[i - 1]);
-			dp[idx] = dp[idx] + cost;
-			for (int j = 2; j <= k; j++) {
-				int idx2 = ((idx - j) % k + k) % k;
-				cost = abs(h[i] - h[i - j]);
-				dp[idx] = min(dp[idx], dp[idx2] + cost);
+			int best = dp[idx] + abs(h[i] - h[i - k]);
+			for (int j = 1; j < k; j++) {
+				int idx2 = idx - j;
+				if (idx2 < 0) idx2 += k;
+				best = min(best, dp[idx2] + abs(h[i] - h[i - j]));
 			}
+			dp[idx] = best;
 		}
 		return dp[(n - 1) % k];
 	}

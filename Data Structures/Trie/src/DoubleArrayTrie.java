@@ -11,7 +11,9 @@ public final class DoubleArrayTrie {
 		this.base = new int[capacity];
 		this.check = new int[capacity];
 		this.terminal = new boolean[capacity];
-		this.size = 1; // インデックス0は未使用
+		// 未使用スロットは-1（check==0はルートの子と区別できないため）
+		java.util.Arrays.fill(check, -1);
+		this.size = 1;
 	}
 
 	/**
@@ -48,18 +50,16 @@ public final class DoubleArrayTrie {
 		int baseVal = findBase(node.children.keySet());
 		base[parentIdx] = baseVal;
 
+		// 再帰前に全ての子のスロットを確保する（再帰中のfindBaseに横取りされないように）
 		for (var entry : node.children.entrySet()) {
-			char c = entry.getKey();
-			Node child = entry.getValue();
-			int childIdx = baseVal + c;
-
-			// 配列拡張
+			int childIdx = baseVal + entry.getKey();
 			ensureCapacity(childIdx + 1);
-
 			check[childIdx] = parentIdx;
-			terminal[childIdx] = child.end;
+			terminal[childIdx] = entry.getValue().end;
+		}
 
-			allocate(child, childIdx);
+		for (var entry : node.children.entrySet()) {
+			allocate(entry.getValue(), baseVal + entry.getKey());
 		}
 	}
 
@@ -68,7 +68,8 @@ public final class DoubleArrayTrie {
 		outer:
 		while (true) {
 			for (char c : chars) {
-				if (check[base + c] != 0) {
+				ensureCapacity(base + c + 1);
+				if (check[base + c] != -1) {
 					base++;
 					continue outer;
 				}
@@ -81,7 +82,7 @@ public final class DoubleArrayTrie {
 		int idx = 0;
 		for (char c : word.toCharArray()) {
 			int nextIdx = base[idx] + c;
-			if (check[nextIdx] != idx) return false;
+			if (nextIdx >= check.length || check[nextIdx] != idx) return false;
 			idx = nextIdx;
 		}
 		return terminal[idx];
@@ -89,10 +90,12 @@ public final class DoubleArrayTrie {
 
 	private void ensureCapacity(int required) {
 		if (required >= base.length) {
-			int newSize = Math.max(required + 1, base.length * 2);
+			int oldLength = base.length;
+			int newSize = Math.max(required + 1, oldLength * 2);
 			base = java.util.Arrays.copyOf(base, newSize);
 			check = java.util.Arrays.copyOf(check, newSize);
 			terminal = java.util.Arrays.copyOf(terminal, newSize);
+			java.util.Arrays.fill(check, oldLength, newSize, -1);
 		}
 	}
 

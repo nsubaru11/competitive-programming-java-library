@@ -68,13 +68,19 @@ public final class LongArray1D implements Iterable<Long> {
 	}
 
 	public void lShift(final int n) {
-		if (n < 0) rShift(-n);
+		if (n < 0) {
+			rShift(-n);
+			return;
+		}
 		offset += n % size;
 		if (offset >= size) offset -= size;
 	}
 
 	public void rShift(final int n) {
-		if (n < 0) lShift(-n);
+		if (n < 0) {
+			lShift(-n);
+			return;
+		}
 		offset -= n % size;
 		if (offset < 0) offset += size;
 	}

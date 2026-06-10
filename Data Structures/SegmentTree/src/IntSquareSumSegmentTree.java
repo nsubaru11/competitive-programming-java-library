@@ -210,8 +210,7 @@ public final class IntSquareSumSegmentTree implements Iterable<Integer> {
 
 			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
-				final int v = tree[size + idx++];
-				return v < 0 ? v + mod : v;
+				return get(idx++);
 			}
 		};
 	}
@@ -219,12 +218,8 @@ public final class IntSquareSumSegmentTree implements Iterable<Integer> {
 	@Override
 	public String toString() {
 		final StringBuilder s = new StringBuilder();
-		int v = tree[size];
-		s.append(v < 0 ? v + mod : v);
-		for (int i = size + 1; i < size + n; i++) {
-			v = tree[i];
-			s.append(' ').append(v < 0 ? v + mod : v);
-		}
+		s.append(get(0));
+		for (int i = 1; i < n; i++) s.append(' ').append(get(i));
 		return s.toString();
 	}
 }

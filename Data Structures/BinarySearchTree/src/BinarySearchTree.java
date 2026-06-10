@@ -202,7 +202,7 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 		while (cur.parent != null && cur.parent.right == cur) {
 			cur = cur.parent;
 		}
-		return cur;
+		return cur.parent;
 	}
 
 	// Nested classes
@@ -242,7 +242,7 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 				if (left == null) return right;
 				if (right == null) return left;
 				Node temp = left.extractMax();
-				temp.setLeft(left);
+				if (temp != left) temp.setLeft(left);
 				temp.setRight(right);
 				temp.updateNode();
 				return temp;

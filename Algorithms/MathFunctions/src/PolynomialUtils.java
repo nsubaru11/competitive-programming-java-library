@@ -1,5 +1,3 @@
-import static java.lang.Math.pow;
-
 /**
  * 多項式関連のユーティリティクラス
  */
@@ -17,12 +15,12 @@ public final class PolynomialUtils {
 		int maxLength = Math.max(a.length, b.length);
 		double[] result = new double[maxLength];
 
-		for (int i = 0; i < a.length; i++) {
-			result[i] += a[i];
+		for (int i = 0, offset = maxLength - a.length; i < a.length; i++) {
+			result[offset + i] += a[i];
 		}
 
-		for (int i = 0; i < b.length; i++) {
-			result[i] += b[i];
+		for (int i = 0, offset = maxLength - b.length; i < b.length; i++) {
+			result[offset + i] += b[i];
 		}
 
 		return result;
@@ -39,12 +37,12 @@ public final class PolynomialUtils {
 		int maxLength = Math.max(a.length, b.length);
 		double[] result = new double[maxLength];
 
-		for (int i = 0; i < a.length; i++) {
-			result[i] += a[i];
+		for (int i = 0, offset = maxLength - a.length; i < a.length; i++) {
+			result[offset + i] += a[i];
 		}
 
-		for (int i = 0; i < b.length; i++) {
-			result[i] -= b[i];
+		for (int i = 0, offset = maxLength - b.length; i < b.length; i++) {
+			result[offset + i] -= b[i];
 		}
 
 		return result;
@@ -115,8 +113,8 @@ public final class PolynomialUtils {
 	 */
 	public static double evaluate(double[] a, double x) {
 		double result = 0;
-		for (int i = 0; i < a.length; i++) {
-			result += a[i] * pow(x, a.length - 1 - i);
+		for (final double c : a) {
+			result = result * x + c;
 		}
 		return result;
 	}
@@ -144,34 +142,23 @@ public final class PolynomialUtils {
 	 * @return 最大公約数の多項式の係数配列
 	 */
 	public static double[] gcd(double[] a, double[] b) {
-		if (b.length == 0 || (b.length == 1 && b[0] == 0)) {
-			return a;
-		}
-
-		double[] remainder = new double[a.length];
-		System.arraycopy(a, 0, remainder, 0, a.length);
-
-		while (true) {
-			int degreeA = degree(remainder);
-			int degreeB = degree(b);
-
-			if (degreeB == -1) {
-				return remainder;
-			}
-
-			if (degreeA < degreeB) {
-				double[] temp = remainder;
-				remainder = b;
-				b = temp;
+		double[] x = a.clone(), y = b.clone();
+		while (degree(y) >= 0) {
+			final int dx = degree(x), dy = degree(y);
+			if (dx < dy) {
+				final double[] temp = x;
+				x = y;
+				y = temp;
 				continue;
 			}
-
-			double factor = remainder[0] / b[0];
-			double[] quotient = new double[degreeA - degreeB + 1];
-			quotient[0] = factor;
-
-			double[] product = multiply(quotient, b);
-			remainder = subtract(remainder, product);
+			final int ox = x.length - 1 - dx, oy = y.length - 1 - dy;
+			final double factor = x[ox] / y[oy];
+			for (int i = 1; i <= dy; i++) {
+				x[ox + i] -= factor * y[oy + i];
+			}
+			// 先頭項は厳密に消去し、丸め誤差による無限ループを防ぐ
+			x[ox] = 0;
 		}
+		return x;
 	}
 }

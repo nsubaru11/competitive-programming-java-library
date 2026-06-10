@@ -9,13 +9,12 @@ public final class PowerUtils {
 	 *
 	 * @param a   底
 	 * @param b   指数
-	 * @param mod 割る値(素数)
+	 * @param mod 割る値
 	 * @return a ^ b % mod
 	 */
 	public static long modPow(long a, long b, long mod) {
 		long ans = 1;
-		b %= mod - 1;
-		for (; b > 0; a = a * a % mod, b >>= 1) {
+		for (a %= mod; b > 0; a = a * a % mod, b >>= 1) {
 			if ((b & 1) == 1) ans = ans * a % mod;
 		}
 		return ans;

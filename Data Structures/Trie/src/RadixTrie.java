@@ -25,6 +25,7 @@ public final class RadixTrie {
 			if (matchLen < prefix.length()) {
 				// ノード分割が必要
 				splitNode(cur, child, firstChar, matchLen);
+				child = cur.children.get(firstChar);
 			}
 
 			pos += matchLen;

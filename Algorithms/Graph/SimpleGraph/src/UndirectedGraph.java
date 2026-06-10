@@ -64,15 +64,20 @@ public final class UndirectedGraph {
 	public boolean isBipartite() {
 		final int[] color = new int[n];
 		final int[] q = new int[n];
-		color[0] = 1;
-		for (int head = 0, tail = 1; head < tail; head++) {
-			final int u = q[head];
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				if (color[v] == color[u]) return false;
-				if (color[v] != 0) continue;
-				color[v] = -color[u];
-				q[tail++] = v;
+		int tail = 0;
+		for (int s = 0; s < n; s++) {
+			if (color[s] != 0) continue;
+			color[s] = 1;
+			q[tail++] = s;
+			for (int head = tail - 1; head < tail; head++) {
+				final int u = q[head];
+				for (int e = first[u]; e != -1; e = next[e]) {
+					final int v = dest[e];
+					if (color[v] == color[u]) return false;
+					if (color[v] != 0) continue;
+					color[v] = -color[u];
+					q[tail++] = v;
+				}
 			}
 		}
 		return true;

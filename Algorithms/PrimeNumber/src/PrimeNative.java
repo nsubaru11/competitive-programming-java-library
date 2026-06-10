@@ -64,8 +64,8 @@ public final class PrimeNative {
 	public static int elements(final int min, final int max) {
 		final BitSet table = new BitSet(max + 1);
 		int count = 0;
-		if (2 > min) count++;
-		if (3 > min) count++;
+		if (min <= 2 && 2 <= max) count++;
+		if (min <= 3 && 3 <= max) count++;
 		for (int i = 4; i <= max; i += 2) table.set(i);
 		for (int i = 9; i <= max; i += 6) table.set(i);
 		for (int i = 5; i <= max; i += 6) {
@@ -126,8 +126,8 @@ public final class PrimeNative {
 	private static <T extends Collection<Integer>> T Eratosthenes(final int min, final int max, final Supplier<T> supplier) {
 		final T primeNum = supplier.get();
 		final BitSet table = new BitSet(max + 1);
-		if (min <= 2) primeNum.add(2);
-		if (min <= 3) primeNum.add(3);
+		if (min <= 2 && 2 <= max) primeNum.add(2);
+		if (min <= 3 && 3 <= max) primeNum.add(3);
 		for (int i = 4; i <= max; i += 2) table.set(i);
 		for (int i = 9; i <= max; i += 6) table.set(i);
 		for (int i = 5; i <= max; i += 6) {

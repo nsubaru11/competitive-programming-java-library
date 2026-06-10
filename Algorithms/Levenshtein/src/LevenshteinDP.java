@@ -65,7 +65,10 @@ public final class LevenshteinDP {
 		for (int i = 0; i < band; i++) dp1[i] = abs(i - k);
 		for (int i = 0; i < sLen; i++) {
 			char si = s.charAt(i);
-			for (int l = max(k - i, 0), j = i + l - k; l < band && j < tLen; l++, j++) {
+			final int l0 = max(k - i, 0);
+			// 列0（t未消費）に対応する境界セルは削除コスト i+1（前々行の古い値の参照を防ぐ）
+			if (l0 > 0) dp2[l0 - 1] = i + 1;
+			for (int l = l0, j = i + l - k; l < band && j < tLen; l++, j++) {
 				if (si == t.charAt(j)) {
 					dp2[l] = dp1[l];
 				} else {
@@ -141,7 +144,10 @@ public final class LevenshteinDP {
 		for (int i = 0; i < band; i++) dp1[i] = abs(i - k);
 		for (int i = 0; i < sLen; i++) {
 			char si = s[i];
-			for (int l = max(k - i, 0), j = i + l - k; l < band && j < tLen; l++, j++) {
+			final int l0 = max(k - i, 0);
+			// 列0（t未消費）に対応する境界セルは削除コスト i+1（前々行の古い値の参照を防ぐ）
+			if (l0 > 0) dp2[l0 - 1] = i + 1;
+			for (int l = l0, j = i + l - k; l < band && j < tLen; l++, j++) {
 				if (si == t[j]) {
 					dp2[l] = dp1[l];
 				} else {
@@ -217,7 +223,10 @@ public final class LevenshteinDP {
 		for (int i = 0; i < band; i++) dp1[i] = abs(i - k);
 		for (int i = 0; i < sLen; i++) {
 			int si = s[i];
-			for (int l = max(k - i, 0), j = i + l - k; l < band && j < tLen; l++, j++) {
+			final int l0 = max(k - i, 0);
+			// 列0（t未消費）に対応する境界セルは削除コスト i+1（前々行の古い値の参照を防ぐ）
+			if (l0 > 0) dp2[l0 - 1] = i + 1;
+			for (int l = l0, j = i + l - k; l < band && j < tLen; l++, j++) {
 				if (si == t[j]) {
 					dp2[l] = dp1[l];
 				} else {
