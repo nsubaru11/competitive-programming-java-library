@@ -62,3 +62,5 @@ qodana.yml             # JetBrains Qodana 設定ファイル
 
 # その他の一時ファイル
 **/*.tmp               # 一時ファイル
+# ベンチマーク生成物（FastIO Benchmark の作業ディレクトリ）
+**/Benchmark/work/
