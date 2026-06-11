@@ -26,109 +26,150 @@ C:.
 │ └───PULL_REQUEST_TEMPLATE
 ├───.junie
 ├───Algorithms
-│ ├───Basic
-│ │ └───src
-│ ├───BinarySearch
-│ │ ├───docs
-│ │ └───src
-│ ├───Convolution
+│ ├───Conversion
 │ │ └───src
 │ ├───DP
 │ │ └───src
-│ ├───Factorial
+│ ├───DivideAndConquer
+│ │ ├───CentroidDecomposition
+│ │ │ └───src
+│ │ └───MoAlgorithm
 │ │ └───src
 │ ├───Graph
+│ │ ├───Connectivity
+│ │ │ └───src
+│ │ ├───Core
+│ │ │ └───src
+│ │ ├───Flow
+│ │ │ ├───MaxFlow
+│ │ │ │ └───src
+│ │ │ └───MinCostFlow
+│ │ │ └───src
+│ │ ├───MinimumSpanningTree
+│ │ │ ├───docs
+│ │ │ └───src
 │ │ ├───ShortestPath
 │ │ │ ├───docs
 │ │ │ └───src
-│ │ └───SimpleGraph
+│ │ └───TwoSat
 │ │ └───src
+│ ├───Math
+│ │ ├───Combinatorics
+│ │ │ ├───docs
+│ │ │ └───src
+│ │ ├───Convolution
+│ │ │ └───src
+│ │ ├───Factorial
+│ │ │ └───src
+│ │ ├───Geometry
+│ │ │ ├───docs
+│ │ │ └───src
+│ │ ├───LinearAlgebra
+│ │ │ └───src
+│ │ ├───Matrix
+│ │ │ └───src
+│ │ ├───NumberTheory
+│ │ │ └───src
+│ │ ├───NumberUtils
+│ │ │ ├───docs
+│ │ │ └───src
+│ │ ├───Permutation
+│ │ │ ├───docs
+│ │ │ └───src
+│ │ ├───Polynomial
+│ │ │ └───src
+│ │ └───PrimeNumber
+│ │ ├───docs
+│ │ └───src
+│ ├───Randomized
+│ │ └───src
+│ ├───Search
+│ │ ├───BinarySearch
+│ │ │ ├───docs
+│ │ │ └───src
+│ │ └───UnimodalUtils
+│ │ └───src
+│ ├───Sort
+│ │ ├───docs
+│ │ └───src
+│ └───String
 │ ├───Levenshtein
-│ │ ├───docs
-│ │ └───src
-│ ├───MathFunctions
-│ │ ├───docs
-│ │ └───src
-│ ├───Matrix
-│ │ └───src
-│ ├───MinimumSpanningTree
 │ │ ├───docs
 │ │ └───src
 │ ├───Palindrome
 │ │ ├───docs
 │ │ └───src
-│ ├───Permutation
-│ │ ├───docs
-│ │ └───src
-│ ├───PrimeNumber
-│ │ ├───docs
-│ │ └───src
-│ ├───Randomized
-│ │ └───src
-│ ├───Sort
-│ │ ├───docs
-│ │ └───src
-│ ├───StringSearch
-│ │ ├───docs
-│ │ └───src
-│ └───UnimodalUtils
-│ └───src
-├───Data Structures
-│ ├───ArrayUtils
-│ │ ├───docs
-│ │ └───src
-│ ├───AVLTree
-│ │ ├───docs
-│ │ └───src
-│ ├───BinaryIndexedTree
-│ │ ├───docs
-│ │ └───src
-│ ├───BinarySearchTree
-│ │ ├───docs
-│ │ └───src
-│ ├───BitSet
-│ │ └───src
-│ ├───CartesianTree
-│ │ └───src
-│ ├───FastIO17
-│ │ ├───Benchmark
-│ │ │ ├───BatchFiles
-│ │ │ ├───Output
-│ │ │ └───TestCases
-│ │ ├───docs
-│ │ ├───out
-│ │ └───src
-│ ├───FastIO24
-│ │ ├───Benchmark
-│ │ ├───docs
-│ │ ├───out
-│ │ └───src
-│ ├───HashMap
-│ │ ├───docs
-│ │ └───src
-│ ├───Int128
-│ │ └───src
-│ ├───ModNumbers
-│ │ ├───docs
-│ │ └───src
-│ ├───PriorityQueue
-│ │ ├───docs
-│ │ └───src
-│ ├───RingBuffer
-│ │ ├───docs
-│ │ └───src
-│ ├───SegmentTree
-│ │ ├───docs
-│ │ └───src
-│ ├───SparseTable
-│ │ ├───docs
-│ │ └───src
-│ ├───Trie
-│ │ ├───docs
-│ │ └───src
-│ └───UnionFind
+│ └───StringSearch
 │ ├───docs
 │ └───src
+└───DataStructures
+├───AVLTree
+│ ├───docs
+│ └───src
+├───ArrayUtils
+│ ├───docs
+│ └───src
+├───BinaryIndexedTree
+│ ├───docs
+│ └───src
+├───BinarySearchTree
+│ ├───docs
+│ └───src
+├───BitSet
+│ └───src
+├───CartesianTree
+│ └───src
+├───EulerTour
+│ └───src
+├───FastIO
+│ ├───Java17
+│ │ ├───Benchmark
+│ │ │ ├───BatchFiles
+│ │ │ └───Output
+│ │ ├───docs
+│ │ └───src
+│ └───Java24
+│ ├───Benchmark
+│ ├───docs
+│ └───src
+├───HashMap
+│ ├───docs
+│ └───src
+├───Int128
+│ └───src
+├───LiChaoTree
+│ └───src
+├───ModNumbers
+│ ├───docs
+│ └───src
+├───PersistentSegmentTree
+│ └───src
+├───PersistentUnionFind
+│ └───src
+├───PriorityQueue
+│ ├───docs
+│ └───src
+├───RingBuffer
+│ ├───docs
+│ └───src
+├───SegmentTree
+│ ├───docs
+│ └───src
+├───SegmentTree2D
+│ └───src
+├───SkipList
+│ └───src
+├───SparseTable
+│ ├───docs
+│ └───src
+├───Trie
+│ ├───docs
+│ └───src
+├───UnionFind
+│ ├───docs
+│ └───src
+└───WaveletTree
+└───src
 
 ## JDKバージョン
 
@@ -137,4 +178,4 @@ C:.
 - JDK 24の最新機能を活用し、コードの最適化や安全性の向上を図ること。
 - IntelliJ IDEAの設定やビルドツール（例: Maven, Gradleなど）がJDK 24に対応していることを確認すること。
 - 環境変数およびIDEの構成でJDK 24が優先されるように設定してください。
-- 例外として `Data Structures/FastIO17` 配下のみ JDK 17 互換を維持すること（Java 17 環境向けの実装のため）。
+- 例外として `DataStructures/FastIO/Java17` 配下のみ JDK 17 互換を維持すること（Java 17 環境向けの実装のため）。
