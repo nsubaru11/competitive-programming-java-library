@@ -64,8 +64,8 @@ public class Main {
 |-----------------------------------------------------------------------------------------------|--------------------------------------------------------|
 | [Conversion](./Algorithms/Conversion)                                                         | 数値・文字列・配列の相互変換などの基本ユーティリティ                             |
 | [DP](./Algorithms/DP)                                                                         | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                         |
-| [DivideAndConquer/CentroidDecomposition](./Algorithms/DivideAndConquer/CentroidDecomposition) | 📝 重心分解（TODO）                                          |
-| [DivideAndConquer/MoAlgorithm](./Algorithms/DivideAndConquer/MoAlgorithm)                     | 📝 Mo's Algorithm（オフライン区間クエリの平方分割、TODO）                |
+| [DivideAndConquer/MoAlgorithm](Algorithms/DivideConquer/MoAlgorithm)                     | Mo's Algorithm（オフライン区間クエリの平方分割、add/remove関数によるジグザグ走査） |
+| [Graph/CentroidDecomposition](./Algorithms/Graph/CentroidDecomposition)                       | 📝 重心分解（TODO）                                          |
 | [Graph/Connectivity](./Algorithms/Graph/Connectivity)                                         | 📝 橋・関節点・二重連結成分分解（TODO）                                |
 | [Graph/Core](./Algorithms/Graph/Core)                                                         | 有向/無向グラフ（SCC・トポロジカルソート・二部判定）、木（直径）、根付き木（LCA・HLD）       |
 | [Graph/Flow/MaxFlow](./Algorithms/Graph/Flow/MaxFlow)                                         | 📝 Dinic法による最大流（TODO）                                  |
