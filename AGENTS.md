@@ -2,60 +2,57 @@
 
 ## Project Big Picture
 
-- This repo is a **competitive programming Java library collection**, not a single app/service.
-- Top-level boundaries are `Algorithms/` and `DataStructures/`; each topic is split into a standalone module with
-  `src/`, often `README.md`, and sometimes `docs/`.
-- Classes are designed for **copy-paste use in contests** and are usually in the **default package** (no `package`
-  declaration), e.g. `Algorithms/Search/BinarySearch/src/BinarySearch.java`.
-- Fast I/O is split by runtime target: `DataStructures/FastIO/Java17/src/*` (Java 17) and
-  `DataStructures/FastIO/Java24/src/*` (
-  Java 24 optimized).
-- Many modules include `Example.java` as an executable usage check, e.g.
-  `Algorithms/Search/BinarySearch/src/Example.java`.
+- This repository is a competitive-programming Java library collection, not a single app or service.
+- `src/lib/` is the importable API source tree. Packages are grouped as `lib.ds`, `lib.graph`, `lib.io`, `lib.math`, `lib.search`, `lib.sort`, `lib.string`, and `lib.util`.
+- `src/patterns/` contains code meant to be read, copied, or adapted rather than treated as a stable reusable API.
+- `test/verify/` contains executable examples, online-judge checks, and benchmark drivers. It is a test source root.
+- `docs/` contains module READMEs, detailed guides, and benchmark runners.
+- Fast I/O is split by runtime target: `lib.io` is Java 24 optimized; `lib.io.compat17` must remain Java 17 compatible.
 
-## Coding Conventions Used Here
+## Coding Conventions
 
 - Follow `.github/copilot-instructions.md` as project-local policy.
-- Write JavaDoc for non-compressed classes/methods; keep constants in `UPPER_SNAKE_CASE`.
-- Use **tabs** for indentation and keep a trailing newline at end-of-file.
-- Prefer bit operations and low-level optimizations where reasonable (see `FastScanner` and `FastPrinter`
-  implementations).
-- For reusable APIs, add overloads and provide primitive + generic variants when appropriate.
+- Write JavaDoc for non-compressed public classes and methods; keep constants in `UPPER_SNAKE_CASE`.
+- Use tabs for Java indentation and keep a trailing newline at end-of-file.
+- Prefer bit operations and low-level optimizations where they measurably help performance.
+- For reusable APIs, add overloads and primitive-specialized variants when appropriate.
+- Public importable classes must live at `src/lib/<package>/<ClassName>.java`; the path, package declaration, public type, and filename must agree.
 
-## Architecture/Implementation Patterns (with examples)
+## Architecture and Dependency Rules
 
-- Static utility style: `final` class + private constructor + static methods (
-  `Algorithms/Search/BinarySearch/src/BinarySearch.java`).
-- Binary search APIs return insertion points with bitwise complement (`~index`) semantics.
-- Performance-critical code avoids extra allocations and uses manual buffering/bit tricks:
-	- `DataStructures/FastIO/Java24/src/FastScanner.java` (`(n << 3) + (n << 1)`, `VarHandle` access)
-	- `DataStructures/FastIO/Java24/src/FastPrinter.java` (power-of-two buffers, manual digit writes)
-- Generic data structures accept function objects to define operations, e.g.
-  `DataStructures/SegmentTree/src/SegmentTree.java` with `BinaryOperator<T>` and `Predicate<T>`.
-- I/O usage pattern is `try-with-resources` for `AutoCloseable` scanners/printers (
-  `DataStructures/FastIO/Java24/src/Example.java`, root `README.md`).
+- Static utilities normally use a `final` class, private constructor, and static methods, for example `src/lib/search/BinarySearch.java`.
+- Binary-search APIs return insertion points using bitwise-complement (`~index`) semantics.
+- Performance-critical code avoids avoidable allocation and may use manual buffering, SWAR, `VarHandle`, or `Unsafe` where the runtime-specific package permits it.
+- Generic data structures accept operation functions where useful, for example `src/lib/ds/SegmentTree.java`.
+- Library classes may depend on other `lib.*` classes through normal imports. Keep the dependency graph small and acyclic where practical.
+- Do not restore private copies of shared primitives inside higher-level algorithms. For example, `lib.graph.Kruskal` uses `lib.ds.UnionFind`.
+- Imports from `lib.*` are expanded transitively by the AtCoder-side bundler. Static imports from `lib.*` and fully qualified `lib.*` references in method bodies are not bundler-compatible.
 
-## Developer Workflows (non-obvious but practical)
+## Developer Workflows
 
-- There is **no Maven/Gradle** build; compile only needed files with `javac`.
-- Typical PowerShell flow (adjust module paths as needed):
-	-
-  `javac -encoding UTF-8 -d out "DataStructures\FastIO\Java24\src\FastScanner.java" "DataStructures\FastIO\Java24\src\FastPrinter.java"`
-	- `javac -encoding UTF-8 -cp out -d out Main.java`
-	- `java -cp out Main`
-- For module smoke checks, compile module `src/*.java` and run its `Example` class.
-- Benchmark/profiling entrypoint is `DataStructures/FastIO/Java24/Benchmark/run_tests_24.sh` (Linux/WSL bash; `.bat` for
-  Windows); it compiles FastIO24 benchmark classes, runs repeated measurements, and emits CSV/logs under
-  `Benchmark/work/` (gitignored). See `DataStructures/FastIO/Java24/Benchmark/README.md`.
+- There is no Maven or Gradle build. Compile the source roots directly with `javac`.
+- Full Java 24 smoke compile in PowerShell:
 
-## Integration Points and Maintenance Rules
+  `javac --release 24 -encoding UTF-8 -d out (rg --files src -g '*.java')`
 
-- Static analysis is configured in `qodana.yaml` (`jetbrains/qodana-jvm:2025.2`, `projectJDK: "24"`).
-- Contribution metadata is standardized via `.github/ISSUE_TEMPLATE/` and `.github/PULL_REQUEST_TEMPLATE/`.
-- When API behavior changes, update both code and docs:
-	- module `README.md` (format guided by `README_TEMPLATE.md`)
-	- module guides in `docs/` (template: `GuideTemplate.md`)
-- Prefer minimal API breakage; this library is consumed as standalone snippets.
-- Some READMEs may lag implementation (example: `Algorithms/Math/Factorial/README.md` class names). Verify against
-  `src/`
-  before editing.
+- Compile verification sources after the library:
+
+  `javac --release 24 -encoding UTF-8 -cp out -d out/test (rg --files test -g '*.java')`
+
+- Check Java 17 compatibility separately for `src/lib/io/compat17/*.java` using `--release 17`.
+- Run executable checks by fully qualified name, for example `java -cp "out;out/test" verify.graph.mst.Example` on Windows.
+- The Java 24 benchmark entrypoints are `docs/io/Java24/Benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
+
+## Submission Integration
+
+- Contest solutions should use ordinary imports such as `import lib.ds.UnionFind;` while editing locally.
+- Raw import-based solutions cannot be submitted to AtCoder. The runner's `run`, `localtest`, `test`, `tomain`, and `submit` paths must all operate on the bundled source.
+- Keep a manual fallback available: every bundled FQCN maps back to its source under `src/`, and bundler output reports the inlined class list.
+- The AtCoder repository may mount this repository as `library/` or set `ATCODER_LIB_SRC` to this repository's `src` directory.
+
+## Integration and Maintenance
+
+- Static analysis is configured in `qodana.yaml` with JDK 24.
+- When API behavior or location changes, update the relevant module README under `docs/`, detailed guides, root `README.md`, and verification code.
+- Prefer minimal API breakage; contest solutions and the bundler consume these classes as source.
+- Some documentation may lag implementation. Verify claims against `src/` before editing.
