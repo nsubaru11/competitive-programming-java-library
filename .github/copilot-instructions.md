@@ -2,180 +2,65 @@
 
 ## プロジェクト概要
 
-このプロジェクトは競技プログラミング用のJavaライブラリを提供します。
+このプロジェクトは競技プログラミング用のJavaライブラリです。ローカルではパッケージ付きソースとしてIDE支援を活用し、AtCoder提出時には別repoのバンドラで推移的依存を単一の`Main.java`へ展開します。
+
+## ソース区分
+
+- `src/lib`: importして再利用する公開API
+- `src/patterns`: 読んで写経・改変する実装パターン
+- `test/verify`: Example、Check、オンラインジャッジ用検証、ベンチマークドライバ
+- `docs`: モジュールREADME、詳細ガイド、ベンチマークランナー
+
+`src/lib`のパッケージは次の責務で分けます。
+
+- `lib.ds`: データ構造
+- `lib.graph`: グラフアルゴリズム
+- `lib.io`: Java 24向け高速I/O
+- `lib.io.compat17`: Java 17互換高速I/O
+- `lib.math`: 数学・数論・行列
+- `lib.search`: 探索・選択
+- `lib.sort`: ソート
+- `lib.string`: 文字列アルゴリズム
+- `lib.util`: その他の汎用処理
 
 ## コーディング規則
 
-- **JavaDoc コメント**: 圧縮版のクラス以外の全てのクラス・メソッドでJavaDocコメントを記述すること。
-- **定数の命名規則**: 定数はUPPER_SNAKE_CASEで記述すること。
-- **インデント**: インデントにはタブキーを使用すること。
-- **ビット演算子の使用**: 限りなく高速化なコードにするため、可能ならビット演算子を使用すること。
-- **オーバーロードの作成**: 汎用ライブラリを作成するため、様々なオーバーロードを作成すること。
-- **プリミティブ型版とジェネリクス型版の実装**: 高速に動作させるため、プリミティブ型版とジェネリクス型版の両方を実装すること。
-- **多次元配列の圧縮**: 内部的に多次元配列を用いる場合、1次元に圧縮すること。
+- JavaDoc: 非圧縮の公開クラス・公開メソッドに記述する。
+- 定数: `UPPER_SNAKE_CASE`で命名する。
+- インデント: タブを使用する。
+- 改行・文字コード: LF、UTF-8、末尾改行あり。
+- 性能: 不要な割り当てを避け、効果が明確ならビット演算・手動バッファリング・SWAR等を使う。
+- API: 用途がある場合はオーバーロード、プリミティブ特化版、ジェネリクス版を用意する。
+- 多次元配列: 性能クリティカルな内部表現では一次元配列への圧縮を検討する。
+- 依存: 標準ライブラリと`lib.*`のみ。共通処理を高階クラス内へ複製しない。
+- 公開型: `src/lib/<package>/<ClassName>.java`、`package`宣言、public型名、ファイル名を一致させる。
 
-## ディレクトリ構成
+## バンドラ互換性
 
-- `src`: ソースコードを含む。
-- `docs`: ドキュメントを含む。
+- ライブラリ間依存は`import lib.ds.UnionFind;`のような通常importで表す。
+- `import static lib...`は禁止する。
+- 本文中で`lib.ds.UnionFind`のような完全修飾名を直接使わない。
+- トップレベル型の単純名衝突を避ける。
+- パッケージ内だけで暗黙参照している兄弟クラスも推移的依存になることを意識する。
 
-C:.
-├───.claude
-├───.github
-│ ├───ISSUE_TEMPLATE
-│ └───PULL_REQUEST_TEMPLATE
-├───.junie
-├───Algorithms
-│ ├───Conversion
-│ │ └───src
-│ ├───DP
-│ │ └───src
-│ ├───DivideAndConquer
-│ │ ├───CentroidDecomposition
-│ │ │ └───src
-│ │ └───MoAlgorithm
-│ │ └───src
-│ ├───Graph
-│ │ ├───Connectivity
-│ │ │ └───src
-│ │ ├───Core
-│ │ │ └───src
-│ │ ├───Flow
-│ │ │ ├───MaxFlow
-│ │ │ │ └───src
-│ │ │ └───MinCostFlow
-│ │ │ └───src
-│ │ ├───MinimumSpanningTree
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ ├───ShortestPath
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ └───TwoSat
-│ │ └───src
-│ ├───Math
-│ │ ├───Combinatorics
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ ├───Convolution
-│ │ │ └───src
-│ │ ├───Factorial
-│ │ │ └───src
-│ │ ├───Geometry
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ ├───LinearAlgebra
-│ │ │ └───src
-│ │ ├───Matrix
-│ │ │ └───src
-│ │ ├───NumberTheory
-│ │ │ └───src
-│ │ ├───NumberUtils
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ ├───Permutation
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ ├───Polynomial
-│ │ │ └───src
-│ │ └───PrimeNumber
-│ │ ├───docs
-│ │ └───src
-│ ├───Randomized
-│ │ └───src
-│ ├───Search
-│ │ ├───BinarySearch
-│ │ │ ├───docs
-│ │ │ └───src
-│ │ └───UnimodalUtils
-│ │ └───src
-│ ├───Sort
-│ │ ├───docs
-│ │ └───src
-│ └───String
-│ ├───Levenshtein
-│ │ ├───docs
-│ │ └───src
-│ ├───Palindrome
-│ │ ├───docs
-│ │ └───src
-│ └───StringSearch
-│ ├───docs
-│ └───src
-└───DataStructures
-├───AVLTree
-│ ├───docs
-│ └───src
-├───ArrayUtils
-│ ├───docs
-│ └───src
-├───BinaryIndexedTree
-│ ├───docs
-│ └───src
-├───BinarySearchTree
-│ ├───docs
-│ └───src
-├───BitSet
-│ └───src
-├───CartesianTree
-│ └───src
-├───EulerTour
-│ └───src
-├───FastIO
-│ ├───Java17
-│ │ ├───Benchmark
-│ │ │ ├───BatchFiles
-│ │ │ └───Output
-│ │ ├───docs
-│ │ └───src
-│ └───Java24
-│ ├───Benchmark
-│ ├───docs
-│ └───src
-├───HashMap
-│ ├───docs
-│ └───src
-├───Int128
-│ └───src
-├───LiChaoTree
-│ └───src
-├───ModNumbers
-│ ├───docs
-│ └───src
-├───PersistentSegmentTree
-│ └───src
-├───PersistentUnionFind
-│ └───src
-├───PriorityQueue
-│ ├───docs
-│ └───src
-├───RingBuffer
-│ ├───docs
-│ └───src
-├───SegmentTree
-│ ├───docs
-│ └───src
-├───SegmentTree2D
-│ └───src
-├───SkipList
-│ └───src
-├───SparseTable
-│ ├───docs
-│ └───src
-├───Trie
-│ ├───docs
-│ └───src
-├───UnionFind
-│ ├───docs
-│ └───src
-└───WaveletTree
-└───src
+## ビルドと検証
+
+ビルドツールは使用しません。PowerShellでは次を基本とします。
+
+```powershell
+$src = @(rg --files src -g '*.java')
+javac --release 24 -encoding UTF-8 -d out $src
+
+$verify = @(rg --files test -g '*.java')
+javac --release 24 -encoding UTF-8 -cp out -d out/test $verify
+```
+
+`src/lib/io/compat17/*.java`は`--release 17`でも確認してください。検証コードは完全修飾名で実行します。
+
+## ドキュメント保守
+
+APIや配置を変えた場合は、関連する`docs/`のREADME・ガイド、ルート`README.md`、必要に応じて`README_TEMPLATE.md`を同時に更新します。古い`Algorithms/`や`DataStructures/`パス、デフォルトパッケージ前提の説明を追加しないでください。
 
 ## JDKバージョン
 
-このプロジェクトは **JDK 24（24.0.2）** を使用して開発を行います。
-
-- JDK 24の最新機能を活用し、コードの最適化や安全性の向上を図ること。
-- IntelliJ IDEAの設定やビルドツール（例: Maven, Gradleなど）がJDK 24に対応していることを確認すること。
-- 環境変数およびIDEの構成でJDK 24が優先されるように設定してください。
-- 例外として `DataStructures/FastIO/Java17` 配下のみ JDK 17 互換を維持すること（Java 17 環境向けの実装のため）。
+基本ターゲットはJDK 24です。`lib.io.compat17`だけはJDK 17互換を維持します。

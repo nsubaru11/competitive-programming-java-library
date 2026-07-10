@@ -11,6 +11,9 @@
 .idea/
 *.iml
 
+# ローカルAIアシスタント設定
+.claude/
+
 # ビルド成果物
 out/
 *.class
