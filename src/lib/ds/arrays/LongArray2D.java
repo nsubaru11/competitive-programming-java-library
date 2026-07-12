@@ -1,24 +1,24 @@
-package lib.ds;
+package lib.ds.arrays;
 
 import java.util.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
-public final class IntArray2D implements Iterable<Integer> {
-	private final int[] arr;
+public final class LongArray2D implements Iterable<Long> {
+	private final long[] arr;
 	private final int hw, h, w;
 	private int rCnt = 0;
 	private boolean transposed = false;
 
-	public IntArray2D(final int h, final int w, final IntBinaryOperator init) {
+	public LongArray2D(final int h, final int w, final LongBinaryOperator init) {
 		this.h = h;
 		this.w = w;
 		this.hw = h * w;
-		this.arr = new int[hw];
-		for (int i = 0, ij = 0; i < h; i++) for (int j = 0; j < w; j++) arr[ij++] = init.applyAsInt(i, j);
+		this.arr = new long[hw];
+		for (int i = 0, ij = 0; i < h; i++) for (int j = 0; j < w; j++) arr[ij++] = init.applyAsLong(i, j);
 	}
 
-	public int get(int i, int j) {
+	public long get(int i, int j) {
 		if (transposed) {
 			int t = i;
 			i = j;
@@ -33,7 +33,7 @@ public final class IntArray2D implements Iterable<Integer> {
 		};
 	}
 
-	public void set(int i, int j, final int value) {
+	public void set(int i, int j, final long value) {
 		if (transposed) {
 			int t = i;
 			i = j;
@@ -61,15 +61,15 @@ public final class IntArray2D implements Iterable<Integer> {
 		if (h == w) transposed = !transposed;
 	}
 
-	public PrimitiveIterator.OfInt iterator() {
-		return new PrimitiveIterator.OfInt() {
+	public PrimitiveIterator.OfLong iterator() {
+		return new PrimitiveIterator.OfLong() {
 			private int index = 0;
 
 			public boolean hasNext() {
 				return index < hw;
 			}
 
-			public int nextInt() {
+			public long nextLong() {
 				return arr[index++];
 			}
 		};
