@@ -26,7 +26,7 @@ public final class Check2 {
 
 	private static void solve() {
 		int q = sc.nextInt();
-		IntArrayDeque a = new IntArrayDeque(500000);
+		IntArrayDeque a = new IntArrayDeque(q);
 		while (q-- > 0) {
 			int t = sc.nextInt();
 			if (t == 0) {
