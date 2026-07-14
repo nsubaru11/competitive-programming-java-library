@@ -31,16 +31,16 @@ public final class IntCompressedArray implements IntArray {
 		this(a.toArray(), rankType, false);
 	}
 
-	public IntCompressedArray(final IntArray arr, final RankType rankType, final boolean oneBased) {
-		this(arr.toArray(), rankType, oneBased);
+	public IntCompressedArray(final IntArray a, final RankType rankType, final boolean oneBased) {
+		this(a.toArray(), rankType, oneBased);
 	}
 
-	public IntCompressedArray(final int[] arr, final RankType rankType, final boolean oneBased) {
+	public IntCompressedArray(final int[] a, final RankType rankType, final boolean oneBased) {
 		this.rankType = rankType;
 		this.oneBased = oneBased;
-		length = arr.length;
+		length = a.length;
 		compressed = new int[length];
-		sorted = copyOf(arr, arr.length);
+		sorted = copyOf(a, length);
 		sort(sorted);
 		ranks = new int[length];
 		int r = oneBased ? 1 : 0;
@@ -81,7 +81,7 @@ public final class IntCompressedArray implements IntArray {
 		}
 		this.distinctSize = distinctSize;
 		for (int i = 0; i < length; i++) {
-			compressed[i] = ranks[binarySearch(sorted, arr[i])];
+			compressed[i] = ranks[binarySearch(sorted, a[i])];
 		}
 	}
 
@@ -89,11 +89,11 @@ public final class IntCompressedArray implements IntArray {
 		return compressed[i];
 	}
 
-	public int rankOfValue(int v) {
+	public int rankOfValue(final int v) {
 		return ranks[binarySearch(sorted, v)];
 	}
 
-	public int valueOfRank(int rank) {
+	public int valueOfRank(final int rank) {
 		return sorted[binarySearch(ranks, rank)];
 	}
 
@@ -127,6 +127,20 @@ public final class IntCompressedArray implements IntArray {
 
 	public int count(final int v) {
 		return ArrayBinarySearch.count(sorted, v);
+	}
+
+	/**
+	 * 圧縮後の順位を元配列順でコピーして返します。
+	 */
+	public int[] toArray() {
+		return copyOf(compressed, length);
+	}
+
+	/**
+	 * 圧縮後の順位を元配列順でコピーして返します。
+	 */
+	public int[] compressed() {
+		return toArray();
 	}
 
 	public int[] sorted() {

@@ -1,6 +1,7 @@
 package lib.ds.arrays;
 
 import java.util.*;
+import java.util.function.*;
 
 /**
  * int型に特化した可変容量の配列deque。
@@ -23,6 +24,34 @@ public final class IntArrayDeque implements IntMutableArray, Cloneable {
 		this.capacity = 1 << (32 - Integer.numberOfLeadingZeros(capacity - 1));
 		this.buf = new int[this.capacity];
 		this.head = size = 0;
+	}
+
+	/**
+	 * 指定された配列の要素を同じ順序で保持するIntArrayDequeを構築します。
+	 */
+	public IntArrayDeque(final int[] a) {
+		this(a.length);
+		System.arraycopy(a, 0, buf, 0, a.length);
+		size = a.length;
+	}
+
+	/**
+	 * 指定された配列の論理順を保持するIntArrayDequeを構築します。
+	 */
+	public IntArrayDeque(final IntArray a) {
+		this(a.size());
+		size = a.size();
+		for (int i = 0; i < size; i++) buf[i] = a.get(i);
+	}
+
+	/**
+	 * supplierが生成するn要素を保持するIntArrayDequeを返します。
+	 */
+	public static IntArrayDeque generate(final int n, final IntSupplier init) {
+		final IntArrayDeque res = new IntArrayDeque(n);
+		for (int i = 0; i < n; i++) res.buf[i] = init.getAsInt();
+		res.size = n;
+		return res;
 	}
 
 	/**
@@ -126,6 +155,26 @@ public final class IntArrayDeque implements IntMutableArray, Cloneable {
 		int old = buf[i];
 		buf[i] = e;
 		return old;
+	}
+
+	/**
+	 * 全要素を指定値で更新します。
+	 *
+	 * @param v 設定する値
+	 */
+	public void fill(final int v) {
+		head = 0;
+		Arrays.fill(buf, 0, size, v);
+	}
+
+	/**
+	 * 各論理添字に対して生成した値で全要素を更新します。
+	 *
+	 * @param init 論理添字から値を生成する関数
+	 */
+	public void setAll(final IntUnaryOperator init) {
+		head = 0;
+		for (int i = 0; i < size; i++) buf[i] = init.applyAsInt(i);
 	}
 
 	/**

@@ -11,6 +11,7 @@
 - 3種類の同順位処理を `RankType` で選択可能
 - 値から順位、順位から値への O(log n) 変換
 - 元配列の復元、出現判定、出現回数の取得に対応
+- 圧縮結果・ソート済み値・順位配列をコピーとして取得可能
 - `LongCompressedArray` も圧縮後の順位は `int` のため `IntArray` を実装
 
 ## 依存関係
@@ -61,6 +62,8 @@
 | `distinctSize()` | `int`      | 異なる値の個数            |
 | `rankType()`     | `RankType` | 使用中の順位方式           |
 | `isOneBased()`   | `boolean`  | 1-based か判定        |
+| `toArray()`      | `int[]`    | 元配列順の圧縮結果のコピーを返す   |
+| `compressed()`   | `int[]`    | 元配列順の圧縮結果のコピーを返す   |
 
 `length` と `distinctSize` は public final フィールドとしても公開されています。
 
@@ -118,7 +121,7 @@ LongCompressedArray c = new LongCompressedArray(
 - `get`, `size`, `distinctSize`, `rankType`, `isOneBased`: O(1)
 - `rankOfValue`, `valueOfRank`, `containsValue`, `count`: O(log n)
 - `restore`: O(n log n)
-- `sorted`, `ranks`, iterator, `toString`: O(n)
+- `toArray`, `compressed`, `sorted`, `ranks`, iterator, `toString`: O(n)
 - 使用メモリ: O(n)
 
 ## バージョン情報
@@ -127,6 +130,7 @@ LongCompressedArray c = new LongCompressedArray(
 |:--------------|:-----------|:--------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-07-15 | DENSE・COMPETITION・MODIFIED_COMPETITION、0/1-based、値と順位の相互変換を備える座標圧縮として初回実装 |
 | **バージョン 1.1** | 2026-07-15 | `toString()` を元配列順の空白区切り形式へ改善                                             |
+| **バージョン 2.0** | 2026-07-15 | 元配列順の圧縮結果を直接コピーする `toArray()` と `compressed()` を追加                        |
 
 ### バージョン管理について
 

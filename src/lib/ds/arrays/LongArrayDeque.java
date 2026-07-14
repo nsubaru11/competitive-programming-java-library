@@ -1,6 +1,7 @@
 package lib.ds.arrays;
 
 import java.util.*;
+import java.util.function.*;
 
 /**
  * long型に特化した可変容量の配列deque。
@@ -23,6 +24,34 @@ public final class LongArrayDeque implements LongMutableArray, Cloneable {
 		this.capacity = 1 << (32 - Integer.numberOfLeadingZeros(capacity - 1));
 		this.buf = new long[this.capacity];
 		this.head = size = 0;
+	}
+
+	/**
+	 * 指定された配列の要素を同じ順序で保持するLongArrayDequeを構築します。
+	 */
+	public LongArrayDeque(final long[] a) {
+		this(a.length);
+		System.arraycopy(a, 0, buf, 0, a.length);
+		size = a.length;
+	}
+
+	/**
+	 * 指定された配列の論理順を保持するLongArrayDequeを構築します。
+	 */
+	public LongArrayDeque(final LongArray a) {
+		this(a.size());
+		size = a.size();
+		for (int i = 0; i < size; i++) buf[i] = a.get(i);
+	}
+
+	/**
+	 * supplierが生成するn要素を保持するLongArrayDequeを返します。
+	 */
+	public static LongArrayDeque generate(final int n, final LongSupplier init) {
+		final LongArrayDeque res = new LongArrayDeque(n);
+		for (int i = 0; i < n; i++) res.buf[i] = init.getAsLong();
+		res.size = n;
+		return res;
 	}
 
 	/**
@@ -126,6 +155,26 @@ public final class LongArrayDeque implements LongMutableArray, Cloneable {
 		long old = buf[i];
 		buf[i] = e;
 		return old;
+	}
+
+	/**
+	 * 全要素を指定値で更新します。
+	 *
+	 * @param v 設定する値
+	 */
+	public void fill(final long v) {
+		head = 0;
+		Arrays.fill(buf, 0, size, v);
+	}
+
+	/**
+	 * 各論理添字に対して生成した値で全要素を更新します。
+	 *
+	 * @param init 論理添字から値を生成する関数
+	 */
+	public void setAll(final IntToLongFunction init) {
+		head = 0;
+		for (int i = 0; i < size; i++) buf[i] = init.applyAsLong(i);
 	}
 
 	/**

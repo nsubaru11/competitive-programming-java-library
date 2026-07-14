@@ -10,6 +10,7 @@
 - 現在の論理順に対する O(1) の `get` / `set`
 - 更新時に合計値を差分更新し、`sum()` を O(1) で提供
 - `fill` と `setAll` による一括更新
+- 配列、`IntArray` / `LongArray`、supplierからの初期化に対応
 - `IntMutableArray` / `LongMutableArray` として汎用アルゴリズムへ渡せる
 - iterator、配列化、文字列化はいずれも現在の論理順を反映
 
@@ -19,6 +20,8 @@
 - `java.util.PrimitiveIterator`
 - `java.util.function.IntUnaryOperator`
 - `java.util.function.IntToLongFunction`
+- `java.util.function.IntSupplier`
+- `java.util.function.LongSupplier`
 - [`lib.ds.arrays.IntMutableArray`](../../../src/lib/ds/arrays/IntMutableArray.java)
 - [`lib.ds.arrays.LongMutableArray`](../../../src/lib/ds/arrays/LongMutableArray.java)
 
@@ -26,10 +29,16 @@
 
 ### 1. コンストラクタ
 
-| メソッド                                               | 戻り値の型 | 説明                      |
-|----------------------------------------------------|-------|-------------------------|
-| `IntCircularArray(int n, IntUnaryOperator init)`   | -     | `init(i)` で int 配列を初期化  |
-| `LongCircularArray(int n, IntToLongFunction init)` | -     | `init(i)` で long 配列を初期化 |
+| メソッド                                               | 戻り値の型               | 説明                       |
+|----------------------------------------------------|---------------------|--------------------------|
+| `IntCircularArray(int n, IntUnaryOperator init)`   | -                   | `init(i)` で int 配列を初期化   |
+| `LongCircularArray(int n, IntToLongFunction init)` | -                   | `init(i)` で long 配列を初期化  |
+| `IntCircularArray(int[] a)`                        | -                   | int 配列をコピーして構築           |
+| `LongCircularArray(long[] a)`                      | -                   | long 配列をコピーして構築          |
+| `IntCircularArray(IntArray a)`                     | -                   | `IntArray` の論理順をコピーして構築  |
+| `LongCircularArray(LongArray a)`                   | -                   | `LongArray` の論理順をコピーして構築 |
+| `IntCircularArray.generate(int n, init)`           | `IntCircularArray`  | supplierが生成する `n` 要素で構築  |
+| `LongCircularArray.generate(int n, init)`          | `LongCircularArray` | supplierが生成する `n` 要素で構築  |
 
 ### 2. 要素アクセス・更新
 
@@ -87,6 +96,7 @@ System.out.println(a);       // 5 10 2 3 4
 ## パフォーマンス特性
 
 - `get`, `set`, `sum`, `size`, 各回転操作: O(1)
+- 各コンストラクタと `generate`: O(n)
 - `fill`, `setAll`, `contains`, `toArray`, `iterator`, `toString`: O(n)
 - 使用メモリ: O(n)
 - `toArray` と `toString` は結果用の追加メモリを使用
@@ -98,6 +108,7 @@ System.out.println(a);       // 5 10 2 3 4
 | **バージョン 1.0** | 2026-07-12 | 旧一次元配列実装を、固定長の論理回転・更新・合計保持を行う `CircularArray` として再編 |
 | **バージョン 2.0** | 2026-07-15 | `IntMutableArray` / `LongMutableArray` の実装へ変更       |
 | **バージョン 2.1** | 2026-07-15 | `toString()` を現在の論理順の空白区切り形式へ改善                     |
+| **バージョン 3.0** | 2026-07-15 | 配列・配列インターフェース・supplierからの構築を追加                      |
 
 ### バージョン管理について
 

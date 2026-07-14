@@ -10,6 +10,8 @@
 - 先頭・末尾の追加を償却 O(1) で実行
 - 2のべき乗容量とビットマスクによる循環バッファ
 - 正負の論理添字による O(1) のランダムアクセス・更新
+- 配列、`IntArray` / `LongArray`、supplierからの初期化に対応
+- `fill` と `setAll` による一括更新
 - 満杯時は容量を2倍にして論理順へ再配置
 - clone、要素順に基づく equals / hashCode、配列化に対応
 
@@ -18,6 +20,10 @@
 - `java.util.Arrays`
 - `java.util.NoSuchElementException`
 - `java.util.PrimitiveIterator`
+- `java.util.function.IntSupplier`
+- `java.util.function.IntUnaryOperator`
+- `java.util.function.IntToLongFunction`
+- `java.util.function.LongSupplier`
 - [`lib.ds.arrays.IntMutableArray`](../../../src/lib/ds/arrays/IntMutableArray.java)
 - [`lib.ds.arrays.LongMutableArray`](../../../src/lib/ds/arrays/LongMutableArray.java)
 
@@ -25,15 +31,21 @@
 
 ### 1. コンストラクタ・容量
 
-| メソッド                           | 戻り値の型     | 説明                    |
-|--------------------------------|-----------|-----------------------|
-| `IntArrayDeque(int capacity)`  | -         | 指定容量以上の2のべき乗容量で構築     |
-| `LongArrayDeque(int capacity)` | -         | 指定容量以上の2のべき乗容量で構築     |
-| `size()`                       | `int`     | 現在の要素数                |
-| `capacity()`                   | `int`     | 現在の内部配列容量             |
-| `remainingCapacity()`          | `int`     | `capacity() - size()` |
-| `isEmpty()`                    | `boolean` | 空か判定                  |
-| `isFull()`                     | `boolean` | 現在の内部容量を使い切っているか判定    |
+| メソッド                                   | 戻り値の型            | 説明                      |
+|----------------------------------------|------------------|-------------------------|
+| `IntArrayDeque(int capacity)`          | -                | 指定容量以上の2のべき乗容量で構築       |
+| `LongArrayDeque(int capacity)`         | -                | 指定容量以上の2のべき乗容量で構築       |
+| `IntArrayDeque(int[] a)`               | -                | 配列の要素を同じ順序で保持して構築       |
+| `LongArrayDeque(long[] a)`             | -                | 配列の要素を同じ順序で保持して構築       |
+| `IntArrayDeque(IntArray a)`            | -                | `IntArray` の論理順を保持して構築  |
+| `LongArrayDeque(LongArray a)`          | -                | `LongArray` の論理順を保持して構築 |
+| `IntArrayDeque.generate(int n, init)`  | `IntArrayDeque`  | supplierが生成する `n` 要素で構築 |
+| `LongArrayDeque.generate(int n, init)` | `LongArrayDeque` | supplierが生成する `n` 要素で構築 |
+| `size()`                               | `int`            | 現在の要素数                  |
+| `capacity()`                           | `int`            | 現在の内部配列容量               |
+| `remainingCapacity()`                  | `int`            | `capacity() - size()`   |
+| `isEmpty()`                            | `boolean`        | 空か判定                    |
+| `isFull()`                             | `boolean`        | 現在の内部容量を使い切っているか判定      |
 
 ### 2. 先頭・末尾操作
 
@@ -52,6 +64,8 @@
 |-------------------------|----------------|----------------------|
 | `get(int index)`        | `int` / `long` | 論理添字の値を返す。負数は末尾から数える |
 | `set(int index, value)` | `int` / `long` | 論理添字を更新し、旧値を返す       |
+| `fill(value)`           | `void`         | 全要素を指定値で更新           |
+| `setAll(init)`          | `void`         | 論理添字から生成した値で全要素を更新   |
 | `contains(value)`       | `boolean`      | 値が含まれるか線形探索          |
 
 ### 4. クリア・複製・比較
@@ -100,17 +114,19 @@ deque.set(-1, 10);                    // 2 10
 
 - `addFirst`, `addLast`: 償却 O(1)、拡張時 O(n)
 - `peekFirst`, `peekLast`, `pollFirst`, `pollLast`, `get`, `set`, `size`, `clear`: O(1)
-- `contains`, `equals`, `hashCode`, `toArray`, `iterator`, `toString`: O(n)
+- 配列・`IntArray` / `LongArray`・supplierからの構築: O(n)
+- `fill`, `setAll`, `contains`, `equals`, `hashCode`, `toArray`, `iterator`, `toString`: O(n)
 - `clone`: O(capacity)
 - 使用メモリ: O(capacity)
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                            |
-|:--------------|:-----------|:----------------------------------------------|
-| **バージョン 1.0** | 2026-07-12 | プリミティブ特化の可変容量循環 deque として初回実装                 |
-| **バージョン 2.0** | 2026-07-15 | `IntMutableArray` / `LongMutableArray` の実装へ変更 |
-| **バージョン 2.1** | 2026-07-15 | `toString()` を論理順の空白区切り形式へ改善                  |
+| バージョン番号       | 年月日        | 詳細                                                                 |
+|:--------------|:-----------|:-------------------------------------------------------------------|
+| **バージョン 1.0** | 2026-07-12 | プリミティブ特化の可変容量循環 deque として初回実装                                      |
+| **バージョン 2.0** | 2026-07-15 | `IntMutableArray` / `LongMutableArray` の実装へ変更                      |
+| **バージョン 2.1** | 2026-07-15 | `toString()` を論理順の空白区切り形式へ改善                                       |
+| **バージョン 3.0** | 2026-07-15 | 配列・配列インターフェース・supplierからの構築と、`head` を0へ正規化する `fill` / `setAll` を追加 |
 
 ### バージョン管理について
 

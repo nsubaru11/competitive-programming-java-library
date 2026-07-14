@@ -25,17 +25,17 @@ public final class LongPrefixSum implements LongArray {
 		}
 	}
 
-	public static LongPrefixSum generate(final int n, final LongSupplier init) {
-		return new LongPrefixSum(n, _ -> init.getAsLong());
-	}
-
-	public LongPrefixSum(LongArray a) {
+	public LongPrefixSum(final LongArray a) {
 		length = a.size();
 		sum = new long[length];
 		sum[0] = a.get(0);
 		for (int i = 1; i < length; i++) {
 			sum[i] = sum[i - 1] + a.get(i);
 		}
+	}
+
+	public static LongPrefixSum generate(final int n, final LongSupplier init) {
+		return new LongPrefixSum(n, _ -> init.getAsLong());
 	}
 
 	public long get(final int i) {

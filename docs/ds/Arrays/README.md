@@ -8,7 +8,7 @@
 | Guide                                             | 対象                                          | 用途                    |
 |---------------------------------------------------|---------------------------------------------|-----------------------|
 | [ArrayGuide](./ArrayGuide.md)                     | `IntArray`, `LongArray`                     | 読み取り専用配列インターフェース      |
-| [MutableArrayGuide](./MutableArrayGuide.md)       | `IntMutableArray`, `LongMutableArray`       | 更新可能配列インターフェース        |
+| [MutableArrayGuide](./MutableArrayGuide.md)       | `IntMutableArray`, `LongMutableArray`       | 単一要素・全要素の更新インターフェース   |
 | [PrefixSumGuide](./PrefixSumGuide.md)             | `IntPrefixSum`, `LongPrefixSum`             | 静的配列の区間和              |
 | [CircularArrayGuide](./CircularArrayGuide.md)     | `IntCircularArray`, `LongCircularArray`     | O(1) の論理回転と固定長更新      |
 | [ArrayDequeGuide](./ArrayDequeGuide.md)           | `IntArrayDeque`, `LongArrayDeque`           | プリミティブ特化の可変長 deque    |
@@ -29,6 +29,7 @@
 
 - `int` / `long` をプリミティブのまま扱い、ボクシングと不要な割り当てを避けます。
 - `IntArray` / `LongArray` を受け取る API により、具体実装を差し替えられます。
+- 更新可能配列は `fill` / `setAll` により実装を問わず一括更新できます。
 - コンテストの問題制約を満たす入力を前提とし、全ての不正引数を検査する汎用コレクションではありません。
 - 配列長、添字、窓幅などの事前条件は各 Guide に記載します。
 

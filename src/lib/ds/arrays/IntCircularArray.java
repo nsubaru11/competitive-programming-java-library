@@ -27,6 +27,39 @@ public final class IntCircularArray implements IntMutableArray {
 		sum = s;
 	}
 
+	/**
+	 * 指定された配列の要素を同じ順序で保持する循環配列を構築します。
+	 */
+	public IntCircularArray(final int[] a) {
+		size = a.length;
+		arr = Arrays.copyOf(a, size);
+		long s = 0;
+		for (final int v : a) s += v;
+		sum = s;
+	}
+
+	/**
+	 * 指定された配列の論理順を保持する循環配列を構築します。
+	 */
+	public IntCircularArray(final IntArray a) {
+		size = a.size();
+		arr = new int[size];
+		long s = 0;
+		for (int i = 0; i < size; i++) {
+			int v = a.get(i);
+			arr[i] = v;
+			s += v;
+		}
+		sum = s;
+	}
+
+	/**
+	 * supplierが生成するn要素を保持する循環配列を返します。
+	 */
+	public static IntCircularArray generate(final int n, final IntSupplier init) {
+		return new IntCircularArray(n, _ -> init.getAsInt());
+	}
+
 	public int get(final int i) {
 		int j = offset + i;
 		if (j >= size) j -= size;

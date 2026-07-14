@@ -8,6 +8,7 @@
 
 - 読み取り API と更新 API を型レベルで分離
 - `set` は更新前の値を返すため、別途 `get` せず差分処理が可能
+- `fill` と `setAll` を共通の既定メソッドとして提供
 - `CircularArray` と `ArrayDeque` を同じ更新可能配列として扱える
 - `int` / `long` のプリミティブ特化によりボクシングを回避
 
@@ -15,6 +16,8 @@
 
 - [`lib.ds.arrays.IntArray`](../../../src/lib/ds/arrays/IntArray.java)
 - [`lib.ds.arrays.LongArray`](../../../src/lib/ds/arrays/LongArray.java)
+- `java.util.function.IntUnaryOperator`
+- `java.util.function.IntToLongFunction`
 
 ## 主な機能（メソッド一覧）
 
@@ -24,6 +27,10 @@
 |---------------------------------------|--------|------------------------|
 | `IntMutableArray.set(int i, int v)`   | `int`  | 論理添字 `i` を更新し、更新前の値を返す |
 | `LongMutableArray.set(int i, long v)` | `long` | 論理添字 `i` を更新し、更新前の値を返す |
+| `IntMutableArray.fill(int v)`         | `void` | 全要素を `v` で更新           |
+| `LongMutableArray.fill(long v)`       | `void` | 全要素を `v` で更新           |
+| `IntMutableArray.setAll(init)`        | `void` | `init(i)` で全要素を更新      |
+| `LongMutableArray.setAll(init)`       | `void` | `init(i)` で全要素を更新      |
 
 ### 2. 継承メソッド
 
@@ -34,6 +41,8 @@
 ```java
 IntMutableArray a = new IntCircularArray(4, i -> i + 1);
 int old = a.set(2, 10);
+a.setAll(i -> i * i);
+a.fill(5);
 
 System.out.println(old);      // 3
 System.out.println(a.get(2)); // 10
@@ -49,6 +58,7 @@ System.out.println(a.get(2)); // 10
 ## パフォーマンス特性
 
 - 現在の実装クラスでは `set` は O(1)
+- `fill`, `setAll`: O(n)
 - `set` 自体は追加メモリを使用しない
 
 ## バージョン情報
@@ -56,6 +66,7 @@ System.out.println(a.get(2)); // 10
 | バージョン番号       | 年月日        | 詳細                                                  |
 |:--------------|:-----------|:----------------------------------------------------|
 | **バージョン 1.0** | 2026-07-15 | `IntArray` / `LongArray` から更新操作を分離するインターフェースとして初回実装 |
+| **バージョン 2.0** | 2026-07-15 | 全要素を更新する既定メソッド `fill` / `setAll` を追加                |
 
 ### バージョン管理について
 

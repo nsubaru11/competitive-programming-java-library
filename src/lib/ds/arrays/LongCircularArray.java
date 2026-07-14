@@ -16,15 +16,42 @@ public final class LongCircularArray implements LongMutableArray {
 	public LongCircularArray(final int n, final IntToLongFunction init) {
 		size = n;
 		arr = new long[n];
-		long v0 = init.applyAsLong(0);
-		arr[0] = v0;
-		long s = v0;
+		long v = init.applyAsLong(0);
+		arr[0] = v;
+		long s = v;
 		for (int i = 1; i < n; i++) {
-			long v = init.applyAsLong(i);
+			v = init.applyAsLong(i);
 			arr[i] = v;
 			s += v;
 		}
 		sum = s;
+	}
+
+	/** 指定された配列の要素を同じ順序で保持する循環配列を構築します。 */
+	public LongCircularArray(final long[] a) {
+		size = a.length;
+		arr = Arrays.copyOf(a, size);
+		long s = 0;
+		for (final long v : a) s += v;
+		sum = s;
+	}
+
+	/** 指定された配列の論理順を保持する循環配列を構築します。 */
+	public LongCircularArray(final LongArray a) {
+		size = a.size();
+		arr = new long[size];
+		long s = 0;
+		for (int i = 0; i < size; i++) {
+			long v = a.get(i);
+			arr[i] = v;
+			s += v;
+		}
+		sum = s;
+	}
+
+	/** supplierが生成するn要素を保持する循環配列を返します。 */
+	public static LongCircularArray generate(final int n, final LongSupplier init) {
+		return new LongCircularArray(n, _ -> init.getAsLong());
 	}
 
 	public long get(final int i) {

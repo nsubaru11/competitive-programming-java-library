@@ -32,16 +32,16 @@ public final class LongCompressedArray implements IntArray {
 		this(a.toArray(), rankType, false);
 	}
 
-	public LongCompressedArray(final LongArray arr, final RankType rankType, final boolean oneBased) {
-		this(arr.toArray(), rankType, oneBased);
+	public LongCompressedArray(final LongArray a, final RankType rankType, final boolean oneBased) {
+		this(a.toArray(), rankType, oneBased);
 	}
 
-	public LongCompressedArray(final long[] arr, final RankType rankType, final boolean oneBased) {
+	public LongCompressedArray(final long[] a, final RankType rankType, final boolean oneBased) {
 		this.rankType = rankType;
 		this.oneBased = oneBased;
-		length = arr.length;
+		length = a.length;
 		compressed = new int[length];
-		sorted = copyOf(arr, arr.length);
+		sorted = copyOf(a, length);
 		sort(sorted);
 		ranks = new int[length];
 		int r = oneBased ? 1 : 0;
@@ -82,7 +82,7 @@ public final class LongCompressedArray implements IntArray {
 		}
 		this.distinctSize = distinctSize;
 		for (int i = 0; i < length; i++) {
-			compressed[i] = ranks[binarySearch(sorted, arr[i])];
+			compressed[i] = ranks[binarySearch(sorted, a[i])];
 		}
 	}
 
@@ -128,6 +128,16 @@ public final class LongCompressedArray implements IntArray {
 
 	public int count(final long v) {
 		return ArrayBinarySearch.count(sorted, v);
+	}
+
+	/** 圧縮後の順位を元配列順でコピーして返します。 */
+	public int[] toArray() {
+		return copyOf(compressed, length);
+	}
+
+	/** 圧縮後の順位を元配列順でコピーして返します。 */
+	public int[] compressed() {
+		return toArray();
 	}
 
 	public long[] sorted() {
