@@ -1,18 +1,32 @@
 package lib.ds.arrays;
 
 import java.util.*;
+import java.util.function.*;
 
 public final class LongPrefixSum implements LongArray {
 	private final int length;
 	private final long[] sum;
 
-	public LongPrefixSum(int[] a) {
+	public LongPrefixSum(final int n, final IntToLongFunction init) {
+		length = n;
+		sum = new long[length];
+		sum[0] = init.applyAsLong(0);
+		for (int i = 1; i < length; i++) {
+			sum[i] = sum[i - 1] + init.applyAsLong(i);
+		}
+	}
+
+	public LongPrefixSum(final long[] a) {
 		length = a.length;
 		sum = new long[length];
 		sum[0] = a[0];
 		for (int i = 1; i < length; i++) {
 			sum[i] = sum[i - 1] + a[i];
 		}
+	}
+
+	public static LongPrefixSum generate(final int n, final LongSupplier init) {
+		return new LongPrefixSum(n, _ -> init.getAsLong());
 	}
 
 	public LongPrefixSum(LongArray a) {

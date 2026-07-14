@@ -1,12 +1,22 @@
 package lib.ds.arrays;
 
 import java.util.*;
+import java.util.function.*;
 
 public final class IntPrefixSum implements IntArray {
 	private final int length;
 	private final long[] sum;
 
-	public IntPrefixSum(int[] a) {
+	public IntPrefixSum(final int n, final IntUnaryOperator init) {
+		length = n;
+		sum = new long[length];
+		sum[0] = init.applyAsInt(0);
+		for (int i = 1; i < length; i++) {
+			sum[i] = sum[i - 1] + init.applyAsInt(i);
+		}
+	}
+
+	public IntPrefixSum(final int[] a) {
 		length = a.length;
 		sum = new long[length];
 		sum[0] = a[0];
@@ -15,13 +25,17 @@ public final class IntPrefixSum implements IntArray {
 		}
 	}
 
-	public IntPrefixSum(IntArray a) {
+	public IntPrefixSum(final IntArray a) {
 		length = a.size();
 		sum = new long[length];
 		sum[0] = a.get(0);
 		for (int i = 1; i < length; i++) {
 			sum[i] = sum[i - 1] + a.get(i);
 		}
+	}
+
+	public static IntPrefixSum generate(final int n, final IntSupplier init) {
+		return new IntPrefixSum(n, _ -> init.getAsInt());
 	}
 
 	public int get(final int i) {
