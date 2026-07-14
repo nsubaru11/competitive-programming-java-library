@@ -420,7 +420,7 @@ public final class Check2 {
 	}
 	// endregion
 
-	// region < I/O & Debug >
+	// region < main & debug >
 	public static void main(final String[] args) {
 		try {
 			solve();
