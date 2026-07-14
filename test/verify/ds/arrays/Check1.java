@@ -27,11 +27,11 @@ public final class Check1 {
 	private static void solve() {
 		int n = sc.nextInt();
 		int q = sc.nextInt();
-		IntCircularArray s = new IntCircularArray(n, i -> sc.nextInt());
+		IntPrefixSum a = IntPrefixSum.generate(n, sc::nextInt);
 		while (q-- > 0) {
 			int l = sc.nextInt();
 			int r = sc.nextInt();
-
+			out.println(a.sum(l, r - 1));
 		}
 	}
 
@@ -412,7 +412,7 @@ public final class Check1 {
 	}
 	// endregion
 
-	// region < I/O & Debug >
+	// region < main & debug >
 	public static void main(final String[] args) {
 		try {
 			solve();
