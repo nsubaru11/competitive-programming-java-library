@@ -7,7 +7,7 @@ import java.util.function.*;
  * 固定長の回転可能なint配列です。
  */
 @SuppressWarnings("unused")
-public final class IntCircularArray implements IntArray {
+public final class IntCircularArray implements IntMutableArray {
 	public final int size;
 	private final int[] a;
 	private long sum;

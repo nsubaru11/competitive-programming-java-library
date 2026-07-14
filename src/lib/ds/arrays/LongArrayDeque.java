@@ -9,7 +9,7 @@ import java.util.*;
  * 内部容量を自動的に2のべき乗に正規化することで、剰余演算の代わりに高速なビット演算を利用します。
  */
 @SuppressWarnings("unused")
-public final class LongArrayDeque implements LongArray, Cloneable {
+public final class LongArrayDeque implements LongMutableArray, Cloneable {
 	private int capacity;
 	private long[] buf;
 	private int head, size;

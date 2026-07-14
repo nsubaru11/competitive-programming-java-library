@@ -7,7 +7,7 @@ import java.util.function.*;
  * 固定長の回転可能なlong配列です。
  */
 @SuppressWarnings("unused")
-public final class LongCircularArray implements LongArray {
+public final class LongCircularArray implements LongMutableArray {
 	public final int size;
 	private final long[] arr;
 	private long sum;

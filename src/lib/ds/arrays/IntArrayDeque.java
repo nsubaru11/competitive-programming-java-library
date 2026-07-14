@@ -9,7 +9,7 @@ import java.util.*;
  * 内部容量を自動的に2のべき乗に正規化することで、剰余演算の代わりに高速なビット演算を利用します。
  */
 @SuppressWarnings("unused")
-public final class IntArrayDeque implements IntArray, Cloneable {
+public final class IntArrayDeque implements IntMutableArray, Cloneable {
 	private int capacity;
 	private int[] buf;
 	private int head, size;

@@ -1,8 +1,8 @@
 package lib.search;
 
 /**
- * 配列向けの二分探索ユーティリティです。
- * int/long/double/Comparable配列に対して通常探索・下限探索・上限探索・包含判定を提供します。
+ * 昇順ソート済み配列向けの二分探索ユーティリティです。
+ * int/long/double/Comparable配列に対して通常探索・下限探索・上限探索・包含判定・カウントを提供します。
  * 探索失敗時は -(挿入位置 + 1) を返します。
  */
 @SuppressWarnings("unused")
@@ -29,6 +29,12 @@ public final class ArrayBinarySearch {
 		return binarySearchNormal(arr, 0, arr.length - 1, target) >= 0;
 	}
 
+	public static int count(final int[] arr, final int target) {
+		final int up = upperBoundSearch(arr, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, target) + 1;
+	}
+
 	public static int normalSearch(final int[] arr, final int l, final int r, final int target) {
 		return binarySearchNormal(arr, l, r - 1, target);
 	}
@@ -43,6 +49,12 @@ public final class ArrayBinarySearch {
 
 	public static boolean contains(final int[] arr, final int l, final int r, final int target) {
 		return binarySearchNormal(arr, l, r - 1, target) >= 0;
+	}
+
+	public static int count(final int[] arr, final int l, final int r, final int target) {
+		final int up = upperBoundSearch(arr, l, r, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, l, r, target) + 1;
 	}
 	// endregion
 
@@ -63,6 +75,12 @@ public final class ArrayBinarySearch {
 		return binarySearchNormal(arr, 0, arr.length - 1, target) >= 0;
 	}
 
+	public static int count(final long[] arr, final long target) {
+		final int up = upperBoundSearch(arr, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, target) + 1;
+	}
+
 	public static int normalSearch(final long[] arr, final int l, final int r, final long target) {
 		return binarySearchNormal(arr, l, r - 1, target);
 	}
@@ -77,6 +95,12 @@ public final class ArrayBinarySearch {
 
 	public static boolean contains(final long[] arr, final int l, final int r, final long target) {
 		return binarySearchNormal(arr, l, r - 1, target) >= 0;
+	}
+
+	public static int count(final long[] arr, final int l, final int r, final long target) {
+		final int up = upperBoundSearch(arr, l, r, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, l, r, target) + 1;
 	}
 	// endregion
 
@@ -97,6 +121,12 @@ public final class ArrayBinarySearch {
 		return binarySearchNormal(arr, 0, arr.length - 1, target) >= 0;
 	}
 
+	public static int count(final double[] arr, final double target) {
+		final int up = upperBoundSearch(arr, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, target) + 1;
+	}
+
 	public static int normalSearch(final double[] arr, final int l, final int r, final double target) {
 		return binarySearchNormal(arr, l, r - 1, target);
 	}
@@ -111,6 +141,12 @@ public final class ArrayBinarySearch {
 
 	public static boolean contains(final double[] arr, final int l, final int r, final double target) {
 		return binarySearchNormal(arr, l, r - 1, target) >= 0;
+	}
+
+	public static int count(final double[] arr, final int l, final int r, final double target) {
+		final int up = upperBoundSearch(arr, l, r, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, l, r, target) + 1;
 	}
 	// endregion
 
@@ -131,6 +167,12 @@ public final class ArrayBinarySearch {
 		return binarySearchNormal(arr, 0, arr.length - 1, target) >= 0;
 	}
 
+	public static <T extends Comparable<? super T>> int count(final T[] arr, final T target) {
+		final int up = upperBoundSearch(arr, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, target) + 1;
+	}
+
 	public static <T extends Comparable<? super T>> int normalSearch(final T[] arr, final int l, final int r, final T target) {
 		return binarySearchNormal(arr, l, r - 1, target);
 	}
@@ -145,6 +187,12 @@ public final class ArrayBinarySearch {
 
 	public static <T extends Comparable<? super T>> boolean contains(final T[] arr, final int l, final int r, final T target) {
 		return binarySearchNormal(arr, l, r - 1, target) >= 0;
+	}
+
+	public static <T extends Comparable<? super T>> int count(final T[] arr, final int l, final int r, final T target) {
+		final int up = upperBoundSearch(arr, l, r, target);
+		if (up < 0) return 0;
+		return up - lowerBoundSearch(arr, l, r, target) + 1;
 	}
 	// endregion
 
