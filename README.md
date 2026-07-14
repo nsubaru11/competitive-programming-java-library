@@ -14,11 +14,11 @@ AtCoder などの競技プログラミングで使用することを想定した
 
 ## 動作環境
 
-| 項目     | 内容                                                                   |
-|--------|----------------------------------------------------------------------|
+| 項目     | 内容                                                      |
+|--------|---------------------------------------------------------|
 | JDK    | **Java 24（24.0.2 想定）** ※`lib.io.compat17` のみ Java 17 互換 |
-| ビルドツール | 不要（`javac` / `java` のみで動作）                                           |
-| 外部依存   | なし（標準ライブラリのみ）                                                        |
+| ビルドツール | 不要（`javac` / `java` のみで動作）                              |
+| 外部依存   | なし（標準ライブラリのみ）                                           |
 
 ## クイックスタート
 
@@ -64,54 +64,54 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 
 ### アルゴリズム（`lib.graph` / `lib.math` / `lib.search` / `lib.sort` / `lib.string` / `lib.util`）
 
-| モジュール                                                                                         | 内容                                                     |
-|-----------------------------------------------------------------------------------------------|--------------------------------------------------------|
-| [Conversion](./docs/util/Conversion)                                                         | 数値・文字列・配列の相互変換などの基本ユーティリティ                             |
-| [DP](./src/patterns/dp)                                                                         | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                         |
-| [DivideAndConquer/MoAlgorithm](./docs/util/MoAlgorithm)                     | Mo's Algorithm（オフライン区間クエリの平方分割、add/remove関数によるジグザグ走査） |
-| [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition)                       | 📝 重心分解（TODO）                                          |
-| [Graph/Connectivity](./docs/graph/Connectivity)                                         | 📝 橋・関節点・二重連結成分分解（TODO）                                |
-| [Graph/Core](./src/lib/graph/DirectedGraph.java)                                                         | 有向/無向グラフ（SCC・トポロジカルソート・二部判定）、木（直径）、根付き木（LCA・HLD）       |
-| [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                                         | 📝 Dinic法による最大流（TODO）                                  |
-| [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                                 | 📝 最小費用流（TODO）                                         |
-| [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)                           | Kruskal・Prim（最小/最大全域木）※Edmonds 📝                      |
-| [Graph/ShortestPath](./docs/graph/ShortestPath)                                         | Dijkstra（最短/最長）・Bellman-Ford（負閉路検出）・Warshall-Floyd     |
-| [Graph/TwoSat](./docs/graph/TwoSat)                                                     | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                      |
-| [Math/Combinatorics](./docs/math/Combinatorics)                                         | 組み合わせ数・順列数・重複組み合わせ・スターリング数・ベル数などの組合せ論ユーティリティ           |
-| [Math/Convolution](./docs/math/Convolution)                                             | 🚧 NTT / FFT / ビット演算系畳み込み（内部変換ロジックが未実装）                |
-| [Math/Factorial](./docs/math/Factorial)                                                 | 階乗・逆元の前計算テーブル、nCr / nPr / カタラン数・ベル数等                   |
-| [Math/Geometry](./docs/math/Geometry)                                                   | 線分/長方形の交差判定、点と図形の位置関係、各種距離計算などの計算幾何ユーティリティ             |
-| [Math/LinearAlgebra](./docs/math/LinearAlgebra)                                         | 📝 ガウスの消去法による連立一次方程式・行列式・ランク（TODO）                     |
-| [Math/Matrix](./src/lib/math/IntMatrixUtils.java)                                                       | int / long 行列演算（加減乗・累乗・mod 演算、in-place 版あり）            |
-| [Math/NumberTheory](./docs/math/NumberTheory)                                           | GCD/LCM・拡張ユークリッド・オイラーのトーシェント関数などの数論ユーティリティ             |
-| [Math/NumberUtils](./docs/math/NumberUtils)                                             | べき乗計算・数値フォーマット変換・数値の性質判定ユーティリティ                        |
-| [Math/Permutation](./docs/math/Permutation)                                             | 辞書順 next/prev permutation（int / long / char / 2次元配列対応） |
-| [Math/Polynomial](./docs/math/Polynomial)                                               | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                          |
-| [Math/PrimeNumber](./docs/math/PrimeNumber)                                             | 素数判定・エラトステネスの篩（ビット圧縮）・素因数分解・k 番目の素数                    |
-| [Randomized](./src/lib/search/QuickSelect.java)                                                         | QuickSelect（k 番目の要素を期待 O(n) で取得）                       |
-| [Search/BinarySearch](./docs/search/BinarySearch)                                       | 条件関数・ソート済み配列に対する二分探索（lower/upper bound、`-(挿入位置+1)` 形式） |
-| [Search/UnimodalUtils](./docs/search/UnimodalUtils)                                     | 📝 三分探索・黄金分割探索・ニュートン法（TODO）                            |
-| [Sort](./docs/sort)                                                                     | 学習用ソートアルゴリズム11種 ※FordJohnson 📝                        |
-| [String/Levenshtein](./docs/string/Levenshtein)                                         | 編集距離（標準 DP・距離制限付き banded DP）※Myers / Wu 📝             |
-| [String/Palindrome](./docs/string/Palindrome)                                           | Manacher（全回文検出 O(n)）・素朴な回文判定/生成 ※Eertree 📝            |
-| [String/StringSearch](./docs/string/StringSearch)                                       | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝   |
+| モジュール                                                             | 内容                                                     |
+|-------------------------------------------------------------------|--------------------------------------------------------|
+| [Conversion](./docs/util/Conversion)                              | 数値・文字列・配列の相互変換などの基本ユーティリティ                             |
+| [DP](./src/patterns/dp)                                           | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                         |
+| [DivideAndConquer/MoAlgorithm](./docs/util/MoAlgorithm)           | Mo's Algorithm（オフライン区間クエリの平方分割、add/remove関数によるジグザグ走査）  |
+| [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                          |
+| [Graph/Connectivity](./docs/graph/Connectivity)                   | 📝 橋・関節点・二重連結成分分解（TODO）                                |
+| [Graph/Core](./src/lib/graph/DirectedGraph.java)                  | 有向/無向グラフ（SCC・トポロジカルソート・二部判定）、木（直径）、根付き木（LCA・HLD）       |
+| [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                  |
+| [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                         |
+| [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域木）※Edmonds 📝                      |
+| [Graph/ShortestPath](./docs/graph/ShortestPath)                   | Dijkstra（最短/最長）・Bellman-Ford（負閉路検出）・Warshall-Floyd     |
+| [Graph/TwoSat](./docs/graph/TwoSat)                               | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                      |
+| [Math/Combinatorics](./docs/math/Combinatorics)                   | 組み合わせ数・順列数・重複組み合わせ・スターリング数・ベル数などの組合せ論ユーティリティ           |
+| [Math/Convolution](./docs/math/Convolution)                       | 🚧 NTT / FFT / ビット演算系畳み込み（内部変換ロジックが未実装）                |
+| [Math/Factorial](./docs/math/Factorial)                           | 階乗・逆元の前計算テーブル、nCr / nPr / カタラン数・ベル数等                   |
+| [Math/Geometry](./docs/math/Geometry)                             | 線分/長方形の交差判定、点と図形の位置関係、各種距離計算などの計算幾何ユーティリティ             |
+| [Math/LinearAlgebra](./docs/math/LinearAlgebra)                   | 📝 ガウスの消去法による連立一次方程式・行列式・ランク（TODO）                     |
+| [Math/Matrix](./src/lib/math/IntMatrixUtils.java)                 | int / long 行列演算（加減乗・累乗・mod 演算、in-place 版あり）            |
+| [Math/NumberTheory](./docs/math/NumberTheory)                     | GCD/LCM・拡張ユークリッド・オイラーのトーシェント関数などの数論ユーティリティ             |
+| [Math/NumberUtils](./docs/math/NumberUtils)                       | べき乗計算・数値フォーマット変換・数値の性質判定ユーティリティ                        |
+| [Math/Permutation](./docs/math/Permutation)                       | 辞書順 next/prev permutation（int / long / char / 2次元配列対応） |
+| [Math/Polynomial](./docs/math/Polynomial)                         | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                          |
+| [Math/PrimeNumber](./docs/math/PrimeNumber)                       | 素数判定・エラトステネスの篩（ビット圧縮）・素因数分解・k 番目の素数                    |
+| [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 O(n) で取得）                       |
+| [Search/BinarySearch](./docs/search/BinarySearch)                 | 条件関数・ソート済み配列に対する二分探索（lower/upper bound、`-(挿入位置+1)` 形式） |
+| [Search/UnimodalUtils](./docs/search/UnimodalUtils)               | 📝 三分探索・黄金分割探索・ニュートン法（TODO）                            |
+| [Sort](./docs/sort)                                               | 学習用ソートアルゴリズム11種 ※FordJohnson 📝                        |
+| [String/Levenshtein](./docs/string/Levenshtein)                   | 編集距離（標準 DP・距離制限付き banded DP）※Myers / Wu 📝             |
+| [String/Palindrome](./docs/string/Palindrome)                     | Manacher（全回文検出 O(n)）・素朴な回文判定/生成 ※Eertree 📝            |
+| [String/StringSearch](./docs/string/StringSearch)                 | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝   |
 
 ### データ構造（`lib.ds`）
 
-| モジュール                                                           | 内容                                                                                                       |
-|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| [ArrayUtils](./docs/ds/ArrayUtils)                       | 高速回転・区間和・LIS・スライディングウィンドウ等を備えた不変長配列（1D / 2D）                                                             |
+| モジュール                                                    | 内容                                                                                                       |
+|----------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [Primitive Array Utilities](docs/ds/Arrays)              | プリミティブ配列インターフェース、累積和、循環配列、deque、2D配列、座標圧縮、LIS・固定幅窓・部分集合アルゴリズム                                            |
 | [AVLTree](./docs/ds/AVLTree)                             | AVL 木による順序付き Set / Multiset（順位検索・近傍検索対応、int / long 特化版あり）                                                |
 | [BinaryIndexedTree](./docs/ds/BinaryIndexedTree)         | BIT（点更新区間和・2D・区間加算区間和、BIT 上の二分探索付き）                                                                      |
 | [BinarySearchTree](./docs/ds/BinarySearchTree)           | 基本 BST・Treap（順序統計付き乱択平衡 BST）※赤黒木・B木・vEB木 📝                                                              |
-| [CartesianTree](./src/lib/ds/CartesianTree.java)                 | 📝 デカルト木（TODO）                                                                                           |
+| [CartesianTree](./src/lib/ds/CartesianTree.java)         | 📝 デカルト木（TODO）                                                                                           |
 | [EulerTour](./docs/ds/EulerTour)                         | 📝 オイラーツアー（TODO）                                                                                         |
-| [FastIO/Java17](./docs/io/Java17)                 | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                           |
-| [FastIO/Java24](./docs/io/Java24)                 | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)             |
+| [FastIO/Java17](./docs/io/Java17)                        | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                           |
+| [FastIO/Java24](./docs/io/Java24)                        | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)                           |
 | [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（O(1) clear、ペア/トリプルキー対応）                                                        |
-| [Int128](./src/lib/ds/Int128.java)                               | 128bit 符号付き整数（四則演算・文字列変換・比較）                                                                             |
+| [Int128](./src/lib/ds/Int128.java)                       | 128bit 符号付き整数（四則演算・文字列変換・比較）                                                                             |
 | [LiChaoTree](./docs/ds/LiChaoTree)                       | 📝 Li Chao Tree（直線群へのCHT、TODO）                                                                           |
-| [ModNumbers](./docs/math/ModNumbers)                       | 剰余演算ラッパー ModInt / ModLong（逆元・冪乗付き）                                                                       |
+| [ModNumbers](./docs/math/ModNumbers)                     | 剰余演算ラッパー ModInt / ModLong（逆元・冪乗付き）                                                                       |
 | [PersistentSegmentTree](./docs/ds/PersistentSegmentTree) | 📝 永続セグメント木（TODO）                                                                                        |
 | [PersistentUnionFind](./docs/ds/PersistentUnionFind)     | 📝 永続Union-Find（TODO）                                                                                    |
 | [PriorityQueue](./docs/ds/PriorityQueue)                 | 遅延ヒープ構築による高速優先度キュー（汎用 / int / long / インデックス付き）                                                           |

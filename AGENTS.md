@@ -18,6 +18,13 @@
 - For reusable APIs, add overloads and primitive-specialized variants when appropriate.
 - Public importable classes must live at `src/lib/<package>/<ClassName>.java`; the path, package declaration, public type, and filename must agree.
 
+## Competitive-Programming Assumptions
+
+- Evaluate APIs under valid contest constraints and inputs. Do not require defensive handling for states that cannot be produced by the problem input, such as empty construction when the problem guarantees a positive size or arithmetic edge cases excluded by the constraints.
+- Prefer speed, short hot paths, and readable contest code over exhaustive validation, fail-fast checks, or general-purpose collection contracts.
+- Add validation or special-case handling only when it is required for valid contest inputs, prevents a realistic wrong answer, or has negligible cost and clearly improves the API.
+- Documentation should state the expected preconditions instead of implying that every invalid argument is checked.
+
 ## Architecture and Dependency Rules
 
 - Static utilities normally use a `final` class, private constructor, and static methods, for example `src/lib/search/BinarySearch.java`.
@@ -53,6 +60,7 @@
 ## Integration and Maintenance
 
 - Static analysis is configured in `qodana.yaml` with JDK 24.
+- When creating or updating a detailed class guide, follow the root `GuideTemplate.md`, including features, dependencies, complete overload-aware method tables, examples, cautions, performance characteristics, and implementation version history.
 - When API behavior or location changes, update the relevant module README under `docs/`, detailed guides, root `README.md`, and verification code.
 - Prefer minimal API breakage; contest solutions and the bundler consume these classes as source.
 - Some documentation may lag implementation. Verify claims against `src/` before editing.
