@@ -132,10 +132,9 @@ public final class LongCircularArray implements LongMutableArray {
 	}
 
 	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		final PrimitiveIterator.OfLong it = iterator();
-		sb.append(it.nextLong());
-		while (it.hasNext()) sb.append(' ').append(it.nextLong());
+		final StringBuilder sb = new StringBuilder(20 * size);
+		sb.append(arr[offset]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }

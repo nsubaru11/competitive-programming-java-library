@@ -152,6 +152,13 @@ public final class LongCompressedArray implements IntArray {
 		};
 	}
 
+	public String toString() {
+		final StringBuilder sb = new StringBuilder(11 * length);
+		sb.append(compressed[0]);
+		for (int i = 1; i < length; i++) sb.append(' ').append(compressed[i]);
+		return sb.toString();
+	}
+
 	public enum RankType {
 		/**
 		 * 1, 2, 2, 3形式。

@@ -232,7 +232,7 @@ public final class LongArrayDeque implements LongMutableArray, Cloneable {
 	 */
 	public String toString() {
 		if (isEmpty()) return "";
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder(20 * size);
 		sb.append(buf[head]);
 		for (int i = 1; i < size; i++) sb.append(' ').append(buf[physicalIndex(i)]);
 		return sb.toString();

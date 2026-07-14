@@ -9,19 +9,19 @@ import java.util.function.*;
 @SuppressWarnings("unused")
 public final class IntCircularArray implements IntMutableArray {
 	public final int size;
-	private final int[] a;
+	private final int[] arr;
 	private long sum;
 	private int offset = 0;
 
 	public IntCircularArray(final int n, final IntUnaryOperator init) {
 		size = n;
-		a = new int[n];
+		arr = new int[n];
 		int v = init.applyAsInt(0);
-		a[0] = v;
+		arr[0] = v;
 		long s = v;
 		for (int i = 1; i < n; i++) {
 			v = init.applyAsInt(i);
-			a[i] = v;
+			arr[i] = v;
 			s += v;
 		}
 		sum = s;
@@ -30,20 +30,20 @@ public final class IntCircularArray implements IntMutableArray {
 	public int get(final int i) {
 		int j = offset + i;
 		if (j >= size) j -= size;
-		return a[j];
+		return arr[j];
 	}
 
 	public int set(final int i, final int v) {
 		int j = offset + i;
 		if (j >= size) j -= size;
-		int old = a[j];
-		a[j] = v;
+		int old = arr[j];
+		arr[j] = v;
 		sum += (long) v - old;
 		return old;
 	}
 
 	public void fill(final int v) {
-		Arrays.fill(a, v);
+		Arrays.fill(arr, v);
 		sum = (long) v * size;
 	}
 
@@ -53,7 +53,7 @@ public final class IntCircularArray implements IntMutableArray {
 			int v = init.applyAsInt(i);
 			int j = offset + i;
 			if (j >= size) j -= size;
-			a[j] = v;
+			arr[j] = v;
 			s += v;
 		}
 		sum = s;
@@ -132,10 +132,9 @@ public final class IntCircularArray implements IntMutableArray {
 	}
 
 	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		final PrimitiveIterator.OfInt it = iterator();
-		sb.append(it.nextInt());
-		while (it.hasNext()) sb.append(' ').append(it.nextInt());
+		final StringBuilder sb = new StringBuilder(11 * size);
+		sb.append(arr[offset]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }
