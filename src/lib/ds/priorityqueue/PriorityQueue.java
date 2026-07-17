@@ -1,4 +1,4 @@
-package lib.ds;
+package lib.ds.priorityqueue;
 
 import static java.lang.Math.*;
 
@@ -9,13 +9,10 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "unused"})
 public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T> {
-	// -------------- フィールド --------------
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
 	private final Comparator<? super T> comparator;
 	private T[] buf;
 	private int size, capacity, unsortedCount;
-
-	// -------------- コンストラクタ --------------
 
 	/**
 	 * コンストラクタ（デフォルト容量1024、最小値優先）
@@ -95,8 +92,6 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 		size = 0;
 		unsortedCount = 0;
 	}
-
-	// -------------- 公開メソッド --------------
 
 	/**
 	 * 要素を追加する
@@ -220,25 +215,20 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	 *
 	 * @return 順序付けていないイテレータ
 	 */
-	@Override
 	public Iterator<T> iterator() {
 		return new Iterator<>() {
 			int i = 0;
 
-			@Override
 			public boolean hasNext() {
 				return i < size;
 			}
 
-			@Override
 			public T next() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return buf[i++];
 			}
 		};
 	}
-
-	// -------------- ヒープ構築（遅延評価） --------------
 
 	/**
 	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する
@@ -296,8 +286,6 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	private void heapify() {
 		for (int i = (size >> 1) - 1; i >= 0; i--) siftDown(buf[i], i);
 	}
-
-	// -------------- ヒープ操作（基本） --------------
 
 	/**
 	 * siftUp操作 - O(log N)

@@ -10,12 +10,12 @@
 - 全頂点の距離と親を返す`solve`
 - 距離だけを返す2種類の`dist`
 - 頂点列として経路を返す`path`
-- `IndexedPriorityQueue`により頂点ごとの暫定距離を管理
+- `LongIndexedPriorityQueue`により頂点ごとの暫定距離を管理
 
 ## 依存関係
 
 - [`Graph`](../Core/GraphGuide.md)
-- [`IndexedPriorityQueue`](../../ds/PriorityQueue/IndexedPriorityQueueGuide.md)
+- [`LongIndexedPriorityQueue`](../../ds/PriorityQueue/IndexedPriorityQueueGuide.md)
 
 ## 主な機能（メソッド一覧）
 
@@ -78,6 +78,7 @@ int[] path = result.pathTo(4);    // {0, 2, 1, 3, 4}
 
 | バージョン番号       | 年月日        | 詳細                                            |
 |:--------------|:-----------|:----------------------------------------------|
+| **バージョン 2.1** | 2026-07-18 | 暫定距離管理を`LongIndexedPriorityQueue`の新APIへ移行       |
 | **バージョン 2.0** | 2026-07-17 | `Graph`を受け取る静的ユーティリティへ変更し、結果オブジェクトと経路復元APIを追加 |
 | **バージョン 1.0** | 2025-10-13 | グラフと始点キャッシュを保持するクラスとして初回実装                    |
 

@@ -1,194 +1,167 @@
-# PriorityQueue 利用ガイド
+# PriorityQueue / IntPriorityQueue / LongPriorityQueue 利用ガイド
 
 ## 概要
 
-`PriorityQueue<T>`は、競技プログラミング向けに最適化された軽量・高速なジェネリック優先度キュークラスです。
-Java標準ライブラリの`java.util.PriorityQueue`から不要な機能を排除し、コア機能に特化することで、効率的な実装を行います。
+[`PriorityQueue<T>`](../../../src/lib/ds/priorityqueue/PriorityQueue.java)、
+[`IntPriorityQueue`](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java)、
+[`LongPriorityQueue`](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java) は、可変長配列を内部に持つ競技プログラミング向け優先度キューです。追加を未整列領域へ蓄積し、優先順が必要になった時点でヒープを構築します。
 
 ## 特徴
 
-- **OpenJDK準拠の最適化**: `siftUp`/`siftDown`操作で要素交換ではなく代入による「ずらし方式」を採用し、Java標準ライブラリと同等の性能を出す
-- **柔軟な順序指定**: 昇順（最小ヒープ）・降順（最大ヒープ）の両方に対応する
-- **カスタムComparator対応**: 任意の比較ロジックを指定可能
-- **動的拡張**: 容量不足時に自動的に配列を2倍に拡張する
-- **軽量設計**: 競技プログラミングで必要な機能のみに絞り込み、シンプルで高速
+- 最小値優先と最大値優先に対応
+- `push` / `addAll` は要素を末尾へ追加し、ヒープ構築を遅延
+- 未整列要素数に応じてFloydのheapifyと逐次`siftUp`を選択
+- 容量不足時は内部配列を2倍へ拡張
+- ジェネリック版は`Comparator`による順序指定に対応
+- int / long版はボクシングせず、`IntCollection` / `LongCollection`として走査可能
+- iteratorは優先順ではなく内部配列順
 
 ## 依存関係
 
-- Java標準ライブラリのみ（`java.util.Arrays`, `java.util.Comparator`, `java.util.Iterator`,
-  `java.util.NoSuchElementException`）
-- 外部依存なし
+- `java.util.Arrays`
+- `java.util.Comparator`
+- `java.util.Iterator`
+- `java.util.PrimitiveIterator`
+- `java.util.NoSuchElementException`
+- [`lib.ds.IntCollection`](../../../src/lib/ds/IntCollection.java)
+- [`lib.ds.LongCollection`](../../../src/lib/ds/LongCollection.java)
 
 ## 主な機能（メソッド一覧）
 
-### 1. コンストラクタ
+### 1. ジェネリック版コンストラクタ
 
-| メソッド                                                                               | 説明                    |
-|------------------------------------------------------------------------------------|-----------------------|
-| `PriorityQueue()`                                                                  | デフォルトコンストラクタ（容量16、昇順） |
-| `PriorityQueue(int capacity)`                                                      | 初期容量を指定（昇順）           |
-| `PriorityQueue(Comparator<T> comparator)`                                          | カスタム比較器を指定（容量16）      |
-| `PriorityQueue(boolean isDescendingOrder)`                                         | 降順/昇順を指定（容量16）        |
-| `PriorityQueue(int capacity, Comparator<T> comparator)`                            | 容量と比較器を指定             |
-| `PriorityQueue(Comparator<T> comparator, boolean isDescendingOrder)`               | 比較器と順序を指定（容量16）       |
-| `PriorityQueue(int capacity, boolean isDescendingOrder)`                           | 容量と順序を指定              |
-| `PriorityQueue(int capacity, Comparator<T> comparator, boolean isDescendingOrder)` | 全パラメータを指定             |
+| メソッド                                                                        | 説明                    |
+|-----------------------------------------------------------------------------|-----------------------|
+| `PriorityQueue()`                                                           | 容量1024、自然順、最小値優先で構築   |
+| `PriorityQueue(int capacity)`                                               | 初期容量を指定し、自然順、最小値優先で構築 |
+| `PriorityQueue(Comparator<T> comparator)`                                   | 比較器を指定し、最小値優先で構築      |
+| `PriorityQueue(boolean descending)`                                         | 自然順で優先方向を指定して構築       |
+| `PriorityQueue(int capacity, Comparator<T> comparator)`                     | 初期容量と比較器を指定して構築       |
+| `PriorityQueue(Comparator<T> comparator, boolean descending)`               | 比較器と優先方向を指定して構築       |
+| `PriorityQueue(int capacity, boolean descending)`                           | 初期容量と優先方向を指定して構築      |
+| `PriorityQueue(int capacity, Comparator<T> comparator, boolean descending)` | 全設定を指定して構築            |
 
-### 2. 基本操作メソッド
+### 2. プリミティブ版コンストラクタ
 
-| メソッド              | 戻り値の型  | 説明                      |
-|-------------------|--------|-------------------------|
-| `push(T v)`       | `void` | 要素を追加（遅延評価）             |
-| `poll()`          | `T`    | 最優先要素を取り出して削除（O(log N)） |
-| `peek()`          | `T`    | 最優先要素を参照（削除しない、O(1)）    |
-| `replaceTop(T v)` | `T`    | 先頭要素を置き換える（O(log N)）    |
+| メソッド                                                  | 説明                |
+|-------------------------------------------------------|-------------------|
+| `IntPriorityQueue()`                                  | 容量1024、最小値優先で構築   |
+| `IntPriorityQueue(int capacity)`                      | 初期容量を指定し、最小値優先で構築 |
+| `IntPriorityQueue(boolean descending)`                | 優先方向を指定して構築       |
+| `IntPriorityQueue(int capacity, boolean descending)`  | 初期容量と優先方向を指定して構築  |
+| `LongPriorityQueue()`                                 | 容量1024、最小値優先で構築   |
+| `LongPriorityQueue(int capacity)`                     | 初期容量を指定し、最小値優先で構築 |
+| `LongPriorityQueue(boolean descending)`               | 優先方向を指定して構築       |
+| `LongPriorityQueue(int capacity, boolean descending)` | 初期容量と優先方向を指定して構築  |
 
-### 3. 状態取得メソッド
+### 3. 追加・一括追加
 
-| メソッド        | 戻り値の型     | 説明           |
-|-------------|-----------|--------------|
-| `size()`    | `int`     | 現在の要素数を取得    |
-| `isEmpty()` | `boolean` | キューが空かどうかを判定 |
-| `clear()`   | `void`    | 全要素を削除       |
+| メソッド                                                  | 戻り値の型  | 説明                       |
+|-------------------------------------------------------|--------|--------------------------|
+| `PriorityQueue.push(T v)`                             | `void` | 要素を未整列領域へ追加              |
+| `PriorityQueue.addAll(T[] elements)`                  | `void` | 配列の全要素を未整列領域へ追加          |
+| `PriorityQueue.addAll(Iterable<T> elements)`          | `void` | Iterableの全要素を未整列領域へ追加    |
+| `IntPriorityQueue.push(int v)`                        | `void` | int値を未整列領域へ追加            |
+| `IntPriorityQueue.addAll(int[] elements)`             | `void` | int配列の全要素を未整列領域へ追加       |
+| `IntPriorityQueue.addAll(Iterable<Integer> elements)` | `void` | Iterableの全int値を未整列領域へ追加  |
+| `LongPriorityQueue.push(long v)`                      | `void` | long値を未整列領域へ追加           |
+| `LongPriorityQueue.addAll(long[] elements)`           | `void` | long配列の全要素を未整列領域へ追加      |
+| `LongPriorityQueue.addAll(Iterable<Long> elements)`   | `void` | Iterableの全long値を未整列領域へ追加 |
 
-### 4. イテレータ
+### 4. 優先要素の操作
 
-| メソッド         | 戻り値の型         | 説明                        |
-|--------------|---------------|---------------------------|
-| `iterator()` | `Iterator<T>` | ヒープ配列順のイテレータを取得（優先度順ではない） |
+| メソッド                                   | 戻り値の型  | 説明                   |
+|----------------------------------------|--------|----------------------|
+| `PriorityQueue.peek()`                 | `T`    | 最優先要素を削除せず返す         |
+| `IntPriorityQueue.peek()`              | `int`  | 最優先int値を削除せず返す       |
+| `LongPriorityQueue.peek()`             | `long` | 最優先long値を削除せず返す      |
+| `PriorityQueue.poll()`                 | `T`    | 最優先要素を返して削除          |
+| `IntPriorityQueue.poll()`              | `int`  | 最優先int値を返して削除        |
+| `LongPriorityQueue.poll()`             | `long` | 最優先long値を返して削除       |
+| `PriorityQueue.replaceTop(T v)`        | `T`    | 最優先要素を`v`へ置換し、旧要素を返す |
+| `IntPriorityQueue.replaceTop(int v)`   | `int`  | 最優先int値を置換し、旧値を返す    |
+| `LongPriorityQueue.replaceTop(long v)` | `long` | 最優先long値を置換し、旧値を返す   |
 
-## 遅延評価戦略
+### 5. 状態・反復
 
-`PriorityQueue<T>`の最大の特徴の一つは、**遅延評価による自動最適化**です。
+| メソッド                           | 戻り値の型                      | 説明              |
+|--------------------------------|----------------------------|-----------------|
+| `size()`                       | `int`                      | 現在の要素数を返す       |
+| `isEmpty()`                    | `boolean`                  | 要素がないか判定        |
+| `clear()`                      | `void`                     | 要素数と未整列要素数を0にする |
+| `PriorityQueue.iterator()`     | `Iterator<T>`              | 内部配列順に走査        |
+| `IntPriorityQueue.iterator()`  | `PrimitiveIterator.OfInt`  | 内部配列順にint値を走査   |
+| `LongPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | 内部配列順にlong値を走査  |
 
-### アルゴリズムの選択基準
+### 6. プリミティブCollection由来のメソッド
 
-`push`操作では即座にヒープ化せず、未整列要素として蓄積します。
-`poll`や`peek`などのヒープ性質を必要とする操作時に、**厳密なステップ数計算**に基づいて最適なアルゴリズムを選択します。
+| メソッド                                         | 戻り値の型                          | 説明                   |
+|----------------------------------------------|--------------------------------|----------------------|
+| `contains(value)`                            | `boolean`                      | 値が含まれるか線形探索          |
+| `forEachInt(action)` / `forEachLong(action)` | `void`                         | 全要素へ処理を適用            |
+| `spliterator()`                              | `Spliterator.OfInt` / `OfLong` | プリミティブspliteratorを返す |
+| `intStream()` / `longStream()`               | `IntStream` / `LongStream`     | プリミティブStreamを返す      |
+| `toList()`                                   | `List<Integer>` / `List<Long>` | ボックス化した不変Listを返す     |
+| `toArray()`                                  | `int[]` / `long[]`             | 全要素をプリミティブ配列へコピー     |
 
-#### 1. heapifyのコスト
+## 遅延ヒープ構築
 
-- **Floyd's algorithm**: `2N - 2 * log₂N` ステップ（N=総要素数）
-- これは理論値として正確
+内部配列の先頭`size - unsortedCount`要素はヒープで、末尾`unsortedCount`要素は追加順の未整列領域です。`peek`、`poll`、`replaceTop`の直前に、全体のheapifyと未整列要素の逐次`siftUp`の推定比較回数を比べ、少ない方を実行します。
 
-#### 2. インクリメンタル構築のコスト
-
-各要素を挿入する時点でのヒープサイズから個別に計算：
-
-- **少数の場合（k ≤ 100）**: 厳密に計算
-  ```
-  incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
-  ```
-  各挿入時点の実際のヒープサイズの対数を合計
-
-- **多数の場合（k > 100）**: 効率化のため近似値を使用
-  ```
-  avgHeapSize = sortedSize + k / 2
-  incrementalCost = k × log₂(avgHeapSize)
-  ```
-  対数の平均値を利用した高速計算
-
-#### 3. アルゴリズム選択
-
-```
-if (heapifyCost < incrementalCost) {
-    heapify を実行
-} else {
-    逐次 siftUp を実行
-}
-```
-
-固定閾値を使わず、現在のヒープ状態に応じて常に最適なアルゴリズムを選択します。
-
-### Comparatorベースの順序制御
-
-`PriorityQueue<T>`では、降順指定時にComparatorを反転させることで順序を制御します。
-
-- **統一されたヒープ操作**: 内部的には常に最小ヒープとして動作
-- **柔軟な比較ロジック**: カスタムComparatorと降順指定を組み合わせ可能
-- **コードの簡潔性**: プリミティブ型特化版の符号反転とは異なるアプローチ
-
-例：
-
-```java
-// 昇順（デフォルト）
-Comparator<T> comp = Comparator.naturalOrder();
-
-// 降順指定時
-Comparator<T> comp = Comparator.naturalOrder().reversed();
-```
-
-この設計により、任意の比較ロジックに対して昇順・降順を簡単に切り替えられます。
+iteratorとCollection由来の線形操作は優先順を必要としないため、通常版ではヒープ構築を行いません。
 
 ## 利用例
 
 ```java
-// 昇順（最小値優先）
-PriorityQueue<Integer> pq = new PriorityQueue<>();
-pq.push(5);
-pq.push(2);
-pq.push(8);
-System.out.println(pq.peek());      // 2（最小値を参照）
-System.out.println(pq.poll());      // 2（最小値を取り出して削除）
-System.out.println(pq.size());      // 2
-pq.replaceTop(10);                  // 先頭を10に置き換え
-pq.clear();                         // 全削除
+IntPriorityQueue q = new IntPriorityQueue();
+q.addAll(new int[]{5, 2, 8});
+q.push(1);
 
-// 降順（最大値優先）
-PriorityQueue<Integer> maxHeap = new PriorityQueue<>(true);
-maxHeap.push(5);
-maxHeap.push(2);
-maxHeap.push(8);
-System.out.println(maxHeap.poll()); // 8（最大値を取り出し）
+System.out.println(q.peek()); // 1
+while (!q.isEmpty()) {
+	System.out.println(q.poll());
+}
+```
 
-// カスタムComparatorの使用（文字列長で比較）
-PriorityQueue<String> strPq = new PriorityQueue<>(Comparator.comparingInt(String::length));
-strPq.push("apple");
-strPq.push("pie");
-strPq.push("banana");
-System.out.println(strPq.poll());   // "pie"（最短）
+```java
+PriorityQueue<String> q =
+	new PriorityQueue<>(Comparator.comparingInt(String::length));
+q.addAll(new String[]{"apple", "pie", "banana"});
+
+System.out.println(q.poll()); // pie
 ```
 
 ## 注意事項
 
-- **null要素は非対応**: null値を追加すると予期しない動作が発生します
-- **空キューでのpoll/peek**: 空のキューに対して`poll()`または`peek()`を呼び出すと`NoSuchElementException`がスローされます
-- **イテレータの順序**: `iterator()`で取得されるイテレータは内部配列の順序で要素を返すため、優先度順ではありません
-- **型制約**: ジェネリック型`T`は`Comparable<T>`を実装している必要があります（Comparatorを明示的に指定する場合を除く）
-- **オートボクシング**: プリミティブ型（int, long）を扱う場合、オートボクシングのオーバーヘッドが発生します。大量のデータを扱う場合は
-  `IntPriorityQueue`または`LongPriorityQueue`の使用を推奨
+- `peek`、`poll`、`replaceTop`は空でない状態で呼び出します。空の場合は`NoSuchElementException`を投げます。
+- iterator、`toArray`、`toList`の順序は優先順ではありません。優先順が必要なら`poll`を繰り返します。
+- `clear()`は確保済み内部配列を縮小しません。
+- 現在の実装では、指定した初期容量が1024未満でも内部容量は1024になります。
+- `PriorityQueue<T>`の`T`は、比較器を指定する場合も`Comparable<T>`を実装する必要があります。
+- ジェネリック版は`java.util.PriorityQueue`と単純名が同じため、同時利用時はimportの衝突に注意します。
+- ジェネリック版へ`null`を追加しません。
 
 ## パフォーマンス特性
 
-### 時間計算量
-
-- **push**: O(log N)
-- **poll**: O(log N)
-- **peek**: O(1)
-- **size/isEmpty**: O(1)
-- **clear**: O(1)
-
-### 空間計算量
-
-- O(N): N個の要素を格納
-- 初期容量は1024、容量不足時に2倍に拡張
-
-### 最適化のポイント
-
-- 要素の移動は`swap`ではなく代入の連鎖により実行されるため、定数倍が小さい
-- 配列アクセスのみで構成され、分岐予測に優しい実装
-- ジェネリクス版のため、オートボクシングが発生する点に注意（プリミティブ型特化版の使用を推奨）
+- `push`: 償却O(1)、拡張時O(n)
+- `addAll`: O(k)、拡張時は既存要素のコピーにO(n)
+- `peek`: ヒープ構築済みならO(1)。未整列要素があればO(n)またはO(k log n)の構築を伴う
+- `poll`, `replaceTop`: ヒープ構築済みならO(log n)。未整列要素があれば構築コストを伴う
+- `size`, `isEmpty`, `clear`: O(1)
+- iteratorとプリミティブCollection由来の走査・変換: O(n)
+- 使用メモリ: O(capacity)
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                             |
-|:--------------|:-----------|:---------------------------------------------------------------|
-| **バージョン 1.0** | 2025-10-04 | 初回リリース：OpenJDK準拠の最適化された実装                                      |
-| **バージョン 2.0** | 2025-10-08 | 遅延評価による高速化、replaceTopメソッドの追加、Comparatorベースの降順対応、javadocコメントの統一 |
+| バージョン番号       | 年月日        | 詳細                                                                   |
+|:--------------|:-----------|:---------------------------------------------------------------------|
+| **バージョン 1.0** | 2025-10-04 | ジェネリック版、int版、long版を初回実装                                              |
+| **バージョン 2.0** | 2025-10-08 | 遅延ヒープ構築、降順、`replaceTop`を追加                                           |
+| **バージョン 3.0** | 2026-07-18 | `lib.ds.priorityqueue`へ移動し、プリミティブ版をCollection化、`addAll(Iterable)`を追加 |
 
 ### バージョン管理について
 
 バージョン番号は2桁で管理します：
 
 - 1桁目（メジャーバージョン）: メソッドの追加や機能拡張があった場合に更新
-- 2桁目（マイナーバージョン）: 誤字修正、バグ修正、マイクロ高速化などの小さな更新があった場合に更新
+- 2桁目（マイナーバージョン）: 誤字修正、バグ修正、マイクロ高速化などの小さな更新

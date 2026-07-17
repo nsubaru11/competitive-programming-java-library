@@ -3,12 +3,12 @@ package verify.graph.shortestpath;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import lib.graph.*;
-import lib.io.compat17.*;
 
 public final class Check4 {
 
@@ -19,8 +19,8 @@ public final class Check4 {
 	private static final char[] op = new char[]{'L', 'U', 'R', 'D'};
 	private static final int[] di = new int[]{0, -1, 0, 1, -1, -1, 1, 1};
 	private static final int[] dj = new int[]{-1, 0, 1, 0, -1, 1, 1, -1};
-	private static final FastScanner sc = new FastScanner();
-	private static final FastPrinter out = new FastPrinter();
+	private static final Scanner sc = new Scanner(System.in);
+	private static final PrintWriter out = new PrintWriter(System.out, false);
 	// endregion
 
 	private static void solve() {

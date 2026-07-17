@@ -21,6 +21,7 @@
 ## Competitive-Programming Assumptions
 
 - Evaluate APIs under valid contest constraints and inputs. Do not require defensive handling for states that cannot be produced by the problem input, such as empty construction when the problem guarantees a positive size or arithmetic edge cases excluded by the constraints.
+- Treat extreme values such as `Integer.MIN_VALUE` and `Long.MIN_VALUE`, including overflow caused by negating them, as out of scope for routine design and review. The same applies to stamp or generation-counter overflow when valid usage cannot reach it. Address these cases only when the user explicitly requests it or the valid constraints of a target problem include them; do not repeatedly raise excluded arithmetic edge cases as general concerns.
 - Prefer speed, short hot paths, and readable contest code over exhaustive validation, fail-fast checks, or general-purpose collection contracts.
 - Add validation or special-case handling only when it is required for valid contest inputs, prevents a realistic wrong answer, or has negligible cost and clearly improves the API.
 - Documentation should state the expected preconditions instead of implying that every invalid argument is checked.

@@ -1,26 +1,25 @@
-package lib.ds;
+package lib.ds.priorityqueue;
 
 import static java.lang.Math.*;
 
 import java.util.*;
 
+import lib.ds.*;
+
 /**
- * 競技プログラミング向け優先度キュー（long型特化版）
+ * 競技プログラミング向け優先度キュー（int型特化版）
  */
 @SuppressWarnings("unused")
-public final class LongPriorityQueue implements Iterable<Long> {
-	// -------------- フィールド --------------
+public final class IntPriorityQueue implements IntCollection {
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
 	private final boolean isDescendingOrder;
-	private long[] buf;
+	private int[] buf;
 	private int size, capacity, unsortedCount;
-
-	// -------------- コンストラクタ --------------
 
 	/**
 	 * コンストラクタ（デフォルト容量1024、最小値優先）
 	 */
-	public LongPriorityQueue() {
+	public IntPriorityQueue() {
 		this(DEFAULT_INITIAL_CAPACITY, false);
 	}
 
@@ -29,7 +28,7 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 *
 	 * @param capacity 初期容量
 	 */
-	public LongPriorityQueue(int capacity) {
+	public IntPriorityQueue(int capacity) {
 		this(capacity, false);
 	}
 
@@ -38,7 +37,7 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 *
 	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
 	 */
-	public LongPriorityQueue(boolean isDescendingOrder) {
+	public IntPriorityQueue(boolean isDescendingOrder) {
 		this(DEFAULT_INITIAL_CAPACITY, isDescendingOrder);
 	}
 
@@ -48,22 +47,20 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @param capacity          初期容量
 	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
 	 */
-	public LongPriorityQueue(int capacity, boolean isDescendingOrder) {
+	public IntPriorityQueue(int capacity, boolean isDescendingOrder) {
 		this.capacity = max(capacity, DEFAULT_INITIAL_CAPACITY);
 		this.isDescendingOrder = isDescendingOrder;
-		buf = new long[this.capacity];
+		buf = new int[this.capacity];
 		size = 0;
 		unsortedCount = 0;
 	}
-
-	// -------------- 公開メソッド --------------
 
 	/**
 	 * 要素を追加する
 	 *
 	 * @param v 追加する要素
 	 */
-	public void push(long v) {
+	public void push(int v) {
 		if (size == capacity) buf = Arrays.copyOf(buf, capacity <<= 1);
 		if (isDescendingOrder) v = -v;
 		buf[size++] = v;
@@ -75,7 +72,7 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 *
 	 * @param elements 追加する要素の配列
 	 */
-	public void addAll(final long[] elements) {
+	public void addAll(final int[] elements) {
 		final int n = elements.length;
 		int s = size;
 		if (s + n > capacity) {
@@ -84,12 +81,9 @@ public final class LongPriorityQueue implements Iterable<Long> {
 			buf = Arrays.copyOf(buf, newCap);
 			capacity = newCap;
 		}
-		final long[] b = buf;
-		if (isDescendingOrder) {
-			for (int i = 0; i < n; i++) b[s + i] = -elements[i];
-		} else {
-			System.arraycopy(elements, 0, b, s, n);
-		}
+		final int[] b = buf;
+		if (isDescendingOrder) for (int i = 0; i < n; i++) b[s + i] = -elements[i];
+		else System.arraycopy(elements, 0, b, s, n);
 		size = s + n;
 		unsortedCount += n;
 	}
@@ -99,8 +93,8 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 *
 	 * @param elements 追加する要素のイテラブル
 	 */
-	public void addAll(final Iterable<Long> elements) {
-		if (elements instanceof final Collection<Long> c) {
+	public void addAll(final Iterable<Integer> elements) {
+		if (elements instanceof final Collection<Integer> c) {
 			final int n = c.size();
 			int s = size;
 			if (s + n > capacity) {
@@ -109,16 +103,13 @@ public final class LongPriorityQueue implements Iterable<Long> {
 				buf = Arrays.copyOf(buf, newCap);
 				capacity = newCap;
 			}
-			final long[] b = buf;
-			if (isDescendingOrder) {
-				for (final long e : c) b[s++] = -e;
-			} else {
-				for (final long e : c) b[s++] = e;
-			}
+			final int[] b = buf;
+			if (isDescendingOrder) for (final int e : c) b[s++] = -e;
+			else for (final int e : c) b[s++] = e;
 			size = s;
 			unsortedCount += n;
 		} else {
-			for (final long e : elements) push(e);
+			for (final int e : elements) push(e);
 		}
 	}
 
@@ -128,7 +119,7 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @return ヒープの先頭要素（昇順時は最小、降順時は最大）
 	 * @throws NoSuchElementException ヒープが空の場合
 	 */
-	public long peek() {
+	public int peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
 		return isDescendingOrder ? -buf[0] : buf[0];
@@ -139,10 +130,10 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 *
 	 * @return 削除された要素（昇順時は最小、降順時は最大）
 	 */
-	public long poll() {
+	public int poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		long res = isDescendingOrder ? -buf[0] : buf[0];
+		int res = isDescendingOrder ? -buf[0] : buf[0];
 		if (--size > 0) siftDown(buf[size], 0);
 		return res;
 	}
@@ -153,10 +144,10 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @param v 置き換える要素
 	 * @return 置き換えられた要素（昇順時は最小、降順時は最大）
 	 */
-	public long replaceTop(final long v) {
+	public int replaceTop(final int v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		long res = isDescendingOrder ? -buf[0] : buf[0];
+		int res = isDescendingOrder ? -buf[0] : buf[0];
 		buf[0] = isDescendingOrder ? -v : v;
 		siftDown(buf[0], 0);
 		return res;
@@ -180,39 +171,25 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	}
 
 	/**
-	 * ヒープが空かどうかを判定
-	 *
-	 * @return 空の場合はtrue
-	 */
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	/**
 	 * 要素を順序付けていないイテレータを取得する
 	 *
 	 * @return 順序付けていないイテレータ
 	 */
-	@Override
-	public PrimitiveIterator.OfLong iterator() {
-		return new PrimitiveIterator.OfLong() {
+	public PrimitiveIterator.OfInt iterator() {
+		return new PrimitiveIterator.OfInt() {
 			int i = 0;
 
-			@Override
 			public boolean hasNext() {
 				return i < size;
 			}
 
-			@Override
-			public long nextLong() {
+			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
-				long v = buf[i++];
+				int v = buf[i++];
 				return isDescendingOrder ? -v : v;
 			}
 		};
 	}
-
-	// -------------- ヒープ構築（遅延評価） --------------
 
 	/**
 	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する
@@ -271,8 +248,6 @@ public final class LongPriorityQueue implements Iterable<Long> {
 		for (int i = (size >> 1) - 1; i >= 0; i--) siftDown(buf[i], i);
 	}
 
-	// -------------- ヒープ操作（基本） --------------
-
 	/**
 	 * siftUp操作 - O(log N)
 	 * <p>
@@ -281,8 +256,8 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @param v 移動させる要素
 	 * @param i 要素の現在位置
 	 */
-	private void siftUp(final long v, int i) {
-		final long[] b = buf;
+	private void siftUp(final int v, int i) {
+		final int[] b = buf;
 		while (i > 0) {
 			final int j = (i - 1) >> 1;
 			if (v >= b[j]) break;
@@ -301,8 +276,8 @@ public final class LongPriorityQueue implements Iterable<Long> {
 	 * @param v 移動させる要素
 	 * @param i 要素の現在位置
 	 */
-	private void siftDown(final long v, int i) {
-		final long[] b = buf;
+	private void siftDown(final int v, int i) {
+		final int[] b = buf;
 		final int n = size;
 		final int half = n >> 1;
 		while (i < half) {

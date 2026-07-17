@@ -2,7 +2,7 @@ package lib.graph;
 
 import static java.util.Arrays.*;
 
-import lib.ds.*;
+import lib.ds.priorityqueue.LongIndexedPriorityQueue;
 
 /**
  * Dijkstra法により、非負重み付きグラフの単一始点最短経路を求めるユーティリティクラス。
@@ -24,7 +24,7 @@ public final class Dijkstra {
 	 * @return 計算結果
 	 */
 	public static Result solve(final Graph graph, final int s) {
-		IndexedPriorityQueue ans = new IndexedPriorityQueue(graph.n);
+		LongIndexedPriorityQueue ans = new LongIndexedPriorityQueue(graph.n);
 		int[] parent = new int[graph.n];
 		fill(parent, -1);
 		int[] next = graph.next, first = graph.first, dest = graph.dest;
@@ -33,7 +33,7 @@ public final class Dijkstra {
 		parent[s] = s;
 		while (!ans.isEmpty()) {
 			final long cu = ans.peek();
-			final int u = ans.pollNode();
+			final int u = ans.pollIndex();
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
 				final long cv = cost[e];
@@ -41,7 +41,7 @@ public final class Dijkstra {
 			}
 		}
 		long[] dist = new long[graph.n];
-		setAll(dist, i -> ans.getCostOrDefault(i, INF));
+		setAll(dist, i -> ans.getLastOrDefault(i, INF));
 		return new Result(s, dist, parent);
 	}
 
@@ -67,13 +67,13 @@ public final class Dijkstra {
 	 * @return 始点から終点への最短距離。到達不能な場合は {@link Long#MAX_VALUE}
 	 */
 	public static long dist(final Graph graph, final int s, final int g) {
-		IndexedPriorityQueue ans = new IndexedPriorityQueue(graph.n);
+		LongIndexedPriorityQueue ans = new LongIndexedPriorityQueue(graph.n);
 		int[] next = graph.next, first = graph.first, dest = graph.dest;
 		long[] cost = graph.cost;
 		ans.push(s, 0);
 		while (!ans.isEmpty()) {
 			final long cu = ans.peek();
-			final int u = ans.pollNode();
+			final int u = ans.pollIndex();
 			if (u == g) break;
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
@@ -81,7 +81,7 @@ public final class Dijkstra {
 				ans.relax(v, cu + cv);
 			}
 		}
-		return ans.getCostOrDefault(g, INF);
+		return ans.getLastOrDefault(g, INF);
 	}
 
 	/**

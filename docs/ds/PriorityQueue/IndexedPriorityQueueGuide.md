@@ -1,234 +1,170 @@
-# IndexedPriorityQueue 利用ガイド
+# IntIndexedPriorityQueue / LongIndexedPriorityQueue 利用ガイド
 
 ## 概要
 
-`IndexedPriorityQueue`は、グラフアルゴリズムに特化した高機能な優先度キュークラスです。
-頂点IDとコストを管理し、**特定の頂点のコストを効率的に更新・取得・削除**できます。
-さらに、**遅延評価戦略**により、heapifyと逐次pushを自動選択して最適化を行います。
+[`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java) と
+[`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java) は、固定範囲`0 <= i < n`のindexへcostを対応付ける優先度キューです。同じindexを高々1個だけactiveにし、costの更新、改善、削除、削除後の最終cost取得を行えます。
 
 ## 特徴
 
-- **インデックス付き管理**: 頂点ID（ノード）とコストを3配列で同期管理し、O(log N)でのコスト更新を行う
-- **遅延評価による自動最適化**: 蓄積された未整列要素数に応じて、heapify（O(N)）と逐次push（O(k log N)）を自動選択する
-- **高度な操作**: 特定頂点のコスト取得、更新、削除が可能
-- **グラフアルゴリズム最適化**: ダイクストラ法、Prim法などで頻繁に必要な「コスト更新」を効率的に実行する
-- **頂点ID取得**: `pollNode()`で頂点IDを直接取得できる
-- **固定容量**: 頂点数を事前に指定し、配列の再確保を回避する
+- int / longのcostをプリミティブのまま保持
+- indexからヒープ位置をO(1)で取得
+- `set`はcostを無条件更新し、未追加・削除済みindexも登録
+- `relax`はより優先されるcostだけ反映し、削除済みindexは再登録しない
+- `push` / `pushAll`後のヒープ構築を遅延
+- `set` / `relax`は未整列領域を展開せず、整列済み領域だけヒープ性を維持
+- `setAll`で全indexを一括登録してheapify
+- `position`配列と負のstampだけで未追加・active・削除済みを管理
+- `clear()`は配列を初期化せずO(1)
+- 削除済みindexのcostを`getLast`で取得可能
+- activeなcostのCollectionとして走査可能
 
 ## 依存関係
 
-- Java標準ライブラリのみ（`java.util.Arrays`, `java.util.NoSuchElementException`, `java.util.PrimitiveIterator`）
-- 外部依存なし
+- `java.util.NoSuchElementException`
+- `java.util.PrimitiveIterator`
+- `java.util.function.IntUnaryOperator`
+- `java.util.function.IntToLongFunction`
+- [`lib.ds.IntCollection`](../../../src/lib/ds/IntCollection.java)
+- [`lib.ds.LongCollection`](../../../src/lib/ds/LongCollection.java)
 
 ## 主な機能（メソッド一覧）
 
 ### 1. コンストラクタ
 
-| メソッド                                                     | 説明          |
-|----------------------------------------------------------|-------------|
-| `IndexedPriorityQueue(int n)`                            | 頂点数nを指定（昇順） |
-| `IndexedPriorityQueue(int n, boolean isDescendingOrder)` | 頂点数と順序を指定   |
+| メソッド                                                  | 説明                              |
+|-------------------------------------------------------|---------------------------------|
+| `IntIndexedPriorityQueue(int n)`                      | index数`n`、int cost、最小値優先で構築     |
+| `IntIndexedPriorityQueue(int n, boolean descending)`  | index数`n`、int cost、優先方向を指定して構築  |
+| `LongIndexedPriorityQueue(int n)`                     | index数`n`、long cost、最小値優先で構築    |
+| `LongIndexedPriorityQueue(int n, boolean descending)` | index数`n`、long cost、優先方向を指定して構築 |
 
-### 2. 基本操作メソッド
+### 2. 一括初期化・追加・更新
 
-| メソッド                        | 戻り値の型  | 説明                           |
-|-----------------------------|--------|------------------------------|
-| `push(int node, long cost)` | `void` | 頂点とコストを追加（遅延評価）              |
-| `poll()`                    | `long` | 最優先要素のコストを取り出して削除（O(log N)）  |
-| `pollNode()`                | `int`  | 最優先要素の頂点IDを取り出して削除（O(log N)） |
-| `peek()`                    | `long` | 最優先要素のコストを参照（O(1) + 整列コスト）   |
-| `peekNode()`                | `int`  | 最優先要素の頂点IDを参照（O(1) + 整列コスト）  |
-| `peekSecond()`              | `long` | 2番目の要素のコストを参照（O(1) + 整列コスト）  |
+| メソッド                                                      | 戻り値の型     | 説明                            |
+|-----------------------------------------------------------|-----------|-------------------------------|
+| `IntIndexedPriorityQueue.setAll(IntUnaryOperator init)`   | `void`    | 全indexを`init(i)`のint costで登録  |
+| `LongIndexedPriorityQueue.setAll(IntToLongFunction init)` | `void`    | 全indexを`init(i)`のlong costで登録 |
+| `IntIndexedPriorityQueue.push(int i, int c)`              | `void`    | 現在世代で未追加のindexを登録             |
+| `LongIndexedPriorityQueue.push(int i, long c)`            | `void`    | 現在世代で未追加のindexを登録             |
+| `IntIndexedPriorityQueue.pushAll(int[] is, int[] cs)`     | `void`    | 未追加のindexとint costをまとめて登録     |
+| `LongIndexedPriorityQueue.pushAll(int[] is, long[] cs)`   | `void`    | 未追加のindexとlong costをまとめて登録    |
+| `IntIndexedPriorityQueue.set(int i, int c)`               | `void`    | activeなら更新し、未追加・削除済みなら登録      |
+| `LongIndexedPriorityQueue.set(int i, long c)`             | `void`    | activeなら更新し、未追加・削除済みなら登録      |
+| `IntIndexedPriorityQueue.relax(int i, int c)`             | `boolean` | 登録またはより優先されるcostへの更新を行ったか返す   |
+| `LongIndexedPriorityQueue.relax(int i, long c)`           | `boolean` | 登録またはより優先されるcostへの更新を行ったか返す   |
 
-### 3. インデックス操作メソッド
+### 3. 優先要素・削除
 
-| メソッド                                 | 戻り値の型     | 説明                     |
-|--------------------------------------|-----------|------------------------|
-| `getCost(int node)`                  | `long`    | 指定頂点のコストを取得（O(1)）      |
-| `getCostOrDefault(int, long)`        | `long`    | 指定頂点のコストを取得（デフォルト値対応）  |
-| `updateCost(int node, long newCost)` | `void`    | 指定頂点のコストを更新（O(log N)）  |
-| `remove(int node)`                   | `void`    | 指定頂点を削除（O(log N)）      |
-| `contains(int node)`                 | `boolean` | 指定頂点が存在するか確認（O(1)）     |
-| `relax(int node, long cost)`         | `boolean` | relax操作を実行（Dijkstra法用） |
-| `pushOrUpdate(int node, long cost)`  | `void`    | 存在しなければ追加、存在すれば更新      |
+| メソッド                                    | 戻り値の型  | 説明                     |
+|-----------------------------------------|--------|------------------------|
+| `IntIndexedPriorityQueue.peek()`        | `int`  | 最優先costを削除せず返す         |
+| `LongIndexedPriorityQueue.peek()`       | `long` | 最優先costを削除せず返す         |
+| `peekIndex()`                           | `int`  | 最優先indexを削除せず返す        |
+| `IntIndexedPriorityQueue.peekSecond()`  | `int`  | 2番目に優先されるint costを返す   |
+| `LongIndexedPriorityQueue.peekSecond()` | `long` | 2番目に優先されるlong costを返す  |
+| `IntIndexedPriorityQueue.poll()`        | `int`  | 最優先要素を削除してint costを返す  |
+| `LongIndexedPriorityQueue.poll()`       | `long` | 最優先要素を削除してlong costを返す |
+| `pollIndex()`                           | `int`  | 最優先要素を削除してindexを返す     |
+| `remove(int i)`                         | `void` | 指定したactiveなindexを削除    |
 
-### 4. 状態取得メソッド
+### 4. indexごとのcost取得
 
-| メソッド        | 戻り値の型     | 説明           |
-|-------------|-----------|--------------|
-| `size()`    | `int`     | 現在の要素数を取得    |
-| `isEmpty()` | `boolean` | キューが空かどうかを判定 |
-| `clear()`   | `void`    | 全要素を削除       |
+| メソッド                                    | 未追加     | active | 削除済み    |
+|-----------------------------------------|---------|--------|---------|
+| `get(int i)`                            | 例外      | cost   | 例外      |
+| `getOrDefault(int i, defaultValue)`     | default | cost   | default |
+| `getLast(int i)`                        | 例外      | cost   | 最後のcost |
+| `getLastOrDefault(int i, defaultValue)` | default | cost   | 最後のcost |
 
-### 5. イテレータ
+Int版の戻り値と`defaultValue`は`int`、Long版では`long`です。
 
-| メソッド         | 戻り値の型                      | 説明                 |
-|--------------|----------------------------|--------------------|
-| `iterator()` | `PrimitiveIterator.OfLong` | コスト配列のイテレータ（整列を実行） |
+### 5. 状態・Collection
 
-## 遅延評価戦略
+| メソッド                                         | 戻り値の型                                | 説明                           |
+|----------------------------------------------|--------------------------------------|------------------------------|
+| `containsIndex(int i)`                       | `boolean`                            | indexがactiveか判定              |
+| `hasCost(int i)`                             | `boolean`                            | 現在世代でcostが記録されたか判定。削除済みもtrue |
+| `size()`                                     | `int`                                | activeなindex数を返す             |
+| `isEmpty()`                                  | `boolean`                            | activeなindexがないか判定           |
+| `clear()`                                    | `void`                               | active要素と現在世代のcost記録を論理的に消去  |
+| `iterator()`                                 | `PrimitiveIterator.OfInt` / `OfLong` | activeなcostを内部ヒープ順に走査        |
+| `contains(cost)`                             | `boolean`                            | activeなcostが含まれるか線形探索        |
+| `forEachInt(action)` / `forEachLong(action)` | `void`                               | activeな全costへ処理を適用           |
+| `spliterator()`                              | `Spliterator.OfInt` / `OfLong`       | プリミティブspliteratorを返す         |
+| `intStream()` / `longStream()`               | `IntStream` / `LongStream`           | activeなcostのStreamを返す        |
+| `toList()`                                   | `List<Integer>` / `List<Long>`       | activeなcostをボックス化した不変Listで返す |
+| `toArray()`                                  | `int[]` / `long[]`                   | activeなcostをプリミティブ配列へコピー     |
 
-`IndexedPriorityQueue`の最大の特徴は、**遅延評価による自動最適化**です。
+## 状態管理
 
-### アルゴリズムの選択基準
+各indexは現在世代で次のいずれかです。
 
-`push`操作では即座にヒープ化せず、未整列要素として蓄積します。
-`poll`や`peek`などのヒープ性質を必要とする操作時に、**厳密なステップ数計算**に基づいて最適なアルゴリズムを選択します。
+| 状態     | `containsIndex(i)` | `hasCost(i)` | `set(i, c)` | `relax(i, c)` |
+|--------|-------------------:|-------------:|-------------|---------------|
+| 未追加    |              false |        false | 登録          | 登録            |
+| active |               true |         true | 無条件更新       | 改善時だけ更新       |
+| 削除済み   |              false |         true | 再登録         | 何もしない         |
 
-#### 1. heapifyのコスト
-
-- **Floyd's algorithm**: `2N - 2 * log₂N` ステップ（N=総要素数）
-- これは理論値として正確
-
-#### 2. インクリメンタル構築のコスト
-
-各要素を挿入する時点でのヒープサイズから個別に計算：
-
-- **少数の場合（k ≤ 100）**: 厳密に計算
-  ```
-  incrementalCost = Σ(i=1 to k) log₂(sortedSize + i)
-  ```
-  各挿入時点の実際のヒープサイズの対数を合計
-
-- **多数の場合（k > 100）**: 効率化のため近似値を使用
-  ```
-  avgHeapSize = sortedSize + k / 2
-  incrementalCost = k × log₂(avgHeapSize)
-  ```
-  対数の平均値を利用した高速計算
-
-#### 3. アルゴリズム選択
-
-```
-if (heapifyCost < incrementalCost) {
-    heapify を実行
-} else {
-    逐次 siftUp を実行
-}
-```
-
-固定閾値を使わず、現在のヒープ状態に応じて常に最適なアルゴリズムを選択します。
-
-### 具体例（実際の分岐点）
-
-| 総ノード数(size) | 未ソート数(k) | Push総ステップ数 | Heapify総ステップ数 | 選択アルゴリズム      |
-|-------------|----------|------------|---------------|---------------|
-| 100,000     | 1,000    | ≈17,000    | 200,000       | Push (siftUp) |
-| 100,000     | 10,000   | ≈170,000   | 200,000       | Push (siftUp) |
-| 100,000     | 50,000   | ≈850,000   | 200,000       | Heapify       |
-| 1,000,000   | 10,000   | ≈200,000   | 2,000,000     | Push (siftUp) |
-| 1,000,000   | 100,000  | ≈2,000,000 | 2,000,000     | ほぼ同等          |
-| 1,000,000   | 200,000  | ≈4,000,000 | 2,000,000     | Heapify       |
-
-この戦略により、以下の状況に対応できます：
-
-- **ダイクストラ法**: 頂点を段階的に追加する場合はPushが有利
-- **大規模初期化**: 多数の頂点を一度に追加する場合はHeapifyが有利
-- **動的な更新**: relax操作が頻繁な場合も適切に処理
+active判定は`position[i]`が指すヒープ位置と`heap[position[i]] == i`の一致で行います。削除時は`position[i]`へ現在の負のstampを保存し、`clear()`ではstampを1つ減らすだけで全indexを次世代の未追加状態として扱います。
 
 ## 利用例
 
 ```java
-// 頂点数5のグラフを想定
-IndexedPriorityQueue pq = new IndexedPriorityQueue(5);
+LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(5);
+q.push(0, 10);
+q.push(1, 4);
+q.set(0, 3);
 
-// ノードとコストを追加
-pq.push(0, 10);
-pq.push(1, 5);
-pq.push(2, 8);
+int i = q.pollIndex();                    // 0
+long active = q.getOrDefault(i, -1);      // -1
+long last = q.getLastOrDefault(i, -1);    // 3
+```
 
-// 先頭要素の取得
-System.out.println(pq.peek());      // 5（最小コスト）
-System.out.println(pq.peekNode());  // 1（最小コストのノード）
+```java
+IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(4, true);
+q.setAll(i -> i * 10);
 
-// ノード2のコストを更新
-pq.updateCost(2, 3);
-System.out.println(pq.peekNode());  // 2（コスト3が最小に）
-
-// ノード情報の取得
-System.out.println(pq.getCost(0));  // 10
-System.out.println(pq.contains(1)); // true
-
-// relax操作（Dijkstra法などで使用）
-pq.relax(1, 4);                     // ノード1のコストを4に改善
-
-// 先頭ノードを取り出し
-int node = pq.pollNode();           // 2
-System.out.println(pq.size());      // 2
+System.out.println(q.peekIndex());  // 3
+System.out.println(q.peek());       // 30
 ```
 
 ## 注意事項
 
-- **固定容量**: 頂点数nは構築時に指定し、後から変更できません
-- **頂点IDの範囲**: 0 ≤ node < n の範囲内である必要があります
-- **重複追加の禁止**: 同じ頂点を2回pushすると`IllegalArgumentException`がスローされます
-- **存在しない頂点への操作**: `getCost`, `updateCost`, `remove`を存在しない頂点に対して呼び出すと
-  `NoSuchElementException`がスローされます
-- **poll後の取得**: `pollNode()`で取り出した頂点は削除されるため、その後`getCost()`で取得できません（必要なら先に`peek()`
-  を使用）
-- **整列のタイミング**: `poll`, `peek`, `updateCost`, `remove`などを呼び出すと、必要に応じて自動的にヒープ化を実行します
+- 構築時の`n`は使用するindex範囲全体を表し、各操作は`0 <= i < n`で呼び出します。
+- `push(i, c)`は現在世代で未追加のindexにだけ使用します。activeまたは削除済みなら`IllegalArgumentException`を投げます。
+- `pushAll`の2配列は同じ長さとし、含まれるindexはすべて未追加かつ重複なしとします。
+- `setAll`は以前の状態を消去し、`0`から`n - 1`までの全indexをactiveにします。
+- `set`は削除済みindexを再登録しますが、`relax`は再登録しません。
+- `get`系はactive限定、`getLast`系は削除済みを含む現在世代の記録を対象にします。
+- `peek`、`peekIndex`、`poll`、`pollIndex`は空でない状態で呼び出します。
+- `peekSecond`は要素数が2以上の状態で呼び出します。
+- iteratorとCollection由来の変換結果は優先順ではありません。
 
 ## パフォーマンス特性
 
-### 時間計算量
-
-| 操作                       | 計算量      | 備考                              |
-|--------------------------|----------|---------------------------------|
-| `push(node, cost)`       | O(1)     | 遅延評価のため即座には整列しない                |
-| `poll()` / `pollNode()`  | O(log N) | 初回は整列コスト（O(N) or O(k log N)）が追加 |
-| `peek()` / `peekNode()`  | O(1)     | 初回は整列コスト（O(N) or O(k log N)）が追加 |
-| `getCost(node)`          | O(1)     | 常に即座に取得可能                       |
-| `updateCost(node, cost)` | O(log N) | 自動的にヒープ性質を維持                    |
-| `remove(node)`           | O(log N) | 自動的にヒープ性質を維持                    |
-| `contains(node)`         | O(1)     | position配列で管理                   |
-
-### 空間計算量
-
-- O(N): 頂点数N分の配列を確保
-	- `cost[]`: long型配列（8N バイト）
-	- `heap[]`: int型配列（4N バイト）
-	- `position[]`: int型配列（4N バイト）
-	- 合計: 16N バイト（N=100万で約16MB）
-
-### 遅延評価の効果
-
-従来の方式（毎回siftUp）と比較した性能改善：
-
-| 操作パターン         | 従来方式       | 遅延評価版      | 改善率                    |
-|----------------|------------|------------|------------------------|
-| N個を一括追加後、全poll | O(N log N) | O(N)       | **約20倍高速** (N=10^6の場合) |
-| 少数追加（k << N）   | O(k log N) | O(k log N) | 同等（オーバーヘッドは僅か）         |
-| 追加と取り出しの混在     | O(M log N) | O(M log N) | 同等                     |
-
-### 実測性能例
-
-※環境: Java 24, N=1,000,000
-
-| シナリオ             | 従来版    | 遅延評価版  | 備考             |
-|------------------|--------|--------|----------------|
-| 100万個push後に全poll | 約450ms | 約25ms  | heapifyの効果     |
-| 10個ずつpush/poll   | 約5ms   | 約5ms   | オーバーヘッド無視できる   |
-| Dijkstra (密グラフ)  | 約800ms | 約750ms | updateCostの効率化 |
-
-## 他のPriorityQueueクラスとの比較
-
-| クラス                    | 用途     | 特徴                  | 推奨シーン          |
-|------------------------|--------|---------------------|----------------|
-| `PriorityQueue<T>`     | 汎用     | ジェネリック、Comparator対応 | 複雑なオブジェクトの比較   |
-| `IntPriorityQueue`     | int特化  | 最高速、省メモリ            | 単純な値の優先度管理     |
-| `LongPriorityQueue`    | long特化 | 大きな値対応              | コストが21億超える場合   |
-| `IndexedPriorityQueue` | グラフ特化  | コスト更新・削除対応          | ダイクストラ、Prim法など |
+- `push`: O(1)
+- `pushAll`: O(k)
+- `setAll`: O(n)
+- `set`, `relax`: O(log n)。対象が未整列領域ならO(1)
+- `remove`: ヒープ構築済みならO(log n)。未整列要素があれば先にO(n)またはO(k log n)の構築を伴う
+- `peek`, `peekIndex`, `peekSecond`: ヒープ構築済みならO(1)。未整列要素があれば構築コストを伴う
+- `poll`, `pollIndex`: ヒープ構築済みならO(log n)。未整列要素があれば構築コストを伴う
+- `get`, `getOrDefault`, `getLast`, `getLastOrDefault`, `containsIndex`, `hasCost`, `size`, `clear`: O(1)
+- iteratorとCollection由来の走査・変換: O(n)。iterator生成時に未整列要素があればヒープ構築を行う
+- 使用メモリ: O(n)。cost、heap、positionの3配列を保持
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                              |
-|:--------------|:-----------|:--------------------------------|
-| **バージョン 1.0** | 2025-10-07 | 初回リリース：遅延評価戦略とインデックス管理を実装       |
-| **バージョン 2.0** | 2025-10-08 | 降順対応の強化、javadocコメントの統一、実装の整合性向上 |
+| バージョン番号       | 年月日        | 詳細                                                                 |
+|:--------------|:-----------|:-------------------------------------------------------------------|
+| **バージョン 1.0** | 2025-10-07 | long costの`IndexedPriorityQueue`として初回実装                            |
+| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによるO(1) clear、`set`、active限定getter、`getLast`を追加 |
+| **バージョン 3.0** | 2026-07-18 | `setAll`を追加し、`set` / `relax`が未整列領域を展開しないよう改善                       |
 
 ### バージョン管理について
 
 バージョン番号は2桁で管理します：
 
 - 1桁目（メジャーバージョン）: メソッドの追加や機能拡張があった場合に更新
-- 2桁目（マイナーバージョン）: 誤字修正、バグ修正、マイクロ高速化などの小さな更新があった場合に更新
+- 2桁目（マイナーバージョン）: 誤字修正、バグ修正、マイクロ高速化などの小さな更新
