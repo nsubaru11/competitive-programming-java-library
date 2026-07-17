@@ -1,6 +1,7 @@
 package verify.graph.shortestpath;
 
 import lib.graph.*;
+import lib.io.compat17.*;
 
 import java.util.*;
 
@@ -32,32 +33,41 @@ import java.util.*;
 public class Example {
 
 	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int v = sc.nextInt();
-		int e = sc.nextInt();
-		int[][] edges = new int[e][3];
-		for (int i = 0; i < e; i++) {
-			edges[i][0] = sc.nextInt() - 1;
-			edges[i][1] = sc.nextInt() - 1;
-			edges[i][2] = sc.nextInt();
-		}
-		solveDijkstra(v, edges);
+		FastScanner sc = new FastScanner();
+		int n = sc.nextInt(), m = sc.nextInt();
+		DirectedGraph graph = new DirectedGraph(n, m);
+		graph.setAll(sc::nextInt0, sc::nextInt0, sc::nextLong);
+		solveDijkstra(graph);
 		System.out.println();
-		solveBellmanFord(v, e, edges);
+		solveBellmanFord(graph);
 		System.out.println();
-		solveWarshallFloyd(v, edges);
+		solveWarshallFloyd(graph);
 	}
 
-	private static void solveDijkstra(int v, int[][] edges) {
-		Dijkstra dijkstra = new Dijkstra(v, edges.length);
-		for (int[] edge : edges) {
-			dijkstra.addEdge(edge[0], edge[1], edge[2]);
-		}
+	private static void solveDijkstra(DirectedGraph graph) {
+		int n = graph.n;
 		StringJoiner sj = new StringJoiner("\n");
-		for (int i = 0; i < v; i++) {
+		for (int i = 0; i < n; i++) {
 			StringJoiner sj2 = new StringJoiner(" ");
-			for (int j = 0; j < v; j++) {
-				long ans = dijkstra.solve(i, j);
+			var result = Dijkstra.solve(graph, i);
+			for (int j = 0; j < n; j++) {
+				long ans = result.distTo(j);
+				String str = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
+				sj2.add(str);
+			}
+			sj.add(sj2.toString());
+		}
+		System.out.println(sj);
+	}
+
+	private static void solveBellmanFord(DirectedGraph graph) {
+		int n = graph.n;
+		StringJoiner sj = new StringJoiner("\n");
+		for (int i = 0; i < n; i++) {
+			StringJoiner sj2 = new StringJoiner(" ");
+			var result = BellmanFord.solve(graph, i);
+			for (int j = 0; j < n; j++) {
+				long ans = result.distTo(j);
 				String ans2 = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
 				sj2.add(ans2);
 			}
@@ -66,34 +76,14 @@ public class Example {
 		System.out.println(sj);
 	}
 
-	private static void solveBellmanFord(int v, int e, int[][] edges) {
-		BellmanFord bellmanFord = new BellmanFord(v, e);
-		for (int[] edge : edges) {
-			bellmanFord.addEdge(edge[0], edge[1], edge[2]);
-		}
+	private static void solveWarshallFloyd(DirectedGraph graph) {
+		int n = graph.n;
 		StringJoiner sj = new StringJoiner("\n");
-		for (int i = 0; i < v; i++) {
+		var result = WarshallFloyd.solve(graph);
+		for (int i = 0; i < n; i++) {
 			StringJoiner sj2 = new StringJoiner(" ");
-			for (int j = 0; j < v; j++) {
-				long ans = bellmanFord.solve(i, j);
-				String ans2 = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
-				sj2.add(ans2);
-			}
-			sj.add(sj2.toString());
-		}
-		System.out.println(sj);
-	}
-
-	private static void solveWarshallFloyd(int v, int[][] edges) {
-		WarshallFloyd warshallfroyd = new WarshallFloyd(v);
-		for (int[] edge : edges) {
-			warshallfroyd.addEdge(edge[0], edge[1], edge[2]);
-		}
-		StringJoiner sj = new StringJoiner("\n");
-		for (int i = 0; i < v; i++) {
-			StringJoiner sj2 = new StringJoiner(" ");
-			for (int j = 0; j < v; j++) {
-				long ans = warshallfroyd.solve(i, j);
+			for (int j = 0; j < n; j++) {
+				long ans = result.dist(i, j);
 				String ans2 = ans == Long.MAX_VALUE ? "INF" : Long.toString(ans);
 				sj2.add(ans2);
 			}

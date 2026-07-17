@@ -1,93 +1,113 @@
 package lib.graph;
 
-import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 /**
- * Warshall-Floyd アルゴリズムを実装するクラス。
- * 全点対間の最短経路を計算する。負閉路が存在する場合は、
- * solve() は -INF を返し、getAllShortestPathWeight() は null を返す。
+ * Warshall-Floyd法により全頂点対間の最短距離を求めるユーティリティクラス。
  * <p>
- * ※ 隣接行列を用いるため、頂点数が大きい場合はメモリや計算量の観点で注意が必要。
+ * 到達不能な頂点対は {@link Long#MAX_VALUE}、負閉路の影響を受ける頂点対は
+ * {@link Long#MIN_VALUE} です。
+ * 計算量は {@code O(n^3)}、追加メモリは {@code O(n^2)} です。
  */
-@SuppressWarnings("unused")
 public final class WarshallFloyd {
 	private static final long INF = Long.MAX_VALUE;
-	private final int v;
-	private final long[][] dist;
-	private boolean update = false;
-	private boolean isNegative = false;
+	private static final long NINF = Long.MIN_VALUE;
+
+	private WarshallFloyd() {
+	}
 
 	/**
-	 * コンストラクタ
+	 * 全頂点対間の最短距離を計算します。
 	 *
-	 * @param v 頂点数
+	 * @param graph 探索対象のグラフ
+	 * @return 計算結果
 	 */
-	public WarshallFloyd(final int v) {
-		this.v = v;
-		dist = new long[v][v];
-		for (int i = 0; i < v; i++) {
-			fill(dist[i], INF);
-			dist[i][i] = 0;
+	public static Result solve(final Graph graph) {
+		int n = graph.n;
+		long[][] dist = new long[n][n];
+		for (int u = 0; u < n; u++) {
+			fill(dist[u], INF);
+			dist[u][u] = 0;
 		}
-	}
-
-	/**
-	 * 有向辺を追加する。
-	 * 既に辺が存在する場合は、より小さい重みを採用する。
-	 *
-	 * @param from 開始点（0-indexed）
-	 * @param to   到着点（0-indexed）
-	 * @param cost 辺の重み
-	 */
-	public void addEdge(final int from, final int to, final long cost) {
-		dist[from][to] = min(dist[from][to], cost);
-		update = true;
-		isNegative = false;
-	}
-
-	/**
-	 * 始点 from から終点 to への最短経路の重みを返す。
-	 * 負閉路が存在する場合は -INF を返す。
-	 *
-	 * @param from 始点（0-indexed）
-	 * @param to   終点（0-indexed）
-	 * @return 始点から終点への最短経路の重み（到達不可能なら INF）
-	 */
-	public long solve(final int from, final int to) {
-		if (update) dist();
-		return isNegative ? -INF : dist[from][to];
-	}
-
-	/**
-	 * 全点対間の最短経路の重みを含む隣接行列を返す。
-	 * 負閉路が存在する場合は null を返す。
-	 *
-	 * @return 全点対間の最短経路行列（負閉路がある場合は null）
-	 */
-	public long[][] getAllShortestPathWeight() {
-		if (update) dist();
-		return isNegative ? null : dist;
-	}
-
-	/**
-	 * ワーシャルフロイド法により、全点対間の最短経路を計算する。
-	 * 辺の緩和を全頂点対で行い、負閉路が検出された場合は isNegative を true にする。
-	 */
-	private void dist() {
-		update = false;
-		for (int via = 0; via < v; via++) {
-			for (int from = 0; from < v; from++) {
-				if (dist[from][via] == INF) continue;
-				for (int to = 0; to < v; to++) {
-					if (dist[via][to] == INF) continue;
-					dist[from][to] = min(dist[from][to], dist[from][via] + dist[via][to]);
-					if (from == to && dist[from][to] < 0) {
-						isNegative = true;
-						return;
-					}
+		final int[] first = graph.first, next = graph.next, dest = graph.dest;
+		final long[] cost = graph.cost;
+		for (int u = 0; u < n; u++) {
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				final long c = cost[e];
+				if (c < dist[u][v]) dist[u][v] = c;
+			}
+		}
+		for (int via = 0; via < n; via++) {
+			final long[] viaRow = dist[via];
+			for (int from = 0; from < n; from++) {
+				final long[] fromRow = dist[from];
+				final long fromToVia = fromRow[via];
+				if (fromToVia == INF) continue;
+				for (int to = 0; to < n; to++) {
+					final long viaToTo = viaRow[to];
+					if (viaToTo == INF) continue;
+					final long candidate = fromToVia + viaToTo;
+					if (candidate < fromRow[to]) fromRow[to] = candidate;
 				}
 			}
 		}
+		boolean[] negative = new boolean[n];
+		boolean hasNegCycle = false;
+		for (int v = 0; v < n; v++) {
+			if (dist[v][v] < 0) {
+				negative[v] = true;
+				hasNegCycle = true;
+			}
+		}
+		for (int via = 0; via < n; via++) {
+			if (!negative[via]) continue;
+			long[] viaRow = dist[via];
+			for (int from = 0; from < n; from++) {
+				long[] fromRow = dist[from];
+				if (fromRow[via] == INF) continue;
+				for (int to = 0; to < n; to++) {
+					if (viaRow[to] != INF) fromRow[to] = NINF;
+				}
+			}
+		}
+		return new Result(hasNegCycle, dist);
+	}
+
+	/**
+	 * Warshall-Floyd法による全頂点対最短距離の計算結果。
+	 */
+	public static final class Result {
+		public final boolean hasNegCycle;
+		public final long[][] dist;
+
+		private Result(final boolean hasNegCycle, final long[][] dist) {
+			this.hasNegCycle = hasNegCycle;
+			this.dist = dist;
+		}
+
+		/**
+		 * 頂点 {@code u} から頂点 {@code v} への距離を返します。
+		 *
+		 * @param u 始点
+		 * @param v 終点
+		 * @return 距離。到達不能は {@link Long#MAX_VALUE}、負閉路の影響下は {@link Long#MIN_VALUE}
+		 */
+		public long dist(final int u, final int v) {
+			return dist[u][v];
+		}
+
+		/**
+		 * 頂点 {@code u} から頂点 {@code v} へ到達可能かを返します。
+		 * 負閉路の影響下でも到達可能なら {@code true} です。
+		 *
+		 * @param u 始点
+		 * @param v 終点
+		 * @return 到達可能なら {@code true}
+		 */
+		public boolean reachable(final int u, final int v) {
+			return dist[u][v] != INF;
+		}
+
 	}
 }

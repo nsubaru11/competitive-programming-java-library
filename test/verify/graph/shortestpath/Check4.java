@@ -10,8 +10,7 @@ import java.util.stream.*;
 import lib.graph.*;
 import lib.io.compat17.*;
 
-// https://judge.yosupo.jp/problem/shortest_path
-public final class Check1 {
+public final class Check4 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -25,20 +24,21 @@ public final class Check1 {
 	// endregion
 
 	private static void solve() {
-		int n = sc.nextInt(), m = sc.nextInt();
-		int s = sc.nextInt(), t = sc.nextInt();
-		DirectedGraph graph = new DirectedGraph(n, m);
+		int v = sc.nextInt(), e = sc.nextInt();
+		DirectedGraph graph = new DirectedGraph(v, e);
 		graph.setAll(sc::nextInt, sc::nextInt, sc::nextInt);
-		var result = Dijkstra.solve(graph, s);
-		if (!result.reachable(t)) {
-			out.println(-1);
-		} else {
-			int[] path = result.pathTo(t);
-			int len = path.length;
-			out.print(result.distTo(t), len - 1).println();
-			for (int i = 0; i < len - 1; i++) {
-				out.print(path[i], path[i + 1]).println();
+		var result = WarshallFloyd.solve(graph);
+		if (result.hasNegCycle) {
+			out.println("NEGATIVE CYCLE");
+			return;
+		}
+		long[][] dist = result.dist;
+		for (int i = 0; i < v; i++) {
+			StringJoiner sj = new StringJoiner(" ");
+			for (int j = 0; j < v; j++) {
+				sj.add(dist[i][j] == Long.MAX_VALUE ? "INF" : Long.toString(dist[i][j]));
 			}
+			out.println(sj);
 		}
 	}
 
@@ -412,7 +412,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check4::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -421,7 +421,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check4::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

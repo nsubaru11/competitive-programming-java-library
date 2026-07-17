@@ -10,8 +10,8 @@ import java.util.stream.*;
 import lib.graph.*;
 import lib.io.compat17.*;
 
-// https://judge.yosupo.jp/problem/shortest_path
-public final class Check1 {
+// https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/1/GRL_1_A
+public final class Check2 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -25,20 +25,13 @@ public final class Check1 {
 	// endregion
 
 	private static void solve() {
-		int n = sc.nextInt(), m = sc.nextInt();
-		int s = sc.nextInt(), t = sc.nextInt();
-		DirectedGraph graph = new DirectedGraph(n, m);
+		int v = sc.nextInt(), e = sc.nextInt();
+		int r = sc.nextInt();
+		DirectedGraph graph = new DirectedGraph(v, e);
 		graph.setAll(sc::nextInt, sc::nextInt, sc::nextInt);
-		var result = Dijkstra.solve(graph, s);
-		if (!result.reachable(t)) {
-			out.println(-1);
-		} else {
-			int[] path = result.pathTo(t);
-			int len = path.length;
-			out.print(result.distTo(t), len - 1).println();
-			for (int i = 0; i < len - 1; i++) {
-				out.print(path[i], path[i + 1]).println();
-			}
+		long[] dist = Dijkstra.dist(graph, r);
+		for (int i = 0; i < v; i++) {
+			out.println(dist[i] == Long.MAX_VALUE ? "INF" : dist[i]);
 		}
 	}
 
@@ -412,7 +405,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -421,7 +414,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

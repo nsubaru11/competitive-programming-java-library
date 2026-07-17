@@ -1,100 +1,150 @@
 package lib.graph;
 
-import java.util.*;
+import static java.util.Arrays.*;
 
 /**
- * Bellman-Ford アルゴリズムを実装するクラス。
- * 単一始点からの最短経路を求めることができ、負閉路が存在する場合は -INF を返す。
- * すべての辺リストに対して反復緩和を行い、最短距離を計算する。
+ * Bellman-Ford法により、負辺を含むグラフの単一始点最短経路を求めるユーティリティクラス。
  * <p>
- * ※ 同一始点での複数回呼び出しのためにキャッシュ機構（used フィールド）を用いているが、
- * 複雑な利用ではキャッシュの無効化や再計算のタイミングに注意する必要がある。
+ * 到達不能な頂点の距離は {@link Long#MAX_VALUE}、到達可能な負閉路の影響を受ける頂点は
+ * {@link Long#MIN_VALUE} です。
+ * 計算量は {@code O(nm)}、追加メモリは {@code O(n)} です。
  */
-@SuppressWarnings("unused")
 public final class BellmanFord {
 	private static final long INF = Long.MAX_VALUE;
-	private final int n;
-	private final int[] dest, next, first;
-	private final long[] cost;
-	private final long[] dist;
-	private int edgeCount = 0;
-	private int cache = -1;
-	private boolean hasNegCycle = false;
+	private static final long NINF = Long.MIN_VALUE;
 
-	/**
-	 * @param n 頂点数
-	 * @param m 辺の最大数（確保するメモリ量）
-	 */
-	public BellmanFord(final int n, final int m) {
-		this.n = n;
-		dist = new long[n];
-		dest = new int[m];
-		next = new int[m];
-		cost = new long[m];
-		first = new int[n];
-		Arrays.fill(first, -1);
+	private BellmanFord() {
 	}
 
 	/**
-	 * 有向辺を追加する
+	 * 始点 {@code s} から全頂点への最短距離を計算します。
+	 *
+	 * @param graph 探索対象のグラフ
+	 * @param s 始点（0-indexed）
+	 * @return 計算結果
 	 */
-	public void addEdge(final int from, final int to, final long c) {
-		dest[edgeCount] = to;
-		cost[edgeCount] = c;
-		next[edgeCount] = first[from];
-		first[from] = edgeCount++;
-		cache = -1;
-	}
+	public static Result solve(final Graph graph, final int s) {
+		int n = graph.n;
+		int[] first = graph.first, next = graph.next, dest = graph.dest;
+		long[] dist = new long[n], cost = graph.cost;
+		int[] parent = new int[n];
+		fill(dist, INF);
+		fill(parent, -1);
+		dist[s] = 0;
+		parent[s] = s;
 
-	/**
-	 * 始点 i から終点 j への最短距離を求める。
-	 * 始点から到達可能な負閉路が存在する場合は -INF (Long.MIN_VALUE) を返す。
-	 * 到達不能な場合は INF (Long.MAX_VALUE) を返す。
-	 */
-	public long solve(final int i, final int j) {
-		if (cache == i) {
-			if (hasNegCycle) return Long.MIN_VALUE;
-			return dist[j];
-		}
-
-		cache = i;
-		hasNegCycle = false;
-		Arrays.fill(dist, INF);
-		dist[i] = 0;
-
-		for (int k = 1; k <= n; k++) {
+		for (int k = 1; k < n; k++) {
 			boolean updated = false;
 			for (int u = 0; u < n; u++) {
-				if (dist[u] == INF) continue;
+				long du = dist[u];
+				if (du == INF) continue;
 				for (int e = first[u]; e != -1; e = next[e]) {
 					int v = dest[e];
 					long c = cost[e];
-					if (dist[v] > dist[u] + c) {
-						dist[v] = dist[u] + c;
+					if (dist[v] > du + c) {
+						dist[v] = du + c;
+						parent[v] = u;
 						updated = true;
-						if (k == n) {
-							hasNegCycle = true;
-							return Long.MIN_VALUE;
-						}
 					}
 				}
 			}
 			if (!updated) break;
 		}
-		return dist[j];
+
+		boolean[] affected = new boolean[n];
+		int[] q = new int[n];
+		int tail = 0;
+		for (int u = 0; u < n; u++) {
+			long du = dist[u];
+			if (du == INF) continue;
+			for (int e = first[u]; e != -1; e = next[e]) {
+				int v = dest[e];
+				if (dist[v] > du + cost[e] && !affected[v]) {
+					affected[v] = true;
+					q[tail++] = v;
+				}
+			}
+		}
+		for (int head = 0; head < tail; head++) {
+			int u = q[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				int v = dest[e];
+				if (affected[v]) continue;
+				affected[v] = true;
+				q[tail++] = v;
+			}
+		}
+		for (int i = 0; i < tail; i++) {
+			int v = q[i];
+			dist[v] = NINF;
+			parent[v] = -1;
+		}
+		return new Result(s, tail > 0, dist, parent);
 	}
 
 	/**
-	 * 直前の solve() 呼び出しにおいて、到達可能な負閉路が検出されたかを返す
+	 * Bellman-Ford法による単一始点最短経路の計算結果。
 	 */
-	public boolean hasNegativeCycle() {
-		return hasNegCycle;
-	}
+	public static final class Result {
+		public final boolean hasNegCycle;
+		public final int s;
+		public final long[] dist;
+		public final int[] parent;
 
-	/**
-	 * 直前の solve() の始点からの距離配列を取得する
-	 */
-	public long[] getDist() {
-		return dist;
+		private Result(final int s, boolean hasNegCycle, final long[] dist, final int[] parent) {
+			this.s = s;
+			this.hasNegCycle = hasNegCycle;
+			this.dist = dist;
+			this.parent = parent;
+		}
+
+		/**
+		 * 指定した頂点への距離を返します。
+		 *
+		 * @param v 終点
+		 * @return 距離。到達不能は {@link Long#MAX_VALUE}、負閉路の影響下は {@link Long#MIN_VALUE}
+		 */
+		public long distTo(final int v) {
+			return dist[v];
+		}
+
+		/**
+		 * 指定した頂点へ到達可能かを返します。
+		 * 負閉路の影響下でも到達可能なら {@code true} です。
+		 *
+		 * @param v 終点
+		 * @return 到達可能なら {@code true}
+		 */
+		public boolean reachable(final int v) {
+			return dist[v] != INF;
+		}
+
+		/**
+		 * 最短経路上の親を返します。
+		 *
+		 * @param v 頂点
+		 * @return 親。始点自身は始点、到達不能または負閉路の影響下では {@code -1}
+		 */
+		public int parent(final int v) {
+			return parent[v];
+		}
+
+		/**
+		 * 始点から指定した頂点までの最短経路を頂点列として返します。
+		 *
+		 * @param v 終点
+		 * @return 始点と終点を含む頂点列。到達不能または負閉路の影響下では {@code null}
+		 */
+		public int[] pathTo(final int v) {
+			long d = distTo(v);
+			if (d == INF || d == NINF) return null;
+			final int[] temp = new int[dist.length];
+			int len = 0;
+			for (int p = v; p != s; p = parent[p]) temp[len++] = p;
+			temp[len++] = s;
+			int[] res = new int[len];
+			for (int i = 0; i < len; i++) res[i] = temp[len - i - 1];
+			return res;
+		}
 	}
 }
