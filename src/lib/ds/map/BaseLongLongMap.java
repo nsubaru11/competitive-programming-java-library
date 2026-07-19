@@ -1,4 +1,4 @@
-package lib.ds;
+package lib.ds.map;
 
 import static java.lang.Math.*;
 
@@ -6,19 +6,20 @@ import java.util.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
-public final class BaseIntIntMap {
-	private int[] keys, values, stamps;
+public final class BaseLongLongMap {
+	private long[] keys, values;
+	private int[] stamps;
 	private int stamp, size, capacity, occupied, resizeThreshold, mask;
 
-	public BaseIntIntMap(final int initialCapacity) {
+	public BaseLongLongMap(final int initialCapacity) {
 		capacity = normalizeCapacity(initialCapacity);
 		size = 0;
 		occupied = 0;
 		stamp = 1;
 		resizeThreshold = capacity - (capacity >>> 2);
 		stamps = new int[capacity];
-		keys = new int[capacity];
-		values = new int[capacity];
+		keys = new long[capacity];
+		values = new long[capacity];
 		mask = capacity - 1;
 	}
 
@@ -35,7 +36,7 @@ public final class BaseIntIntMap {
 		return cap + 1;
 	}
 
-	public int get(final int key) {
+	public long get(final long key) {
 		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
 			if (s < 0 || keys[hash] != key) continue;
 			return values[hash];
@@ -43,7 +44,7 @@ public final class BaseIntIntMap {
 		throw new NoSuchElementException();
 	}
 
-	public int getOrDefault(final int key, final int defaultValue) {
+	public long getOrDefault(final long key, final long defaultValue) {
 		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
 			if (s < 0 || keys[hash] != key) continue;
 			return values[hash];
@@ -51,19 +52,19 @@ public final class BaseIntIntMap {
 		return defaultValue;
 	}
 
-	public int increment(final int key) {
+	public long increment(final long key) {
 		return addOrDefault(key, 1, 1);
 	}
 
-	public int decrement(final int key) {
+	public long decrement(final long key) {
 		return addOrDefault(key, -1, -1);
 	}
 
-	public int add(final int key, final int delta) {
+	public long add(final long key, final long delta) {
 		return addOrDefault(key, delta, delta);
 	}
 
-	public int addOrDefault(final int key, final int delta, final int defaultValue) {
+	public long addOrDefault(final long key, final long delta, final long defaultValue) {
 		if (occupied >= resizeThreshold) resize();
 		int pos = -1;
 		int hash = hash(key);
@@ -84,7 +85,7 @@ public final class BaseIntIntMap {
 		return values[pos] = defaultValue;
 	}
 
-	public int put(final int key, final int value) {
+	public long put(final long key, final long value) {
 		if (occupied >= resizeThreshold) resize();
 		int pos = -1;
 		int hash = hash(key);
@@ -105,7 +106,7 @@ public final class BaseIntIntMap {
 		return values[pos] = value;
 	}
 
-	public boolean remove(final int key) {
+	public boolean remove(final long key) {
 		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
 			if (s < 0 || keys[hash] != key) continue;
 			stamps[hash] = -stamp;
@@ -115,7 +116,7 @@ public final class BaseIntIntMap {
 		return false;
 	}
 
-	public boolean containsKey(final int key) {
+	public boolean containsKey(final long key) {
 		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
 			if (s < 0 || keys[hash] != key) continue;
 			return true;
@@ -123,7 +124,7 @@ public final class BaseIntIntMap {
 		return false;
 	}
 
-	public int merge(final int key, final int value, final IntBinaryOperator op) {
+	public long merge(final long key, final long value, final LongBinaryOperator op) {
 		if (occupied >= resizeThreshold) resize();
 		int pos = -1;
 		int hash = hash(key);
@@ -132,7 +133,7 @@ public final class BaseIntIntMap {
 				if (pos == -1) pos = hash;
 				continue;
 			} else if (keys[hash] != key) continue;
-			return values[hash] = op.applyAsInt(values[hash], value);
+			return values[hash] = op.applyAsLong(values[hash], value);
 		}
 		if (pos == -1) {
 			pos = hash;
@@ -144,7 +145,7 @@ public final class BaseIntIntMap {
 		return values[pos] = value;
 	}
 
-	public int putIfAbsent(final int key, final int value) {
+	public long putIfAbsent(final long key, final long value) {
 		if (occupied >= resizeThreshold) resize();
 		int pos = -1;
 		int hash = hash(key);
@@ -179,21 +180,21 @@ public final class BaseIntIntMap {
 		return size == 0;
 	}
 
-	public void forEach(final IntIntConsumer action) {
+	public void forEach(final LongLongConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(keys[i], values[i]);
 		}
 	}
 
-	public void forEachKey(final IntConsumer action) {
+	public void forEachKey(final LongConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(keys[i]);
 		}
 	}
 
-	public void forEachValue(final IntConsumer action) {
+	public void forEachValue(final LongConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(values[i]);
@@ -227,8 +228,8 @@ public final class BaseIntIntMap {
 		return result;
 	}
 
-	public int[] keys() {
-		final int[] res = new int[size];
+	public long[] keys() {
+		final long[] res = new long[size];
 		for (int i = 0, idx = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			res[idx++] = keys[i];
@@ -236,8 +237,8 @@ public final class BaseIntIntMap {
 		return res;
 	}
 
-	public int[] values() {
-		final int[] res = new int[size];
+	public long[] values() {
+		final long[] res = new long[size];
 		for (int i = 0, idx = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			res[idx++] = values[i];
@@ -245,8 +246,8 @@ public final class BaseIntIntMap {
 		return res;
 	}
 
-	public int[][] entries() {
-		final int[][] res = new int[2][size];
+	public long[][] entries() {
+		final long[][] res = new long[2][size];
 		for (int i = 0, idx = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			res[0][idx] = keys[i];
@@ -258,17 +259,18 @@ public final class BaseIntIntMap {
 
 	private void resize() {
 		final int oldCapacity = capacity;
-		final int[] oldKeys = keys, oldValues = values, oldStamps = stamps;
+		final long[] oldKeys = keys, oldValues = values;
+		final int[] oldStamps = stamps;
 		capacity <<= 1;
 		resizeThreshold = capacity - (capacity >>> 2);
-		keys = new int[capacity];
-		values = new int[capacity];
+		keys = new long[capacity];
+		values = new long[capacity];
 		stamps = new int[capacity];
 		occupied = 0;
 		mask = capacity - 1;
 		for (int i = 0; i < oldCapacity; i++) {
 			if (oldStamps[i] != stamp) continue;
-			final int key = oldKeys[i];
+			final long key = oldKeys[i];
 			int hash = hash(key);
 			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
 			stamps[hash] = stamp;
@@ -278,21 +280,19 @@ public final class BaseIntIntMap {
 		}
 	}
 
-	private int hash(final int key) {
-		int h = key;
-		h ^= h >>> 16;
-		h *= 0x7feb352d;
-		h ^= h >>> 15;
-		h *= 0x846ca68b;
-		h ^= h >>> 16;
-		return h & mask;
+	private int hash(final long key) {
+		long h = key;
+		h ^= h >>> 33;
+		h *= 0xff51afd7ed558ccdL;
+		h ^= h >>> 33;
+		return (int) h & mask;
 	}
 
 	public interface EntryToLongAccumulator {
-		long apply(long accumulator, int key, int value);
+		long apply(long accumulator, long key, long value);
 	}
 
-	public interface IntIntConsumer {
-		void accept(int key, int value);
+	public interface LongLongConsumer {
+		void accept(long key, long value);
 	}
 }

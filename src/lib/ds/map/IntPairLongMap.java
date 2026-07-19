@@ -1,45 +1,45 @@
-package lib.ds;
+package lib.ds.map;
 
 import java.util.function.*;
 
 @SuppressWarnings("unused")
-public final class IntPairIntMap {
+public final class IntPairLongMap {
 	private static final long MASK = 0xFFFFFFFFL;
-	private final BaseLongIntMap baseMap;
+	private final BaseLongLongMap baseMap;
 
-	public IntPairIntMap(final int initialCapacity) {
-		baseMap = new BaseLongIntMap(initialCapacity);
+	public IntPairLongMap(final int initialCapacity) {
+		baseMap = new BaseLongLongMap(initialCapacity);
 	}
 
 	private static long pack(final int a, final int b) {
 		return ((long) a << 32) | (b & MASK);
 	}
 
-	public int put(final int a, final int b, final int value) {
+	public long put(final int a, final int b, final long value) {
 		return baseMap.put(pack(a, b), value);
 	}
 
-	public int get(final int a, final int b) {
+	public long get(final int a, final int b) {
 		return baseMap.get(pack(a, b));
 	}
 
-	public int getOrDefault(final int a, final int b, final int defaultValue) {
+	public long getOrDefault(final int a, final int b, final long defaultValue) {
 		return baseMap.getOrDefault(pack(a, b), defaultValue);
 	}
 
-	public int increment(final int a, final int b) {
+	public long increment(final int a, final int b) {
 		return addOrDefault(a, b, 1, 1);
 	}
 
-	public int decrement(final int a, final int b) {
+	public long decrement(final int a, final int b) {
 		return addOrDefault(a, b, -1, -1);
 	}
 
-	public int add(final int a, final int b, final int delta) {
+	public long add(final int a, final int b, final long delta) {
 		return addOrDefault(a, b, delta, delta);
 	}
 
-	public int addOrDefault(final int a, final int b, final int delta, final int defaultValue) {
+	public long addOrDefault(final int a, final int b, final long delta, final long defaultValue) {
 		return baseMap.addOrDefault(pack(a, b), delta, defaultValue);
 	}
 
@@ -51,11 +51,11 @@ public final class IntPairIntMap {
 		return baseMap.containsKey(pack(a, b));
 	}
 
-	public int merge(final int a, final int b, final int value, final IntBinaryOperator op) {
+	public long merge(final int a, final int b, final long value, final LongBinaryOperator op) {
 		return baseMap.merge(pack(a, b), value, op);
 	}
 
-	public int putIfAbsent(final int a, final int b, final int value) {
+	public long putIfAbsent(final int a, final int b, final long value) {
 		return baseMap.putIfAbsent(pack(a, b), value);
 	}
 
@@ -71,7 +71,7 @@ public final class IntPairIntMap {
 		return baseMap.isEmpty();
 	}
 
-	public void forEach(final IntPairIntConsumer action) {
+	public void forEach(final IntPairLongConsumer action) {
 		baseMap.forEach((key, value) -> {
 			final int a = (int) (key >>> 32), b = (int) key;
 			action.accept(a, b, value);
@@ -85,7 +85,7 @@ public final class IntPairIntMap {
 		});
 	}
 
-	public void forEachValue(final IntConsumer action) {
+	public void forEachValue(final LongConsumer action) {
 		baseMap.forEachValue(action);
 	}
 
@@ -107,9 +107,9 @@ public final class IntPairIntMap {
 		return baseMap.reduceValues(identity, accumulator);
 	}
 
-	public int[][] keys() {
+	public long[][] keys() {
 		final int size = baseMap.size();
-		final int[][] res = new int[2][size];
+		final long[][] res = new long[2][size];
 		final long[] keys = baseMap.keys();
 		for (int i = 0; i < size; i++) {
 			final long key = keys[i];
@@ -120,20 +120,20 @@ public final class IntPairIntMap {
 		return res;
 	}
 
-	public int[] values() {
+	public long[] values() {
 		return baseMap.values();
 	}
 
-	public int[][] entries() {
+	public long[][] entries() {
 		final int size = baseMap.size();
-		final int[][] res = new int[3][size];
+		final long[][] res = new long[3][size];
 		final long[][] entries = baseMap.entries();
 		for (int i = 0; i < size; i++) {
 			final long key = entries[0][i], value = entries[1][i];
 			final int a = (int) (key >>> 32), b = (int) key;
 			res[0][i] = a;
 			res[1][i] = b;
-			res[2][i] = (int) value;
+			res[2][i] = value;
 		}
 		return res;
 	}
@@ -143,11 +143,11 @@ public final class IntPairIntMap {
 	}
 
 	public interface EntryToLongAccumulator {
-		long apply(long accumulator, int key1, int key2, int value);
+		long apply(long accumulator, int key1, int key2, long value);
 	}
 
-	public interface IntPairIntConsumer {
-		void accept(int a, int b, int value);
+	public interface IntPairLongConsumer {
+		void accept(int a, int b, long value);
 	}
 
 	public interface IntPairConsumer {

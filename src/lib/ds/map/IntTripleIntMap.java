@@ -1,4 +1,4 @@
-package lib.ds;
+package lib.ds.map;
 
 import java.util.function.*;
 
