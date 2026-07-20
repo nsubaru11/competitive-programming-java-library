@@ -1,40 +1,44 @@
 package lib.ds.priorityqueue;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 import java.util.function.*;
 
 import lib.ds.*;
+import lib.util.function.*;
 
 /**
- * int型のコストを扱うインデックス付き優先度キューです。
- * <p>
- * 各インデックスは現在のキュー内に高々1個だけ存在します。取り出しまたは削除された
- * インデックスの最後のコストは、次に {@link #clear()} されるまで保持されます。
+ * int型コストを扱うインデックス付き優先度キューです。
  */
 public final class IntIndexedPriorityQueue implements IntCollection {
 	private final boolean isDescendingOrder;
+	private final IntComparator comparator;
 	private final int[] heap, position, cost;
 	private int size, unsortedCount, stamp;
 
 	/**
-	 * 最小値優先のキューを構築します。
-	 *
-	 * @param n 使用できるインデックス数
+	 * 指定したindex数で昇順のキューを構築します。
 	 */
 	public IntIndexedPriorityQueue(final int n) {
-		this(n, false);
+		this(n, false, null);
 	}
 
 	/**
-	 * キューを構築します。
-	 *
-	 * @param n                 使用できるインデックス数
-	 * @param isDescendingOrder 最大値優先ならtrue、最小値優先ならfalse
+	 * 指定したindex数で昇順または降順のキューを構築します。
 	 */
 	public IntIndexedPriorityQueue(final int n, final boolean isDescendingOrder) {
+		this(n, isDescendingOrder, null);
+	}
+
+	/**
+	 * 指定したindex数とComparatorでキューを構築します。
+	 */
+	public IntIndexedPriorityQueue(final int n, final IntComparator comparator) {
+		this(n, false, Objects.requireNonNull(comparator));
+	}
+
+	private IntIndexedPriorityQueue(final int n, final boolean isDescendingOrder, final IntComparator comparator) {
 		this.isDescendingOrder = isDescendingOrder;
+		this.comparator = comparator;
 		cost = new int[n];
 		heap = new int[n];
 		position = new int[n];
@@ -42,15 +46,59 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * 指定したインデックスのコストを設定します。
-	 * <p>
-	 * activeならコストを更新し、未追加または削除済みならキューへ登録します。
-	 *
-	 * @param i インデックス
-	 * @param c コスト
+	 * costs[i]をindex iの昇順コストとして登録したキューを構築します。
 	 */
-	public void set(final int i, int c) {
-		if (isDescendingOrder) c = -c;
+	public IntIndexedPriorityQueue(final int[] costs) {
+		this(costs, false);
+	}
+
+	/**
+	 * costs[i]をindex iの昇順または降順コストとして登録したキューを構築します。
+	 */
+	public IntIndexedPriorityQueue(final int[] costs, final boolean isDescendingOrder) {
+		this(costs.length, isDescendingOrder, null);
+		initialize(costs);
+	}
+
+	/**
+	 * costs[i]をindex iのコストとしてComparator順で登録したキューを構築します。
+	 */
+	public IntIndexedPriorityQueue(final int[] costs, final IntComparator comparator) {
+		this(costs.length, false, Objects.requireNonNull(comparator));
+		initialize(costs);
+	}
+
+	/**
+	 * init(i)をindex iのコストとして持つ昇順キューを返します。
+	 */
+	public static IntIndexedPriorityQueue generate(final int n, final IntUnaryOperator init) {
+		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n);
+		q.setAll(init);
+		return q;
+	}
+
+	/**
+	 * init(i)をindex iの昇順または降順コストとして持つキューを返します。
+	 */
+	public static IntIndexedPriorityQueue generate(final int n, final IntUnaryOperator init, final boolean isDescendingOrder) {
+		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n, isDescendingOrder);
+		q.setAll(init);
+		return q;
+	}
+
+	/**
+	 * init(i)をindex iのComparator順コストとして持つキューを返します。
+	 */
+	public static IntIndexedPriorityQueue generate(final int n, final IntUnaryOperator init, final IntComparator comparator) {
+		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n, comparator);
+		q.setAll(init);
+		return q;
+	}
+
+	/**
+	 * activeなら更新し、そうでなければ登録します。
+	 */
+	public void set(final int i, final int c) {
 		if (!isActive(i)) {
 			cost[i] = c;
 			heap[size] = i;
@@ -59,82 +107,65 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 			return;
 		}
 		final int old = cost[i];
-		if (c == old) return;
+		final int order = compare(c, old);
+		cost[i] = c;
+		if (order == 0) return;
 		final int p = position[i];
 		final int sortedSize = size - unsortedCount;
-		cost[i] = c;
 		if (p >= sortedSize) return;
-		if (c < old) siftUp(i, p);
+		if (order < 0) siftUp(i, p);
 		else siftDown(i, p, sortedSize);
 	}
 
 	/**
-	 * 全indexを{@code init(i)}のコストで登録します。
-	 *
-	 * @param init indexからコストを生成する関数
+	 * 全indexをinit(i)のコストで登録します。
 	 */
 	public void setAll(final IntUnaryOperator init) {
 		clear();
 		size = cost.length;
 		for (int i = 0; i < size; i++) {
-			final int c = init.applyAsInt(i);
-			cost[i] = isDescendingOrder ? -c : c;
-			heap[i] = i;
-			position[i] = i;
+			cost[i] = init.applyAsInt(i);
+			heap[i] = position[i] = i;
 		}
-		heapify();
+		unsortedCount = size;
 	}
 
 	/**
-	 * 現在世代で未追加のインデックスを追加します。
-	 *
-	 * @param i インデックス
-	 * @param c コスト
+	 * inactiveなindexを追加します。
 	 */
-	public void push(final int i, int c) {
-		if (!isUnseen(i)) throw new IllegalArgumentException();
-		cost[i] = isDescendingOrder ? -c : c;
+	public boolean add(final int i, final int c) {
+		if (isActive(i)) return false;
+		cost[i] = c;
 		heap[size] = i;
 		position[i] = size++;
 		unsortedCount++;
+		return true;
 	}
 
 	/**
-	 * 現在世代で未追加のインデックスをまとめて追加します。
-	 *
-	 * @param is インデックス配列
-	 * @param cs コスト配列
+	 * inactiveなindexをまとめて追加します。
 	 */
-	public void pushAll(final int[] is, final int[] cs) {
-		final int n = is.length;
-		final int k = isDescendingOrder ? -1 : 1;
-		for (int j = 0; j < n; j++) {
+	public boolean addAll(final int[] is, final int[] cs) {
+		boolean changed = false;
+		for (int j = 0; j < is.length; j++) {
 			final int i = is[j];
-			if (!isUnseen(i)) throw new IllegalArgumentException();
-			cost[i] = cs[j] * k;
+			if (isActive(i)) continue;
+			cost[i] = cs[j];
 			heap[size] = i;
 			position[i] = size++;
+			unsortedCount++;
+			changed = true;
 		}
-		unsortedCount += n;
+		return changed;
 	}
 
 	/**
-	 * 指定したインデックスのコストを、より優先される場合だけ更新します。
-	 * <p>
-	 * 未追加なら登録し、削除済みなら何も行いません。
-	 *
-	 * @param i インデックス
-	 * @param c コスト
-	 * @return 登録または更新した場合はtrue
+	 * コストがより優先される場合だけ登録または更新します。
 	 */
-	public boolean relax(final int i, int c) {
+	public boolean relax(final int i, final int c) {
 		if (isRemoved(i)) return false;
-		if (!isActive(i)) {
-			push(i, c);
-			return true;
-		}
-		if (isDescendingOrder) c = -c;
-		if (cost[i] <= c) return false;
+		if (!isActive(i)) return add(i, c);
+		if (compare(c, cost[i]) >= 0) return false;
 		final int p = position[i];
 		cost[i] = c;
 		if (p < size - unsortedCount) siftUp(i, p);
@@ -143,21 +174,21 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 
 	/**
 	 * 最優先コストを返します。
-	 *
-	 * @return 最優先コスト
 	 */
 	public int peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		final int c = cost[heap[0]];
-		return isDescendingOrder ? -c : c;
+		return cost[heap[0]];
 	}
 
 	/**
-	 * 最優先インデックスを返します。
-	 *
-	 * @return 最優先インデックス
+	 * 空ならdefaultValue、そうでなければ最優先コストを返します。
 	 */
+	public int peekOrDefault(final int defaultValue) {
+		return isEmpty() ? defaultValue : peek();
+	}
+
+	/** 最優先indexを返します。 */
 	public int peekIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -165,23 +196,21 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * 2番目に優先されるコストを返します。
-	 *
-	 * @return 2番目に優先されるコスト
+	 * 空ならdefaultIndex、そうでなければ最優先indexを返します。
 	 */
+	public int peekIndexOrDefault(final int defaultIndex) {
+		return isEmpty() ? defaultIndex : peekIndex();
+	}
+
+	/** 2番目に優先されるコストを返します。 */
 	public int peekSecond() {
 		if (size < 2) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		if (size == 2) return isDescendingOrder ? -cost[heap[1]] : cost[heap[1]];
-		final int c = min(cost[heap[1]], cost[heap[2]]);
-		return isDescendingOrder ? -c : c;
+		if (size == 2) return cost[heap[1]];
+		return compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
 	}
 
-	/**
-	 * 最優先要素を削除して、そのコストを返します。
-	 *
-	 * @return 削除した要素のコスト
-	 */
+	/** 最優先要素を削除してコストを返します。 */
 	public int poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -189,14 +218,17 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		final int c = cost[i];
 		position[i] = stamp;
 		if (--size > 0) siftDown(heap[size], 0);
-		return isDescendingOrder ? -c : c;
+		return c;
 	}
 
 	/**
-	 * 最優先要素を削除して、そのインデックスを返します。
-	 *
-	 * @return 削除した要素のインデックス
+	 * 空ならdefaultValue、そうでなければ最優先コストを削除して返します。
 	 */
+	public int pollOrDefault(final int defaultValue) {
+		return isEmpty() ? defaultValue : poll();
+	}
+
+	/** 最優先要素を削除してindexを返します。 */
 	public int pollIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -207,118 +239,86 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * 指定したインデックスを削除します。
-	 *
-	 * @param i インデックス
+	 * 空ならdefaultIndex、そうでなければ最優先indexを削除して返します。
 	 */
-	public void remove(final int i) {
-		if (!isActive(i)) throw new NoSuchElementException();
+	public int pollIndexOrDefault(final int defaultIndex) {
+		return isEmpty() ? defaultIndex : pollIndex();
+	}
+
+	/**
+	 * activeなindexを削除します。
+	 */
+	public boolean remove(final int i) {
+		if (!isActive(i)) return false;
 		if (unsortedCount > 0) ensureHeapProperty();
 		final int p = position[i];
 		position[i] = stamp;
-		if (--size == p) return;
-		final int j = heap[size];
-		if (cost[j] < cost[i]) siftUp(j, p);
-		else siftDown(j, p);
+		if (--size != p) {
+			final int j = heap[size];
+			if (compare(cost[j], cost[i]) < 0) siftUp(j, p);
+			else siftDown(j, p);
+		}
+		return true;
 	}
 
-	/**
-	 * activeなインデックスのコストを返します。
-	 *
-	 * @param i インデックス
-	 * @return コスト
-	 */
+	/** activeなindexのコストを返します。 */
 	public int get(final int i) {
 		if (!isActive(i)) throw new NoSuchElementException();
-		final int c = cost[i];
-		return isDescendingOrder ? -c : c;
+		return cost[i];
 	}
 
 	/**
-	 * activeなインデックスのコストを返します。
-	 *
-	 * @param i            インデックス
-	 * @param defaultValue activeでない場合の値
-	 * @return コスト、またはdefaultValue
+	 * activeでなければdefaultValueを返します。
 	 */
 	public int getOrDefault(final int i, final int defaultValue) {
-		if (!isActive(i)) return defaultValue;
-		final int c = cost[i];
-		return isDescendingOrder ? -c : c;
+		return isActive(i) ? cost[i] : defaultValue;
 	}
 
-	/**
-	 * 現在世代で最後に記録したコストを返します。
-	 * <p>
-	 * 削除済みのインデックスについても最後のコストを返します。
-	 *
-	 * @param i インデックス
-	 * @return 最後に記録したコスト
-	 */
+	/** 現在世代で最後に記録したコストを返します。 */
 	public int getLast(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
-		final int c = cost[i];
-		return isDescendingOrder ? -c : c;
+		return cost[i];
 	}
 
-	/**
-	 * 現在世代で最後に記録したコストを返します。
-	 *
-	 * @param i            インデックス
-	 * @param defaultValue 現在世代で未追加の場合の値
-	 * @return 最後に記録したコスト、またはdefaultValue
-	 */
+	/** 現在世代で未追加ならdefaultValueを返します。 */
 	public int getLastOrDefault(final int i, final int defaultValue) {
-		if (isUnseen(i)) return defaultValue;
-		final int c = cost[i];
-		return isDescendingOrder ? -c : c;
+		return isUnseen(i) ? defaultValue : cost[i];
 	}
 
 	/**
 	 * 現在の要素数を返します。
-	 *
-	 * @return 要素数
 	 */
 	public int size() {
 		return size;
 	}
 
 	/**
-	 * キューと現在世代のコスト記録を論理的に消去します。
+	 * 使用可能なindex数を返します。
 	 */
+	public int indexCount() {
+		return cost.length;
+	}
+
+	/** キューと現在世代のコスト記録を論理的に削除します。 */
 	public void clear() {
-		size = 0;
-		unsortedCount = 0;
+		size = unsortedCount = 0;
 		stamp--;
 	}
 
 	/**
-	 * 指定したインデックスがactiveか判定します。
-	 *
-	 * @param i インデックス
-	 * @return active なら true
+	 * indexがactiveか判定します。
 	 */
 	public boolean containsIndex(final int i) {
 		return isActive(i);
 	}
 
-	/**
-	 * 指定したインデックスに現在世代のコスト記録があるか判定します。
-	 *
-	 * @param i インデックス
-	 * @return active または削除済みなら true
-	 */
+	/** indexに現在世代のコスト記録があるか判定します。 */
 	public boolean hasCost(final int i) {
 		return !isUnseen(i);
 	}
 
-	/**
-	 * activeな要素のコストを内部ヒープ順に走査します。
-	 *
-	 * @return コストの iterator
-	 */
+	/** activeなコストを内部順で走査するIteratorを返します。 */
 	public PrimitiveIterator.OfInt iterator() {
-		if (unsortedCount > 0) ensureHeapProperty();
 		return new PrimitiveIterator.OfInt() {
 			private int i;
 
@@ -328,10 +328,20 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 
 			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
-				final int c = cost[heap[i++]];
-				return isDescendingOrder ? -c : c;
+				return cost[heap[i++]];
 			}
 		};
+	}
+
+	private void initialize(final int[] costs) {
+		System.arraycopy(costs, 0, cost, 0, costs.length);
+		size = unsortedCount = costs.length;
+		for (int i = 0; i < size; i++) heap[i] = position[i] = i;
+	}
+
+	private int compare(final int a, final int b) {
+		if (comparator != null) return comparator.compare(a, b);
+		return isDescendingOrder ? Integer.compare(b, a) : Integer.compare(a, b);
 	}
 
 	private boolean isActive(final int i) {
@@ -351,21 +361,15 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		final int log2N = 31 - Integer.numberOfLeadingZeros(size);
 		final int heapifyCost = size * 2 - 2 * log2N;
 		final int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
-		if (heapifyCost < incrementalCost) {
-			heapify();
-		} else {
-			for (int p = size - unsortedCount; p < size; p++) siftUp(heap[p], p);
-		}
+		if (heapifyCost < incrementalCost) heapify();
+		else for (int p = size - unsortedCount; p < size; p++) siftUp(heap[p], p);
 		unsortedCount = 0;
 	}
 
 	private int getIncrementalCostStrict() {
 		int c = 0;
 		final int sortedSize = size - unsortedCount;
-		for (int i = 1; i <= unsortedCount; i++) {
-			final int currentSize = sortedSize + i;
-			c += 31 - Integer.numberOfLeadingZeros(currentSize);
-		}
+		for (int i = 1; i <= unsortedCount; i++) c += 31 - Integer.numberOfLeadingZeros(sortedSize + i);
 		return c;
 	}
 
@@ -384,7 +388,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		while (p > 0) {
 			final int q = (p - 1) >> 1;
 			final int j = heap[q];
-			if (c >= cost[j]) break;
+			if (compare(c, cost[j]) >= 0) break;
 			heap[p] = j;
 			position[j] = p;
 			p = q;
@@ -393,7 +397,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		position[i] = p;
 	}
 
-	private void siftDown(final int i, int p) {
+	private void siftDown(final int i, final int p) {
 		siftDown(i, p, size);
 	}
 
@@ -402,9 +406,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		final int half = n >> 1;
 		while (p < half) {
 			int q = (p << 1) + 1;
-			if (q + 1 < n && cost[heap[q]] > cost[heap[q + 1]]) q++;
+			if (q + 1 < n && compare(cost[heap[q]], cost[heap[q + 1]]) > 0) q++;
 			final int j = heap[q];
-			if (c <= cost[j]) break;
+			if (compare(c, cost[j]) <= 0) break;
 			heap[p] = j;
 			position[j] = p;
 			p = q;

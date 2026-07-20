@@ -3,86 +3,83 @@ package lib.ds.priorityqueue;
 import java.util.*;
 import java.util.function.*;
 
-import lib.ds.*;
-import lib.util.function.*;
-
 /**
- * long型コストを扱うインデックス付き優先度キューです。
+ * genericコストを扱うインデックス付き優先度キューです。
+ * Comparatorを省略した場合は自然順序を使用し、costが相互にComparableでなければ比較時に{@link ClassCastException}となります。
+ *
+ * @param <T> コスト型
  */
-public final class LongIndexedPriorityQueue implements LongCollection {
-	private final boolean isDescendingOrder;
-	private final LongComparator comparator;
+@SuppressWarnings({"unchecked", "unused"})
+public final class IndexedPriorityQueue<T> implements Iterable<T> {
+	private final Comparator<? super T> comparator;
 	private final int[] heap, position;
-	private final long[] cost;
+	private final T[] cost;
 	private int size, unsortedCount, stamp;
 
 	/**
-	 * 指定したindex数で昇順のキューを構築します。
+	 * 指定したindex数で自然順序のキューを構築します。
 	 */
-	public LongIndexedPriorityQueue(final int n) {
-		this(n, false, null);
+	public IndexedPriorityQueue(final int n) {
+		this(n, false);
 	}
 
 	/**
-	 * 指定したindex数で昇順または降順のキューを構築します。
+	 * 指定したindex数で自然順序または逆順のキューを構築します。
 	 */
-	public LongIndexedPriorityQueue(final int n, final boolean isDescendingOrder) {
-		this(n, isDescendingOrder, null);
+	public IndexedPriorityQueue(final int n, final boolean isDescendingOrder) {
+		this(n, naturalComparator(isDescendingOrder));
 	}
 
 	/**
 	 * 指定したindex数とComparatorでキューを構築します。
 	 */
-	public LongIndexedPriorityQueue(final int n, final LongComparator comparator) {
-		this(n, false, Objects.requireNonNull(comparator));
-	}
-
-	/**
-	 * costs[i]をindex iの昇順コストとして登録したキューを構築します。
-	 */
-	public LongIndexedPriorityQueue(final long[] costs) {
-		this(costs, false);
-	}
-
-	/**
-	 * costs[i]をindex iの昇順または降順コストとして登録したキューを構築します。
-	 */
-	public LongIndexedPriorityQueue(final long[] costs, final boolean isDescendingOrder) {
-		this(costs.length, isDescendingOrder, null);
-		initialize(costs);
-	}
-
-	/**
-	 * costs[i]をindex iのコストとしてComparator順で登録したキューを構築します。
-	 */
-	public LongIndexedPriorityQueue(final long[] costs, final LongComparator comparator) {
-		this(costs.length, false, Objects.requireNonNull(comparator));
-		initialize(costs);
-	}
-
-	private LongIndexedPriorityQueue(final int n, final boolean isDescendingOrder, final LongComparator comparator) {
-		this.isDescendingOrder = isDescendingOrder;
-		this.comparator = comparator;
-		cost = new long[n];
+	public IndexedPriorityQueue(final int n, final Comparator<? super T> comparator) {
+		this.comparator = Objects.requireNonNull(comparator);
+		cost = (T[]) new Object[n];
 		heap = new int[n];
 		position = new int[n];
 		stamp = -1;
 	}
 
 	/**
-	 * init(i)をindex iのコストとして持つ昇順キューを返します。
+	 * costs[i]をindex iの自然順序コストとして登録したキューを構築します。
 	 */
-	public static LongIndexedPriorityQueue generate(final int n, final IntToLongFunction init) {
-		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(n);
+	public IndexedPriorityQueue(final T[] costs) {
+		this(costs, false);
+	}
+
+	/**
+	 * costs[i]をindex iの自然順序または逆順コストとして登録したキューを構築します。
+	 */
+	public IndexedPriorityQueue(final T[] costs, final boolean isDescendingOrder) {
+		this(costs, naturalComparator(isDescendingOrder));
+	}
+
+	/**
+	 * costs[i]をindex iのコストとしてComparator順で登録したキューを構築します。
+	 */
+	public IndexedPriorityQueue(final T[] costs, final Comparator<? super T> comparator) {
+		this(costs.length, comparator);
+		System.arraycopy(costs, 0, cost, 0, costs.length);
+		size = unsortedCount = costs.length;
+		for (int i = 0; i < size; i++) heap[i] = position[i] = i;
+	}
+
+	/**
+	 * init(i)をindex iの自然順序コストとして持つキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> IndexedPriorityQueue<T> generate(final int n, final IntFunction<? extends T> init) {
+		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, Comparator.naturalOrder());
 		q.setAll(init);
 		return q;
 	}
 
 	/**
-	 * init(i)をindex iの昇順または降順コストとして持つキューを返します。
+	 * init(i)をindex iの自然順序または逆順コストとして持つキューを返します。
 	 */
-	public static LongIndexedPriorityQueue generate(final int n, final IntToLongFunction init, final boolean isDescendingOrder) {
-		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(n, isDescendingOrder);
+	public static <T extends Comparable<? super T>> IndexedPriorityQueue<T> generate(
+			final int n, final IntFunction<? extends T> init, final boolean isDescendingOrder) {
+		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, naturalComparator(isDescendingOrder));
 		q.setAll(init);
 		return q;
 	}
@@ -90,16 +87,21 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	/**
 	 * init(i)をindex iのComparator順コストとして持つキューを返します。
 	 */
-	public static LongIndexedPriorityQueue generate(final int n, final IntToLongFunction init, final LongComparator comparator) {
-		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(n, comparator);
+	public static <T> IndexedPriorityQueue<T> generate(
+			final int n, final IntFunction<? extends T> init, final Comparator<? super T> comparator) {
+		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, comparator);
 		q.setAll(init);
 		return q;
+	}
+
+	private static <T> Comparator<? super T> naturalComparator(final boolean isDescendingOrder) {
+		return isDescendingOrder ? (Comparator<? super T>) Comparator.reverseOrder() : (Comparator<? super T>) Comparator.naturalOrder();
 	}
 
 	/**
 	 * activeなら更新し、そうでなければ登録します。
 	 */
-	public void set(final int i, final long c) {
+	public void set(final int i, final T c) {
 		if (!isActive(i)) {
 			cost[i] = c;
 			heap[size] = i;
@@ -107,8 +109,8 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 			unsortedCount++;
 			return;
 		}
-		final long old = cost[i];
-		final int order = compare(c, old);
+		final T old = cost[i];
+		final int order = comparator.compare(c, old);
 		cost[i] = c;
 		if (order == 0) return;
 		final int p = position[i];
@@ -118,12 +120,14 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		else siftDown(i, p, sortedSize);
 	}
 
-	/** 全indexをinit(i)のコストで登録します。 */
-	public void setAll(final IntToLongFunction init) {
+	/**
+	 * 全indexをinit(i)のコストで登録します。
+	 */
+	public void setAll(final IntFunction<? extends T> init) {
 		clear();
 		size = cost.length;
 		for (int i = 0; i < size; i++) {
-			cost[i] = init.applyAsLong(i);
+			cost[i] = init.apply(i);
 			heap[i] = position[i] = i;
 		}
 		unsortedCount = size;
@@ -132,7 +136,7 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	/**
 	 * inactiveなindexを追加します。
 	 */
-	public boolean add(final int i, final long c) {
+	public boolean add(final int i, final T c) {
 		if (isActive(i)) return false;
 		cost[i] = c;
 		heap[size] = i;
@@ -144,7 +148,7 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	/**
 	 * inactiveなindexをまとめて追加します。
 	 */
-	public boolean addAll(final int[] is, final long[] cs) {
+	public boolean addAll(final int[] is, final T[] cs) {
 		boolean changed = false;
 		for (int j = 0; j < is.length; j++) {
 			final int i = is[j];
@@ -161,18 +165,20 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	/**
 	 * コストがより優先される場合だけ登録または更新します。
 	 */
-	public boolean relax(final int i, final long c) {
+	public boolean relax(final int i, final T c) {
 		if (isRemoved(i)) return false;
 		if (!isActive(i)) return add(i, c);
-		if (compare(c, cost[i]) >= 0) return false;
+		if (comparator.compare(c, cost[i]) >= 0) return false;
 		final int p = position[i];
 		cost[i] = c;
 		if (p < size - unsortedCount) siftUp(i, p);
 		return true;
 	}
 
-	/** 最優先コストを返します。 */
-	public long peek() {
+	/**
+	 * 最優先コストを返します。
+	 */
+	public T peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
 		return cost[heap[0]];
@@ -181,11 +187,13 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	/**
 	 * 空ならdefaultValue、そうでなければ最優先コストを返します。
 	 */
-	public long peekOrDefault(final long defaultValue) {
+	public T peekOrDefault(final T defaultValue) {
 		return isEmpty() ? defaultValue : peek();
 	}
 
-	/** 最優先indexを返します。 */
+	/**
+	 * 最優先indexを返します。
+	 */
 	public int peekIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -199,20 +207,24 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultIndex : peekIndex();
 	}
 
-	/** 2番目に優先されるコストを返します。 */
-	public long peekSecond() {
+	/**
+	 * 2番目に優先されるコストを返します。
+	 */
+	public T peekSecond() {
 		if (size < 2) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
 		if (size == 2) return cost[heap[1]];
-		return compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
+		return comparator.compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
 	}
 
-	/** 最優先要素を削除してコストを返します。 */
-	public long poll() {
+	/**
+	 * 最優先要素を削除してコストを返します。
+	 */
+	public T poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
 		final int i = heap[0];
-		final long c = cost[i];
+		final T c = cost[i];
 		position[i] = stamp;
 		if (--size > 0) siftDown(heap[size], 0);
 		return c;
@@ -221,11 +233,13 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	/**
 	 * 空ならdefaultValue、そうでなければ最優先コストを削除して返します。
 	 */
-	public long pollOrDefault(final long defaultValue) {
+	public T pollOrDefault(final T defaultValue) {
 		return isEmpty() ? defaultValue : poll();
 	}
 
-	/** 最優先要素を削除してindexを返します。 */
+	/**
+	 * 最優先要素を削除してindexを返します。
+	 */
 	public int pollIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -242,7 +256,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultIndex : pollIndex();
 	}
 
-	/** activeなindexを削除します。 */
+	/**
+	 * activeなindexを削除します。
+	 */
 	public boolean remove(final int i) {
 		if (!isActive(i)) return false;
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -250,31 +266,39 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		position[i] = stamp;
 		if (--size != p) {
 			final int j = heap[size];
-			if (compare(cost[j], cost[i]) < 0) siftUp(j, p);
+			if (comparator.compare(cost[j], cost[i]) < 0) siftUp(j, p);
 			else siftDown(j, p);
 		}
 		return true;
 	}
 
-	/** activeなindexのコストを返します。 */
-	public long get(final int i) {
+	/**
+	 * activeなindexのコストを返します。
+	 */
+	public T get(final int i) {
 		if (!isActive(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	/** activeでなければdefaultValueを返します。 */
-	public long getOrDefault(final int i, final long defaultValue) {
+	/**
+	 * activeでなければdefaultValueを返します。
+	 */
+	public T getOrDefault(final int i, final T defaultValue) {
 		return isActive(i) ? cost[i] : defaultValue;
 	}
 
-	/** 現在世代で最後に記録したコストを返します。 */
-	public long getLast(final int i) {
+	/**
+	 * 現在世代で最後に記録したコストを返します。
+	 */
+	public T getLast(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	/** 現在世代で未追加ならdefaultValueを返します。 */
-	public long getLastOrDefault(final int i, final long defaultValue) {
+	/**
+	 * 現在世代で未追加ならdefaultValueを返します。
+	 */
+	public T getLastOrDefault(final int i, final T defaultValue) {
 		return isUnseen(i) ? defaultValue : cost[i];
 	}
 
@@ -285,18 +309,31 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return size;
 	}
 
-	/** 使用可能なindex数を返します。 */
+	/**
+	 * 使用可能なindex数を返します。
+	 */
 	public int indexCount() {
 		return cost.length;
 	}
 
-	/** キューと現在世代のコスト記録を論理的に削除します。 */
+	/**
+	 * キューと現在世代のコスト記録をO(1)で論理的に削除します。
+	 */
 	public void clear() {
 		size = unsortedCount = 0;
 		stamp--;
 	}
 
-	/** indexがactiveか判定します。 */
+	/**
+	 * キューが空か判定します。
+	 */
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	/**
+	 * indexがactiveか判定します。
+	 */
 	public boolean containsIndex(final int i) {
 		return isActive(i);
 	}
@@ -308,31 +345,22 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return !isUnseen(i);
 	}
 
-	/** activeなコストを内部順で走査するIteratorを返します。 */
-	public PrimitiveIterator.OfLong iterator() {
-		return new PrimitiveIterator.OfLong() {
+	/**
+	 * activeなコストを内部順で走査するIteratorを返します。
+	 */
+	public Iterator<T> iterator() {
+		return new Iterator<>() {
 			private int i;
 
 			public boolean hasNext() {
 				return i < size;
 			}
 
-			public long nextLong() {
+			public T next() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return cost[heap[i++]];
 			}
 		};
-	}
-
-	private void initialize(final long[] costs) {
-		System.arraycopy(costs, 0, cost, 0, costs.length);
-		size = unsortedCount = costs.length;
-		for (int i = 0; i < size; i++) heap[i] = position[i] = i;
-	}
-
-	private int compare(final long a, final long b) {
-		if (comparator != null) return comparator.compare(a, b);
-		return isDescendingOrder ? Long.compare(b, a) : Long.compare(a, b);
 	}
 
 	private boolean isActive(final int i) {
@@ -375,11 +403,11 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	}
 
 	private void siftUp(final int i, int p) {
-		final long c = cost[i];
+		final T c = cost[i];
 		while (p > 0) {
 			final int q = (p - 1) >> 1;
 			final int j = heap[q];
-			if (compare(c, cost[j]) >= 0) break;
+			if (comparator.compare(c, cost[j]) >= 0) break;
 			heap[p] = j;
 			position[j] = p;
 			p = q;
@@ -393,13 +421,13 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	}
 
 	private void siftDown(final int i, int p, final int n) {
-		final long c = cost[i];
+		final T c = cost[i];
 		final int half = n >> 1;
 		while (p < half) {
 			int q = (p << 1) + 1;
-			if (q + 1 < n && compare(cost[heap[q]], cost[heap[q + 1]]) > 0) q++;
+			if (q + 1 < n && comparator.compare(cost[heap[q]], cost[heap[q + 1]]) > 0) q++;
 			final int j = heap[q];
-			if (compare(c, cost[j]) <= 0) break;
+			if (comparator.compare(c, cost[j]) <= 0) break;
 			heap[p] = j;
 			position[j] = p;
 			p = q;

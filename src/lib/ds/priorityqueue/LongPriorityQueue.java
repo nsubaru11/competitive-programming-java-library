@@ -5,179 +5,211 @@ import static java.lang.Math.*;
 import java.util.*;
 
 import lib.ds.*;
+import lib.util.function.*;
 
 /**
- * 競技プログラミング向け優先度キュー（long型特化版）
+ * 競技プログラミング向けのlong型優先度キューです。
  */
 @SuppressWarnings("unused")
 public final class LongPriorityQueue implements LongCollection {
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
 	private final boolean isDescendingOrder;
+	private final LongComparator comparator;
 	private long[] buf;
 	private int size, capacity, unsortedCount;
 
 	/**
-	 * コンストラクタ（デフォルト容量1024、最小値優先）
+	 * 昇順のキューを構築します。
 	 */
 	public LongPriorityQueue() {
-		this(DEFAULT_INITIAL_CAPACITY, false);
+		this(DEFAULT_INITIAL_CAPACITY, false, null);
 	}
 
 	/**
-	 * コンストラクタ（最小値優先）
-	 *
-	 * @param capacity 初期容量
+	 * 指定した初期容量で昇順のキューを構築します。
 	 */
-	public LongPriorityQueue(int capacity) {
-		this(capacity, false);
+	public LongPriorityQueue(final int initialCapacity) {
+		this(initialCapacity, false, null);
 	}
 
 	/**
-	 * コンストラクタ（デフォルト容量1024）
-	 *
-	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
+	 * 昇順または降順のキューを構築します。
 	 */
-	public LongPriorityQueue(boolean isDescendingOrder) {
-		this(DEFAULT_INITIAL_CAPACITY, isDescendingOrder);
+	public LongPriorityQueue(final boolean isDescendingOrder) {
+		this(DEFAULT_INITIAL_CAPACITY, isDescendingOrder, null);
 	}
 
 	/**
-	 * コンストラクタ
-	 *
-	 * @param capacity          初期容量
-	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
+	 * 指定した初期容量で昇順または降順のキューを構築します。
 	 */
-	public LongPriorityQueue(int capacity, boolean isDescendingOrder) {
-		this.capacity = max(capacity, DEFAULT_INITIAL_CAPACITY);
+	public LongPriorityQueue(final int initialCapacity, final boolean isDescendingOrder) {
+		this(initialCapacity, isDescendingOrder, null);
+	}
+
+	/**
+	 * 指定したComparatorでキューを構築します。
+	 */
+	public LongPriorityQueue(final LongComparator comparator) {
+		this(DEFAULT_INITIAL_CAPACITY, false, Objects.requireNonNull(comparator));
+	}
+
+	/**
+	 * 指定した初期容量とComparatorでキューを構築します。
+	 */
+	public LongPriorityQueue(final int initialCapacity, final LongComparator comparator) {
+		this(initialCapacity, false, Objects.requireNonNull(comparator));
+	}
+
+	/**
+	 * 配列の全要素を持つ昇順のキューを構築します。
+	 */
+	public LongPriorityQueue(final long[] values) {
+		this(values, false);
+	}
+
+	/**
+	 * 配列の全要素を持つ昇順または降順のキューを構築します。
+	 */
+	public LongPriorityQueue(final long[] values, final boolean isDescendingOrder) {
+		this(max(1, values.length), isDescendingOrder, null);
+		System.arraycopy(values, 0, buf, 0, values.length);
+		size = unsortedCount = values.length;
+	}
+
+	/**
+	 * 配列の全要素を持つComparator順のキューを構築します。
+	 */
+	public LongPriorityQueue(final long[] values, final LongComparator comparator) {
+		this(max(1, values.length), false, Objects.requireNonNull(comparator));
+		System.arraycopy(values, 0, buf, 0, values.length);
+		size = unsortedCount = values.length;
+	}
+
+	private LongPriorityQueue(final int initialCapacity, final boolean isDescendingOrder, final LongComparator comparator) {
+		capacity = max(1, initialCapacity);
 		this.isDescendingOrder = isDescendingOrder;
-		buf = new long[this.capacity];
-		size = 0;
-		unsortedCount = 0;
+		this.comparator = comparator;
+		buf = new long[capacity];
 	}
 
 	/**
-	 * 要素を追加する
-	 *
-	 * @param v 追加する要素
+	 * 要素を追加します。
 	 */
-	public void push(long v) {
-		if (size == capacity) buf = Arrays.copyOf(buf, capacity <<= 1);
-		if (isDescendingOrder) v = -v;
+	public boolean add(final long v) {
+		ensureCapacity(size + 1);
 		buf[size++] = v;
 		unsortedCount++;
+		return true;
 	}
 
 	/**
-	 * 全ての要素を追加する
-	 *
-	 * @param elements 追加する要素の配列
+	 * 配列の全要素を追加します。
 	 */
-	public void addAll(final long[] elements) {
-		final int n = elements.length;
-		int s = size;
-		if (s + n > capacity) {
-			int newCap = capacity;
-			while (s + n > newCap) newCap <<= 1;
-			buf = Arrays.copyOf(buf, newCap);
-			capacity = newCap;
-		}
-		final long[] b = buf;
-		if (isDescendingOrder) for (int i = 0; i < n; i++) b[s + i] = -elements[i];
-		else System.arraycopy(elements, 0, b, s, n);
-		size = s + n;
+	public boolean addAll(final long[] values) {
+		final int n = values.length;
+		if (n == 0) return false;
+		ensureCapacity(size + n);
+		System.arraycopy(values, 0, buf, size, n);
+		size += n;
 		unsortedCount += n;
+		return true;
 	}
 
 	/**
-	 * 全ての要素を追加する
-	 *
-	 * @param elements 追加する要素のイテラブル
+	 * Iterableの全要素を追加します。
 	 */
-	public void addAll(final Iterable<Long> elements) {
-		if (elements instanceof final Collection<Long> c) {
+	public boolean addAll(final Iterable<Long> values) {
+		if (values instanceof final Collection<Long> c) {
 			final int n = c.size();
-			int s = size;
-			if (s + n > capacity) {
-				int newCap = capacity;
-				while (s + n > newCap) newCap <<= 1;
-				buf = Arrays.copyOf(buf, newCap);
-				capacity = newCap;
-			}
-			final long[] b = buf;
-			if (isDescendingOrder) for (final long e : c) b[s++] = -e;
-			else for (final long e : c) b[s++] = e;
-			size = s;
+			if (n == 0) return false;
+			ensureCapacity(size + n);
+			for (final long v : c) buf[size++] = v;
 			unsortedCount += n;
-		} else {
-			for (final long e : elements) push(e);
+			return true;
 		}
+		boolean changed = false;
+		for (final long v : values) {
+			add(v);
+			changed = true;
+		}
+		return changed;
 	}
 
-	/**
-	 * ヒープの先頭要素を取得
-	 *
-	 * @return ヒープの先頭要素（昇順時は最小、降順時は最大）
-	 * @throws NoSuchElementException ヒープが空の場合
-	 */
+	/** 最優先要素を返します。 */
 	public long peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		return isDescendingOrder ? -buf[0] : buf[0];
+		return buf[0];
 	}
 
 	/**
-	 * ヒープの先頭要素を削除して返す
-	 *
-	 * @return 削除された要素（昇順時は最小、降順時は最大）
+	 * 空ならdefaultValue、そうでなければ最優先要素を返します。
 	 */
+	public long peekOrDefault(final long defaultValue) {
+		return isEmpty() ? defaultValue : peek();
+	}
+
+	/**
+	 * 2番目に優先される要素を返します。
+	 */
+	public long peekSecond() {
+		if (size < 2) throw new NoSuchElementException();
+		if (unsortedCount > 0) ensureHeapProperty();
+		if (size == 2) return buf[1];
+		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
+	}
+
+	/** 最優先要素を削除して返します。 */
 	public long poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		long res = isDescendingOrder ? -buf[0] : buf[0];
+		final long res = buf[0];
 		if (--size > 0) siftDown(buf[size], 0);
 		return res;
 	}
 
 	/**
-	 * ヒープの先頭要素を置き換える
-	 *
-	 * @param v 置き換える要素
-	 * @return 置き換えられた要素（昇順時は最小、降順時は最大）
+	 * 空ならdefaultValue、そうでなければ最優先要素を削除して返します。
 	 */
+	public long pollOrDefault(final long defaultValue) {
+		return isEmpty() ? defaultValue : poll();
+	}
+
+	/** 最優先要素を置き換え、置き換え前の値を返します。 */
 	public long replaceTop(final long v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		long res = isDescendingOrder ? -buf[0] : buf[0];
-		buf[0] = isDescendingOrder ? -v : v;
-		siftDown(buf[0], 0);
+		final long res = buf[0];
+		buf[0] = v;
+		siftDown(v, 0);
 		return res;
 	}
 
 	/**
-	 * 要素数を取得する
-	 *
-	 * @return 要素数
+	 * 現在の要素数を返します。
 	 */
 	public int size() {
 		return size;
 	}
 
 	/**
-	 * ヒープをクリアする
+	 * 現在の内部配列容量を返します。
 	 */
-	public void clear() {
-		size = 0;
-		unsortedCount = 0;
+	public int capacity() {
+		return capacity;
 	}
 
 	/**
-	 * 要素を順序付けていないイテレータを取得する
-	 *
-	 * @return 順序付けていないイテレータ
+	 * 全要素を削除します。
 	 */
+	public void clear() {
+		size = unsortedCount = 0;
+	}
+
+	/** 内部順で要素を走査するIteratorを返します。 */
 	public PrimitiveIterator.OfLong iterator() {
 		return new PrimitiveIterator.OfLong() {
-			int i = 0;
+			private int i;
 
 			public boolean hasNext() {
 				return i < size;
@@ -185,108 +217,68 @@ public final class LongPriorityQueue implements LongCollection {
 
 			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
-				long v = buf[i++];
-				return isDescendingOrder ? -v : v;
+				return buf[i++];
 			}
 		};
 	}
 
-	/**
-	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する
-	 * <p>
-	 * このメソッドは、未ソート要素が存在する場合に最適なアルゴリズムを自動選択して実行します
-	 * <p><b>分岐点の決定：</b>
-	 * 両アルゴリズムの最大比較回数を計算し、コストが小さい方を実行する
-	 * (heapifyCost < incrementalCost なら heapify を選択)
-	 */
+	private int compare(final long a, final long b) {
+		if (comparator != null) return comparator.compare(a, b);
+		return isDescendingOrder ? Long.compare(b, a) : Long.compare(a, b);
+	}
+
+	private void ensureCapacity(final int required) {
+		if (required <= capacity) return;
+		int newCapacity = capacity;
+		while (newCapacity < required) newCapacity <<= 1;
+		buf = Arrays.copyOf(buf, capacity = newCapacity);
+	}
+
 	private void ensureHeapProperty() {
 		final int log2N = 31 - Integer.numberOfLeadingZeros(size);
 		final int heapifyCost = size * 2 - 2 * log2N;
 		final int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
-		if (heapifyCost < incrementalCost) {
-			heapify();
-		} else {
-			for (int i = size - unsortedCount; i < size; i++) siftUp(buf[i], i);
-		}
+		if (heapifyCost < incrementalCost) heapify();
+		else for (int i = size - unsortedCount; i < size; i++) siftUp(buf[i], i);
 		unsortedCount = 0;
 	}
 
-	/**
-	 * インクリメンタル構築の最大比較回数を厳密に計算する
-	 *
-	 * @return 最大比較回数の合計
-	 */
 	private int getIncrementalCostStrict() {
-		int totalCost = 0;
+		int cost = 0;
 		final int sortedSize = size - unsortedCount;
-		for (int i = 1; i <= unsortedCount; i++) {
-			final int currentHeapSize = sortedSize + i;
-			final int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
-			totalCost += depth;
-		}
-		return totalCost;
+		for (int i = 1; i <= unsortedCount; i++) cost += 31 - Integer.numberOfLeadingZeros(sortedSize + i);
+		return cost;
 	}
 
-	/**
-	 * インクリメンタル構築の最大比較回数を高速に近似計算する
-	 * <p>コスト ≈ k * floor(log₂(平均ヒープサイズ))
-	 *
-	 * @return 最大比較回数の近似値
-	 */
 	private int getIncrementalCostApprox() {
-		final int sortedSize = size - unsortedCount;
-		final int avgHeapSize = sortedSize + (unsortedCount >> 1);
-		if (avgHeapSize == 0) return 0;
-		final int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
-		return unsortedCount * depthOfAvgSize;
+		final int averageSize = size - unsortedCount + (unsortedCount >> 1);
+		if (averageSize == 0) return 0;
+		return unsortedCount * (31 - Integer.numberOfLeadingZeros(averageSize));
 	}
 
-	/**
-	 * Bottom-up heapify (Floyd's algorithm)
-	 */
 	private void heapify() {
 		for (int i = (size >> 1) - 1; i >= 0; i--) siftDown(buf[i], i);
 	}
 
-	/**
-	 * siftUp操作 - O(log N)
-	 * <p>
-	 * 新要素を親と比較しながら上方向に移動（親 ≤ 子）
-	 *
-	 * @param v 移動させる要素
-	 * @param i 要素の現在位置
-	 */
 	private void siftUp(final long v, int i) {
-		final long[] b = buf;
 		while (i > 0) {
-			final int j = (i - 1) >> 1;
-			if (v >= b[j]) break;
-			b[i] = b[j];
-			i = j;
+			final int p = (i - 1) >> 1;
+			if (compare(v, buf[p]) >= 0) break;
+			buf[i] = buf[p];
+			i = p;
 		}
-		b[i] = v;
+		buf[i] = v;
 	}
 
-	/**
-	 * siftDown操作 - O(log N)
-	 * <p>
-	 * 末尾要素を子と比較しながら下方向に移動（親 ≤ 子）
-	 * 2つの子のうち小さい方と比較
-	 *
-	 * @param v 移動させる要素
-	 * @param i 要素の現在位置
-	 */
 	private void siftDown(final long v, int i) {
-		final long[] b = buf;
-		final int n = size;
-		final int half = n >> 1;
+		final int half = size >> 1;
 		while (i < half) {
 			int child = (i << 1) + 1;
-			if (child + 1 < n && b[child] > b[child + 1]) child++;
-			if (v <= b[child]) break;
-			b[i] = b[child];
+			if (child + 1 < size && compare(buf[child], buf[child + 1]) > 0) child++;
+			if (compare(v, buf[child]) <= 0) break;
+			buf[i] = buf[child];
 			i = child;
 		}
-		b[i] = v;
+		buf[i] = v;
 	}
 }

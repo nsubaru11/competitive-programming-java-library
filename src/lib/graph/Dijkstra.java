@@ -2,7 +2,7 @@ package lib.graph;
 
 import static java.util.Arrays.*;
 
-import lib.ds.priorityqueue.LongIndexedPriorityQueue;
+import lib.ds.priorityqueue.*;
 
 /**
  * Dijkstra法により、非負重み付きグラフの単一始点最短経路を求めるユーティリティクラス。
@@ -29,7 +29,7 @@ public final class Dijkstra {
 		fill(parent, -1);
 		int[] next = graph.next, first = graph.first, dest = graph.dest;
 		long[] cost = graph.cost;
-		ans.push(s, 0);
+		ans.add(s, 0);
 		parent[s] = s;
 		while (!ans.isEmpty()) {
 			final long cu = ans.peek();
@@ -70,7 +70,7 @@ public final class Dijkstra {
 		LongIndexedPriorityQueue ans = new LongIndexedPriorityQueue(graph.n);
 		int[] next = graph.next, first = graph.first, dest = graph.dest;
 		long[] cost = graph.cost;
-		ans.push(s, 0);
+		ans.add(s, 0);
 		while (!ans.isEmpty()) {
 			final long cu = ans.peek();
 			final int u = ans.pollIndex();

@@ -5,150 +5,176 @@ import static java.lang.Math.*;
 import java.util.*;
 
 /**
- * 競技プログラミング向け優先度キュー（ジェネリック版）
+ * 競技プログラミング向けのgeneric優先度キューです。
+ * Comparatorを省略した場合は自然順序を使用し、要素が相互にComparableでなければ比較時に{@link ClassCastException}となります。
+ *
+ * @param <T> 要素型
  */
 @SuppressWarnings({"unchecked", "unused"})
-public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T> {
+public final class PriorityQueue<T> implements Iterable<T> {
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
 	private final Comparator<? super T> comparator;
 	private T[] buf;
 	private int size, capacity, unsortedCount;
 
 	/**
-	 * コンストラクタ（デフォルト容量1024、最小値優先）
+	 * 自然順序のキューを構築します。
 	 */
 	public PriorityQueue() {
-		this(DEFAULT_INITIAL_CAPACITY, Comparator.naturalOrder(), false);
+		this(DEFAULT_INITIAL_CAPACITY, false);
 	}
 
 	/**
-	 * コンストラクタ（最小値優先）
-	 *
-	 * @param capacity 初期容量
+	 * 指定した初期容量で自然順序のキューを構築します。
 	 */
-	public PriorityQueue(int capacity) {
-		this(capacity, Comparator.naturalOrder(), false);
+	public PriorityQueue(final int initialCapacity) {
+		this(initialCapacity, false);
 	}
 
 	/**
-	 * コンストラクタ（デフォルト容量1024）
-	 *
-	 * @param comparator 比較関数
+	 * 自然順序または逆順のキューを構築します。
 	 */
-	public PriorityQueue(Comparator<T> comparator) {
-		this(DEFAULT_INITIAL_CAPACITY, comparator, false);
+	public PriorityQueue(final boolean isDescendingOrder) {
+		this(DEFAULT_INITIAL_CAPACITY, isDescendingOrder);
 	}
 
 	/**
-	 * コンストラクタ（デフォルト容量1024）
-	 *
-	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
+	 * 指定した初期容量で自然順序または逆順のキューを構築します。
 	 */
-	public PriorityQueue(boolean isDescendingOrder) {
-		this(DEFAULT_INITIAL_CAPACITY, Comparator.naturalOrder(), isDescendingOrder);
+	public PriorityQueue(final int initialCapacity, final boolean isDescendingOrder) {
+		this(initialCapacity, naturalComparator(isDescendingOrder));
 	}
 
 	/**
-	 * コンストラクタ
-	 *
-	 * @param capacity   初期容量
-	 * @param comparator 比較関数
+	 * 指定したComparatorでキューを構築します。
 	 */
-	public PriorityQueue(int capacity, Comparator<T> comparator) {
-		this(capacity, comparator, false);
+	public PriorityQueue(final Comparator<? super T> comparator) {
+		this(DEFAULT_INITIAL_CAPACITY, comparator);
 	}
 
 	/**
-	 * コンストラクタ（デフォルト容量1024）
-	 *
-	 * @param comparator        比較関数
-	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
+	 * 指定した初期容量とComparatorでキューを構築します。
 	 */
-	public PriorityQueue(Comparator<T> comparator, boolean isDescendingOrder) {
-		this(DEFAULT_INITIAL_CAPACITY, comparator, isDescendingOrder);
+	public PriorityQueue(final int initialCapacity, final Comparator<? super T> comparator) {
+		capacity = max(1, initialCapacity);
+		this.comparator = Objects.requireNonNull(comparator);
+		buf = (T[]) new Object[capacity];
 	}
 
 	/**
-	 * コンストラクタ
-	 *
-	 * @param capacity          初期容量
-	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
+	 * 配列の全要素を持つ自然順序のキューを構築します。
 	 */
-	public PriorityQueue(int capacity, boolean isDescendingOrder) {
-		this(capacity, Comparator.naturalOrder(), isDescendingOrder);
+	public PriorityQueue(final T[] values) {
+		this(values, false);
 	}
 
 	/**
-	 * コンストラクタ
-	 *
-	 * @param capacity          初期容量
-	 * @param comparator        比較関数
-	 * @param isDescendingOrder true の場合は最大値優先（降順）、false の場合は最小値優先（昇順）
+	 * 配列の全要素を持つ自然順序または逆順のキューを構築します。
 	 */
-	public PriorityQueue(int capacity, Comparator<T> comparator, boolean isDescendingOrder) {
-		this.capacity = max(capacity, DEFAULT_INITIAL_CAPACITY);
-		this.comparator = isDescendingOrder ? comparator.reversed() : comparator;
-		buf = (T[]) new Comparable<?>[this.capacity];
-		size = 0;
-		unsortedCount = 0;
+	public PriorityQueue(final T[] values, final boolean isDescendingOrder) {
+		this(values, naturalComparator(isDescendingOrder));
 	}
 
 	/**
-	 * 要素を追加する
-	 *
-	 * @param v 追加する要素
+	 * 配列の全要素を持つComparator順のキューを構築します。
 	 */
-	public void push(T v) {
-		if (size == capacity) buf = Arrays.copyOf(buf, capacity <<= 1);
+	public PriorityQueue(final T[] values, final Comparator<? super T> comparator) {
+		this(max(1, values.length), comparator);
+		System.arraycopy(values, 0, buf, 0, values.length);
+		size = unsortedCount = values.length;
+	}
+
+	/**
+	 * Comparable要素を自然順序で扱うキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> PriorityQueue<T> naturalOrder() {
+		return new PriorityQueue<>(Comparator.naturalOrder());
+	}
+
+	/**
+	 * Comparable要素を自然順序で扱うキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> PriorityQueue<T> naturalOrder(final int initialCapacity) {
+		return new PriorityQueue<>(initialCapacity, Comparator.naturalOrder());
+	}
+
+	/**
+	 * Comparable要素を逆順で扱うキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> PriorityQueue<T> reverseOrder() {
+		return new PriorityQueue<>(Comparator.reverseOrder());
+	}
+
+	/**
+	 * Comparable要素を逆順で扱うキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> PriorityQueue<T> reverseOrder(final int initialCapacity) {
+		return new PriorityQueue<>(initialCapacity, Comparator.reverseOrder());
+	}
+
+	/**
+	 * 配列の全要素を自然順序で扱うキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> PriorityQueue<T> naturalOrder(final T[] values) {
+		return new PriorityQueue<>(values, Comparator.naturalOrder());
+	}
+
+	/**
+	 * 配列の全要素を逆順で扱うキューを返します。
+	 */
+	public static <T extends Comparable<? super T>> PriorityQueue<T> reverseOrder(final T[] values) {
+		return new PriorityQueue<>(values, Comparator.reverseOrder());
+	}
+
+	private static <T> Comparator<? super T> naturalComparator(final boolean isDescendingOrder) {
+		return isDescendingOrder ? (Comparator<? super T>) Comparator.reverseOrder() : (Comparator<? super T>) Comparator.naturalOrder();
+	}
+
+	/**
+	 * 要素を追加します。
+	 */
+	public boolean add(final T v) {
+		ensureCapacity(size + 1);
 		buf[size++] = v;
 		unsortedCount++;
+		return true;
 	}
 
 	/**
-	 * 全ての要素を追加する
-	 *
-	 * @param elements 追加する要素の配列
+	 * 配列の全要素を追加します。
 	 */
-	public void addAll(final T[] elements) {
-		final int n = elements.length;
-		if (size + n > capacity) {
-			while (size + n > capacity) capacity <<= 1;
-			buf = Arrays.copyOf(buf, capacity);
-		}
-		System.arraycopy(elements, 0, buf, size, n);
+	public boolean addAll(final T[] values) {
+		final int n = values.length;
+		if (n == 0) return false;
+		ensureCapacity(size + n);
+		System.arraycopy(values, 0, buf, size, n);
 		size += n;
 		unsortedCount += n;
+		return true;
 	}
 
 	/**
-	 * 全ての要素を追加する
-	 *
-	 * @param elements 追加する要素のイテラブル
+	 * Iterableの全要素を追加します。
 	 */
-	public void addAll(final Iterable<T> elements) {
-		if (elements instanceof final Collection<T> c) {
+	public boolean addAll(final Iterable<? extends T> values) {
+		if (values instanceof final Collection<? extends T> c) {
 			final int n = c.size();
-			int s = size;
-			if (s + n > capacity) {
-				int newCap = capacity;
-				while (s + n > newCap) newCap <<= 1;
-				buf = Arrays.copyOf(buf, newCap);
-				capacity = newCap;
-			}
-			final T[] b = buf;
-			for (final T e : c) b[s++] = e;
-			size = s;
+			if (n == 0) return false;
+			ensureCapacity(size + n);
+			for (final T v : c) buf[size++] = v;
 			unsortedCount += n;
-		} else {
-			for (final T e : elements) push(e);
+			return true;
 		}
+		boolean changed = false;
+		for (final T v : values) {
+			add(v);
+			changed = true;
+		}
+		return changed;
 	}
 
 	/**
-	 * ヒープの先頭要素を取得
-	 *
-	 * @return ヒープの先頭要素（昇順時は最小、降順時は最大）
-	 * @throws NoSuchElementException ヒープが空の場合
+	 * 最優先要素を返します。
 	 */
 	public T peek() {
 		if (isEmpty()) throw new NoSuchElementException();
@@ -157,67 +183,80 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 	}
 
 	/**
-	 * ヒープの先頭要素を削除して返す
-	 *
-	 * @return 削除された要素（昇順時は最小、降順時は最大）
+	 * 空ならdefaultValue、そうでなければ最優先要素を返します。
+	 */
+	public T peekOrDefault(final T defaultValue) {
+		return isEmpty() ? defaultValue : peek();
+	}
+
+	/**
+	 * 2番目に優先される要素を返します。
+	 */
+	public T peekSecond() {
+		if (size < 2) throw new NoSuchElementException();
+		if (unsortedCount > 0) ensureHeapProperty();
+		if (size == 2) return buf[1];
+		return comparator.compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
+	}
+
+	/**
+	 * 最優先要素を削除して返します。
 	 */
 	public T poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		T res = buf[0];
+		final T res = buf[0];
 		if (--size > 0) siftDown(buf[size], 0);
 		return res;
 	}
 
 	/**
-	 * ヒープの先頭要素を置き換える
-	 *
-	 * @param v 置き換える要素
-	 * @return 置き換えられた要素（昇順時は最小、降順時は最大）
+	 * 空ならdefaultValue、そうでなければ最優先要素を削除して返します。
 	 */
+	public T pollOrDefault(final T defaultValue) {
+		return isEmpty() ? defaultValue : poll();
+	}
+
+	/** 最優先要素を置き換え、置き換え前の値を返します。 */
 	public T replaceTop(final T v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		T res = buf[0];
+		final T res = buf[0];
 		buf[0] = v;
-		siftDown(buf[0], 0);
+		siftDown(v, 0);
 		return res;
 	}
 
 	/**
-	 * 要素数を取得する
-	 *
-	 * @return 要素数
+	 * 現在の要素数を返します。
 	 */
 	public int size() {
 		return size;
 	}
 
-	/**
-	 * ヒープをクリアする
-	 */
-	public void clear() {
-		size = 0;
-		unsortedCount = 0;
+	/** 現在の内部配列容量を返します。 */
+	public int capacity() {
+		return capacity;
 	}
 
 	/**
-	 * ヒープが空かどうかを判定
-	 *
-	 * @return 空の場合はtrue
+	 * キューをO(1)で論理的に空にします。
+	 */
+	public void clear() {
+		size = unsortedCount = 0;
+	}
+
+	/**
+	 * キューが空か判定します。
 	 */
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
-	/**
-	 * 要素を順序付けていないイテレータを取得する
-	 *
-	 * @return 順序付けていないイテレータ
-	 */
+	/** 内部順で要素を走査するIteratorを返します。 */
 	public Iterator<T> iterator() {
 		return new Iterator<>() {
-			int i = 0;
+			private int i;
 
 			public boolean hasNext() {
 				return i < size;
@@ -230,102 +269,58 @@ public final class PriorityQueue<T extends Comparable<T>> implements Iterable<T>
 		};
 	}
 
-	/**
-	 * 遅延評価された未ソート要素をヒープ化し、ヒーププロパティを復元する
-	 * <p>
-	 * このメソッドは、未ソート要素が存在する場合に最適なアルゴリズムを自動選択して実行します
-	 * <p><b>分岐点の決定：</b>
-	 * 両アルゴリズムの最大比較回数を計算し、コストが小さい方を実行する
-	 * (heapifyCost < incrementalCost なら heapify を選択)
-	 */
+	private void ensureCapacity(final int required) {
+		if (required <= capacity) return;
+		int newCapacity = capacity;
+		while (newCapacity < required) newCapacity <<= 1;
+		buf = Arrays.copyOf(buf, capacity = newCapacity);
+	}
+
 	private void ensureHeapProperty() {
 		final int log2N = 31 - Integer.numberOfLeadingZeros(size);
 		final int heapifyCost = size * 2 - 2 * log2N;
 		final int incrementalCost = unsortedCount <= 100 ? getIncrementalCostStrict() : getIncrementalCostApprox();
-		if (heapifyCost < incrementalCost) {
-			heapify();
-		} else {
-			for (int i = size - unsortedCount; i < size; i++) siftUp(buf[i], i);
-		}
+		if (heapifyCost < incrementalCost) heapify();
+		else for (int i = size - unsortedCount; i < size; i++) siftUp(buf[i], i);
 		unsortedCount = 0;
 	}
 
-	/**
-	 * インクリメンタル構築の最大比較回数を厳密に計算する
-	 *
-	 * @return 最大比較回数の合計
-	 */
 	private int getIncrementalCostStrict() {
-		int totalCost = 0;
+		int cost = 0;
 		final int sortedSize = size - unsortedCount;
-		for (int i = 1; i <= unsortedCount; i++) {
-			final int currentHeapSize = sortedSize + i;
-			final int depth = 31 - Integer.numberOfLeadingZeros(currentHeapSize);
-			totalCost += depth;
-		}
-		return totalCost;
+		for (int i = 1; i <= unsortedCount; i++) cost += 31 - Integer.numberOfLeadingZeros(sortedSize + i);
+		return cost;
 	}
 
-	/**
-	 * インクリメンタル構築の最大比較回数を高速に近似計算する
-	 * <p>コスト ≈ k * floor(log₂(平均ヒープサイズ))
-	 *
-	 * @return 最大比較回数の近似値
-	 */
 	private int getIncrementalCostApprox() {
-		final int sortedSize = size - unsortedCount;
-		final int avgHeapSize = sortedSize + (unsortedCount >> 1);
-		if (avgHeapSize == 0) return 0;
-		final int depthOfAvgSize = 31 - Integer.numberOfLeadingZeros(avgHeapSize);
-		return unsortedCount * depthOfAvgSize;
+		final int averageSize = size - unsortedCount + (unsortedCount >> 1);
+		if (averageSize == 0) return 0;
+		return unsortedCount * (31 - Integer.numberOfLeadingZeros(averageSize));
 	}
 
-	/**
-	 * Bottom-up heapify (Floyd's algorithm)
-	 */
 	private void heapify() {
 		for (int i = (size >> 1) - 1; i >= 0; i--) siftDown(buf[i], i);
 	}
 
-	/**
-	 * siftUp操作 - O(log N)
-	 * <p>
-	 * 新要素を親と比較しながら上方向に移動（親 ≤ 子）
-	 *
-	 * @param v 移動させる要素
-	 * @param i 要素の現在位置
-	 */
 	private void siftUp(final T v, int i) {
-		final T[] b = buf;
 		while (i > 0) {
-			final int j = (i - 1) >> 1;
-			if (comparator.compare(v, b[j]) >= 0) break;
-			b[i] = b[j];
-			i = j;
+			final int p = (i - 1) >> 1;
+			if (comparator.compare(v, buf[p]) >= 0) break;
+			buf[i] = buf[p];
+			i = p;
 		}
-		b[i] = v;
+		buf[i] = v;
 	}
 
-	/**
-	 * siftDown操作 - O(log N)
-	 * <p>
-	 * 末尾要素を子と比較しながら下方向に移動（親 ≤ 子）
-	 * 2つの子のうち小さい方と比較
-	 *
-	 * @param v 移動させる要素
-	 * @param i 要素の現在位置
-	 */
 	private void siftDown(final T v, int i) {
-		final T[] b = buf;
-		final int n = size;
-		final int half = n >> 1;
+		final int half = size >> 1;
 		while (i < half) {
 			int child = (i << 1) + 1;
-			if (child + 1 < n && comparator.compare(b[child], b[child + 1]) > 0) child++;
-			if (comparator.compare(v, b[child]) <= 0) break;
-			b[i] = b[child];
+			if (child + 1 < size && comparator.compare(buf[child], buf[child + 1]) > 0) child++;
+			if (comparator.compare(v, buf[child]) <= 0) break;
+			buf[i] = buf[child];
 			i = child;
 		}
-		b[i] = v;
+		buf[i] = v;
 	}
 }

@@ -81,7 +81,7 @@ public final class Prim {
 		int cnt = 0;
 		ans = 0;
 		final LongIndexedPriorityQueue pq = new LongIndexedPriorityQueue(n);
-		pq.push(0, 0);
+		pq.add(0, 0);
 		final int[] parentEdge = new int[n];
 		while (!pq.isEmpty()) {
 			final int u = pq.pollIndex();

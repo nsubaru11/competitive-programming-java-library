@@ -15,12 +15,12 @@ public class Example {
 
 		while (n-- > 0) {
 			int r = (int) (Math.random() * 20);
-			ipq.push(r);
-			lqp.push(r);
-			ipqd.push(r);
-			lqpd.push(r);
-			pq.push(r);
-			pqd.push(r);
+			ipq.add(r);
+			lqp.add(r);
+			ipqd.add(r);
+			lqpd.add(r);
+			pq.add(r);
+			pqd.add(r);
 		}
 
 		System.out.print("IntPriorityQueue:");
