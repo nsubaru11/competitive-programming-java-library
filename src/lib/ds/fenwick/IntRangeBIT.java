@@ -1,9 +1,11 @@
 package lib.ds.fenwick;
 
-import java.util.*;
-import java.util.function.*;
+import lib.ds.IntCollection;
 
-import lib.ds.*;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+import java.util.function.IntBinaryOperator;
+import java.util.function.IntUnaryOperator;
 
 /**
  * 競技プログラミング向け Range Update Range Query (区間加算・区間和取得) を提供する int 型特化 BIT。
@@ -12,7 +14,7 @@ import lib.ds.*;
  */
 @SuppressWarnings("unused")
 public final class IntRangeBIT implements IntCollection {
-	private final int n;
+	public final int n;
 	private final int[] bit1, bit2;
 
 	/**
@@ -35,6 +37,23 @@ public final class IntRangeBIT implements IntCollection {
 	public IntRangeBIT(final int n, final IntUnaryOperator init) {
 		this(n);
 		setAll(init);
+	}
+
+	public void fill(final int val) {
+		bit1[0] = bit2[0] = 0;
+		for (int i = 0, prev = 0; i < n; i++) {
+			int diff = val - prev;
+			bit1[i + 1] = diff;
+			bit2[i + 1] = 0;
+			prev = val;
+		}
+		for (int i = 1; i <= n; i++) {
+			int j = i + (i & -i);
+			if (j <= n) {
+				bit1[j] += bit1[i];
+				bit2[j] += bit2[i];
+			}
+		}
 	}
 
 	/**
@@ -61,13 +80,37 @@ public final class IntRangeBIT implements IntCollection {
 	}
 
 	/**
+	 * インデックス i (0-indexed) の現在の値を取得する。
+	 *
+	 * @param i インデックス
+	 * @return 現在の値
+	 */
+	public int get(final int i) {
+		return sum(bit1, i + 1);
+	}
+
+	/**
+	 * インデックス i (0-indexed) の要素を v に更新する。
+	 *
+	 * @param i インデックス
+	 * @param v 更新後の値
+	 */
+	public void set(final int i, final int v) {
+		final int delta = v - get(i);
+		add(bit1, i, delta);
+		add(bit1, i + 1, -delta);
+		add(bit2, i, delta * i);
+		add(bit2, i + 1, -delta * (i + 1));
+	}
+
+	/**
 	 * 閉区間 [l, r] に v を加算する。
 	 *
 	 * @param l 左端の境界 (includes)
 	 * @param r 右端の境界 (includes)
 	 * @param v 加算する値
 	 */
-	public void apply(final int l, final int r, final int v) {
+	public void add(final int l, final int r, final int v) {
 		if (l > r) return;
 		add(bit1, l, v);
 		add(bit1, r + 1, -v);
@@ -81,18 +124,21 @@ public final class IntRangeBIT implements IntCollection {
 	 * @param i インデックス
 	 * @param v 加算する値
 	 */
-	public void apply(final int i, final int v) {
-		apply(i, i, v);
+	public void add(final int i, final int v) {
+		add(i, i, v);
 	}
 
-	/**
-	 * インデックス i (0-indexed) の現在の値を取得する。
-	 *
-	 * @param i インデックス
-	 * @return 現在の値
-	 */
-	public int get(final int i) {
-		return sum(bit1, i + 1);
+	public void multiply(final int i, final int a) {
+		add(i, i, get(i) * (a - 1));
+	}
+
+	public void apply(final int i, final int a, final int b) {
+		add(i, i, get(i) * (a - 1) + b);
+	}
+
+	public void apply(final int i, final int v, final IntBinaryOperator op) {
+		final int ai = get(i);
+		add(i, i, op.applyAsInt(ai, v) - ai);
 	}
 
 	/**
@@ -101,7 +147,7 @@ public final class IntRangeBIT implements IntCollection {
 	 * @param r 右端の境界 (includes)
 	 * @return [0, r] の和
 	 */
-	public int query(final int r) {
+	public int sum(final int r) {
 		if (r < 0) return 0;
 		return sum(bit1, r + 1) * (r + 1) - sum(bit2, r + 1);
 	}
@@ -113,9 +159,13 @@ public final class IntRangeBIT implements IntCollection {
 	 * @param r 右端の境界 (includes)
 	 * @return [l, r] の和
 	 */
-	public int query(final int l, final int r) {
+	public int sum(final int l, final int r) {
 		if (l > r) return 0;
-		return query(r) - query(l - 1);
+		return sum(r) - sum(l - 1);
+	}
+
+	public int sumAll() {
+		return sum(n - 1);
 	}
 
 	/**
@@ -131,15 +181,22 @@ public final class IntRangeBIT implements IntCollection {
 		return new PrimitiveIterator.OfInt() {
 			private int i = 0;
 
+			public boolean hasNext() {
+				return i < n;
+			}
+
 			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return get(i++);
 			}
-
-			public boolean hasNext() {
-				return i < n;
-			}
 		};
+	}
+
+	public String toString() {
+		final StringBuilder s = new StringBuilder();
+		s.append(get(0));
+		for (int i = 1; i < n; i++) s.append(' ').append(get(i));
+		return s.toString();
 	}
 
 	private void add(final int[] bit, int i, final int v) {

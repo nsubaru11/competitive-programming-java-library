@@ -1,10 +1,16 @@
 package lib.ds.segmenttree;
 
-import java.util.*;
-import java.util.function.*;
+import lib.ds.IntCollection;
+
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+import java.util.function.IntBinaryOperator;
+import java.util.function.IntPredicate;
+import java.util.function.IntUnaryOperator;
 
 @SuppressWarnings("unused")
-public final class IntSegmentTree implements Iterable<Integer> {
+public final class IntSegmentTree implements IntCollection {
 	private final int n, size, identity;
 	private final IntBinaryOperator operator;
 	private final int[] tree;
@@ -28,6 +34,16 @@ public final class IntSegmentTree implements Iterable<Integer> {
 		if (identity != 0) Arrays.fill(tree, size + n, size << 1, identity);
 		buildAll();
 	}
+
+    public void fill(final int val) {
+        Arrays.fill(tree, size, size + n, val);
+        buildAll();
+    }
+
+    public void setAll(final IntUnaryOperator init) {
+        for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.applyAsInt(i);
+        buildAll();
+    }
 
 	public int get(final int i) {
 		return tree[size + i];
@@ -54,16 +70,6 @@ public final class IntSegmentTree implements Iterable<Integer> {
 
 	public int apply(final int i, final int v, final IntBinaryOperator op) {
 		return apply(i, 0, op.applyAsInt(tree[size + i], v));
-	}
-
-	public void fill(final int val) {
-		Arrays.fill(tree, size, size + n, val);
-		buildAll();
-	}
-
-	public void setAll(final IntUnaryOperator func) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.applyAsInt(i);
-		buildAll();
 	}
 
 	public int query(final int l, final int r) {
@@ -132,31 +138,29 @@ public final class IntSegmentTree implements Iterable<Integer> {
 		return n;
 	}
 
-	private void buildAll() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[(i << 1) | 1]);
-	}
-
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
-			private int idx = 0;
+            private int i = 0;
 
 			public boolean hasNext() {
-				return idx < n;
+                return i < n;
 			}
 
 			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + idx++];
+                return tree[size + i++];
 			}
 		};
 	}
 
-	@Override
 	public String toString() {
 		final StringBuilder s = new StringBuilder();
 		s.append(tree[size]);
-		for (int i = size + 1; i < size + n; i++) s.append(' ').append(tree[i]);
+        for (int i = 1; i < n; i++) s.append(' ').append(tree[i + size]);
 		return s.toString();
 	}
 
+    private void buildAll() {
+        for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[(i << 1) | 1]);
+    }
 }

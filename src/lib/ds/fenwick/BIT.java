@@ -1,8 +1,10 @@
 package lib.ds.fenwick;
 
-import static java.util.Arrays.*;
-
-import java.util.function.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.BinaryOperator;
+import java.util.function.IntFunction;
 
 /**
  * 競技プログラミング向け Binary Indexed Tree（Fenwick Tree）
@@ -10,9 +12,9 @@ import java.util.function.*;
  * 1点更新と閉区間 [0, r] の累積和（演算適用結果）を O(log N) で提供。
  */
 @SuppressWarnings({"unused", "unchecked"})
-public final class BIT<T> {
-	private final int n;
-	private final T identity;
+public final class BIT<T> implements Iterable<T> {
+	public final int n;
+	public final T identity;
 	private final T[] tree, raw;
 	private final BinaryOperator<T> op, inv;
 
@@ -28,8 +30,10 @@ public final class BIT<T> {
 		this.n = n;
 		tree = (T[]) new Object[n + 1];
 		raw = (T[]) new Object[n];
-		fill(tree, identity);
-		fill(raw, identity);
+		if (identity != null) {
+			Arrays.fill(tree, identity);
+			Arrays.fill(raw, identity);
+		}
 		this.op = op;
 		this.inv = inv;
 		this.identity = identity;
@@ -54,6 +58,15 @@ public final class BIT<T> {
 		setAll(init);
 	}
 
+	public void fill(final T val) {
+		tree[0] = identity;
+		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = val;
+		for (int i = 1; i <= n; i++) {
+			int j = i + (i & -i);
+			if (j <= n) tree[j] = op.apply(tree[j], tree[i]);
+		}
+	}
+
 	public void setAll(final IntFunction<T> init) {
 		tree[0] = identity;
 		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = init.apply(i);
@@ -64,14 +77,13 @@ public final class BIT<T> {
 	}
 
 	/**
-	 * インデックス i (0-indexed) の要素に v を作用させる。
+	 * インデックス i (0-indexed) の現在の値を取得する。
 	 *
 	 * @param i インデックス
-	 * @param v 作用させる値
+	 * @return 現在の値
 	 */
-	public void apply(final int i, final T v) {
-		raw[i] = op.apply(raw[i], v);
-		for (int cur = i + 1; cur <= n; cur += cur & -cur) tree[cur] = op.apply(tree[cur], v);
+	public T get(final int i) {
+		return raw[i];
 	}
 
 	/**
@@ -81,17 +93,19 @@ public final class BIT<T> {
 	 * @param i インデックス
 	 * @param v 更新後の値
 	 */
-	public void set(final int i, final T v) {
-		apply(i, inv.apply(v, raw[i]));
+	public T set(final int i, final T v) {
+		return apply(i, inv.apply(v, raw[i]));
 	}
 
 	/**
-	 * インデックス i (0-indexed) の現在の値を取得する。
+	 * インデックス i (0-indexed) の要素に v を作用させる。
 	 *
 	 * @param i インデックス
-	 * @return 現在の値
+	 * @param v 作用させる値
 	 */
-	public T get(final int i) {
+	public T apply(final int i, final T v) {
+		raw[i] = op.apply(raw[i], v);
+		for (int cur = i + 1; cur <= n; cur += cur & -cur) tree[cur] = op.apply(tree[cur], v);
 		return raw[i];
 	}
 
@@ -115,12 +129,38 @@ public final class BIT<T> {
 	 * @param r 右端の境界 (includes)
 	 * @return [l, r] の和
 	 */
-	public T query(int l, int r) {
+	public T query(final int l, final int r) {
 		if (l > r) return identity;
 		return inv.apply(query(r), query(l - 1));
 	}
 
+	public T queryAll() {
+		return query(n - 1);
+	}
+
 	public int size() {
 		return n;
+	}
+
+	public Iterator<T> iterator() {
+		return new Iterator<>() {
+			private int i = 0;
+
+			public boolean hasNext() {
+				return i < n;
+			}
+
+			public T next() {
+				if (!hasNext()) throw new NoSuchElementException();
+				return raw[i++];
+			}
+		};
+	}
+
+	public String toString() {
+		final StringBuilder s = new StringBuilder();
+		s.append(raw[0]);
+		for (int i = 1; i < n; i++) s.append(' ').append(raw[i]);
+		return s.toString();
 	}
 }

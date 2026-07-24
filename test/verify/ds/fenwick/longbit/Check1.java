@@ -1,12 +1,15 @@
 package verify.ds.fenwick.longbit;
 
-import static java.util.Arrays.*;
+import lib.ds.fenwick.LongBIT;
+import lib.io.compat17.FastPrinter;
+import lib.io.compat17.FastScanner;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
-import lib.ds.fenwick.*;
-import lib.io.compat17.*;
+import static java.util.Arrays.deepToString;
+import static java.util.Arrays.stream;
 
 // https://judge.yosupo.jp/problem/static_range_sum
 public final class Check1 {
@@ -29,7 +32,7 @@ public final class Check1 {
 		while (q-- > 0) {
 			int l = sc.nextInt();
 			int r = sc.nextInt();
-			out.println(bit.query(l, r - 1));
+            out.println(bit.sum(l, r - 1));
 		}
 	}
 

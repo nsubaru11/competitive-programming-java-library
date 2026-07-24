@@ -102,7 +102,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 |----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | [Primitive Array Utilities](docs/ds/Arrays)              | プリミティブ配列インターフェース、累積和、循環配列、deque、2D配列、座標圧縮、LIS・固定幅窓・部分集合アルゴリズム |
 | [AVLTree](./docs/ds/AVLTree)                             | AVL 木による順序付き Set / Multiset（順位検索・近傍検索対応、int / long 特化版あり）                             |
-| [BinaryIndexedTree](./docs/ds/BinaryIndexedTree)         | BIT（点更新区間和・2D・区間加算区間和、BIT 上の二分探索付き）                                                    |
+| [BinaryIndexedTree](docs/ds/fenwick)                     | BIT（点更新区間和・2D・区間加算区間和、BIT 上の二分探索 `lowerBound` / `upperBound` 付き）                       |
 | [BinarySearchTree](./docs/ds/BinarySearchTree)           | 基本 BST・Treap（順序統計付き乱択平衡 BST）※赤黒木・B木・vEB木 📝                                                |
 | [CartesianTree](./src/lib/ds/CartesianTree.java)         | 📝 デカルト木（TODO）                                                                                            |
 | [EulerTour](./docs/ds/EulerTour)                         | 📝 オイラーツアー（TODO）                                                                                        |

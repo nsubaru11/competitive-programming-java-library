@@ -1,9 +1,11 @@
 package lib.ds.fenwick;
 
-import java.util.*;
-import java.util.function.*;
+import lib.ds.LongCollection;
 
-import lib.ds.*;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+import java.util.function.IntToLongFunction;
+import java.util.function.LongBinaryOperator;
 
 /**
  * 競技プログラミング向け Range Update Range Query (区間加算・区間和取得) を提供する long 型特化 BIT。
@@ -12,7 +14,7 @@ import lib.ds.*;
  */
 @SuppressWarnings("unused")
 public final class LongRangeBIT implements LongCollection {
-	private final int n;
+	public final int n;
 	private final long[] bit1, bit2;
 
 	/**
@@ -35,6 +37,24 @@ public final class LongRangeBIT implements LongCollection {
 	public LongRangeBIT(final int n, final IntToLongFunction init) {
 		this(n);
 		setAll(init);
+	}
+
+	public void fill(final long val) {
+		bit1[0] = bit2[0] = 0;
+		long prev = 0;
+		for (int i = 0; i < n; i++) {
+			long diff = val - prev;
+			bit1[i + 1] = diff;
+			bit2[i + 1] = 0;
+			prev = val;
+		}
+		for (int i = 1; i <= n; i++) {
+			int j = i + (i & -i);
+			if (j <= n) {
+				bit1[j] += bit1[i];
+				bit2[j] += bit2[i];
+			}
+		}
 	}
 
 	/**
@@ -62,13 +82,37 @@ public final class LongRangeBIT implements LongCollection {
 	}
 
 	/**
+	 * インデックス i (0-indexed) の現在の値を取得する。
+	 *
+	 * @param i インデックス
+	 * @return 現在の値
+	 */
+	public long get(final int i) {
+		return sum(bit1, i + 1);
+	}
+
+	/**
+	 * インデックス i (0-indexed) の要素を v に更新する。
+	 *
+	 * @param i インデックス
+	 * @param v 更新後の値
+	 */
+	public void set(final int i, final long v) {
+		final long delta = v - get(i);
+		add(bit1, i, delta);
+		add(bit1, i + 1, -delta);
+		add(bit2, i, delta * i);
+		add(bit2, i + 1, -delta * (i + 1));
+	}
+
+	/**
 	 * 閉区間 [l, r] に v を加算する。
 	 *
 	 * @param l 左端の境界 (includes)
 	 * @param r 右端の境界 (includes)
 	 * @param v 加算する値
 	 */
-	public void apply(final int l, final int r, final long v) {
+	public void add(final int l, final int r, final long v) {
 		if (l > r) return;
 		add(bit1, l, v);
 		add(bit1, r + 1, -v);
@@ -82,18 +126,21 @@ public final class LongRangeBIT implements LongCollection {
 	 * @param i インデックス
 	 * @param v 加算する値
 	 */
-	public void apply(final int i, final long v) {
-		apply(i, i, v);
+	public void add(final int i, final long v) {
+		add(i, i, v);
 	}
 
-	/**
-	 * インデックス i (0-indexed) の現在の値を取得する。
-	 *
-	 * @param i インデックス
-	 * @return 現在の値
-	 */
-	public long get(final int i) {
-		return sum(bit1, i + 1);
+	public void multiply(final int i, final long a) {
+		add(i, i, get(i) * (a - 1));
+	}
+
+	public void apply(final int i, final long a, final long b) {
+		add(i, i, get(i) * (a - 1) + b);
+	}
+
+	public void apply(final int i, final long v, final LongBinaryOperator op) {
+		final long ai = get(i);
+		add(i, i, op.applyAsLong(ai, v) - ai);
 	}
 
 	/**
@@ -102,7 +149,7 @@ public final class LongRangeBIT implements LongCollection {
 	 * @param r 右端の境界 (includes)
 	 * @return [0, r] の和
 	 */
-	public long query(final int r) {
+	public long sum(final int r) {
 		if (r < 0) return 0;
 		return sum(bit1, r + 1) * (r + 1) - sum(bit2, r + 1);
 	}
@@ -114,9 +161,13 @@ public final class LongRangeBIT implements LongCollection {
 	 * @param r 右端の境界 (includes)
 	 * @return [l, r] の和
 	 */
-	public long query(final int l, final int r) {
+	public long sum(final int l, final int r) {
 		if (l > r) return 0;
-		return query(r) - query(l - 1);
+		return sum(r) - sum(l - 1);
+	}
+
+	public long sumAll() {
+		return sum(n - 1);
 	}
 
 	/**
@@ -132,15 +183,22 @@ public final class LongRangeBIT implements LongCollection {
 		return new PrimitiveIterator.OfLong() {
 			private int i = 0;
 
+			public boolean hasNext() {
+				return i < n;
+			}
+
 			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
 				return get(i++);
 			}
-
-			public boolean hasNext() {
-				return i < n;
-			}
 		};
+	}
+
+	public String toString() {
+		final StringBuilder s = new StringBuilder();
+		s.append(get(0));
+		for (int i = 1; i < n; i++) s.append(' ').append(get(i));
+		return s.toString();
 	}
 
 	private void add(final long[] bit, int i, final long v) {

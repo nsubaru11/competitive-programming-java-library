@@ -1,12 +1,14 @@
 package verify.ds.fenwick.longbit;
 
-import static java.util.Arrays.*;
+import lib.ds.fenwick.LongBIT;
+import lib.io.compat17.FastPrinter;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
-import lib.ds.fenwick.*;
-import lib.io.compat17.*;
+import static java.util.Arrays.deepToString;
+import static java.util.Arrays.stream;
 
 // https://judge.yosupo.jp/problem/point_add_range_sum
 public final class Check2 {
@@ -31,9 +33,9 @@ public final class Check2 {
 			int a = sc.nextInt();
 			int b = sc.nextInt();
 			if (t == 0) {
-				bit.apply(a, b);
+                bit.add(a, b);
 			} else {
-				out.println(bit.query(a, b - 1));
+                out.println(bit.sum(a, b - 1));
 			}
 		}
 	}
