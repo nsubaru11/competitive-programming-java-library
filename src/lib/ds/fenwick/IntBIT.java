@@ -16,6 +16,7 @@ import java.util.function.IntUnaryOperator;
 @SuppressWarnings("unused")
 public final class IntBIT implements IntCollection {
 	public final int n;
+	private final int headBit;
 	private final int[] tree, raw;
 
 	/**
@@ -25,6 +26,7 @@ public final class IntBIT implements IntCollection {
 	 */
 	public IntBIT(final int n) {
 		this.n = n;
+		headBit = Integer.highestOneBit(n);
 		tree = new int[n + 1];
 		raw = new int[n];
 	}
@@ -166,7 +168,7 @@ public final class IntBIT implements IntCollection {
 	public int upperBound(int w) {
 		if (w < 0) return 0;
 		int i = 0;
-		for (int k = Integer.highestOneBit(n); k > 0; k >>= 1) {
+		for (int k = headBit; k > 0; k >>= 1) {
 			if (i + k <= n && tree[i + k] <= w) {
 				w -= tree[i + k];
 				i += k;

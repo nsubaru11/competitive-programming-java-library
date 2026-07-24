@@ -16,6 +16,7 @@ import java.util.function.LongBinaryOperator;
 @SuppressWarnings("unused")
 public final class LongBIT implements LongCollection {
 	public final int n;
+	private final int headBit;
 	private final long[] tree, raw;
 
 	/**
@@ -25,6 +26,7 @@ public final class LongBIT implements LongCollection {
 	 */
 	public LongBIT(final int n) {
 		this.n = n;
+		headBit = Integer.highestOneBit(n);
 		tree = new long[n + 1];
 		raw = new long[n];
 	}
@@ -166,7 +168,7 @@ public final class LongBIT implements LongCollection {
 	public int upperBound(long w) {
 		if (w < 0) return 0;
 		int i = 0;
-		for (int k = Integer.highestOneBit(n); k > 0; k >>= 1) {
+		for (int k = headBit; k > 0; k >>= 1) {
 			if (i + k <= n && tree[i + k] <= w) {
 				w -= tree[i + k];
 				i += k;
