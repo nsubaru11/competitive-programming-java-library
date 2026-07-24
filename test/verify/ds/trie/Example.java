@@ -1,6 +1,6 @@
 package verify.ds.trie;
 
-import lib.ds.*;
+import lib.ds.trie.*;
 
 public final class Example {
 

@@ -1,96 +1,101 @@
-# Kruskal法 利用ガイド
+# Kruskal 利用ガイド
 
 ## 概要
 
-Kruskal法を用いた最小/最大全域木（MST）問題のソルバーです。  
-辺の重みに基づいて最小コストの木を構築します。
+[`Kruskal`](../../../src/lib/graph/Kruskal.java)は、`UndirectedGraph`の辺を重み順に処理し、最小または最大全域森を求める静的ユーティリティクラスです。入力が連結なら結果は全域木になります。
 
 ## 特徴
 
-- 最小全域木または最大全域木を求めることが可能
-- 辺ベースのアルゴリズム
-- 疎なグラフで効率的に動作
-- AIZUのオンラインジャッジでは、Prim法と比べてわずかに速い結果
+- 最小全域森と最大全域森に対応
+- `UndirectedGraph`に登録済みの辺を直接利用し、辺情報をソルバー内へ複製しない
+- 無向辺の偶数側内部辺IDをソートし、外部には元の論理辺IDを返す
+- `UnionFind`による閉路判定
+- 採用辺を含むResult版と、採用辺配列を確保しないcost-only版を提供
+- 負の辺、多重辺、非連結グラフを処理可能
 
 ## 依存関係
 
-- `lib.ds.UnionFind`
-- 辺のソートはクラス内のプリミティブ配列向け実装を使用し、追加の標準ライブラリ依存はありません
+- [`UndirectedGraph`](../Core/UndirectedGraphGuide.md)
+- [`UnionFind`](../../ds/UnionFind/UnionFindGuide.md)
+- [`SpanningForestResult`](./SpanningForestResultGuide.md)
 
-## 主な機能
+辺のソートには、クラス内のプリミティブ配列向け実装を使用します。
 
-### コンストラクタ
+## 主な機能（メソッド一覧）
 
-- `Kruskal(int n, int m)` - 頂点数・辺数を指定して最小全域木ソルバーを初期化
-- `Kruskal(int n, int m, boolean isMinimum)` - 最小/最大全域木ソルバーを初期化
+### 1. Resultを返すメソッド
 
-### メソッド
+| メソッド                         | 戻り値の型             | 説明                                             |
+|----------------------------------|------------------------|--------------------------------------------------|
+| `minimum(UndirectedGraph graph)` | `SpanningForestResult` | 最小全域森の総コスト、採用辺ID、連結成分数を返す |
+| `maximum(UndirectedGraph graph)` | `SpanningForestResult` | 最大全域森の総コスト、採用辺ID、連結成分数を返す |
 
-- `void addEdge(int u, int v, long cost)` - グラフに辺を追加
-- `long solve()` - Kruskal法を実行し、全域木の総コストを計算
-- `int[] solvePath()` - 全域木を構成する、追加順の辺インデックスを返す
+### 2. 総コストだけを返すメソッド
 
-### メソッド詳細
+| メソッド                             | 戻り値の型 | 説明                           |
+|--------------------------------------|------------|--------------------------------|
+| `minimumCost(UndirectedGraph graph)` | `long`     | 最小全域森の総コストだけを返す |
+| `maximumCost(UndirectedGraph graph)` | `long`     | 最大全域森の総コストだけを返す |
 
-#### コンストラクタ
-
-- `Kruskal(int n, int m)`
-	- 引数: n - 頂点数、m - 追加する辺数
-	- 説明: 最小全域木を求めるソルバーを初期化します
-
-- `Kruskal(int n, int m, boolean isMinimum)`
-	- 引数:
-		- n - 頂点数（0からn-1までの頂点番号が使用される）
-		- m - 追加する辺数
-		- isMinimum - trueの場合は最小全域木、falseの場合は最大全域木を求めます
-	- 説明: 最小/最大全域木を求めるソルバーを初期化します
-
-#### addEdge
-
-- `void addEdge(int u, int v, long cost)`
-	- 引数:
-		- u - 辺の始点（0からv-1までの値）
-		- v - 辺の終点（0からv-1までの値）
-		- cost - 辺の重み
-	- 説明: グラフに辺を追加します
-
-#### solve
-
-- `long solve()`
-	- 戻り値: 全域木の総コスト、または連結グラフでない場合は-1
-	- 説明: Kruskal法を実行し、全域木の総コストを計算します
+cost-only版でも辺のソートとUnion-Findは必要ですが、採用辺IDの配列と`SpanningForestResult`を確保しません。
 
 ## 利用例
 
 ```java
-// 最小全域木を求める例
-Kruskal k = new Kruskal(5);
-k.addEdge(0, 1, 3);
-k.addEdge(0, 4, 1);
-k.addEdge(1, 4, 4);
-k.addEdge(2, 3, 2);
-k.addEdge(3, 4, 7);
-k.addEdge(1, 2, 5);
-k.addEdge(2, 4, 6);
-k.addEdge(3, 1, 2);
-long result = k.solve();
-System.out.println(result); // 最小全域木の総コストを出力
+import lib.graph.Kruskal;
+import lib.graph.SpanningForestResult;
+import lib.graph.UndirectedGraph;
+
+UndirectedGraph graph = new UndirectedGraph(4, 5);
+graph.add(0, 1, 1); // edge 0
+graph.add(0, 2, 4); // edge 1
+graph.add(1, 2, 2); // edge 2
+graph.add(1, 3, 5); // edge 3
+graph.add(2, 3, 3); // edge 4
+
+SpanningForestResult result = Kruskal.minimum(graph);
+System.out.println(result.cost);            // 6
+System.out.println(result.edgeCount());     // 3
+System.out.println(result.isSpanningTree()); // true
+```
+
+総コストだけが必要な場合はcost-only版を使用します。
+
+```java
+long minimum = Kruskal.minimumCost(graph); // 6
+long maximum = Kruskal.maximumCost(graph); // 12
 ```
 
 ## 注意事項
 
-- 頂点番号は0からv-1までの範囲で指定する必要があります
-- グラフが連結でない場合は-1が返されます
-- 負のコストを持つ辺も処理可能ですが、負の閉路がある場合は正しい結果が得られない可能性があります
-- `lib.ds.UnionFind`を再利用するため、提出用バンドラはこの依存も推移的に展開します
+- 頂点番号は`0 <= u, v < graph.n`を前提とします。
+- `edgeIds`は入力した`UndirectedGraph`の論理辺IDです。内部辺IDではありません。
+- `edgeIds`はKruskal法が採用した順序で格納されます。同コスト辺の順序は保証しません。
+- 非連結グラフでは、各連結成分の最小または最大全域木を合わせた全域森を返します。
+- 非連結時も`cost`やcost-only版は`-1`ではなく、全域森の総コストです。
+- cost-only版だけでは入力グラフが連結だったか判定できません。必要ならResult版の`componentCount`または`isSpanningTree()`を使用してください。
+- 入力されたグラフと辺の重みは変更しません。
 
 ## パフォーマンス特性
 
-- 時間計算量: O(|E|log|E|)
-- 空間計算量: O(|V| + |E|)
-- 疎なグラフ（|E| ≈ |V|）で効率的に動作します
-- [AIZUOnlineJudge](https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/2/GRL_2_A)では、Prim法と比べてわずかに速い結果が出ています
+- Result版
+	- 時間計算量: `O(|E| log |E|)`
+	- 追加メモリ: `O(|V| + |E|)`
+	- 辺の処理順、Union-Find、採用辺IDを保持
+- cost-only版
+	- 時間計算量: `O(|E| log |E|)`
+	- 追加メモリ: `O(|V| + |E|)`
+	- 採用辺ID配列とResult生成を省略
+- 入力が連結で`|V|-1`辺を採用した場合は、不要な残りの辺走査を打ち切ります。非連結の場合は全辺を確認します。
 
 ## バージョン情報
 
-- 初期バージョン: 最小/最大全域木の計算機能を実装
+| バージョン番号     | 年月日     | 詳細                                                                                        |
+|:-------------------|:-----------|:--------------------------------------------------------------------------------------------|
+| **バージョン 3.0** | 2026-07-24 | `UndirectedGraph`を受け取る静的APIへ変更。最小・最大の全域森、共通Result、cost-only版に対応 |
+| **バージョン 1.0** | 2025-10-07 | 状態を持つソルバーとして最小・最大全域木と採用辺取得を実装                                  |
+
+### バージョン管理について
+
+- 1桁目（メジャーバージョン）: API変更や機能拡張
+- 2桁目（マイナーバージョン）: バグ修正、文言修正、マイクロ高速化

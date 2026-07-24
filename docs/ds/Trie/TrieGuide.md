@@ -34,7 +34,7 @@
 ## 利用例
 
  ```java
- import lib.ds.Trie;
+ import lib.ds.trie.Trie;
 
  Trie trie = new Trie();
  trie.insert("apple").insert("app").insert("apricot");

@@ -1,52 +1,20 @@
 package lib.graph;
 
-import lib.ds.UnionFind;
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
+
+import lib.ds.unionfind.*;
 
 /**
- * Kruskal法を用いた全域木（MST）問題のソルバー。
- * 最小全域木または最大全域木を求めることができます。
- * 時間計算量: O(|E|log|E|)（Eは辺の数）
- * 空間計算量: O(|V| + |E|)
+ * Kruskal法により無向グラフの最小または最大全域森を求めるユーティリティクラス。
+ * <p>
+ * グラフが連結なら結果は全域木、非連結なら各連結成分の全域木を合わせた全域森になります。
+ * 辺IDを含む結果が必要な場合は {@link #minimum(UndirectedGraph)} または
+ * {@link #maximum(UndirectedGraph)}、総コストだけが必要な場合は
+ * {@link #minimumCost(UndirectedGraph)} または {@link #maximumCost(UndirectedGraph)} を使用します。
+ * 計算量は {@code O(|E| log |E|)}、追加メモリは {@code O(|V| + |E|)} です。
  */
-@SuppressWarnings("unused")
 public final class Kruskal {
-	private final int n;
-	private final boolean isMinimum;
-	private final int[] from, to, edges, path;
-	private final long[] cost;
-	private final UnionFind uf;
-	private int edgeCnt = 0;
-	private long ans = 0;
-	private boolean solved = false;
-
-	/**
-	 * 指定された頂点数と最小/最大フラグでソルバーを初期化します。
-	 *
-	 * @param n         頂点数（0からv-1までの頂点番号が使用される）
-	 * @param m         辺の数
-	 * @param isMinimum trueの場合は最小全域木、falseの場合は最大全域木を求めます
-	 */
-	public Kruskal(final int n, final int m, final boolean isMinimum) {
-		this.n = n;
-		this.isMinimum = isMinimum;
-		from = new int[m];
-		to = new int[m];
-		edges = new int[m];
-		path = new int[n - 1];
-		cost = new long[m];
-		uf = new UnionFind(n);
-	}
-
-	/**
-	 * 最小全域木を求めるソルバーを初期化します。
-	 *
-	 * @param n 頂点数（0からv-1までの頂点番号が使用される）
-	 * @param m 辺の数
-	 */
-	public Kruskal(final int n, final int m) {
-		this(n, m, true);
-	}
-
 	/**
 	 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。
 	 * Dual-Pivot Quicksortのエッセンスを採用したプリミティブ実装です。
@@ -118,53 +86,95 @@ public final class Kruskal {
 		a[j] = t;
 	}
 
-	/**
-	 * グラフに辺を追加します。
-	 *
-	 * @param u 辺の始点（0からv-1までの値）
-	 * @param v 辺の終点（0からv-1までの値）
-	 * @param c 辺の重み
-	 */
-	public void addEdge(final int u, final int v, final long c) {
-		from[edgeCnt] = u;
-		to[edgeCnt] = v;
-		cost[edgeCnt] = isMinimum ? c : -c;
-		edges[edgeCnt] = edgeCnt;
-		edgeCnt++;
+	private Kruskal() {
 	}
 
 	/**
-	 * Kruskal法を実行し、全域木の総コストを計算します。
-	 * 設定に応じて最小全域木または最大全域木を求めます。
-	 * グラフが連結でない場合は-1を返します。
+	 * 最小全域森を求めます。
 	 *
-	 * @return 全域木の総コスト、または連結グラフでない場合は-1
+	 * @param graph 対象の無向グラフ
+	 * @return 最小全域森の総コスト、採用辺ID、連結成分数
 	 */
-	public long solve() {
-		if (solved) return ans;
-		int size = 0;
+	public static SpanningForestResult minimum(final UndirectedGraph graph) {
+		return solve(graph, true);
+	}
+
+	/**
+	 * 最大全域森を求めます。
+	 *
+	 * @param graph 対象の無向グラフ
+	 * @return 最大全域森の総コスト、採用辺ID、連結成分数
+	 */
+	public static SpanningForestResult maximum(final UndirectedGraph graph) {
+		return solve(graph, false);
+	}
+
+	/**
+	 * 最小全域森の総コストだけを求めます。
+	 * 採用辺IDの配列を確保しません。
+	 *
+	 * @param graph 対象の無向グラフ
+	 * @return 最小全域森の総コスト
+	 */
+	public static long minimumCost(final UndirectedGraph graph) {
+		return solveCost(graph, true);
+	}
+
+	/**
+	 * 最大全域森の総コストだけを求めます。
+	 * 採用辺IDの配列を確保しません。
+	 *
+	 * @param graph 対象の無向グラフ
+	 * @return 最大全域森の総コスト
+	 */
+	public static long maximumCost(final UndirectedGraph graph) {
+		return solveCost(graph, false);
+	}
+
+	private static SpanningForestResult solve(final UndirectedGraph graph, final boolean isMinimum) {
+		int n = graph.n, edgeCnt = graph.edgeCount();
+		long[] cost = graph.cost;
+		int[] dest = graph.dest;
+
+		int[] edges = new int[edgeCnt];
+		setAll(edges, i -> i << 1);
 		sortEdges(edges, cost, 0, edgeCnt);
-		for (int i = 0; size < n - 1 && i < edgeCnt; i++) {
-			int e = edges[i], u = from[e], v = to[e];
-			long c = cost[e];
+
+		UnionFind uf = new UnionFind(n);
+		int[] edgeIds = new int[min(n - 1, edgeCnt)];
+		int selected = 0;
+		long total = 0;
+		for (int i = 0; selected < n - 1 && i < edgeCnt; i++) {
+			int j = isMinimum ? i : edgeCnt - i - 1;
+			int e = edges[j], u = dest[e], v = dest[e + 1];
 			if (uf.union(u, v)) {
-				path[size++] = e;
-				ans += c;
+				edgeIds[selected++] = e >> 1;
+				total += cost[e];
 			}
 		}
-		solved = true;
-		return ans = size < n - 1 ? -1 : isMinimum ? ans : -ans;
+		return new SpanningForestResult(total, selected == edgeIds.length ? edgeIds : copyOf(edgeIds, selected), uf.groupCount());
 	}
 
-	/**
-	 * 全域木を構成する辺のインデックスを取得します。
-	 * インデックスは addEdge で追加された順序（0-indexed）に対応します。
-	 *
-	 * @return 全域木を構成する辺のインデックス配列
-	 */
-	public int[] solvePath() {
-		if (!solved) solve();
-		return path;
-	}
+	private static long solveCost(final UndirectedGraph graph, final boolean isMinimum) {
+		int n = graph.n, edgeCnt = graph.edgeCount();
+		long[] cost = graph.cost;
+		int[] dest = graph.dest;
 
+		int[] edges = new int[edgeCnt];
+		setAll(edges, i -> i << 1);
+		sortEdges(edges, cost, 0, edgeCnt);
+
+		UnionFind uf = new UnionFind(n);
+		int selected = 0;
+		long total = 0;
+		for (int i = 0; selected < n - 1 && i < edgeCnt; i++) {
+			int j = isMinimum ? i : edgeCnt - i - 1;
+			int e = edges[j], u = dest[e], v = dest[e + 1];
+			if (uf.union(u, v)) {
+				total += cost[e];
+				selected++;
+			}
+		}
+		return total;
+	}
 }

@@ -74,7 +74,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD               |
 | [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                           |
 | [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                    |
-| [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域木）※Edmonds 📝                                              |
+| [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝                   |
 | [Graph/ShortestPath](./docs/graph/ShortestPath)                   | Dijkstra・Bellman-Ford・Warshall-Floyd（負閉路の影響範囲判定）                           |
 | [Graph/TwoSat](./docs/graph/TwoSat)                               | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                                      |
 | [Math/Combinatorics](./docs/math/Combinatorics)                   | 組み合わせ数・順列数・重複組み合わせ・スターリング数・ベル数などの組合せ論ユーティリティ |

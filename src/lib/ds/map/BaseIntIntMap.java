@@ -2,15 +2,29 @@ package lib.ds.map;
 
 import static java.lang.Math.*;
 
-import java.util.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
 public final class BaseIntIntMap {
 	private int[] keys, values, stamps;
-	private int stamp, size, capacity, occupied, resizeThreshold, mask;
+	private final int defaultValue;
+	private int stamp;
+	private int size;
+	private int capacity;
+	private int occupied;
+	private int resizeThreshold;
+	private int mask;
+
+	public BaseIntIntMap() {
+		this(1024, 0);
+	}
 
 	public BaseIntIntMap(final int initialCapacity) {
+		this(initialCapacity, 0);
+	}
+
+	public BaseIntIntMap(final int initialCapacity, final int defaultValue) {
+		this.defaultValue = defaultValue;
 		capacity = normalizeCapacity(initialCapacity);
 		size = 0;
 		occupied = 0;
@@ -40,7 +54,7 @@ public final class BaseIntIntMap {
 			if (s < 0 || keys[hash] != key) continue;
 			return values[hash];
 		}
-		throw new NoSuchElementException();
+		return defaultValue;
 	}
 
 	public int getOrDefault(final int key, final int defaultValue) {

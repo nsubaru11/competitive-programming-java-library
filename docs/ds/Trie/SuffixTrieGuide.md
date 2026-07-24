@@ -33,7 +33,7 @@
 ## 利用例
 
  ```java
- import lib.ds.SuffixTrie;
+ import lib.ds.trie.SuffixTrie;
 
  SuffixTrie strie = new SuffixTrie();
  strie.insert("banana").insert("cabana").insert("band");
