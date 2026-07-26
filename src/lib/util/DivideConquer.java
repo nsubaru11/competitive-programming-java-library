@@ -1,7 +1,6 @@
 package lib.util;
 
 import static java.lang.Math.*;
-import static java.lang.Math.sqrt;
 
 public final class DivideConquer {
 

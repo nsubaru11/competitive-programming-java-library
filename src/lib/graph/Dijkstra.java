@@ -20,7 +20,7 @@ public final class Dijkstra {
 	 * 始点 {@code s} から全頂点への最短距離と経路復元情報を計算します。
 	 *
 	 * @param graph 探索対象のグラフ
-	 * @param s 始点（0-indexed）
+	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
 	public static Result solve(final Graph graph, final int s) {
@@ -62,8 +62,8 @@ public final class Dijkstra {
 	 * 始点 s から終点 g への最短経路のコストをダイクストラ法を用いて計算します。
 	 *
 	 * @param graph 探索対象のグラフ
-	 * @param s 始点（0-indexed）
-	 * @param g 終点（0-indexed）
+	 * @param s     始点（0-indexed）
+	 * @param g     終点（0-indexed）
 	 * @return 始点から終点への最短距離。到達不能な場合は {@link Long#MAX_VALUE}
 	 */
 	public static long dist(final Graph graph, final int s, final int g) {
@@ -88,8 +88,8 @@ public final class Dijkstra {
 	 * 始点 s から終点 g への最短経路をダイクストラ法を用いて計算します。
 	 *
 	 * @param graph 探索対象のグラフ
-	 * @param s 始点（0-indexed）
-	 * @param g 終点（0-indexed）
+	 * @param s     始点（0-indexed）
+	 * @param g     終点（0-indexed）
 	 * @return 始点から終点への最短経路（経路が存在しない場合は null）
 	 */
 	public static int[] path(final Graph graph, final int s, final int g) {

@@ -77,8 +77,7 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 	/**
 	 * init(i)をindex iの自然順序または逆順コストとして持つキューを返します。
 	 */
-	public static <T extends Comparable<? super T>> IndexedPriorityQueue<T> generate(
-			final int n, final IntFunction<? extends T> init, final boolean isDescendingOrder) {
+	public static <T extends Comparable<? super T>> IndexedPriorityQueue<T> generate(final int n, final IntFunction<? extends T> init, final boolean isDescendingOrder) {
 		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, naturalComparator(isDescendingOrder));
 		q.setAll(init);
 		return q;
@@ -87,8 +86,7 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 	/**
 	 * init(i)をindex iのComparator順コストとして持つキューを返します。
 	 */
-	public static <T> IndexedPriorityQueue<T> generate(
-			final int n, final IntFunction<? extends T> init, final Comparator<? super T> comparator) {
+	public static <T> IndexedPriorityQueue<T> generate(final int n, final IntFunction<? extends T> init, final Comparator<? super T> comparator) {
 		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, comparator);
 		q.setAll(init);
 		return q;

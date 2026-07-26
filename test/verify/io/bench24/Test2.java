@@ -1,7 +1,5 @@
 package verify.io.bench24;
 
-import lib.io.*;
-
 import java.io.*;
 import java.lang.management.*;
 
@@ -120,11 +118,6 @@ public final class Test2 {
 		final long mainTotalNs = System.nanoTime() - mainStartNs;
 		final long appTotalNs = System.nanoTime() - PROGRAM_START_NS;
 
-		System.out.println(
-				"RESULT,Test2," + n + "," + STRING_LEN + "," + psn + "," + nextIntNs + "," + nextLongNs + "," + nextNs + ","
-						+ scannerInitNs + "," + nextTotalNs + "," + scannerWithNextTotalNs + "," + sumInt + "," + sumLong + ","
-						+ strHash + "," + printlnIntNs + "," + printlnLongNs + "," + printlnStringNs + "," + printlnBoolNs + ","
-						+ mainTotalNs + "," + appTotalNs
-		);
+		System.out.println("RESULT,Test2," + n + "," + STRING_LEN + "," + psn + "," + nextIntNs + "," + nextLongNs + "," + nextNs + "," + scannerInitNs + "," + nextTotalNs + "," + scannerWithNextTotalNs + "," + sumInt + "," + sumLong + "," + strHash + "," + printlnIntNs + "," + printlnLongNs + "," + printlnStringNs + "," + printlnBoolNs + "," + mainTotalNs + "," + appTotalNs);
 	}
 }

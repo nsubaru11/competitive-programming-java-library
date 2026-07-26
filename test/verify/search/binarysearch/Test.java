@@ -1,8 +1,8 @@
 package verify.search.binarysearch;
 
-import lib.search.*;
-
 import java.util.*;
+
+import lib.search.*;
 
 /**
  * BinarySearchとArrayBinarySearchの使用例とテストケース

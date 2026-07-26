@@ -4,7 +4,9 @@ import java.util.*;
 
 import lib.ds.arrays.*;
 
-/** 配列に対する代表的なアルゴリズムを提供します。 */
+/**
+ * 配列に対する代表的なアルゴリズムを提供します。
+ */
 @SuppressWarnings("unused")
 public final class ArrayUtils {
 	private ArrayUtils() {
@@ -83,7 +85,10 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < runLen >
-	/** 同じ値が連続する最長区間の長さを返します。 */
+
+	/**
+	 * 同じ値が連続する最長区間の長さを返します。
+	 */
 	public static int runLen(final int[] a) {
 		return runLen(a, a.length);
 	}
@@ -140,7 +145,10 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < maxWin >
-	/** 長さkの連続部分列の和の最大値を返します。 */
+
+	/**
+	 * 長さkの連続部分列の和の最大値を返します。
+	 */
 	public static long maxWin(final int[] a, final int k) {
 		return maxWin(a, a.length, k);
 	}
@@ -195,7 +203,10 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < minWin >
-	/** 長さkの連続部分列の和の最小値を返します。 */
+
+	/**
+	 * 長さkの連続部分列の和の最小値を返します。
+	 */
 	public static long minWin(final int[] a, final int k) {
 		return minWin(a, a.length, k);
 	}
@@ -250,7 +261,10 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < winMaxLen >
-	/** 各幅k区間の最大値を担う同一要素が最長で続く位置と区間数を返します。 */
+
+	/**
+	 * 各幅k区間の最大値を担う同一要素が最長で続く位置と区間数を返します。
+	 */
 	public static int[] winMaxLen(final int[] a, final int k) {
 		return winMaxLen(a, a.length, k);
 	}
@@ -367,7 +381,10 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < winMinLen >
-	/** 各幅k区間の最小値を担う同一要素が最長で続く位置と区間数を返します。 */
+
+	/**
+	 * 各幅k区間の最小値を担う同一要素が最長で続く位置と区間数を返します。
+	 */
 	public static int[] winMinLen(final int[] a, final int k) {
 		return winMinLen(a, a.length, k);
 	}
@@ -762,7 +779,10 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < subset >
-	/** 和がtとなる部分集合の個数を半分全列挙で求めます。 */
+
+	/**
+	 * 和がtとなる部分集合の個数を半分全列挙で求めます。
+	 */
 	public static int subsetMitm(final int[] a, final long t) {
 		return subsetMitm(a, a.length, t);
 	}
@@ -839,7 +859,9 @@ public final class ArrayUtils {
 		return ans;
 	}
 
-	/** 和がtとなる部分集合の個数をHashMapによるDPで求めます。 */
+	/**
+	 * 和がtとなる部分集合の個数をHashMapによるDPで求めます。
+	 */
 	public static int subsetDp(final int[] a, final long t) {
 		return subsetDp(a, a.length, t);
 	}
@@ -892,7 +914,9 @@ public final class ArrayUtils {
 		return dp.getOrDefault(t, 0);
 	}
 
-	/** 要素数k、和tとなる部分集合の個数を再帰で求めます。 */
+	/**
+	 * 要素数k、和tとなる部分集合の個数を再帰で求めます。
+	 */
 	public static int subsetRecursion(final int[] a, final long t, final int k) {
 		return subsetRecursion(a, a.length, t, k);
 	}

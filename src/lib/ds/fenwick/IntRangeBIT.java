@@ -1,11 +1,9 @@
 package lib.ds.fenwick;
 
-import lib.ds.IntCollection;
+import java.util.*;
+import java.util.function.*;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntUnaryOperator;
+import lib.ds.*;
 
 /**
  * 競技プログラミング向け Range Update Range Query (区間加算・区間和取得) を提供する int 型特化 BIT。

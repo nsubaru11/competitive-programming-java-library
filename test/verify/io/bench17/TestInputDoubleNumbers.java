@@ -1,7 +1,5 @@
 package verify.io.bench17;
 
-import lib.io.compat17.*;
-
 import java.io.*;
 
 public class TestInputDoubleNumbers {
@@ -110,8 +108,7 @@ public class TestInputDoubleNumbers {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-				if (bufferLength < 0)
-					throw new RuntimeException(new IOException("End of input reached"));
+				if (bufferLength < 0) throw new RuntimeException(new IOException("End of input reached"));
 			}
 			return buffer[pos++];
 		}

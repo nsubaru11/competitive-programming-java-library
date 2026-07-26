@@ -1,10 +1,7 @@
 package lib.ds.fenwick;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.function.BinaryOperator;
-import java.util.function.IntFunction;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * 競技プログラミング向け Binary Indexed Tree（Fenwick Tree）

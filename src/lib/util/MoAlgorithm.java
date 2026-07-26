@@ -24,13 +24,13 @@ public final class MoAlgorithm {
 	/**
 	 * Mo's Algorithm を実行し、各クエリに対する回答（long）を求める。
 	 *
-	 * @param n      列の長さ
-	 * @param queries     各クエリ（{queries[i][0], queries[i][1]} = 閉区間 [l, r]、0-indexed）。
-	 *               {@code FastScanner} 等で {@code l1 r1 / l2 r2 / ... / lq rq} の形式を
-	 *               一括で読み込んだ結果をそのまま渡せる
-	 * @param add    要素 idx を区間に追加する処理
-	 * @param remove 要素 idx を区間から削除する処理
-	 * @param answer 現在の区間に対する回答を取得する処理
+	 * @param n       列の長さ
+	 * @param queries 各クエリ（{queries[i][0], queries[i][1]} = 閉区間 [l, r]、0-indexed）。
+	 *                {@code FastScanner} 等で {@code l1 r1 / l2 r2 / ... / lq rq} の形式を
+	 *                一括で読み込んだ結果をそのまま渡せる
+	 * @param add     要素 idx を区間に追加する処理
+	 * @param remove  要素 idx を区間から削除する処理
+	 * @param answer  現在の区間に対する回答を取得する処理
 	 * @return 各クエリ（[l, r] と同じ順序）に対応する回答
 	 */
 	public static long[] solve(final int n, final int[][] queries, final IntConsumer add, final IntConsumer remove, final LongSupplier answer) {

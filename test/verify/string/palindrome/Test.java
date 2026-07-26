@@ -63,8 +63,7 @@ public class Test {
 		String[] conversionTests = {"abc", "abb", "cbabc"};
 		for (String s : conversionTests) {
 			String palindrome = PalindromeNaive.makePalindrome(s);
-			out.println(s + " -> " + palindrome + " (" +
-					(PalindromeNaive.isPalindrome(palindrome) ? "回文" : "非回文") + ")");
+			out.println(s + " -> " + palindrome + " (" + (PalindromeNaive.isPalindrome(palindrome) ? "回文" : "非回文") + ")");
 		}
 	}
 }

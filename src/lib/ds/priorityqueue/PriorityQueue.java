@@ -217,7 +217,9 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return isEmpty() ? defaultValue : poll();
 	}
 
-	/** 最優先要素を置き換え、置き換え前の値を返します。 */
+	/**
+	 * 最優先要素を置き換え、置き換え前の値を返します。
+	 */
 	public T replaceTop(final T v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -234,7 +236,9 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return size;
 	}
 
-	/** 現在の内部配列容量を返します。 */
+	/**
+	 * 現在の内部配列容量を返します。
+	 */
 	public int capacity() {
 		return capacity;
 	}
@@ -253,7 +257,9 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return size == 0;
 	}
 
-	/** 内部順で要素を走査するIteratorを返します。 */
+	/**
+	 * 内部順で要素を走査するIteratorを返します。
+	 */
 	public Iterator<T> iterator() {
 		return new Iterator<>() {
 			private int i;

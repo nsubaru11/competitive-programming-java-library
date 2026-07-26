@@ -1,11 +1,9 @@
 package lib.ds.fenwick;
 
-import lib.ds.LongCollection;
+import java.util.*;
+import java.util.function.*;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.function.IntToLongFunction;
-import java.util.function.LongBinaryOperator;
+import lib.ds.*;
 
 /**
  * 競技プログラミング向け Range Update Range Query (区間加算・区間和取得) を提供する long 型特化 BIT。

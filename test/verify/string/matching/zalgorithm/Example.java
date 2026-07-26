@@ -13,8 +13,7 @@ public final class Example {
 	}
 
 	public static void main(String[] args) {
-		try (final Scanner sc = new Scanner(System.in);
-		     final PrintWriter out = new PrintWriter(System.out)) {
+		try (final Scanner sc = new Scanner(System.in); final PrintWriter out = new PrintWriter(System.out)) {
 			solve(sc, out);
 		} catch (Exception e) {
 			e.printStackTrace();

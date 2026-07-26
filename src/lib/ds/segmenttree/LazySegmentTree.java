@@ -16,8 +16,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		this(n, operator, identity, (f, x) -> f, (f, g) -> f);
 	}
 
-	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity,
-	                       final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
+	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
 		this.n = n;
 		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
 		this.identity = identity;
@@ -35,8 +34,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		this(data, operator, identity, (f, x) -> f, (f, g) -> f);
 	}
 
-	public LazySegmentTree(final T[] data, final BinaryOperator<T> operator, final T identity,
-	                       final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
+	public LazySegmentTree(final T[] data, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
 		this(data.length, operator, identity, mapping, composition);
 		System.arraycopy(data, 0, tree, size, n);
 		buildAll();

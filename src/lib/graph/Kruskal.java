@@ -15,6 +15,9 @@ import lib.ds.unionfind.*;
  * 計算量は {@code O(|E| log |E|)}、追加メモリは {@code O(|V| + |E|)} です。
  */
 public final class Kruskal {
+	private Kruskal() {
+	}
+
 	/**
 	 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。
 	 * Dual-Pivot Quicksortのエッセンスを採用したプリミティブ実装です。
@@ -84,9 +87,6 @@ public final class Kruskal {
 		int t = a[i];
 		a[i] = a[j];
 		a[j] = t;
-	}
-
-	private Kruskal() {
 	}
 
 	/**

@@ -2,7 +2,7 @@ package lib.math.linearalgebra;
 
 import java.util.*;
 
-import lib.math.number.Fraction;
+import lib.math.number.*;
 
 @SuppressWarnings("unused")
 public final class Matrix {

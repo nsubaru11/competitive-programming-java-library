@@ -10,13 +10,19 @@ import java.util.*;
  * {@code true} となり、採用辺数は通常 {@code |V| - 1} です。
  */
 public final class SpanningForestResult {
-	/** 全域森を構成する辺の総コスト。 */
+	/**
+	 * 全域森を構成する辺の総コスト。
+	 */
 	public final long cost;
 
-	/** 全域森に採用された、入力グラフ上の論理辺ID。 */
+	/**
+	 * 全域森に採用された、入力グラフ上の論理辺ID。
+	 */
 	public final int[] edgeIds;
 
-	/** 入力グラフの連結成分数。 */
+	/**
+	 * 入力グラフの連結成分数。
+	 */
 	public final int componentCount;
 
 	SpanningForestResult(final long cost, final int[] edgeIds, final int componentCount) {
@@ -45,8 +51,6 @@ public final class SpanningForestResult {
 
 	@Override
 	public String toString() {
-		return "cost: " + cost + '\n' +
-				"edgeIds: " + Arrays.toString(edgeIds) + '\n' +
-				"componentCount: " + componentCount;
+		return "cost: " + cost + '\n' + "edgeIds: " + Arrays.toString(edgeIds) + '\n' + "componentCount: " + componentCount;
 	}
 }

@@ -130,12 +130,16 @@ public final class LongCompressedArray implements IntArray {
 		return ArrayBinarySearch.count(sorted, v);
 	}
 
-	/** 圧縮後の順位を元配列順でコピーして返します。 */
+	/**
+	 * 圧縮後の順位を元配列順でコピーして返します。
+	 */
 	public int[] toArray() {
 		return copyOf(compressed, length);
 	}
 
-	/** 圧縮後の順位を元配列順でコピーして返します。 */
+	/**
+	 * 圧縮後の順位を元配列順でコピーして返します。
+	 */
 	public int[] compressed() {
 		return toArray();
 	}

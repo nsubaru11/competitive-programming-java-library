@@ -721,8 +721,7 @@ public final class InteractiveScanner implements AutoCloseable {
 		for (int a = 1; a <= x; a++)
 			for (int b = 1; b <= y; b++)
 				for (int c = 1; c <= z; c++)
-					ps[a][b][c] = nextInt() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c]
-							- ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
+					ps[a][b][c] = nextInt() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c] - ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
 		return ps;
 	}
 
@@ -731,8 +730,7 @@ public final class InteractiveScanner implements AutoCloseable {
 		for (int a = 1; a <= x; a++)
 			for (int b = 1; b <= y; b++)
 				for (int c = 1; c <= z; c++)
-					ps[a][b][c] = nextLong() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c]
-							- ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
+					ps[a][b][c] = nextLong() + ps[a - 1][b][c] + ps[a][b - 1][c] + ps[a][b][c - 1] - ps[a - 1][b - 1][c] - ps[a - 1][b][c - 1] - ps[a][b - 1][c - 1] + ps[a - 1][b - 1][c - 1];
 		return ps;
 	}
 

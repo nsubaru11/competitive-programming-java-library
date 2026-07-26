@@ -1,9 +1,9 @@
 package verify.graph;
 
+import java.util.*;
+
 import lib.graph.*;
 import lib.io.compat17.*;
-
-import java.util.*;
 
 /**
  * 各アルゴリズム（Dijkstra, Bellman-Ford, Warshall-Floyd）による最短経路計算の例。

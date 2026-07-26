@@ -1,11 +1,9 @@
 package lib.ds.fenwick;
 
-import lib.ds.IntCollection;
+import java.util.*;
+import java.util.function.*;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntUnaryOperator;
+import lib.ds.*;
 
 /**
  * 競技プログラミング向け Binary Indexed Tree (Fenwick Tree) の int 型特化実装。

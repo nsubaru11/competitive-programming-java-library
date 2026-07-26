@@ -188,7 +188,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return isEmpty() ? defaultValue : peek();
 	}
 
-	/** 最優先indexを返します。 */
+	/**
+	 * 最優先indexを返します。
+	 */
 	public int peekIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -202,7 +204,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return isEmpty() ? defaultIndex : peekIndex();
 	}
 
-	/** 2番目に優先されるコストを返します。 */
+	/**
+	 * 2番目に優先されるコストを返します。
+	 */
 	public int peekSecond() {
 		if (size < 2) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -210,7 +214,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
 	}
 
-	/** 最優先要素を削除してコストを返します。 */
+	/**
+	 * 最優先要素を削除してコストを返します。
+	 */
 	public int poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -228,7 +234,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return isEmpty() ? defaultValue : poll();
 	}
 
-	/** 最優先要素を削除してindexを返します。 */
+	/**
+	 * 最優先要素を削除してindexを返します。
+	 */
 	public int pollIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -261,7 +269,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return true;
 	}
 
-	/** activeなindexのコストを返します。 */
+	/**
+	 * activeなindexのコストを返します。
+	 */
 	public int get(final int i) {
 		if (!isActive(i)) throw new NoSuchElementException();
 		return cost[i];
@@ -274,13 +284,17 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return isActive(i) ? cost[i] : defaultValue;
 	}
 
-	/** 現在世代で最後に記録したコストを返します。 */
+	/**
+	 * 現在世代で最後に記録したコストを返します。
+	 */
 	public int getLast(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	/** 現在世代で未追加ならdefaultValueを返します。 */
+	/**
+	 * 現在世代で未追加ならdefaultValueを返します。
+	 */
 	public int getLastOrDefault(final int i, final int defaultValue) {
 		return isUnseen(i) ? defaultValue : cost[i];
 	}
@@ -299,7 +313,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return cost.length;
 	}
 
-	/** キューと現在世代のコスト記録を論理的に削除します。 */
+	/**
+	 * キューと現在世代のコスト記録を論理的に削除します。
+	 */
 	public void clear() {
 		size = unsortedCount = 0;
 		stamp--;
@@ -312,12 +328,16 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return isActive(i);
 	}
 
-	/** indexに現在世代のコスト記録があるか判定します。 */
+	/**
+	 * indexに現在世代のコスト記録があるか判定します。
+	 */
 	public boolean hasCost(final int i) {
 		return !isUnseen(i);
 	}
 
-	/** activeなコストを内部順で走査するIteratorを返します。 */
+	/**
+	 * activeなコストを内部順で走査するIteratorを返します。
+	 */
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
 			private int i;

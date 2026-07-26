@@ -1,15 +1,12 @@
 package verify.ds.fenwick.longbit;
 
-import lib.ds.fenwick.LongBIT;
-import lib.io.compat17.FastPrinter;
-import lib.io.compat17.FastScanner;
+import static java.util.Arrays.*;
 
-import java.util.Arrays;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
-import static java.util.Arrays.deepToString;
-import static java.util.Arrays.stream;
+import lib.ds.fenwick.*;
+import lib.io.compat17.*;
 
 // https://judge.yosupo.jp/problem/static_range_sum
 public final class Check1 {
@@ -32,7 +29,7 @@ public final class Check1 {
 		while (q-- > 0) {
 			int l = sc.nextInt();
 			int r = sc.nextInt();
-            out.println(bit.sum(l, r - 1));
+			out.println(bit.sum(l, r - 1));
 		}
 	}
 
@@ -50,8 +47,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else
-				System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -60,8 +56,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else
-				System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

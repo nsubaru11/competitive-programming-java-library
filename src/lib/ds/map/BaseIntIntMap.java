@@ -6,8 +6,8 @@ import java.util.function.*;
 
 @SuppressWarnings("unused")
 public final class BaseIntIntMap {
-	private int[] keys, values, stamps;
 	private final int defaultValue;
+	private int[] keys, values, stamps;
 	private int stamp;
 	private int size;
 	private int capacity;

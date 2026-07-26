@@ -135,7 +135,9 @@ public final class IntPriorityQueue implements IntCollection {
 		return changed;
 	}
 
-	/** 最優先要素を返します。 */
+	/**
+	 * 最優先要素を返します。
+	 */
 	public int peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -177,7 +179,9 @@ public final class IntPriorityQueue implements IntCollection {
 		return isEmpty() ? defaultValue : poll();
 	}
 
-	/** 最優先要素を置き換え、置き換え前の値を返します。 */
+	/**
+	 * 最優先要素を置き換え、置き換え前の値を返します。
+	 */
 	public int replaceTop(final int v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -187,7 +191,9 @@ public final class IntPriorityQueue implements IntCollection {
 		return res;
 	}
 
-	/** 現在の要素数を返します。 */
+	/**
+	 * 現在の要素数を返します。
+	 */
 	public int size() {
 		return size;
 	}
@@ -206,7 +212,9 @@ public final class IntPriorityQueue implements IntCollection {
 		size = unsortedCount = 0;
 	}
 
-	/** 内部順で要素を走査するIteratorを返します。 */
+	/**
+	 * 内部順で要素を走査するIteratorを返します。
+	 */
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
 			private int i;

@@ -1,10 +1,9 @@
 package lib.ds.fenwick;
 
-import lib.ds.LongCollection;
+import java.util.*;
+import java.util.function.*;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.function.LongBinaryOperator;
+import lib.ds.*;
 
 /**
  * 競技プログラミング向け 2次元 Binary Indexed Tree (Fenwick Tree) の long 型特化実装。

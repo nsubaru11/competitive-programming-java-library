@@ -1,7 +1,5 @@
 package verify.io.bench17;
 
-import lib.io.compat17.*;
-
 import static java.util.Arrays.*;
 
 import java.io.*;
@@ -86,8 +84,7 @@ public class TestInputLongArray {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-				if (bufferLength < 0)
-					throw new RuntimeException(new IOException("End of input reached"));
+				if (bufferLength < 0) throw new RuntimeException(new IOException("End of input reached"));
 			}
 			return buffer[pos++];
 		}

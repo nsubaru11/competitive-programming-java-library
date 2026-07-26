@@ -1,12 +1,12 @@
 package verify.io.bench17;
 
-import lib.io.compat17.*;
-
 import static java.lang.Math.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+
+import lib.io.compat17.*;
 
 public final class GenerateTestCase {
 	private static final long DEFAULT_COUNT = 10_000_0000L;

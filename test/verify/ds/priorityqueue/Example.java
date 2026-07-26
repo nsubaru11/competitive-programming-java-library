@@ -1,6 +1,6 @@
 package verify.ds.priorityqueue;
 
-import lib.ds.priorityqueue.IntPriorityQueue;
+import lib.ds.priorityqueue.*;
 
 public final class Example {
 

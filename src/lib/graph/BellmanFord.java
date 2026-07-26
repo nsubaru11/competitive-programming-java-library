@@ -20,7 +20,7 @@ public final class BellmanFord {
 	 * 始点 {@code s} から全頂点への最短距離を計算します。
 	 *
 	 * @param graph 探索対象のグラフ
-	 * @param s 始点（0-indexed）
+	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
 	public static Result solve(final Graph graph, final int s) {

@@ -42,9 +42,7 @@ public final class RadixTrie {
 
 	private int getMatchLength(String word, int wordPos, String prefix) {
 		int len = 0;
-		while (len < prefix.length() &&
-				wordPos + len < word.length() &&
-				word.charAt(wordPos + len) == prefix.charAt(len)) {
+		while (len < prefix.length() && wordPos + len < word.length() && word.charAt(wordPos + len) == prefix.charAt(len)) {
 			len++;
 		}
 		return len;
@@ -58,8 +56,7 @@ public final class RadixTrie {
 		String remainder = oldPrefix.substring(splitPos);
 
 		Node newNode = new Node(newPrefix, false);
-		newNode.children.put(remainder.charAt(0),
-				new Node(remainder, child.end));
+		newNode.children.put(remainder.charAt(0), new Node(remainder, child.end));
 
 		// 元の子の children を移動
 		newNode.children.get(remainder.charAt(0)).children = child.children;

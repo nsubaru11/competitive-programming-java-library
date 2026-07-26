@@ -48,7 +48,8 @@ final class GregCal {
 		long lo = 0, hi = days / 365 + 1;
 		while (lo < hi) {
 			long mid = (lo + hi + 1) >>> 1;
-			if (beforeYear(mid) <= days) lo = mid; else hi = mid - 1;
+			if (beforeYear(mid) <= days) lo = mid;
+			else hi = mid - 1;
 		}
 		long y = lo;
 		long r = days - beforeYear(y); // 年内日 (0-based)
@@ -154,14 +155,16 @@ final class FixedCal {
 		long lo = 0, hi = days / commonLen + 1;
 		while (lo < hi) {
 			long mid = (lo + hi + 1) >>> 1;
-			if (beforeYear(mid) <= days) lo = mid; else hi = mid - 1;
+			if (beforeYear(mid) <= days) lo = mid;
+			else hi = mid - 1;
 		}
 		long y = lo;
 		long r = days - beforeYear(y);
 		long ml = 1, mh = mcnt;
 		while (ml < mh) {
 			long mid = (ml + mh + 1) >>> 1;
-			if (beforeMonth(y, (int) mid) <= r) ml = mid; else mh = mid - 1;
+			if (beforeMonth(y, (int) mid) <= r) ml = mid;
+			else mh = mid - 1;
 		}
 		int m = (int) ml;
 		int day = (int) (r - beforeMonth(y, m)) + 1;

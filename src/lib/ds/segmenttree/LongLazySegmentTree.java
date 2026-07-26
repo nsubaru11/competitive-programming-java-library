@@ -17,8 +17,7 @@ public final class LongLazySegmentTree implements Iterable<Long> {
 		this(n, operator, identity, DEFAULT_MAPPING, DEFAULT_COMPOSITION);
 	}
 
-	public LongLazySegmentTree(final int n, final LongBinaryOperator operator, final long identity,
-	                           final LongBinaryOperator mapping, final LongBinaryOperator composition) {
+	public LongLazySegmentTree(final int n, final LongBinaryOperator operator, final long identity, final LongBinaryOperator mapping, final LongBinaryOperator composition) {
 		this.n = n;
 		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
 		this.identity = identity;
@@ -36,8 +35,7 @@ public final class LongLazySegmentTree implements Iterable<Long> {
 		this(data, operator, identity, DEFAULT_MAPPING, DEFAULT_COMPOSITION);
 	}
 
-	public LongLazySegmentTree(final long[] data, final LongBinaryOperator operator, final long identity,
-	                           final LongBinaryOperator mapping, final LongBinaryOperator composition) {
+	public LongLazySegmentTree(final long[] data, final LongBinaryOperator operator, final long identity, final LongBinaryOperator mapping, final LongBinaryOperator composition) {
 		this(data.length, operator, identity, mapping, composition);
 		System.arraycopy(data, 0, tree, size, n);
 		buildAll();

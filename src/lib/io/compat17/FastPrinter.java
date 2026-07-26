@@ -1485,12 +1485,7 @@ public final class FastPrinter implements AutoCloseable {
 	private static final class Cache {
 		private static final short[] DIGITS_2 = new short[100];
 		private static final int[] DIGITS_3 = new int[1000];
-		private static final long[] POW10 = {
-				1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000,
-				1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L,
-				10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L,
-				10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L
-		};
+		private static final long[] POW10 = {1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 1_000_000_000, 10_000_000_000L, 100_000_000_000L, 1_000_000_000_000L, 10_000_000_000_000L, 100_000_000_000_000L, 1_000_000_000_000_000L, 10_000_000_000_000_000L, 100_000_000_000_000_000L, 1_000_000_000_000_000_000L};
 		private static final Unsafe UNSAFE;
 		private static final long BYTE_ARRAY_BASE_OFFSET;
 		private static final long STRING_VALUE_OFFSET;

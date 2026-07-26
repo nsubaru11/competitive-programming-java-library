@@ -77,14 +77,16 @@ final class PeriodCal {
 		long lo = 0, hi = days / commonLen + 1;
 		while (lo < hi) {
 			long mid = (lo + hi + 1) >>> 1;
-			if (beforeYear(mid) <= days) lo = mid; else hi = mid - 1;
+			if (beforeYear(mid) <= days) lo = mid;
+			else hi = mid - 1;
 		}
 		long y = lo;
 		long r = days - beforeYear(y);
 		long ml = 1, mh = mcnt;
 		while (ml < mh) {
 			long mid = (ml + mh + 1) >>> 1;
-			if (beforeMonth(y, (int) mid) <= r) ml = mid; else mh = mid - 1;
+			if (beforeMonth(y, (int) mid) <= r) ml = mid;
+			else mh = mid - 1;
 		}
 		int m = (int) ml;
 		int day = (int) (r - beforeMonth(y, m)) + 1;
@@ -125,7 +127,8 @@ final class PeriodCal {
 		int lo = 0, hi = leapRems.length;
 		while (lo < hi) {
 			int mid = (lo + hi) >>> 1;
-			if (leapRems[mid] > r) hi = mid; else lo = mid + 1;
+			if (leapRems[mid] > r) hi = mid;
+			else lo = mid + 1;
 		}
 		return lo;
 	}
@@ -135,7 +138,8 @@ final class PeriodCal {
 		int lo = 0, hi = leapRems.length;
 		while (lo < hi) {
 			int mid = (lo + hi) >>> 1;
-			if (leapRems[mid] < r) lo = mid + 1; else hi = mid;
+			if (leapRems[mid] < r) lo = mid + 1;
+			else hi = mid;
 		}
 		return lo - 1;
 	}

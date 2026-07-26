@@ -118,7 +118,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		else siftDown(i, p, sortedSize);
 	}
 
-	/** 全indexをinit(i)のコストで登録します。 */
+	/**
+	 * 全indexをinit(i)のコストで登録します。
+	 */
 	public void setAll(final IntToLongFunction init) {
 		clear();
 		size = cost.length;
@@ -171,7 +173,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return true;
 	}
 
-	/** 最優先コストを返します。 */
+	/**
+	 * 最優先コストを返します。
+	 */
 	public long peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -185,7 +189,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultValue : peek();
 	}
 
-	/** 最優先indexを返します。 */
+	/**
+	 * 最優先indexを返します。
+	 */
 	public int peekIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -199,7 +205,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultIndex : peekIndex();
 	}
 
-	/** 2番目に優先されるコストを返します。 */
+	/**
+	 * 2番目に優先されるコストを返します。
+	 */
 	public long peekSecond() {
 		if (size < 2) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -207,7 +215,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
 	}
 
-	/** 最優先要素を削除してコストを返します。 */
+	/**
+	 * 最優先要素を削除してコストを返します。
+	 */
 	public long poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -225,7 +235,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultValue : poll();
 	}
 
-	/** 最優先要素を削除してindexを返します。 */
+	/**
+	 * 最優先要素を削除してindexを返します。
+	 */
 	public int pollIndex() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -242,7 +254,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultIndex : pollIndex();
 	}
 
-	/** activeなindexを削除します。 */
+	/**
+	 * activeなindexを削除します。
+	 */
 	public boolean remove(final int i) {
 		if (!isActive(i)) return false;
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -256,24 +270,32 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return true;
 	}
 
-	/** activeなindexのコストを返します。 */
+	/**
+	 * activeなindexのコストを返します。
+	 */
 	public long get(final int i) {
 		if (!isActive(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	/** activeでなければdefaultValueを返します。 */
+	/**
+	 * activeでなければdefaultValueを返します。
+	 */
 	public long getOrDefault(final int i, final long defaultValue) {
 		return isActive(i) ? cost[i] : defaultValue;
 	}
 
-	/** 現在世代で最後に記録したコストを返します。 */
+	/**
+	 * 現在世代で最後に記録したコストを返します。
+	 */
 	public long getLast(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	/** 現在世代で未追加ならdefaultValueを返します。 */
+	/**
+	 * 現在世代で未追加ならdefaultValueを返します。
+	 */
 	public long getLastOrDefault(final int i, final long defaultValue) {
 		return isUnseen(i) ? defaultValue : cost[i];
 	}
@@ -285,18 +307,24 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return size;
 	}
 
-	/** 使用可能なindex数を返します。 */
+	/**
+	 * 使用可能なindex数を返します。
+	 */
 	public int indexCount() {
 		return cost.length;
 	}
 
-	/** キューと現在世代のコスト記録を論理的に削除します。 */
+	/**
+	 * キューと現在世代のコスト記録を論理的に削除します。
+	 */
 	public void clear() {
 		size = unsortedCount = 0;
 		stamp--;
 	}
 
-	/** indexがactiveか判定します。 */
+	/**
+	 * indexがactiveか判定します。
+	 */
 	public boolean containsIndex(final int i) {
 		return isActive(i);
 	}
@@ -308,7 +336,9 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return !isUnseen(i);
 	}
 
-	/** activeなコストを内部順で走査するIteratorを返します。 */
+	/**
+	 * activeなコストを内部順で走査するIteratorを返します。
+	 */
 	public PrimitiveIterator.OfLong iterator() {
 		return new PrimitiveIterator.OfLong() {
 			private int i;

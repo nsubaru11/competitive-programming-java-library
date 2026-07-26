@@ -1,10 +1,10 @@
 package verify.util.moalgorithm;
 
-import lib.util.*;
+import static java.lang.System.*;
 
 import java.util.*;
 
-import static java.lang.System.*;
+import lib.util.*;
 
 public final class Example {
 
@@ -17,10 +17,7 @@ public final class Example {
 		final int[] freq = new int[Arrays.stream(a).max().orElse(0) + 1];
 		final long[] cur = {0L};
 
-		final long[] ans = MoAlgorithm.solve(n, lr,
-				i -> cur[0] += freq[a[i]]++,
-				i -> cur[0] -= --freq[a[i]],
-				() -> cur[0]);
+		final long[] ans = MoAlgorithm.solve(n, lr, i -> cur[0] += freq[a[i]]++, i -> cur[0] -= --freq[a[i]], () -> cur[0]);
 
 		out.println(Arrays.toString(ans)); // [4, 1]
 	}

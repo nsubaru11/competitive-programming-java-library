@@ -1,8 +1,8 @@
 package verify.io.compat17;
 
-import lib.io.compat17.*;
-
 import java.util.*;
+
+import lib.io.compat17.*;
 
 public class Example {
 

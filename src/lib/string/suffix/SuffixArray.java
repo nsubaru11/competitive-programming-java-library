@@ -18,11 +18,9 @@ public final class SuffixArray {
 		for (int i = 0; i < n; i++) suffixes[i] = i;
 
 		// ソート（簡易版、実用は SA-IS アルゴリズム）
-		java.util.Arrays.sort(suffixes, (a, b) ->
-				s.substring(a).compareTo(s.substring(b)));
+		java.util.Arrays.sort(suffixes, (a, b) -> s.substring(a).compareTo(s.substring(b)));
 
-		return java.util.Arrays.stream(suffixes)
-				.mapToInt(Integer::intValue).toArray();
+		return java.util.Arrays.stream(suffixes).mapToInt(Integer::intValue).toArray();
 	}
 
 	private int[] buildLCP() {
@@ -37,8 +35,7 @@ public final class SuffixArray {
 			if (rank[i] == 0) continue;
 
 			int j = sa[rank[i] - 1];
-			while (i + h < n && j + h < n &&
-					text.charAt(i + h) == text.charAt(j + h)) {
+			while (i + h < n && j + h < n && text.charAt(i + h) == text.charAt(j + h)) {
 				h++;
 			}
 			lcp[rank[i]] = h;
@@ -58,7 +55,6 @@ public final class SuffixArray {
 				right = mid;
 			}
 		}
-		return left < sa.length &&
-				text.substring(sa[left]).startsWith(pattern);
+		return left < sa.length && text.substring(sa[left]).startsWith(pattern);
 	}
 }

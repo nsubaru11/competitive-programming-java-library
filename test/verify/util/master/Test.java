@@ -1,10 +1,10 @@
 package verify.util.master;
 
-import lib.util.*;
-
 import static java.lang.System.*;
 
 import java.util.*;
+
+import lib.util.*;
 
 public final class Test {
 

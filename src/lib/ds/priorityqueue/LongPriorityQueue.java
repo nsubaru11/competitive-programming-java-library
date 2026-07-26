@@ -135,7 +135,9 @@ public final class LongPriorityQueue implements LongCollection {
 		return changed;
 	}
 
-	/** 最優先要素を返します。 */
+	/**
+	 * 最優先要素を返します。
+	 */
 	public long peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -159,7 +161,9 @@ public final class LongPriorityQueue implements LongCollection {
 		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
 	}
 
-	/** 最優先要素を削除して返します。 */
+	/**
+	 * 最優先要素を削除して返します。
+	 */
 	public long poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -175,7 +179,9 @@ public final class LongPriorityQueue implements LongCollection {
 		return isEmpty() ? defaultValue : poll();
 	}
 
-	/** 最優先要素を置き換え、置き換え前の値を返します。 */
+	/**
+	 * 最優先要素を置き換え、置き換え前の値を返します。
+	 */
 	public long replaceTop(final long v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -206,7 +212,9 @@ public final class LongPriorityQueue implements LongCollection {
 		size = unsortedCount = 0;
 	}
 
-	/** 内部順で要素を走査するIteratorを返します。 */
+	/**
+	 * 内部順で要素を走査するIteratorを返します。
+	 */
 	public PrimitiveIterator.OfLong iterator() {
 		return new PrimitiveIterator.OfLong() {
 			private int i;

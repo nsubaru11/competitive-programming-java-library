@@ -1,8 +1,8 @@
 package verify.io;
 
-import lib.io.*;
-
 import java.util.*;
+
+import lib.io.*;
 
 public class Example {
 

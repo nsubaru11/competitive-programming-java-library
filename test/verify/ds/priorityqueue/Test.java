@@ -362,6 +362,5 @@ public final class Test {
 		}
 	}
 
-	private record Job(int priority, String name) {
-	}
+	private record Job(int priority, String name) {}
 }

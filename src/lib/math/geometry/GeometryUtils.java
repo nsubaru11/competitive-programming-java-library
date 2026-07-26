@@ -150,8 +150,7 @@ public final class GeometryUtils {
 	 * <li>-7：交差していない場合（非平行・非垂直、ねじれの位置にある場合を含む）</li>
 	 * </ul>
 	 */
-	public static int crossLine3D(double x11, double y11, double z11, double x12, double y12, double z12,
-	                              double x21, double y21, double z21, double x22, double y22, double z22) {
+	public static int crossLine3D(double x11, double y11, double z11, double x12, double y12, double z12, double x21, double y21, double z21, double x22, double y22, double z22) {
 
 		double dx1 = x12 - x11, dy1 = y12 - y11, dz1 = z12 - z11;
 		double dx2 = x22 - x21, dy2 = y22 - y21, dz2 = z22 - z21;
@@ -171,9 +170,7 @@ public final class GeometryUtils {
 			// 線分1の始点と線分2の始点を結ぶベクトルと、線分1の方向ベクトルの外積を計算し、
 			// 2つの線分が同一直線上にあるか (collinear) を判定
 			double dx1_21 = x11 - x21, dy1_21 = y11 - y21, dz1_21 = z11 - z21;
-			double collinearCheck = (dy1 * dz1_21 - dz1 * dy1_21) * (dy1 * dz1_21 - dz1 * dy1_21) +
-					(dz1 * dx1_21 - dx1 * dz1_21) * (dz1 * dx1_21 - dx1 * dz1_21) +
-					(dx1 * dy1_21 - dy1 * dx1_21) * (dx1 * dy1_21 - dy1 * dx1_21);
+			double collinearCheck = (dy1 * dz1_21 - dz1 * dy1_21) * (dy1 * dz1_21 - dz1 * dy1_21) + (dz1 * dx1_21 - dx1 * dz1_21) * (dz1 * dx1_21 - dx1 * dz1_21) + (dx1 * dy1_21 - dy1 * dx1_21) * (dx1 * dy1_21 - dy1 * dx1_21);
 
 			// 同一直線上にない場合（平行で離れている）
 			if (collinearCheck > EPSILON * EPSILON) {
@@ -191,8 +188,8 @@ public final class GeometryUtils {
 			boolean eqP12P22 = abs(x12 - x22) < EPSILON && abs(y12 - y22) < EPSILON && abs(z12 - z22) < EPSILON;
 
 			if ((eqP11P21 && eqP12P22) || (eqP11P22 && eqP12P21)) return 0; // 完全に一致
-			if ((eqP11P21 && !onLine12 && !onLine22) || (eqP11P22 && !onLine12 && !onLine21) ||
-					(eqP12P21 && !onLine11 && !onLine22) || (eqP12P22 && !onLine11 && !onLine21)) return -2; // 端点で接する
+			if ((eqP11P21 && !onLine12 && !onLine22) || (eqP11P22 && !onLine12 && !onLine21) || (eqP12P21 && !onLine11 && !onLine22) || (eqP12P22 && !onLine11 && !onLine21))
+				return -2; // 端点で接する
 			if (onLine11 || onLine12 || onLine21 || onLine22) return -1; // 一部分を共有
 			return -5; // 同一直線上だが離れている
 		}
@@ -333,25 +330,21 @@ public final class GeometryUtils {
 		}
 
 		// 完全に等しいかを確認
-		boolean isEqual = abs(x11 - x21) < EPSILON && abs(x12 - x22) < EPSILON &&
-				abs(y11 - y21) < EPSILON && abs(y12 - y22) < EPSILON;
+		boolean isEqual = abs(x11 - x21) < EPSILON && abs(x12 - x22) < EPSILON && abs(y11 - y21) < EPSILON && abs(y12 - y22) < EPSILON;
 		if (isEqual) {
 			return 0;
 		}
 
 		// 一方が他方を含むかを確認
-		boolean rect1ContainsRect2 = x11 <= x21 + EPSILON && x22 <= x12 + EPSILON &&
-				y11 <= y21 + EPSILON && y22 <= y12 + EPSILON;
-		boolean rect2ContainsRect1 = x21 <= x11 + EPSILON && x12 <= x22 + EPSILON &&
-				y21 <= y11 + EPSILON && y12 <= y22 + EPSILON;
+		boolean rect1ContainsRect2 = x11 <= x21 + EPSILON && x22 <= x12 + EPSILON && y11 <= y21 + EPSILON && y22 <= y12 + EPSILON;
+		boolean rect2ContainsRect1 = x21 <= x11 + EPSILON && x12 <= x22 + EPSILON && y21 <= y11 + EPSILON && y12 <= y22 + EPSILON;
 
 		if (rect1ContainsRect2 || rect2ContainsRect1) {
 			return -1;
 		}
 
 		// 交差判定
-		boolean noIntersect = x12 + EPSILON < x21 || x22 + EPSILON < x11 ||
-				y12 + EPSILON < y21 || y22 + EPSILON < y11;
+		boolean noIntersect = x12 + EPSILON < x21 || x22 + EPSILON < x11 || y12 + EPSILON < y21 || y22 + EPSILON < y11;
 
 		// 交差していない場合
 		if (noIntersect) {
@@ -359,26 +352,19 @@ public final class GeometryUtils {
 		}
 
 		// 頂点のみで接しているかを確認
-		boolean cornerOnly = (abs(x12 - x21) < EPSILON && abs(y12 - y21) < EPSILON) ||
-				(abs(x12 - x21) < EPSILON && abs(y11 - y22) < EPSILON) ||
-				(abs(x11 - x22) < EPSILON && abs(y12 - y21) < EPSILON) ||
-				(abs(x11 - x22) < EPSILON && abs(y11 - y22) < EPSILON);
+		boolean cornerOnly = (abs(x12 - x21) < EPSILON && abs(y12 - y21) < EPSILON) || (abs(x12 - x21) < EPSILON && abs(y11 - y22) < EPSILON) || (abs(x11 - x22) < EPSILON && abs(y12 - y21) < EPSILON) || (abs(x11 - x22) < EPSILON && abs(y11 - y22) < EPSILON);
 		if (cornerOnly) {
 			return -2;
 		}
 
 		// 辺で接しているかを確認
-		boolean edgeOnly = abs(x12 - x21) < EPSILON || abs(x11 - x22) < EPSILON ||
-				abs(y12 - y21) < EPSILON || abs(y11 - y22) < EPSILON;
+		boolean edgeOnly = abs(x12 - x21) < EPSILON || abs(x11 - x22) < EPSILON || abs(y12 - y21) < EPSILON || abs(y11 - y22) < EPSILON;
 		if (edgeOnly) {
 			return -3;
 		}
 
 		// 辺で交差しているかを確認
-		boolean edgeCross = (x11 < x21 && x21 < x12 && x12 < x22) ||
-				(x21 < x11 && x11 < x22 && x22 < x12) ||
-				(y11 < y21 && y21 < y12 && y12 < y22) ||
-				(y21 < y11 && y11 < y22 && y22 < y12);
+		boolean edgeCross = (x11 < x21 && x21 < x12 && x12 < x22) || (x21 < x11 && x11 < x22 && x22 < x12) || (y11 < y21 && y21 < y12 && y12 < y22) || (y21 < y11 && y11 < y22 && y22 < y12);
 		if (edgeCross) {
 			return 2;
 		}
@@ -414,8 +400,7 @@ public final class GeometryUtils {
 	 * <li>-5：直方体が交差していない場合</li>
 	 * </ul>
 	 */
-	public static int crossRect3D(double x11, double y11, double z11, double x12, double y12, double z12,
-	                              double x21, double y21, double z21, double x22, double y22, double z22) {
+	public static int crossRect3D(double x11, double y11, double z11, double x12, double y12, double z12, double x21, double y21, double z21, double x22, double y22, double z22) {
 		if (x11 > x12) {
 			double temp = x11;
 			x11 = x12;
@@ -448,30 +433,22 @@ public final class GeometryUtils {
 		}
 
 		// 完全に等しいかを確認
-		boolean isEqual = abs(x11 - x21) < EPSILON && abs(x12 - x22) < EPSILON &&
-				abs(y11 - y21) < EPSILON && abs(y12 - y22) < EPSILON &&
-				abs(z11 - z21) < EPSILON && abs(z12 - z22) < EPSILON;
+		boolean isEqual = abs(x11 - x21) < EPSILON && abs(x12 - x22) < EPSILON && abs(y11 - y21) < EPSILON && abs(y12 - y22) < EPSILON && abs(z11 - z21) < EPSILON && abs(z12 - z22) < EPSILON;
 		if (isEqual) {
 			return 0;
 		}
 
 		// 一方が他方を含むかを確認
-		boolean box1ContainsBox2 = x11 <= x21 + EPSILON && x22 <= x12 + EPSILON &&
-				y11 <= y21 + EPSILON && y22 <= y12 + EPSILON &&
-				z11 <= z21 + EPSILON && z22 <= z12 + EPSILON;
+		boolean box1ContainsBox2 = x11 <= x21 + EPSILON && x22 <= x12 + EPSILON && y11 <= y21 + EPSILON && y22 <= y12 + EPSILON && z11 <= z21 + EPSILON && z22 <= z12 + EPSILON;
 
-		boolean box2ContainsBox1 = x21 <= x11 + EPSILON && x12 <= x22 + EPSILON &&
-				y21 <= y11 + EPSILON && y12 <= y22 + EPSILON &&
-				z21 <= z11 + EPSILON && z12 <= z22 + EPSILON;
+		boolean box2ContainsBox1 = x21 <= x11 + EPSILON && x12 <= x22 + EPSILON && y21 <= y11 + EPSILON && y12 <= y22 + EPSILON && z21 <= z11 + EPSILON && z12 <= z22 + EPSILON;
 
 		if (box1ContainsBox2 || box2ContainsBox1) {
 			return -1;
 		}
 
 		// 交差判定
-		boolean noIntersect = x12 + EPSILON < x21 || x22 + EPSILON < x11 ||
-				y12 + EPSILON < y21 || y22 + EPSILON < y11 ||
-				z12 + EPSILON < z21 || z22 + EPSILON < z11;
+		boolean noIntersect = x12 + EPSILON < x21 || x22 + EPSILON < x11 || y12 + EPSILON < y21 || y22 + EPSILON < y11 || z12 + EPSILON < z21 || z22 + EPSILON < z11;
 
 		// 交差していない場合
 		if (noIntersect) {
@@ -479,59 +456,35 @@ public final class GeometryUtils {
 		}
 
 		// 頂点のみで接しているかを確認
-		boolean cornerOnly = (abs(x12 - x21) < EPSILON && abs(y12 - y21) < EPSILON && abs(z12 - z21) < EPSILON) ||
-				(abs(x12 - x21) < EPSILON && abs(y12 - y21) < EPSILON && abs(z11 - z22) < EPSILON) ||
-				(abs(x12 - x21) < EPSILON && abs(y11 - y22) < EPSILON && abs(z12 - z21) < EPSILON) ||
-				(abs(x12 - x21) < EPSILON && abs(y11 - y22) < EPSILON && abs(z11 - z22) < EPSILON) ||
-				(abs(x11 - x22) < EPSILON && abs(y12 - y21) < EPSILON && abs(z12 - z21) < EPSILON) ||
-				(abs(x11 - x22) < EPSILON && abs(y12 - y21) < EPSILON && abs(z11 - z22) < EPSILON) ||
-				(abs(x11 - x22) < EPSILON && abs(y11 - y22) < EPSILON && abs(z12 - z21) < EPSILON) ||
-				(abs(x11 - x22) < EPSILON && abs(y11 - y22) < EPSILON && abs(z11 - z22) < EPSILON);
+		boolean cornerOnly = (abs(x12 - x21) < EPSILON && abs(y12 - y21) < EPSILON && abs(z12 - z21) < EPSILON) || (abs(x12 - x21) < EPSILON && abs(y12 - y21) < EPSILON && abs(z11 - z22) < EPSILON) || (abs(x12 - x21) < EPSILON && abs(y11 - y22) < EPSILON && abs(z12 - z21) < EPSILON) || (abs(x12 - x21) < EPSILON && abs(y11 - y22) < EPSILON && abs(z11 - z22) < EPSILON) || (abs(x11 - x22) < EPSILON && abs(y12 - y21) < EPSILON && abs(z12 - z21) < EPSILON) || (abs(x11 - x22) < EPSILON && abs(y12 - y21) < EPSILON && abs(z11 - z22) < EPSILON) || (abs(x11 - x22) < EPSILON && abs(y11 - y22) < EPSILON && abs(z12 - z21) < EPSILON) || (abs(x11 - x22) < EPSILON && abs(y11 - y22) < EPSILON && abs(z11 - z22) < EPSILON);
 		if (cornerOnly) {
 			return -2;
 		}
 
 		// 辺のみで接しているかを確認
-		boolean edgeXOnly = (abs(x12 - x21) < EPSILON || abs(x11 - x22) < EPSILON) &&
-				((y11 < y21 && y21 < y12 && y12 < y22) || (y21 < y11 && y11 < y22 && y22 < y12) ||
-						(z11 < z21 && z21 < z12 && z12 < z22) || (z21 < z11 && z11 < z22 && z22 < z12));
+		boolean edgeXOnly = (abs(x12 - x21) < EPSILON || abs(x11 - x22) < EPSILON) && ((y11 < y21 && y21 < y12 && y12 < y22) || (y21 < y11 && y11 < y22 && y22 < y12) || (z11 < z21 && z21 < z12 && z12 < z22) || (z21 < z11 && z11 < z22 && z22 < z12));
 
-		boolean edgeYOnly = (abs(y12 - y21) < EPSILON || abs(y11 - y22) < EPSILON) &&
-				((x11 < x21 && x21 < x12 && x12 < x22) || (x21 < x11 && x11 < x22 && x22 < x12) ||
-						(z11 < z21 && z21 < z12 && z12 < z22) || (z21 < z11 && z11 < z22 && z22 < z12));
+		boolean edgeYOnly = (abs(y12 - y21) < EPSILON || abs(y11 - y22) < EPSILON) && ((x11 < x21 && x21 < x12 && x12 < x22) || (x21 < x11 && x11 < x22 && x22 < x12) || (z11 < z21 && z21 < z12 && z12 < z22) || (z21 < z11 && z11 < z22 && z22 < z12));
 
-		boolean edgeZOnly = (abs(z12 - z21) < EPSILON || abs(z11 - z22) < EPSILON) &&
-				((x11 < x21 && x21 < x12 && x12 < x22) || (x21 < x11 && x11 < x22 && x22 < x12) ||
-						(y11 < y21 && y21 < y12 && y12 < y22) || (y21 < y11 && y11 < y22 && y22 < y12));
+		boolean edgeZOnly = (abs(z12 - z21) < EPSILON || abs(z11 - z22) < EPSILON) && ((x11 < x21 && x21 < x12 && x12 < x22) || (x21 < x11 && x11 < x22 && x22 < x12) || (y11 < y21 && y21 < y12 && y12 < y22) || (y21 < y11 && y11 < y22 && y22 < y12));
 
 		if (edgeXOnly || edgeYOnly || edgeZOnly) {
 			return -3;
 		}
 
 		// 面のみで接しているかを確認
-		boolean faceXOnly = (abs(x12 - x21) < EPSILON || abs(x11 - x22) < EPSILON) &&
-				!((y12 + EPSILON < y21) || (y22 + EPSILON < y11) ||
-						(z12 + EPSILON < z21) || (z22 + EPSILON < z11));
+		boolean faceXOnly = (abs(x12 - x21) < EPSILON || abs(x11 - x22) < EPSILON) && !((y12 + EPSILON < y21) || (y22 + EPSILON < y11) || (z12 + EPSILON < z21) || (z22 + EPSILON < z11));
 
-		boolean faceYOnly = (abs(y12 - y21) < EPSILON || abs(y11 - y22) < EPSILON) &&
-				!((x12 + EPSILON < x21) || (x22 + EPSILON < x11) ||
-						(z12 + EPSILON < z21) || (z22 + EPSILON < z11));
+		boolean faceYOnly = (abs(y12 - y21) < EPSILON || abs(y11 - y22) < EPSILON) && !((x12 + EPSILON < x21) || (x22 + EPSILON < x11) || (z12 + EPSILON < z21) || (z22 + EPSILON < z11));
 
-		boolean faceZOnly = (abs(z12 - z21) < EPSILON || abs(z11 - z22) < EPSILON) &&
-				!((x12 + EPSILON < x21) || (x22 + EPSILON < x11) ||
-						(y12 + EPSILON < y21) || (y22 + EPSILON < y11));
+		boolean faceZOnly = (abs(z12 - z21) < EPSILON || abs(z11 - z22) < EPSILON) && !((x12 + EPSILON < x21) || (x22 + EPSILON < x11) || (y12 + EPSILON < y21) || (y22 + EPSILON < y11));
 
 		if (faceXOnly || faceYOnly || faceZOnly) {
 			return -4;
 		}
 
 		// 面で交差しているかを確認
-		boolean faceCross = (x11 < x21 && x21 < x12 && x12 < x22) ||
-				(x21 < x11 && x11 < x22 && x22 < x12) ||
-				(y11 < y21 && y21 < y12 && y12 < y22) ||
-				(y21 < y11 && y11 < y22 && y22 < y12) ||
-				(z11 < z21 && z21 < z12 && z12 < z22) ||
-				(z21 < z11 && z11 < z22 && z22 < z12);
+		boolean faceCross = (x11 < x21 && x21 < x12 && x12 < x22) || (x21 < x11 && x11 < x22 && x22 < x12) || (y11 < y21 && y21 < y12 && y12 < y22) || (y21 < y11 && y11 < y22 && y22 < y12) || (z11 < z21 && z21 < z12 && z12 < z22) || (z21 < z11 && z11 < z22 && z22 < z12);
 		if (faceCross) {
 			return 2;
 		}
@@ -580,56 +533,35 @@ public final class GeometryUtils {
 		}
 
 		// 頂点上にある場合
-		boolean onVertex = (abs(px - x1) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z1) < EPSILON) ||
-				(abs(px - x1) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z2) < EPSILON) ||
-				(abs(px - x1) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z1) < EPSILON) ||
-				(abs(px - x1) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z2) < EPSILON) ||
-				(abs(px - x2) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z1) < EPSILON) ||
-				(abs(px - x2) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z2) < EPSILON) ||
-				(abs(px - x2) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z1) < EPSILON) ||
-				(abs(px - x2) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z2) < EPSILON);
+		boolean onVertex = (abs(px - x1) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z1) < EPSILON) || (abs(px - x1) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z2) < EPSILON) || (abs(px - x1) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z1) < EPSILON) || (abs(px - x1) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z2) < EPSILON) || (abs(px - x2) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z1) < EPSILON) || (abs(px - x2) < EPSILON && abs(py - y1) < EPSILON && abs(pz - z2) < EPSILON) || (abs(px - x2) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z1) < EPSILON) || (abs(px - x2) < EPSILON && abs(py - y2) < EPSILON && abs(pz - z2) < EPSILON);
 		if (onVertex) {
 			return -2;
 		}
 
 		// 辺上にある場合
-		boolean onEdgeX = (abs(px - x1) < EPSILON || abs(px - x2) < EPSILON) &&
-				(abs(py - y1) < EPSILON || abs(py - y2) < EPSILON) &&
-				(z1 + EPSILON < pz && pz < z2 - EPSILON);
+		boolean onEdgeX = (abs(px - x1) < EPSILON || abs(px - x2) < EPSILON) && (abs(py - y1) < EPSILON || abs(py - y2) < EPSILON) && (z1 + EPSILON < pz && pz < z2 - EPSILON);
 
-		boolean onEdgeY = (abs(py - y1) < EPSILON || abs(py - y2) < EPSILON) &&
-				(abs(pz - z1) < EPSILON || abs(pz - z2) < EPSILON) &&
-				(x1 + EPSILON < px && px < x2 - EPSILON);
+		boolean onEdgeY = (abs(py - y1) < EPSILON || abs(py - y2) < EPSILON) && (abs(pz - z1) < EPSILON || abs(pz - z2) < EPSILON) && (x1 + EPSILON < px && px < x2 - EPSILON);
 
-		boolean onEdgeZ = (abs(pz - z1) < EPSILON || abs(pz - z2) < EPSILON) &&
-				(abs(px - x1) < EPSILON || abs(px - x2) < EPSILON) &&
-				(y1 + EPSILON < py && py < y2 - EPSILON);
+		boolean onEdgeZ = (abs(pz - z1) < EPSILON || abs(pz - z2) < EPSILON) && (abs(px - x1) < EPSILON || abs(px - x2) < EPSILON) && (y1 + EPSILON < py && py < y2 - EPSILON);
 
 		if (onEdgeX || onEdgeY || onEdgeZ) {
 			return -1;
 		}
 
 		// 面上にある場合
-		boolean onFaceX = (abs(px - x1) < EPSILON || abs(px - x2) < EPSILON) &&
-				(y1 + EPSILON < py && py < y2 - EPSILON) &&
-				(z1 + EPSILON < pz && pz < z2 - EPSILON);
+		boolean onFaceX = (abs(px - x1) < EPSILON || abs(px - x2) < EPSILON) && (y1 + EPSILON < py && py < y2 - EPSILON) && (z1 + EPSILON < pz && pz < z2 - EPSILON);
 
-		boolean onFaceY = (abs(py - y1) < EPSILON || abs(py - y2) < EPSILON) &&
-				(x1 + EPSILON < px && px < x2 - EPSILON) &&
-				(z1 + EPSILON < pz && pz < z2 - EPSILON);
+		boolean onFaceY = (abs(py - y1) < EPSILON || abs(py - y2) < EPSILON) && (x1 + EPSILON < px && px < x2 - EPSILON) && (z1 + EPSILON < pz && pz < z2 - EPSILON);
 
-		boolean onFaceZ = (abs(pz - z1) < EPSILON || abs(pz - z2) < EPSILON) &&
-				(x1 + EPSILON < px && px < x2 - EPSILON) &&
-				(y1 + EPSILON < py && py < y2 - EPSILON);
+		boolean onFaceZ = (abs(pz - z1) < EPSILON || abs(pz - z2) < EPSILON) && (x1 + EPSILON < px && px < x2 - EPSILON) && (y1 + EPSILON < py && py < y2 - EPSILON);
 
 		if (onFaceX || onFaceY || onFaceZ) {
 			return 0;
 		}
 
 		// 内部に含まれる場合
-		if (x1 + EPSILON < px && px < x2 - EPSILON &&
-				y1 + EPSILON < py && py < y2 - EPSILON &&
-				z1 + EPSILON < pz && pz < z2 - EPSILON) {
+		if (x1 + EPSILON < px && px < x2 - EPSILON && y1 + EPSILON < py && py < y2 - EPSILON && z1 + EPSILON < pz && pz < z2 - EPSILON) {
 			return 1;
 		}
 
@@ -682,9 +614,7 @@ public final class GeometryUtils {
 		// 三角形が縮退している場合（面積が0）
 		if (length < EPSILON) {
 			// 点が線分上にあるか確認
-			if (isPointOnLine3D(px, py, pz, x1, y1, z1, x2, y2, z2) ||
-					isPointOnLine3D(px, py, pz, x2, y2, z2, x3, y3, z3) ||
-					isPointOnLine3D(px, py, pz, x3, y3, z3, x1, y1, z1)) {
+			if (isPointOnLine3D(px, py, pz, x1, y1, z1, x2, y2, z2) || isPointOnLine3D(px, py, pz, x2, y2, z2, x3, y3, z3) || isPointOnLine3D(px, py, pz, x3, y3, z3, x1, y1, z1)) {
 				return 0;
 			}
 			return -3;

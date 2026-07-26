@@ -1,8 +1,8 @@
 package verify.search.quickselect;
 
-import lib.search.*;
-
 import java.util.*;
+
+import lib.search.*;
 
 public final class Test {
 

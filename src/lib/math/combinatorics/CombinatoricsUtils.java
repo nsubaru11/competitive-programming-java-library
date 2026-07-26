@@ -11,8 +11,8 @@ public final class CombinatoricsUtils {
 	/**
 	 * nCrを求めます。
 	 *
-	 * @param n   二項係数を求めるのに用いる値
-	 * @param r   二項係数を求めるのに用いる値
+	 * @param n 二項係数を求めるのに用いる値
+	 * @param r 二項係数を求めるのに用いる値
 	 * @return nCr
 	 */
 	public static long comb(int n, int r) {
@@ -73,8 +73,7 @@ public final class CombinatoricsUtils {
 	public static long modPerm(long n, long r, final long mod) {
 		if (n < 0 || r < 0) return 0;
 		if (r > n) return 0;
-		if (r > Integer.MAX_VALUE)
-			throw new ArithmeticException("数が膨大すぎます。");
+		if (r > Integer.MAX_VALUE) throw new ArithmeticException("数が膨大すぎます。");
 		long result = 1;
 		for (long i = 0; i < r; i++) {
 			result = (result * (n - i)) % mod;

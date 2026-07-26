@@ -119,13 +119,17 @@ public final class IntCircularArray implements IntMutableArray {
 		if (offset == size) offset = 0;
 	}
 
-	/** 論理配列を右へ1要素回転します。 */
+	/**
+	 * 論理配列を右へ1要素回転します。
+	 */
 	public void rShift() {
 		offset--;
 		if (offset == -1) offset = size - 1;
 	}
 
-	/** 論理配列を左へn要素回転します。 */
+	/**
+	 * 論理配列を左へn要素回転します。
+	 */
 	public void lShift(final int n) {
 		if (n < 0) {
 			rShift(-n);
@@ -135,7 +139,9 @@ public final class IntCircularArray implements IntMutableArray {
 		if (offset >= size) offset -= size;
 	}
 
-	/** 論理配列を右へn要素回転します。 */
+	/**
+	 * 論理配列を右へn要素回転します。
+	 */
 	public void rShift(final int n) {
 		if (n < 0) {
 			lShift(-n);
@@ -145,7 +151,9 @@ public final class IntCircularArray implements IntMutableArray {
 		if (offset < 0) offset += size;
 	}
 
-	/** 回転状態を初期位置へ戻します。 */
+	/**
+	 * 回転状態を初期位置へ戻します。
+	 */
 	public void resetRotation() {
 		offset = 0;
 	}
