@@ -170,19 +170,4 @@ public final class IntCompressedArray implements IntArray {
 		for (int i = 1; i < length; i++) sb.append(' ').append(compressed[i]);
 		return sb.toString();
 	}
-
-	public enum RankType {
-		/**
-		 * 1, 2, 2, 3形式。
-		 */
-		DENSE,
-		/**
-		 * 1, 2, 2, 4形式。
-		 */
-		COMPETITION,
-		/**
-		 * 1, 3, 3, 4形式。
-		 */
-		MODIFIED_COMPETITION
-	}
 }

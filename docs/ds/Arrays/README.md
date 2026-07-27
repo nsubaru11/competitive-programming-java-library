@@ -13,7 +13,7 @@
 | [CircularArrayGuide](./CircularArrayGuide.md)     | `IntCircularArray`, `LongCircularArray`     | O(1) の論理回転と固定長更新                |
 | [ArrayDequeGuide](./ArrayDequeGuide.md)           | `IntArrayDeque`, `LongArrayDeque`           | プリミティブ特化の可変長 deque             |
 | [Array2DGuide](./Array2DGuide.md)                 | `IntArray2D`, `LongArray2D`                 | 一次元圧縮された2次元配列と論理回転        |
-| [CompressedArrayGuide](./CompressedArrayGuide.md) | `IntCompressedArray`, `LongCompressedArray` | 座標圧縮と順位変換                         |
+| [CompressedArrayGuide](./CompressedArrayGuide.md) | 1D / 2D の `CompressedArray`                | 座標圧縮と順位変換                         |
 | [ArrayUtilsGuide](./ArrayUtilsGuide.md)           | `ArrayUtils`                                | 窓、部分列、部分集合などの配列アルゴリズム |
 
 ## 選択の目安

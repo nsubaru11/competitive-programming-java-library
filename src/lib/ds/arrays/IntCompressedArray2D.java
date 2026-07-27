@@ -7,41 +7,31 @@ import java.util.*;
 import lib.search.*;
 
 /**
- * long配列の座標圧縮結果をint値で保持します。
+ * int型2次元配列の全要素を共通の順位空間へ座標圧縮します。
  */
-public final class LongCompressedArray implements IntArray {
-	public final int length, uniqueSize;
+public final class IntCompressedArray2D implements Iterable<Integer> {
+	public final int h, w, length, uniqueSize;
 	private final RankType rankType;
 	private final boolean oneBased;
-	private final int[] compressed, ranks;
-	private final long[] sorted;
+	private final int[] compressed, sorted, ranks;
 
-	public LongCompressedArray(final long[] a) {
+	public IntCompressedArray2D(final int[][] a) {
 		this(a, RankType.DENSE, false);
 	}
 
-	public LongCompressedArray(final long[] a, final RankType rankType) {
+	public IntCompressedArray2D(final int[][] a, final RankType rankType) {
 		this(a, rankType, false);
 	}
 
-	public LongCompressedArray(final LongArray a) {
-		this(a.toArray(), RankType.DENSE, false);
-	}
-
-	public LongCompressedArray(final LongArray a, final RankType rankType) {
-		this(a.toArray(), rankType, false);
-	}
-
-	public LongCompressedArray(final LongArray a, final RankType rankType, final boolean oneBased) {
-		this(a.toArray(), rankType, oneBased);
-	}
-
-	public LongCompressedArray(final long[] a, final RankType rankType, final boolean oneBased) {
+	public IntCompressedArray2D(final int[][] a, final RankType rankType, final boolean oneBased) {
+		h = a.length;
+		w = a[0].length;
+		length = h * w;
 		this.rankType = rankType;
 		this.oneBased = oneBased;
-		length = a.length;
 		compressed = new int[length];
-		sorted = copyOf(a, length);
+		sorted = new int[length];
+		for (int i = 0; i < h; i++) System.arraycopy(a[i], 0, sorted, i * w, w);
 		sort(sorted);
 		ranks = new int[length];
 		int r = oneBased ? 1 : 0, u = 1;
@@ -79,21 +69,24 @@ public final class LongCompressedArray implements IntArray {
 				}
 				break;
 		}
-		this.uniqueSize = u;
-		for (int i = 0; i < length; i++) {
-			compressed[i] = ranks[binarySearch(sorted, a[i])];
+		uniqueSize = u;
+		for (int i = 0, p = 0; i < h; i++) {
+			for (int j = 0; j < w; j++, p++) compressed[p] = ranks[binarySearch(sorted, a[i][j])];
 		}
 	}
 
-	public int get(final int i) {
-		return compressed[i];
+	/**
+	 * 指定位置の圧縮後の順位を返します。
+	 */
+	public int get(final int i, final int j) {
+		return compressed[i * w + j];
 	}
 
-	public int rankOfValue(final long v) {
+	public int rankOfValue(final int v) {
 		return ranks[binarySearch(sorted, v)];
 	}
 
-	public long valueOfRank(final int rank) {
+	public int valueOfRank(final int rank) {
 		return sorted[binarySearch(ranks, rank)];
 	}
 
@@ -113,37 +106,39 @@ public final class LongCompressedArray implements IntArray {
 		return length;
 	}
 
-	public long[] restore() {
-		final long[] res = new long[length];
-		for (int i = 0; i < length; i++) {
-			res[i] = sorted[binarySearch(ranks, compressed[i])];
+	public int[][] restore() {
+		final int[][] res = new int[h][w];
+		for (int i = 0, p = 0; i < h; i++) {
+			for (int j = 0; j < w; j++, p++) res[i][j] = sorted[binarySearch(ranks, compressed[p])];
 		}
 		return res;
 	}
 
-	public boolean containsValue(final long v) {
+	public boolean containsValue(final int v) {
 		return binarySearch(sorted, v) >= 0;
 	}
 
-	public int count(final long v) {
+	public int count(final int v) {
 		return ArrayBinarySearch.count(sorted, v);
 	}
 
 	/**
-	 * 圧縮後の順位を元配列順でコピーして返します。
+	 * 圧縮後の順位を元の2次元形状でコピーして返します。
 	 */
-	public int[] toArray() {
-		return copyOf(compressed, length);
+	public int[][] toArray() {
+		final int[][] res = new int[h][w];
+		for (int i = 0; i < h; i++) System.arraycopy(compressed, i * w, res[i], 0, w);
+		return res;
 	}
 
 	/**
-	 * 圧縮後の順位を元配列順でコピーして返します。
+	 * 圧縮後の順位を元の2次元形状でコピーして返します。
 	 */
-	public int[] compressed() {
+	public int[][] compressed() {
 		return toArray();
 	}
 
-	public long[] sorted() {
+	public int[] sorted() {
 		return copyOf(sorted, length);
 	}
 
@@ -153,7 +148,7 @@ public final class LongCompressedArray implements IntArray {
 
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
-			int i = 0;
+			private int i = 0;
 
 			public int nextInt() {
 				return compressed[i++];
@@ -165,10 +160,17 @@ public final class LongCompressedArray implements IntArray {
 		};
 	}
 
+	/**
+	 * 各行を半角スペース区切り、行間を改行した文字列として返します。
+	 */
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(11 * length - 1);
 		sb.append(compressed[0]);
-		for (int i = 1; i < length; i++) sb.append(' ').append(compressed[i]);
+		for (int j = 1; j < w; j++) sb.append(' ').append(compressed[j]);
+		for (int i = 1, p = w; i < h; i++) {
+			sb.append('\n').append(compressed[p++]);
+			for (int j = 1; j < w; j++) sb.append(' ').append(compressed[p++]);
+		}
 		return sb.toString();
 	}
 }
