@@ -82,7 +82,8 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Math/Factorial](./docs/math/Factorial)                           | 階乗・逆元の前計算テーブル、nCr / nPr / カタラン数・ベル数等                             |
 | [Math/Geometry](./docs/math/Geometry)                             | 線分/長方形の交差判定、点と図形の位置関係、各種距離計算などの計算幾何ユーティリティ      |
 | [Math/LinearAlgebra](./docs/math/LinearAlgebra)                   | 📝 ガウスの消去法による連立一次方程式・行列式・ランク（TODO）                            |
-| [Math/Matrix](./src/lib/math/IntMatrixUtils.java)                 | int / long 行列演算（加減乗・累乗・mod 演算、in-place 版あり）                           |
+| [Math/Matrix](./src/lib/math/linearalgebra/IntMatrixUtils.java)   | int / long 行列演算（加減乗・累乗・mod 演算、in-place 版あり）                           |
+| [Int128](./src/lib/math/number/Int128.java)                       | 128bit 符号付き整数（四則演算・文字列変換・比較）                                        |
 | [Math/NumberTheory](./docs/math/NumberTheory)                     | GCD/LCM・拡張ユークリッド・オイラーのトーシェント関数などの数論ユーティリティ            |
 | [Math/NumberUtils](./docs/math/NumberUtils)                       | べき乗計算・数値フォーマット変換・数値の性質判定ユーティリティ                           |
 | [Math/Permutation](./docs/math/Permutation)                       | 辞書順 next/prev permutation（int / long / char / 2次元配列対応）                        |
@@ -109,7 +110,6 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [FastIO/Java17](./docs/io/Java17)                        | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                 |
 | [FastIO/Java24](./docs/io/Java24)                        | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)          |
 | [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（O(1) clear、ペア/トリプルキー対応）                       |
-| [Int128](./src/lib/ds/Int128.java)                       | 128bit 符号付き整数（四則演算・文字列変換・比較）                                                             |
 | [LiChaoTree](./docs/ds/LiChaoTree)                       | 📝 Li Chao Tree（直線群へのCHT、TODO）                                                                        |
 | [ModNumbers](./docs/math/ModNumbers)                     | 剰余演算ラッパー ModInt / ModLong（逆元・冪乗付き）                                                           |
 | [PersistentSegmentTree](./docs/ds/PersistentSegmentTree) | 📝 永続セグメント木（TODO）                                                                                   |
