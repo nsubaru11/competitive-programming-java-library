@@ -26,20 +26,20 @@
 
 ### 1. コンストラクタ
 
-| メソッド                                                                | 戻り値の型 | 説明                              |
-|---------------------------------------------------------------------|-------|---------------------------------|
-| `IntCompressedArray(int[] a)`                                       | -     | DENSE・0-based で int 配列を圧縮       |
-| `IntCompressedArray(int[] a, RankType type)`                        | -     | 指定順位方式・0-based で圧縮              |
-| `IntCompressedArray(int[] a, RankType type, boolean oneBased)`      | -     | 順位方式と開始位置を指定                    |
-| `IntCompressedArray(IntArray a)`                                    | -     | DENSE・0-based で `IntArray` を圧縮  |
-| `IntCompressedArray(IntArray a, RankType type)`                     | -     | 指定順位方式・0-based で圧縮              |
-| `IntCompressedArray(IntArray a, RankType type, boolean oneBased)`   | -     | 順位方式と開始位置を指定                    |
-| `LongCompressedArray(long[] a)`                                     | -     | DENSE・0-based で long 配列を圧縮      |
-| `LongCompressedArray(long[] a, RankType type)`                      | -     | 指定順位方式・0-based で圧縮              |
-| `LongCompressedArray(long[] a, RankType type, boolean oneBased)`    | -     | 順位方式と開始位置を指定                    |
-| `LongCompressedArray(LongArray a)`                                  | -     | DENSE・0-based で `LongArray` を圧縮 |
-| `LongCompressedArray(LongArray a, RankType type)`                   | -     | 指定順位方式・0-based で圧縮              |
-| `LongCompressedArray(LongArray a, RankType type, boolean oneBased)` | -     | 順位方式と開始位置を指定                    |
+| メソッド                                                            | 戻り値の型 | 説明                                 |
+|---------------------------------------------------------------------|------------|--------------------------------------|
+| `IntCompressedArray(int[] a)`                                       | -          | DENSE・0-based で int 配列を圧縮     |
+| `IntCompressedArray(int[] a, RankType type)`                        | -          | 指定順位方式・0-based で圧縮         |
+| `IntCompressedArray(int[] a, RankType type, boolean oneBased)`      | -          | 順位方式と開始位置を指定             |
+| `IntCompressedArray(IntArray a)`                                    | -          | DENSE・0-based で `IntArray` を圧縮  |
+| `IntCompressedArray(IntArray a, RankType type)`                     | -          | 指定順位方式・0-based で圧縮         |
+| `IntCompressedArray(IntArray a, RankType type, boolean oneBased)`   | -          | 順位方式と開始位置を指定             |
+| `LongCompressedArray(long[] a)`                                     | -          | DENSE・0-based で long 配列を圧縮    |
+| `LongCompressedArray(long[] a, RankType type)`                      | -          | 指定順位方式・0-based で圧縮         |
+| `LongCompressedArray(long[] a, RankType type, boolean oneBased)`    | -          | 順位方式と開始位置を指定             |
+| `LongCompressedArray(LongArray a)`                                  | -          | DENSE・0-based で `LongArray` を圧縮 |
+| `LongCompressedArray(LongArray a, RankType type)`                   | -          | 指定順位方式・0-based で圧縮         |
+| `LongCompressedArray(LongArray a, RankType type, boolean oneBased)` | -          | 順位方式と開始位置を指定             |
 
 `RankType` は `IntCompressedArray` と `LongCompressedArray` の各クラス内に同名で定義されています。
 
@@ -47,43 +47,43 @@
 
 ソート済み値 `[10, 20, 20, 30]` に対する順位は次の通りです。
 
-| RankType               | 0-based        | 1-based        | 説明                 |
-|------------------------|----------------|----------------|--------------------|
-| `DENSE`                | `[0, 1, 1, 2]` | `[1, 2, 2, 3]` | 異なる値ごとに連番          |
-| `COMPETITION`          | `[0, 1, 1, 3]` | `[1, 2, 2, 4]` | 同順位の個数だけ次順位を飛ばす    |
+| RankType               | 0-based        | 1-based        | 説明                                 |
+|------------------------|----------------|----------------|--------------------------------------|
+| `DENSE`                | `[0, 1, 1, 2]` | `[1, 2, 2, 3]` | 異なる値ごとに連番                   |
+| `COMPETITION`          | `[0, 1, 1, 3]` | `[1, 2, 2, 4]` | 同順位の個数だけ次順位を飛ばす       |
 | `MODIFIED_COMPETITION` | `[0, 2, 2, 3]` | `[1, 3, 3, 4]` | 同順位グループの末尾位置を順位にする |
 
 ### 3. 圧縮結果・設定情報
 
-| メソッド             | 戻り値の型      | 説明                 |
-|------------------|------------|--------------------|
-| `get(int i)`     | `int`      | 元配列の `i` 番目に対応する順位 |
-| `size()`         | `int`      | 元配列の長さ             |
-| `distinctSize()` | `int`      | 異なる値の個数            |
-| `rankType()`     | `RankType` | 使用中の順位方式           |
-| `isOneBased()`   | `boolean`  | 1-based か判定        |
-| `toArray()`      | `int[]`    | 元配列順の圧縮結果のコピーを返す   |
-| `compressed()`   | `int[]`    | 元配列順の圧縮結果のコピーを返す   |
+| メソッド       | 戻り値の型 | 説明                             |
+|----------------|------------|----------------------------------|
+| `get(int i)`   | `int`      | 元配列の `i` 番目に対応する順位  |
+| `size()`       | `int`      | 元配列の長さ                     |
+| `uniqueSize()` | `int`      | 異なる値の個数                   |
+| `rankType()`   | `RankType` | 使用中の順位方式                 |
+| `isOneBased()` | `boolean`  | 1-based か判定                   |
+| `toArray()`    | `int[]`    | 元配列順の圧縮結果のコピーを返す |
+| `compressed()` | `int[]`    | 元配列順の圧縮結果のコピーを返す |
 
-`length` と `distinctSize` は public final フィールドとしても公開されています。
+`length` と `uniqueSize` は public final フィールドとしても公開されています。
 
 ### 4. 値・順位の変換
 
-| メソッド                    | 戻り値の型              | 説明           |
-|-------------------------|--------------------|--------------|
-| `rankOfValue(value)`    | `int`              | 元の値に対応する順位   |
+| メソッド                | 戻り値の型         | 説明                     |
+|-------------------------|--------------------|--------------------------|
+| `rankOfValue(value)`    | `int`              | 元の値に対応する順位     |
 | `valueOfRank(int rank)` | `int` / `long`     | 指定順位に対応する元の値 |
-| `containsValue(value)`  | `boolean`          | 元の値が存在するか判定  |
-| `count(value)`          | `int`              | 元の値の出現回数     |
-| `restore()`             | `int[]` / `long[]` | 元の順序と値を復元    |
+| `containsValue(value)`  | `boolean`          | 元の値が存在するか判定   |
+| `count(value)`          | `int`              | 元の値の出現回数         |
+| `restore()`             | `int[]` / `long[]` | 元の順序と値を復元       |
 
 ### 5. 内部順序の取得・反復
 
-| メソッド         | 戻り値の型                     | 説明                 |
-|--------------|---------------------------|--------------------|
-| `sorted()`   | `int[]` / `long[]`        | 重複を含むソート済み値のコピー    |
-| `ranks()`    | `int[]`                   | ソート済み各要素の順位のコピー    |
-| `iterator()` | `PrimitiveIterator.OfInt` | 元配列順の圧縮結果を走査       |
+| メソッド     | 戻り値の型                | 説明                                 |
+|--------------|---------------------------|--------------------------------------|
+| `sorted()`   | `int[]` / `long[]`        | 重複を含むソート済み値のコピー       |
+| `ranks()`    | `int[]`                   | ソート済み各要素の順位のコピー       |
+| `iterator()` | `PrimitiveIterator.OfInt` | 元配列順の圧縮結果を走査             |
 | `toString()` | `String`                  | 元配列順の圧縮結果を空白区切りで返す |
 
 ## 利用例
@@ -92,7 +92,7 @@
 IntCompressedArray a = new IntCompressedArray(new int[]{50, 10, 50, 20});
 
 System.out.println(a);              // 2 0 2 1
-System.out.println(a.distinctSize()); // 3
+System.out.println(a.uniqueSize()); // 3
 System.out.println(a.rankOfValue(20)); // 1
 System.out.println(Arrays.toString(a.restore())); // [50, 10, 50, 20]
 ```
@@ -118,7 +118,7 @@ LongCompressedArray c = new LongCompressedArray(
 ## パフォーマンス特性
 
 - 構築: O(n log n)
-- `get`, `size`, `distinctSize`, `rankType`, `isOneBased`: O(1)
+- `get`, `size`, `uniqueSize`, `rankType`, `isOneBased`: O(1)
 - `rankOfValue`, `valueOfRank`, `containsValue`, `count`: O(log n)
 - `restore`: O(n log n)
 - `toArray`, `compressed`, `sorted`, `ranks`, iterator, `toString`: O(n)
@@ -126,11 +126,12 @@ LongCompressedArray c = new LongCompressedArray(
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                        |
-|:--------------|:-----------|:--------------------------------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                                                  |
+|:-------------------|:-----------|:------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-07-15 | DENSE・COMPETITION・MODIFIED_COMPETITION、0/1-based、値と順位の相互変換を備える座標圧縮として初回実装 |
-| **バージョン 1.1** | 2026-07-15 | `toString()` を元配列順の空白区切り形式へ改善                                             |
-| **バージョン 2.0** | 2026-07-15 | 元配列順の圧縮結果を直接コピーする `toArray()` と `compressed()` を追加                        |
+| **バージョン 1.1** | 2026-07-15 | `toString()` を元配列順の空白区切り形式へ改善                                                         |
+| **バージョン 2.0** | 2026-07-15 | 元配列順の圧縮結果を直接コピーする `toArray()` と `compressed()` を追加                               |
+| **バージョン 3.0** | 2026-07-27 | `distinctSize` を `uniqueSize` へ変更して `length` とともに公開し、`toString()` の容量を調整          |
 
 ### バージョン管理について
 

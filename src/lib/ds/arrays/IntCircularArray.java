@@ -8,21 +8,18 @@ import java.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class IntCircularArray implements IntMutableArray {
-	public final int size;
+	public final int length;
 	private final int[] arr;
 	private long sum;
+	private long rotation = 0;
 	private int offset = 0;
 
 	public IntCircularArray(final int n, final IntUnaryOperator init) {
-		size = n;
+		length = n;
 		arr = new int[n];
-		int v = init.applyAsInt(0);
-		arr[0] = v;
-		long s = v;
+		long s = arr[0] = init.applyAsInt(0);
 		for (int i = 1; i < n; i++) {
-			v = init.applyAsInt(i);
-			arr[i] = v;
-			s += v;
+			s += arr[i] = init.applyAsInt(i);
 		}
 		sum = s;
 	}
@@ -31,8 +28,8 @@ public final class IntCircularArray implements IntMutableArray {
 	 * 指定された配列の要素を同じ順序で保持する循環配列を構築します。
 	 */
 	public IntCircularArray(final int[] a) {
-		size = a.length;
-		arr = Arrays.copyOf(a, size);
+		length = a.length;
+		arr = Arrays.copyOf(a, length);
 		long s = 0;
 		for (final int v : a) s += v;
 		sum = s;
@@ -42,13 +39,11 @@ public final class IntCircularArray implements IntMutableArray {
 	 * 指定された配列の論理順を保持する循環配列を構築します。
 	 */
 	public IntCircularArray(final IntArray a) {
-		size = a.size();
-		arr = new int[size];
+		length = a.size();
+		arr = new int[length];
 		long s = 0;
-		for (int i = 0; i < size; i++) {
-			int v = a.get(i);
-			arr[i] = v;
-			s += v;
+		for (int i = 0; i < length; i++) {
+			s += arr[i] = a.get(i);
 		}
 		sum = s;
 	}
@@ -62,13 +57,13 @@ public final class IntCircularArray implements IntMutableArray {
 
 	public int get(final int i) {
 		int j = offset + i;
-		if (j >= size) j -= size;
+		if (j >= length) j -= length;
 		return arr[j];
 	}
 
 	public int set(final int i, final int v) {
 		int j = offset + i;
-		if (j >= size) j -= size;
+		if (j >= length) j -= length;
 		int old = arr[j];
 		arr[j] = v;
 		sum += (long) v - old;
@@ -77,33 +72,33 @@ public final class IntCircularArray implements IntMutableArray {
 
 	public void fill(final int v) {
 		Arrays.fill(arr, v);
-		sum = (long) v * size;
+		sum = (long) v * length;
+		rotation = 0;
+		offset = 0;
 	}
 
 	public void setAll(final IntUnaryOperator init) {
 		long s = 0;
-		for (int i = 0; i < size; i++) {
-			int v = init.applyAsInt(i);
-			int j = offset + i;
-			if (j >= size) j -= size;
-			arr[j] = v;
-			s += v;
+		for (int i = 0; i < length; i++) {
+			s += arr[i] = init.applyAsInt(i);
 		}
 		sum = s;
+		rotation = 0;
+		offset = 0;
 	}
 
 	public int size() {
-		return size;
+		return length;
 	}
 
 	public boolean contains(final int v) {
-		for (int i = 0; i < size; i++) if (get(i) == v) return true;
+		for (int i = 0; i < length; i++) if (get(i) == v) return true;
 		return false;
 	}
 
 	public int[] toArray() {
-		int[] res = new int[size];
-		for (int i = 0; i < size; i++) res[i] = get(i);
+		int[] res = new int[length];
+		for (int i = 0; i < length; i++) res[i] = get(i);
 		return res;
 	}
 
@@ -116,7 +111,8 @@ public final class IntCircularArray implements IntMutableArray {
 	 */
 	public void lShift() {
 		offset++;
-		if (offset == size) offset = 0;
+		if (offset == length) offset = 0;
+		rotation++;
 	}
 
 	/**
@@ -124,7 +120,8 @@ public final class IntCircularArray implements IntMutableArray {
 	 */
 	public void rShift() {
 		offset--;
-		if (offset == -1) offset = size - 1;
+		if (offset == -1) offset = length - 1;
+		rotation--;
 	}
 
 	/**
@@ -135,8 +132,9 @@ public final class IntCircularArray implements IntMutableArray {
 			rShift(-n);
 			return;
 		}
-		offset += n % size;
-		if (offset >= size) offset -= size;
+		offset += n % length;
+		if (offset >= length) offset -= length;
+		rotation += n;
 	}
 
 	/**
@@ -147,14 +145,23 @@ public final class IntCircularArray implements IntMutableArray {
 			lShift(-n);
 			return;
 		}
-		offset -= n % size;
-		if (offset < 0) offset += size;
+		offset -= n % length;
+		if (offset < 0) offset += length;
+		rotation -= n;
+	}
+
+	/**
+	 * 左回転を正、右回転を負とする総回転数を返します。
+	 */
+	public long rotation() {
+		return rotation;
 	}
 
 	/**
 	 * 回転状態を初期位置へ戻します。
 	 */
 	public void resetRotation() {
+		rotation = 0;
 		offset = 0;
 	}
 
@@ -163,7 +170,7 @@ public final class IntCircularArray implements IntMutableArray {
 			private int idx = 0;
 
 			public boolean hasNext() {
-				return idx < size;
+				return idx < length;
 			}
 
 			public int nextInt() {
@@ -173,9 +180,9 @@ public final class IntCircularArray implements IntMutableArray {
 	}
 
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(11 * size);
+		final StringBuilder sb = new StringBuilder(12 * length - 1);
 		sb.append(arr[offset]);
-		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
+		for (int i = 1; i < length; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }

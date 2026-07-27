@@ -24,74 +24,74 @@
 
 ### 1. 局所値・連長
 
-| メソッド                                                       | 戻り値の型 | 説明               |
-|------------------------------------------------------------|-------|------------------|
-| `localMaxCnt(int[] a)` / `localMaxCnt(int[] a, int len)`   | `int` | 両隣より真に大きい内部要素の個数 |
-| `localMaxCnt(long[] a)` / `localMaxCnt(long[] a, int len)` | `int` | long 配列版         |
-| `localMaxCnt(IntArray a)` / `localMaxCnt(LongArray a)`     | `int` | 配列インターフェース版      |
-| `localMinCnt(int[] a)` / `localMinCnt(int[] a, int len)`   | `int` | 両隣より真に小さい内部要素の個数 |
-| `localMinCnt(long[] a)` / `localMinCnt(long[] a, int len)` | `int` | long 配列版         |
-| `localMinCnt(IntArray a)` / `localMinCnt(LongArray a)`     | `int` | 配列インターフェース版      |
-| `runLen(int[] a)` / `runLen(int[] a, int len)`             | `int` | 同じ値が連続する最長区間の長さ  |
-| `runLen(long[] a)` / `runLen(long[] a, int len)`           | `int` | long 配列版         |
-| `runLen(IntArray a)` / `runLen(LongArray a)`               | `int` | 配列インターフェース版      |
+| メソッド                                                   | 戻り値の型 | 説明                             |
+|------------------------------------------------------------|------------|----------------------------------|
+| `localMaxCnt(int[] a)` / `localMaxCnt(int[] a, int len)`   | `int`      | 両隣より真に大きい内部要素の個数 |
+| `localMaxCnt(long[] a)` / `localMaxCnt(long[] a, int len)` | `int`      | long 配列版                      |
+| `localMaxCnt(IntArray a)` / `localMaxCnt(LongArray a)`     | `int`      | 配列インターフェース版           |
+| `localMinCnt(int[] a)` / `localMinCnt(int[] a, int len)`   | `int`      | 両隣より真に小さい内部要素の個数 |
+| `localMinCnt(long[] a)` / `localMinCnt(long[] a, int len)` | `int`      | long 配列版                      |
+| `localMinCnt(IntArray a)` / `localMinCnt(LongArray a)`     | `int`      | 配列インターフェース版           |
+| `runLen(int[] a)` / `runLen(int[] a, int len)`             | `int`      | 同じ値が連続する最長区間の長さ   |
+| `runLen(long[] a)` / `runLen(long[] a, int len)`           | `int`      | long 配列版                      |
+| `runLen(IntArray a)` / `runLen(LongArray a)`               | `int`      | 配列インターフェース版           |
 
 端点は局所最大・局所最小に数えません。
 
 ### 2. 固定幅窓の和
 
-| メソッド                                                           | 戻り値の型  | 説明           |
-|----------------------------------------------------------------|--------|--------------|
-| `maxWin(int[] a, int k)` / `maxWin(int[] a, int len, int k)`   | `long` | 長さ k の窓和の最大値 |
-| `maxWin(long[] a, int k)` / `maxWin(long[] a, int len, int k)` | `long` | long 配列版     |
-| `maxWin(IntArray a, int k)` / `maxWin(LongArray a, int k)`     | `long` | 配列インターフェース版  |
-| `minWin(int[] a, int k)` / `minWin(int[] a, int len, int k)`   | `long` | 長さ k の窓和の最小値 |
-| `minWin(long[] a, int k)` / `minWin(long[] a, int len, int k)` | `long` | long 配列版     |
-| `minWin(IntArray a, int k)` / `minWin(LongArray a, int k)`     | `long` | 配列インターフェース版  |
+| メソッド                                                       | 戻り値の型 | 説明                   |
+|----------------------------------------------------------------|------------|------------------------|
+| `maxWin(int[] a, int k)` / `maxWin(int[] a, int len, int k)`   | `long`     | 長さ k の窓和の最大値  |
+| `maxWin(long[] a, int k)` / `maxWin(long[] a, int len, int k)` | `long`     | long 配列版            |
+| `maxWin(IntArray a, int k)` / `maxWin(LongArray a, int k)`     | `long`     | 配列インターフェース版 |
+| `minWin(int[] a, int k)` / `minWin(int[] a, int len, int k)`   | `long`     | 長さ k の窓和の最小値  |
+| `minWin(long[] a, int k)` / `minWin(long[] a, int len, int k)` | `long`     | long 配列版            |
+| `minWin(IntArray a, int k)` / `minWin(LongArray a, int k)`     | `long`     | 配列インターフェース版 |
 
 ### 3. 窓最大・最小の担当継続長
 
-| メソッド                                                                 | 戻り値の型   | 説明                                      |
-|----------------------------------------------------------------------|---------|-----------------------------------------|
-| `winMaxLen(int[] a, int k)` / `winMaxLen(int[] a, int len, int k)`   | `int[]` | 窓最大を担う同一位置が最長で続く `{index, windowCount}` |
-| `winMaxLen(long[] a, int k)` / `winMaxLen(long[] a, int len, int k)` | `int[]` | long 配列版                                |
-| `winMaxLen(IntArray a, int k)` / `winMaxLen(LongArray a, int k)`     | `int[]` | 配列インターフェース版                             |
-| `winMinLen(int[] a, int k)` / `winMinLen(int[] a, int len, int k)`   | `int[]` | 窓最小を担う同一位置が最長で続く `{index, windowCount}` |
-| `winMinLen(long[] a, int k)` / `winMinLen(long[] a, int len, int k)` | `int[]` | long 配列版                                |
-| `winMinLen(IntArray a, int k)` / `winMinLen(LongArray a, int k)`     | `int[]` | 配列インターフェース版                             |
+| メソッド                                                             | 戻り値の型 | 説明                                                    |
+|----------------------------------------------------------------------|------------|---------------------------------------------------------|
+| `winMaxLen(int[] a, int k)` / `winMaxLen(int[] a, int len, int k)`   | `int[]`    | 窓最大を担う同一位置が最長で続く `{index, windowCount}` |
+| `winMaxLen(long[] a, int k)` / `winMaxLen(long[] a, int len, int k)` | `int[]`    | long 配列版                                             |
+| `winMaxLen(IntArray a, int k)` / `winMaxLen(LongArray a, int k)`     | `int[]`    | 配列インターフェース版                                  |
+| `winMinLen(int[] a, int k)` / `winMinLen(int[] a, int len, int k)`   | `int[]`    | 窓最小を担う同一位置が最長で続く `{index, windowCount}` |
+| `winMinLen(long[] a, int k)` / `winMinLen(long[] a, int len, int k)` | `int[]`    | long 配列版                                             |
+| `winMinLen(IntArray a, int k)` / `winMinLen(LongArray a, int k)`     | `int[]`    | 配列インターフェース版                                  |
 
 `len < k` の場合は `{-1, -1}` を返します。同値では古い添字を deque に残すため、同じ値ではなく同じ要素位置が担当し続けた窓数です。
 
 ### 4. 最長単調部分列
 
-| メソッド                                         | 戻り値の型 | 説明           |
-|----------------------------------------------|-------|--------------|
-| `lis(int[] a)` / `lis(int[] a, int len)`     | `int` | 最長狭義増加部分列の長さ |
-| `lis(long[] a)` / `lis(long[] a, int len)`   | `int` | long 配列版     |
-| `lis(IntArray a)` / `lis(LongArray a)`       | `int` | 配列インターフェース版  |
-| `lnds(int[] a)` / `lnds(int[] a, int len)`   | `int` | 最長広義増加部分列の長さ |
-| `lnds(long[] a)` / `lnds(long[] a, int len)` | `int` | long 配列版     |
-| `lnds(IntArray a)` / `lnds(LongArray a)`     | `int` | 配列インターフェース版  |
-| `lds(int[] a)` / `lds(int[] a, int len)`     | `int` | 最長狭義減少部分列の長さ |
-| `lds(long[] a)` / `lds(long[] a, int len)`   | `int` | long 配列版     |
-| `lds(IntArray a)` / `lds(LongArray a)`       | `int` | 配列インターフェース版  |
-| `lnis(int[] a)` / `lnis(int[] a, int len)`   | `int` | 最長広義減少部分列の長さ |
-| `lnis(long[] a)` / `lnis(long[] a, int len)` | `int` | long 配列版     |
-| `lnis(IntArray a)` / `lnis(LongArray a)`     | `int` | 配列インターフェース版  |
+| メソッド                                     | 戻り値の型 | 説明                     |
+|----------------------------------------------|------------|--------------------------|
+| `lis(int[] a)` / `lis(int[] a, int len)`     | `int`      | 最長狭義増加部分列の長さ |
+| `lis(long[] a)` / `lis(long[] a, int len)`   | `int`      | long 配列版              |
+| `lis(IntArray a)` / `lis(LongArray a)`       | `int`      | 配列インターフェース版   |
+| `lnds(int[] a)` / `lnds(int[] a, int len)`   | `int`      | 最長広義増加部分列の長さ |
+| `lnds(long[] a)` / `lnds(long[] a, int len)` | `int`      | long 配列版              |
+| `lnds(IntArray a)` / `lnds(LongArray a)`     | `int`      | 配列インターフェース版   |
+| `lds(int[] a)` / `lds(int[] a, int len)`     | `int`      | 最長狭義減少部分列の長さ |
+| `lds(long[] a)` / `lds(long[] a, int len)`   | `int`      | long 配列版              |
+| `lds(IntArray a)` / `lds(LongArray a)`       | `int`      | 配列インターフェース版   |
+| `lnis(int[] a)` / `lnis(int[] a, int len)`   | `int`      | 最長広義減少部分列の長さ |
+| `lnis(long[] a)` / `lnis(long[] a, int len)` | `int`      | long 配列版              |
+| `lnis(IntArray a)` / `lnis(LongArray a)`     | `int`      | 配列インターフェース版   |
 
 ### 5. 部分集合の個数
 
-| メソッド                                                                                             | 戻り値の型 | 説明                         |
-|--------------------------------------------------------------------------------------------------|-------|----------------------------|
-| `subsetMitm(int[] a, long t)` / `subsetMitm(int[] a, int len, long t)`                           | `int` | 半分全列挙で和が t の部分集合数を計算       |
-| `subsetMitm(long[] a, long t)` / `subsetMitm(long[] a, int len, long t)`                         | `int` | long 配列版                   |
-| `subsetMitm(IntArray a, long t)` / `subsetMitm(LongArray a, long t)`                             | `int` | 配列インターフェース版                |
-| `subsetDp(int[] a, long t)` / `subsetDp(int[] a, int len, long t)`                               | `int` | HashMap DP で和が t の部分集合数を計算 |
-| `subsetDp(long[] a, long t)` / `subsetDp(long[] a, int len, long t)`                             | `int` | long 配列版                   |
-| `subsetDp(IntArray a, long t)` / `subsetDp(LongArray a, long t)`                                 | `int` | 配列インターフェース版                |
-| `subsetRecursion(int[] a, long t, int k)` / `subsetRecursion(int[] a, int len, long t, int k)`   | `int` | ちょうど k 個、和が t の部分集合数を再帰で計算 |
-| `subsetRecursion(long[] a, long t, int k)` / `subsetRecursion(long[] a, int len, long t, int k)` | `int` | long 配列版                   |
-| `subsetRecursion(IntArray a, long t, int k)` / `subsetRecursion(LongArray a, long t, int k)`     | `int` | 配列インターフェース版                |
+| メソッド                                                                                         | 戻り値の型 | 説明                                           |
+|--------------------------------------------------------------------------------------------------|------------|------------------------------------------------|
+| `subsetMitm(int[] a, long t)` / `subsetMitm(int[] a, int len, long t)`                           | `int`      | 半分全列挙で和が t の部分集合数を計算          |
+| `subsetMitm(long[] a, long t)` / `subsetMitm(long[] a, int len, long t)`                         | `int`      | long 配列版                                    |
+| `subsetMitm(IntArray a, long t)` / `subsetMitm(LongArray a, long t)`                             | `int`      | 配列インターフェース版                         |
+| `subsetDp(int[] a, long t)` / `subsetDp(int[] a, int len, long t)`                               | `int`      | HashMap DP で和が t の部分集合数を計算         |
+| `subsetDp(long[] a, long t)` / `subsetDp(long[] a, int len, long t)`                             | `int`      | long 配列版                                    |
+| `subsetDp(IntArray a, long t)` / `subsetDp(LongArray a, long t)`                                 | `int`      | 配列インターフェース版                         |
+| `subsetRecursion(int[] a, long t, int k)` / `subsetRecursion(int[] a, int len, long t, int k)`   | `int`      | ちょうど k 個、和が t の部分集合数を再帰で計算 |
+| `subsetRecursion(long[] a, long t, int k)` / `subsetRecursion(long[] a, int len, long t, int k)` | `int`      | long 配列版                                    |
+| `subsetRecursion(IntArray a, long t, int k)` / `subsetRecursion(LongArray a, long t, int k)`     | `int`      | 配列インターフェース版                         |
 
 ## 利用例
 
@@ -125,14 +125,14 @@ int pairs = ArrayUtils.subsetRecursion(values, 8, 2);  // 2
 - `localMaxCnt`, `localMinCnt`, `runLen`, `maxWin`, `minWin`: 時間 O(n)、追加メモリ O(1)
 - `winMaxLen`, `winMinLen`: 時間 O(n)、追加メモリ O(n)
 - `lis`, `lnds`, `lds`, `lnis`: 時間 O(n log n)、追加メモリ O(n)
-- `subsetMitm`: 時間 O(n 2^(n/2))、追加メモリ O(2^(n/2))
+- `subsetMitm`: 時間 O(n 2^ (n/2))、追加メモリ O(2^ (n/2))
 - `subsetDp`: 到達可能な異なる和の個数を S として時間 O(nS)、追加メモリ O(S)
 - `subsetRecursion`: 最悪時間 O(2^n)、再帰深さ O(n)
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                                                          |
-|:--------------|:-----------|:------------------------------------------------------------------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                                                                                                           |
+|:-------------------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-07-12 | 旧一次元配列クラス内のアルゴリズムを static utility へ分離し、プリミティブ配列と `IntArray` / `LongArray` のオーバーロードを備える `ArrayUtils` として初回実装 |
 
 ### バージョン管理について

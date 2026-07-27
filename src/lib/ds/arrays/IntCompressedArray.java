@@ -10,7 +10,7 @@ import lib.search.*;
  * int配列の座標圧縮結果を保持します。
  */
 public final class IntCompressedArray implements IntArray {
-	public final int length, distinctSize;
+	public final int length, uniqueSize;
 	private final RankType rankType;
 	private final boolean oneBased;
 	private final int[] compressed, sorted, ranks;
@@ -43,15 +43,14 @@ public final class IntCompressedArray implements IntArray {
 		sorted = copyOf(a, length);
 		sort(sorted);
 		ranks = new int[length];
-		int r = oneBased ? 1 : 0;
-		int distinctSize = 1;
+		int r = oneBased ? 1 : 0, u = 1;
 		switch (rankType) {
 			case DENSE:
 				ranks[0] = r;
 				for (int i = 1; i < length; i++) {
 					if (sorted[i] != sorted[i - 1]) {
 						r++;
-						distinctSize++;
+						u++;
 					}
 					ranks[i] = r;
 				}
@@ -61,7 +60,7 @@ public final class IntCompressedArray implements IntArray {
 				for (int i = 1; i < length; i++, r++) {
 					if (sorted[i] != sorted[i - 1]) {
 						ranks[i] = r;
-						distinctSize++;
+						u++;
 					} else {
 						ranks[i] = ranks[i - 1];
 					}
@@ -74,12 +73,12 @@ public final class IntCompressedArray implements IntArray {
 						ranks[i] = ranks[i + 1];
 					} else {
 						ranks[i] = i + r;
-						distinctSize++;
+						u++;
 					}
 				}
 				break;
 		}
-		this.distinctSize = distinctSize;
+		this.uniqueSize = u;
 		for (int i = 0; i < length; i++) {
 			compressed[i] = ranks[binarySearch(sorted, a[i])];
 		}
@@ -105,8 +104,8 @@ public final class IntCompressedArray implements IntArray {
 		return oneBased;
 	}
 
-	public int distinctSize() {
-		return distinctSize;
+	public int uniqueSize() {
+		return uniqueSize;
 	}
 
 	public int size() {
@@ -166,7 +165,7 @@ public final class IntCompressedArray implements IntArray {
 	}
 
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(11 * length);
+		final StringBuilder sb = new StringBuilder(11 * length - 1);
 		sb.append(compressed[0]);
 		for (int i = 1; i < length; i++) sb.append(' ').append(compressed[i]);
 		return sb.toString();

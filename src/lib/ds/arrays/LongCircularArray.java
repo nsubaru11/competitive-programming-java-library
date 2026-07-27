@@ -8,21 +8,18 @@ import java.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class LongCircularArray implements LongMutableArray {
-	public final int size;
+	public final int length;
 	private final long[] arr;
 	private long sum;
+	private long rotation = 0;
 	private int offset = 0;
 
 	public LongCircularArray(final int n, final IntToLongFunction init) {
-		size = n;
+		length = n;
 		arr = new long[n];
-		long v = init.applyAsLong(0);
-		arr[0] = v;
-		long s = v;
+		long s = arr[0] = init.applyAsLong(0);
 		for (int i = 1; i < n; i++) {
-			v = init.applyAsLong(i);
-			arr[i] = v;
-			s += v;
+			s += arr[i] = init.applyAsLong(i);
 		}
 		sum = s;
 	}
@@ -31,8 +28,8 @@ public final class LongCircularArray implements LongMutableArray {
 	 * 指定された配列の要素を同じ順序で保持する循環配列を構築します。
 	 */
 	public LongCircularArray(final long[] a) {
-		size = a.length;
-		arr = Arrays.copyOf(a, size);
+		length = a.length;
+		arr = Arrays.copyOf(a, length);
 		long s = 0;
 		for (final long v : a) s += v;
 		sum = s;
@@ -42,13 +39,11 @@ public final class LongCircularArray implements LongMutableArray {
 	 * 指定された配列の論理順を保持する循環配列を構築します。
 	 */
 	public LongCircularArray(final LongArray a) {
-		size = a.size();
-		arr = new long[size];
+		length = a.size();
+		arr = new long[length];
 		long s = 0;
-		for (int i = 0; i < size; i++) {
-			long v = a.get(i);
-			arr[i] = v;
-			s += v;
+		for (int i = 0; i < length; i++) {
+			s += arr[i] = a.get(i);
 		}
 		sum = s;
 	}
@@ -62,13 +57,13 @@ public final class LongCircularArray implements LongMutableArray {
 
 	public long get(final int i) {
 		int j = offset + i;
-		if (j >= size) j -= size;
+		if (j >= length) j -= length;
 		return arr[j];
 	}
 
 	public long set(final int i, final long v) {
 		int j = offset + i;
-		if (j >= size) j -= size;
+		if (j >= length) j -= length;
 		long old = arr[j];
 		arr[j] = v;
 		sum += v - old;
@@ -77,33 +72,33 @@ public final class LongCircularArray implements LongMutableArray {
 
 	public void fill(final long v) {
 		Arrays.fill(arr, v);
-		sum = v * size;
+		sum = v * length;
+		rotation = 0;
+		offset = 0;
 	}
 
 	public void setAll(final IntToLongFunction init) {
 		long s = 0;
-		for (int i = 0; i < size; i++) {
-			long v = init.applyAsLong(i);
-			int j = offset + i;
-			if (j >= size) j -= size;
-			arr[j] = v;
-			s += v;
+		for (int i = 0; i < length; i++) {
+			s += arr[i] = init.applyAsLong(i);
 		}
 		sum = s;
+		rotation = 0;
+		offset = 0;
 	}
 
 	public int size() {
-		return size;
+		return length;
 	}
 
 	public boolean contains(final long v) {
-		for (int i = 0; i < size; i++) if (get(i) == v) return true;
+		for (int i = 0; i < length; i++) if (get(i) == v) return true;
 		return false;
 	}
 
 	public long[] toArray() {
-		long[] res = new long[size];
-		for (int i = 0; i < size; i++) res[i] = get(i);
+		long[] res = new long[length];
+		for (int i = 0; i < length; i++) res[i] = get(i);
 		return res;
 	}
 
@@ -116,7 +111,8 @@ public final class LongCircularArray implements LongMutableArray {
 	 */
 	public void lShift() {
 		offset++;
-		if (offset == size) offset = 0;
+		if (offset == length) offset = 0;
+		rotation++;
 	}
 
 	/**
@@ -124,7 +120,8 @@ public final class LongCircularArray implements LongMutableArray {
 	 */
 	public void rShift() {
 		offset--;
-		if (offset == -1) offset = size - 1;
+		if (offset == -1) offset = length - 1;
+		rotation--;
 	}
 
 	/**
@@ -135,8 +132,9 @@ public final class LongCircularArray implements LongMutableArray {
 			rShift(-n);
 			return;
 		}
-		offset += n % size;
-		if (offset >= size) offset -= size;
+		offset += n % length;
+		if (offset >= length) offset -= length;
+		rotation += n;
 	}
 
 	/**
@@ -147,14 +145,23 @@ public final class LongCircularArray implements LongMutableArray {
 			lShift(-n);
 			return;
 		}
-		offset -= n % size;
-		if (offset < 0) offset += size;
+		offset -= n % length;
+		if (offset < 0) offset += length;
+		rotation -= n;
+	}
+
+	/**
+	 * 左回転を正、右回転を負とする総回転数を返します。
+	 */
+	public long rotation() {
+		return rotation;
 	}
 
 	/**
 	 * 回転状態を初期位置へ戻します。
 	 */
 	public void resetRotation() {
+		rotation = 0;
 		offset = 0;
 	}
 
@@ -163,7 +170,7 @@ public final class LongCircularArray implements LongMutableArray {
 			private int idx = 0;
 
 			public boolean hasNext() {
-				return idx < size;
+				return idx < length;
 			}
 
 			public long nextLong() {
@@ -173,9 +180,9 @@ public final class LongCircularArray implements LongMutableArray {
 	}
 
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(20 * size);
+		final StringBuilder sb = new StringBuilder(21 * length - 1);
 		sb.append(arr[offset]);
-		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
+		for (int i = 1; i < length; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }

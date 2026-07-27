@@ -23,14 +23,14 @@
 
 ### 1. 更新メソッド
 
-| メソッド                                  | 戻り値の型  | 説明                     |
-|---------------------------------------|--------|------------------------|
-| `IntMutableArray.set(int i, int v)`   | `int`  | 論理添字 `i` を更新し、更新前の値を返す |
-| `LongMutableArray.set(int i, long v)` | `long` | 論理添字 `i` を更新し、更新前の値を返す |
-| `IntMutableArray.fill(int v)`         | `void` | 全要素を `v` で更新           |
-| `LongMutableArray.fill(long v)`       | `void` | 全要素を `v` で更新           |
-| `IntMutableArray.setAll(init)`        | `void` | `init(i)` で全要素を更新      |
-| `LongMutableArray.setAll(init)`       | `void` | `init(i)` で全要素を更新      |
+| メソッド                              | 戻り値の型 | 説明                                    |
+|---------------------------------------|------------|-----------------------------------------|
+| `IntMutableArray.set(int i, int v)`   | `int`      | 論理添字 `i` を更新し、更新前の値を返す |
+| `LongMutableArray.set(int i, long v)` | `long`     | 論理添字 `i` を更新し、更新前の値を返す |
+| `IntMutableArray.fill(int v)`         | `void`     | 全要素を `v` で更新                     |
+| `LongMutableArray.fill(long v)`       | `void`     | 全要素を `v` で更新                     |
+| `IntMutableArray.setAll(init)`        | `void`     | `init(i)` で全要素を更新                |
+| `LongMutableArray.setAll(init)`       | `void`     | `init(i)` で全要素を更新                |
 
 ### 2. 継承メソッド
 
@@ -63,10 +63,10 @@ System.out.println(a.get(2)); // 10
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                  |
-|:--------------|:-----------|:----------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                          |
+|:-------------------|:-----------|:------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-07-15 | `IntArray` / `LongArray` から更新操作を分離するインターフェースとして初回実装 |
-| **バージョン 2.0** | 2026-07-15 | 全要素を更新する既定メソッド `fill` / `setAll` を追加                |
+| **バージョン 2.0** | 2026-07-15 | 全要素を更新する既定メソッド `fill` / `setAll` を追加                         |
 
 ### バージョン管理について
 
