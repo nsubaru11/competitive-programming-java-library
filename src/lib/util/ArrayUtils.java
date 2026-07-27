@@ -12,6 +12,718 @@ public final class ArrayUtils {
 	private ArrayUtils() {
 	}
 
+	// region < basic >
+
+	/**
+	 * 配列の総和を返します。
+	 */
+	public static long sum(final int[] a) {
+		long sum = 0;
+		for (final int v : a) sum += v;
+		return sum;
+	}
+
+	/**
+	 * 配列の総和を返します。
+	 */
+	public static long sum(final long[] a) {
+		long sum = 0;
+		for (final long v : a) sum += v;
+		return sum;
+	}
+
+	/**
+	 * 配列の総和を返します。
+	 */
+	public static long sum(final IntArray a) {
+		long sum = 0;
+		for (int i = 0; i < a.size(); i++) sum += a.get(i);
+		return sum;
+	}
+
+	/**
+	 * 配列の総和を返します。
+	 */
+	public static long sum(final LongArray a) {
+		long sum = 0;
+		for (int i = 0; i < a.size(); i++) sum += a.get(i);
+		return sum;
+	}
+
+	/**
+	 * 配列の最小値を返します。
+	 */
+	public static int min(final int[] a) {
+		int min = a[0];
+		for (int i = 1; i < a.length; i++) if (a[i] < min) min = a[i];
+		return min;
+	}
+
+	/**
+	 * 配列の最小値を返します。
+	 */
+	public static long min(final long[] a) {
+		long min = a[0];
+		for (int i = 1; i < a.length; i++) if (a[i] < min) min = a[i];
+		return min;
+	}
+
+	/**
+	 * 配列の最小値を返します。
+	 */
+	public static int min(final IntArray a) {
+		int min = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final int v = a.get(i);
+			if (v < min) min = v;
+		}
+		return min;
+	}
+
+	/**
+	 * 配列の最小値を返します。
+	 */
+	public static long min(final LongArray a) {
+		long min = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final long v = a.get(i);
+			if (v < min) min = v;
+		}
+		return min;
+	}
+
+	/**
+	 * 配列の最大値を返します。
+	 */
+	public static int max(final int[] a) {
+		int max = a[0];
+		for (int i = 1; i < a.length; i++) if (a[i] > max) max = a[i];
+		return max;
+	}
+
+	/**
+	 * 配列の最大値を返します。
+	 */
+	public static long max(final long[] a) {
+		long max = a[0];
+		for (int i = 1; i < a.length; i++) if (a[i] > max) max = a[i];
+		return max;
+	}
+
+	/**
+	 * 配列の最大値を返します。
+	 */
+	public static int max(final IntArray a) {
+		int max = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final int v = a.get(i);
+			if (v > max) max = v;
+		}
+		return max;
+	}
+
+	/**
+	 * 配列の最大値を返します。
+	 */
+	public static long max(final LongArray a) {
+		long max = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final long v = a.get(i);
+			if (v > max) max = v;
+		}
+		return max;
+	}
+
+	/**
+	 * 最小値が最初に現れる添字を返します。
+	 */
+	public static int argMin(final int[] a) {
+		int idx = 0;
+		for (int i = 1; i < a.length; i++) if (a[i] < a[idx]) idx = i;
+		return idx;
+	}
+
+	/**
+	 * 最小値が最初に現れる添字を返します。
+	 */
+	public static int argMin(final long[] a) {
+		int idx = 0;
+		for (int i = 1; i < a.length; i++) if (a[i] < a[idx]) idx = i;
+		return idx;
+	}
+
+	/**
+	 * 最小値が最初に現れる添字を返します。
+	 */
+	public static int argMin(final IntArray a) {
+		int idx = 0, min = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final int v = a.get(i);
+			if (v < min) {
+				min = v;
+				idx = i;
+			}
+		}
+		return idx;
+	}
+
+	/**
+	 * 最小値が最初に現れる添字を返します。
+	 */
+	public static int argMin(final LongArray a) {
+		int idx = 0;
+		long min = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final long v = a.get(i);
+			if (v < min) {
+				min = v;
+				idx = i;
+			}
+		}
+		return idx;
+	}
+
+	/**
+	 * 最大値が最初に現れる添字を返します。
+	 */
+	public static int argMax(final int[] a) {
+		int idx = 0;
+		for (int i = 1; i < a.length; i++) if (a[i] > a[idx]) idx = i;
+		return idx;
+	}
+
+	/**
+	 * 最大値が最初に現れる添字を返します。
+	 */
+	public static int argMax(final long[] a) {
+		int idx = 0;
+		for (int i = 1; i < a.length; i++) if (a[i] > a[idx]) idx = i;
+		return idx;
+	}
+
+	/**
+	 * 最大値が最初に現れる添字を返します。
+	 */
+	public static int argMax(final IntArray a) {
+		int idx = 0, max = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final int v = a.get(i);
+			if (v > max) {
+				max = v;
+				idx = i;
+			}
+		}
+		return idx;
+	}
+
+	/**
+	 * 最大値が最初に現れる添字を返します。
+	 */
+	public static int argMax(final LongArray a) {
+		int idx = 0;
+		long max = a.get(0);
+		for (int i = 1; i < a.size(); i++) {
+			final long v = a.get(i);
+			if (v > max) {
+				max = v;
+				idx = i;
+			}
+		}
+		return idx;
+	}
+
+	/**
+	 * 指定値の出現回数を返します。
+	 */
+	public static int count(final int[] a, final int t) {
+		int cnt = 0;
+		for (final int v : a) if (v == t) cnt++;
+		return cnt;
+	}
+
+	/**
+	 * 指定値の出現回数を返します。
+	 */
+	public static int count(final long[] a, final long t) {
+		int cnt = 0;
+		for (final long v : a) if (v == t) cnt++;
+		return cnt;
+	}
+
+	/**
+	 * 指定値の出現回数を返します。
+	 */
+	public static int count(final IntArray a, final int t) {
+		int cnt = 0;
+		for (int i = 0; i < a.size(); i++) if (a.get(i) == t) cnt++;
+		return cnt;
+	}
+
+	/**
+	 * 指定値の出現回数を返します。
+	 */
+	public static int count(final LongArray a, final long t) {
+		int cnt = 0;
+		for (int i = 0; i < a.size(); i++) if (a.get(i) == t) cnt++;
+		return cnt;
+	}
+
+	/**
+	 * 指定値が最初に現れる添字を返します。
+	 */
+	public static int indexOf(final int[] a, final int t) {
+		for (int i = 0; i < a.length; i++) if (a[i] == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最初に現れる添字を返します。
+	 */
+	public static int indexOf(final long[] a, final long t) {
+		for (int i = 0; i < a.length; i++) if (a[i] == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最初に現れる添字を返します。
+	 */
+	public static int indexOf(final IntArray a, final int t) {
+		for (int i = 0; i < a.size(); i++) if (a.get(i) == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最初に現れる添字を返します。
+	 */
+	public static int indexOf(final LongArray a, final long t) {
+		for (int i = 0; i < a.size(); i++) if (a.get(i) == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最後に現れる添字を返します。
+	 */
+	public static int lastIndexOf(final int[] a, final int t) {
+		for (int i = a.length - 1; i >= 0; i--) if (a[i] == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最後に現れる添字を返します。
+	 */
+	public static int lastIndexOf(final long[] a, final long t) {
+		for (int i = a.length - 1; i >= 0; i--) if (a[i] == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最後に現れる添字を返します。
+	 */
+	public static int lastIndexOf(final IntArray a, final int t) {
+		for (int i = a.size() - 1; i >= 0; i--) if (a.get(i) == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最後に現れる添字を返します。
+	 */
+	public static int lastIndexOf(final LongArray a, final long t) {
+		for (int i = a.size() - 1; i >= 0; i--) if (a.get(i) == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 配列を反転します。
+	 */
+	public static void reverse(final int[] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲を反転します。
+	 */
+	public static void reverse(final int[] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列を反転します。
+	 */
+	public static void reverse(final long[] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲を反転します。
+	 */
+	public static void reverse(final long[] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列を反転します。
+	 */
+	public static void reverse(final char[] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲を反転します。
+	 */
+	public static void reverse(final char[] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列の行を反転します。
+	 */
+	public static void reverse(final int[][] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲の行を反転します。
+	 */
+	public static void reverse(final int[][] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swapRow(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列の行を反転します。
+	 */
+	public static void reverse(final long[][] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲の行を反転します。
+	 */
+	public static void reverse(final long[][] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swapRow(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列の行を反転します。
+	 */
+	public static void reverse(final char[][] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲の行を反転します。
+	 */
+	public static void reverse(final char[][] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swapRow(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列を反転します。
+	 */
+	public static void reverse(final IntMutableArray a) {
+		reverse(a, 0, a.size());
+	}
+
+	/**
+	 * 配列の指定範囲を反転します。
+	 */
+	public static void reverse(final IntMutableArray a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列を反転します。
+	 */
+	public static void reverse(final LongMutableArray a) {
+		reverse(a, 0, a.size());
+	}
+
+	/**
+	 * 配列の指定範囲を反転します。
+	 */
+	public static void reverse(final LongMutableArray a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 二要素を交換します。
+	 */
+	public static void swap(final int[] a, final int i, final int j) {
+		final int v = a[i];
+		a[i] = a[j];
+		a[j] = v;
+	}
+
+	/**
+	 * 二要素を交換します。
+	 */
+	public static void swap(final long[] a, final int i, final int j) {
+		final long v = a[i];
+		a[i] = a[j];
+		a[j] = v;
+	}
+
+	/**
+	 * 二要素を交換します。
+	 */
+	public static void swap(final char[] a, final int i, final int j) {
+		final char v = a[i];
+		a[i] = a[j];
+		a[j] = v;
+	}
+
+	/**
+	 * 二要素を交換します。
+	 */
+	public static void swap(final IntMutableArray a, final int i, final int j) {
+		final int v = a.get(i);
+		a.set(i, a.get(j));
+		a.set(j, v);
+	}
+
+	/**
+	 * 二要素を交換します。
+	 */
+	public static void swap(final LongMutableArray a, final int i, final int j) {
+		final long v = a.get(i);
+		a.set(i, a.get(j));
+		a.set(j, v);
+	}
+
+	/**
+	 * 二つの行を交換します。
+	 */
+	public static void swapRow(final int[][] a, final int i, final int j) {
+		final int[] row = a[i];
+		a[i] = a[j];
+		a[j] = row;
+	}
+
+	/**
+	 * 二つの行を交換します。
+	 */
+	public static void swapRow(final long[][] a, final int i, final int j) {
+		final long[] row = a[i];
+		a[i] = a[j];
+		a[j] = row;
+	}
+
+	/**
+	 * 二つの行を交換します。
+	 */
+	public static void swapRow(final char[][] a, final int i, final int j) {
+		final char[] row = a[i];
+		a[i] = a[j];
+		a[j] = row;
+	}
+
+	/**
+	 * 異なる値の個数を返します。
+	 */
+	public static int uniqueSize(final int[] a) {
+		if (a.length == 0) return 0;
+		final int[] b = a.clone();
+		Arrays.sort(b);
+		int size = 1;
+		for (int i = 1; i < b.length; i++) if (b[i - 1] != b[i]) size++;
+		return size;
+	}
+
+	/**
+	 * 異なる値の個数を返します。
+	 */
+	public static int uniqueSize(final long[] a) {
+		if (a.length == 0) return 0;
+		final long[] b = a.clone();
+		Arrays.sort(b);
+		int size = 1;
+		for (int i = 1; i < b.length; i++) if (b[i - 1] != b[i]) size++;
+		return size;
+	}
+
+	/**
+	 * 異なる値の個数を返します。
+	 */
+	public static int uniqueSize(final IntArray a) {
+		final int n = a.size();
+		if (n == 0) return 0;
+		final int[] b = new int[n];
+		for (int i = 0; i < n; i++) b[i] = a.get(i);
+		Arrays.sort(b);
+		int size = 1;
+		for (int i = 1; i < n; i++) if (b[i - 1] != b[i]) size++;
+		return size;
+	}
+
+	/**
+	 * 異なる値の個数を返します。
+	 */
+	public static int uniqueSize(final LongArray a) {
+		final int n = a.size();
+		if (n == 0) return 0;
+		final long[] b = new long[n];
+		for (int i = 0; i < n; i++) b[i] = a.get(i);
+		Arrays.sort(b);
+		int size = 1;
+		for (int i = 1; i < n; i++) if (b[i - 1] != b[i]) size++;
+		return size;
+	}
+
+	/**
+	 * 0以上size未満の各値の出現回数を返します。
+	 */
+	public static int[] freq(final int[] a, final int size) {
+		final int[] freq = new int[size];
+		for (final int v : a) freq[v]++;
+		return freq;
+	}
+
+	/**
+	 * 0以上size未満の各値の出現回数を返します。
+	 */
+	public static int[] freq(final long[] a, final int size) {
+		final int[] freq = new int[size];
+		for (final long v : a) freq[(int) v]++;
+		return freq;
+	}
+
+	/**
+	 * 0以上size未満の各値の出現回数を返します。
+	 */
+	public static int[] freq(final IntArray a, final int size) {
+		final int[] freq = new int[size];
+		for (int i = 0; i < a.size(); i++) freq[a.get(i)]++;
+		return freq;
+	}
+
+	/**
+	 * 0以上size未満の各値の出現回数を返します。
+	 */
+	public static int[] freq(final LongArray a, final int size) {
+		final int[] freq = new int[size];
+		for (int i = 0; i < a.size(); i++) freq[(int) a.get(i)]++;
+		return freq;
+	}
+
+	/**
+	 * base以上base+size未満の各文字の出現回数を返します。
+	 */
+	public static int[] freq(final char[] a, final char base, final int size) {
+		final int[] freq = new int[size];
+		for (final char c : a) freq[c - base]++;
+		return freq;
+	}
+
+	/**
+	 * 配列に含まれない最小の非負整数を返します。
+	 */
+	public static int mex(final int[] a) {
+		final int n = a.length;
+		final boolean[] used = new boolean[n + 1];
+		for (final int v : a) if (0 <= v && v <= n) used[v] = true;
+		for (int i = 0; ; i++) if (!used[i]) return i;
+	}
+
+	/**
+	 * 配列に含まれない最小の非負整数を返します。
+	 */
+	public static int mex(final long[] a) {
+		final int n = a.length;
+		final boolean[] used = new boolean[n + 1];
+		for (final long v : a) if (0 <= v && v <= n) used[(int) v] = true;
+		for (int i = 0; ; i++) if (!used[i]) return i;
+	}
+
+	/**
+	 * 配列に含まれない最小の非負整数を返します。
+	 */
+	public static int mex(final IntArray a) {
+		final int n = a.size();
+		final boolean[] used = new boolean[n + 1];
+		for (int i = 0; i < n; i++) {
+			final int v = a.get(i);
+			if (0 <= v && v <= n) used[v] = true;
+		}
+		for (int i = 0; ; i++) if (!used[i]) return i;
+	}
+
+	/**
+	 * 配列に含まれない最小の非負整数を返します。
+	 */
+	public static int mex(final LongArray a) {
+		final int n = a.size();
+		final boolean[] used = new boolean[n + 1];
+		for (int i = 0; i < n; i++) {
+			final long v = a.get(i);
+			if (0 <= v && v <= n) used[(int) v] = true;
+		}
+		for (int i = 0; ; i++) if (!used[i]) return i;
+	}
+
+	/**
+	 * 配列が広義昇順ならtrueを返します。
+	 */
+	public static boolean isSorted(final int[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
+		return true;
+	}
+
+	/**
+	 * 配列が広義昇順ならtrueを返します。
+	 */
+	public static boolean isSorted(final long[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
+		return true;
+	}
+
+	/**
+	 * 配列が広義昇順ならtrueを返します。
+	 */
+	public static boolean isSorted(final IntArray a) {
+		for (int i = 1; i < a.size(); i++) if (a.get(i - 1) > a.get(i)) return false;
+		return true;
+	}
+
+	/**
+	 * 配列が広義昇順ならtrueを返します。
+	 */
+	public static boolean isSorted(final LongArray a) {
+		for (int i = 1; i < a.size(); i++) if (a.get(i - 1) > a.get(i)) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が等しければtrueを返します。
+	 */
+	public static boolean allEqual(final int[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] != a[i]) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が等しければtrueを返します。
+	 */
+	public static boolean allEqual(final long[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] != a[i]) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が等しければtrueを返します。
+	 */
+	public static boolean allEqual(final IntArray a) {
+		for (int i = 1; i < a.size(); i++) if (a.get(i - 1) != a.get(i)) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が等しければtrueを返します。
+	 */
+	public static boolean allEqual(final LongArray a) {
+		for (int i = 1; i < a.size(); i++) if (a.get(i - 1) != a.get(i)) return false;
+		return true;
+	}
+	// endregion
+
 	// region < localMaxCnt >
 	public static int localMaxCnt(final int[] a) {
 		return localMaxCnt(a, a.length);

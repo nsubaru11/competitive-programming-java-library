@@ -5,16 +5,16 @@
 
 ## Guide 一覧
 
-| Guide                                             | 対象                                        | 用途                                       |
-|---------------------------------------------------|---------------------------------------------|--------------------------------------------|
-| [ArrayGuide](./ArrayGuide.md)                     | `IntArray`, `LongArray`                     | 読み取り専用配列インターフェース           |
-| [MutableArrayGuide](./MutableArrayGuide.md)       | `IntMutableArray`, `LongMutableArray`       | 単一要素・全要素の更新インターフェース     |
-| [PrefixSumGuide](./PrefixSumGuide.md)             | 1D / 2D / 3D の `PrefixSum`・`PrefixModSum` | 静的配列・矩形・直方体の区間和             |
-| [CircularArrayGuide](./CircularArrayGuide.md)     | `IntCircularArray`, `LongCircularArray`     | O(1) の論理回転と固定長更新                |
-| [ArrayDequeGuide](./ArrayDequeGuide.md)           | `IntArrayDeque`, `LongArrayDeque`           | プリミティブ特化の可変長 deque             |
-| [Array2DGuide](./Array2DGuide.md)                 | `IntArray2D`, `LongArray2D`                 | 一次元圧縮された2次元配列と論理回転        |
-| [CompressedArrayGuide](./CompressedArrayGuide.md) | 1D / 2D の `CompressedArray`                | 座標圧縮と順位変換                         |
-| [ArrayUtilsGuide](./ArrayUtilsGuide.md)           | `ArrayUtils`                                | 窓、部分列、部分集合などの配列アルゴリズム |
+| Guide                                             | 対象                                        | 用途                                                 |
+|---------------------------------------------------|---------------------------------------------|------------------------------------------------------|
+| [ArrayGuide](./ArrayGuide.md)                     | `IntArray`, `LongArray`                     | 読み取り専用配列インターフェース                     |
+| [MutableArrayGuide](./MutableArrayGuide.md)       | `IntMutableArray`, `LongMutableArray`       | 単一要素・全要素の更新インターフェース               |
+| [PrefixSumGuide](./PrefixSumGuide.md)             | 1D / 2D / 3D の `PrefixSum`・`PrefixModSum` | 静的配列・矩形・直方体の区間和                       |
+| [CircularArrayGuide](./CircularArrayGuide.md)     | `IntCircularArray`, `LongCircularArray`     | O(1) の論理回転と固定長更新                          |
+| [ArrayDequeGuide](./ArrayDequeGuide.md)           | `IntArrayDeque`, `LongArrayDeque`           | プリミティブ特化の可変長 deque                       |
+| [Array2DGuide](./Array2DGuide.md)                 | `IntArray2D`, `LongArray2D`                 | 一次元圧縮された2次元配列と論理回転                  |
+| [CompressedArrayGuide](./CompressedArrayGuide.md) | 1D / 2D の `CompressedArray`                | 座標圧縮と順位変換                                   |
+| [ArrayUtilsGuide](./ArrayUtilsGuide.md)           | `ArrayUtils`                                | 集計、探索、反転、窓、部分列、部分集合などの配列処理 |
 
 ## 選択の目安
 
@@ -23,7 +23,7 @@
 - 先頭・末尾の追加削除が必要なら `ArrayDeque`
 - 更新せず区間和を繰り返すなら `PrefixSum`、各和を法で保持するなら `PrefixModSum`
 - 値を順位へ写すなら `CompressedArray`
-- LIS、固定幅窓、部分集合の個数には `ArrayUtils`
+- 集計、線形探索、反転、LIS、固定幅窓、部分集合の個数には `ArrayUtils`
 
 ## 共通方針
 

@@ -83,16 +83,16 @@ public final class Test {
 		// 配列の反転
 		out.println("\n配列の反転テスト:");
 		out.print("int[] 反転前: " + Arrays.toString(ia2) + " -> 反転後: ");
-		Master.reverse(ia2);
+		ArrayUtils.reverse(ia2);
 		out.println(Arrays.toString(ia2));
 
 		out.print("char[] 反転前: " + Arrays.toString(c2) + " -> 反転後: ");
-		Master.reverse(c2);
+		ArrayUtils.reverse(c2);
 		out.println(Arrays.toString(c2));
 
 		long[] la = {1, 2, 3, 4, 5};
 		out.print("long[] 反転前: " + Arrays.toString(la) + " -> 反転後: ");
-		Master.reverse(la);
+		ArrayUtils.reverse(la);
 		out.println(Arrays.toString(la));
 	}
 }

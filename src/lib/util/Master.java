@@ -220,39 +220,6 @@ public final class Master {
 		return lReverse;
 	}
 
-	/**
-	 * 配列の反転（int[]）
-	 */
-	public static void reverse(final int[] arr) {
-		for (int i = 0, len = arr.length; i < len / 2; i++) {
-			final int tmp = arr[i];
-			arr[i] = arr[len - i - 1];
-			arr[len - i - 1] = tmp;
-		}
-	}
-
-	/**
-	 * 配列の反転（char[]）
-	 */
-	public static void reverse(final char[] arr) {
-		for (int i = 0, len = arr.length; i < len / 2; i++) {
-			final char tmp = arr[i];
-			arr[i] = arr[len - i - 1];
-			arr[len - i - 1] = tmp;
-		}
-	}
-
-	/**
-	 * 配列の反転（long[]）
-	 */
-	public static void reverse(final long[] arr) {
-		for (int i = 0, len = arr.length; i < len / 2; i++) {
-			final long tmp = arr[i];
-			arr[i] = arr[len - i - 1];
-			arr[len - i - 1] = tmp;
-		}
-	}
-
 	/* -------------- sort -------------- */
 
 	/**
@@ -311,7 +278,7 @@ public final class Master {
 	public static int descendingSort(final int n) {
 		final char[] c = toCharArray(n);
 		Arrays.sort(c);
-		reverse(c);
+		ArrayUtils.reverse(c);
 		return toInt(c);
 	}
 
@@ -321,7 +288,7 @@ public final class Master {
 	public static long descendingSort(final long n) {
 		final char[] c = toCharArray(n);
 		Arrays.sort(c);
-		reverse(c);
+		ArrayUtils.reverse(c);
 		return toLong(c);
 	}
 
@@ -330,7 +297,7 @@ public final class Master {
 	 */
 	public static void descendingSort(final char[] arr) {
 		Arrays.sort(arr);
-		reverse(arr);
+		ArrayUtils.reverse(arr);
 	}
 
 	/**
@@ -338,7 +305,7 @@ public final class Master {
 	 */
 	public static void descendingSort(final int[] arr) {
 		Arrays.sort(arr);
-		reverse(arr);
+		ArrayUtils.reverse(arr);
 	}
 
 	/**
@@ -346,7 +313,7 @@ public final class Master {
 	 */
 	public static void descendingSort(final long[] arr) {
 		Arrays.sort(arr);
-		reverse(arr);
+		ArrayUtils.reverse(arr);
 	}
 
 	/**

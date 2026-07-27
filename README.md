@@ -86,7 +86,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Int128](./src/lib/math/number/Int128.java)                       | 128bit 符号付き整数（四則演算・文字列変換・比較）                                        |
 | [Math/NumberTheory](./docs/math/NumberTheory)                     | GCD/LCM・拡張ユークリッド・オイラーのトーシェント関数などの数論ユーティリティ            |
 | [Math/NumberUtils](./docs/math/NumberUtils)                       | べき乗計算・数値フォーマット変換・数値の性質判定ユーティリティ                           |
-| [Math/Permutation](./docs/math/Permutation)                       | 辞書順 next/prev permutation（int / long / char / 2次元配列対応）                        |
+| [Math/Permutation](./docs/math/Permutation)                       | 辞書順 index/next/prev permutation（int / long / char / 2次元配列対応）                  |
 | [Math/Polynomial](./docs/math/Polynomial)                         | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                               |
 | [Math/PrimeNumber](./docs/math/PrimeNumber)                       | 素数判定・エラトステネスの篩（ビット圧縮）・素因数分解・k 番目の素数                     |
 | [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 O(n) で取得）                                            |
@@ -99,30 +99,30 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 
 ### データ構造（`lib.ds`）
 
-| モジュール                                               | 内容                                                                                                          |
-|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| [Primitive Array Utilities](docs/ds/Arrays)              | プリミティブ配列、1D/2D/3D累積和・剰余累積和、循環配列、deque、2D配列、座標圧縮、LIS・窓・部分集合            |
-| [AVLTree](./docs/ds/AVLTree)                             | AVL 木による順序付き Set / Multiset（順位検索・近傍検索対応、int / long 特化版あり）                          |
-| [BinaryIndexedTree](docs/ds/fenwick)                     | BIT（点更新区間和・2D・区間加算区間和、BIT 上の二分探索 `lowerBound` / `upperBound` 付き）                    |
-| [BinarySearchTree](./docs/ds/BinarySearchTree)           | 基本 BST・Treap（順序統計付き乱択平衡 BST）※赤黒木・B木・vEB木 📝                                             |
-| [CartesianTree](./src/lib/ds/CartesianTree.java)         | 📝 デカルト木（TODO）                                                                                         |
-| [EulerTour](./docs/ds/EulerTour)                         | 📝 オイラーツアー（TODO）                                                                                     |
-| [FastIO/Java17](./docs/io/Java17)                        | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                 |
-| [FastIO/Java24](./docs/io/Java24)                        | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)          |
-| [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（O(1) clear、ペア/トリプルキー対応）                       |
-| [LiChaoTree](./docs/ds/LiChaoTree)                       | 📝 Li Chao Tree（直線群へのCHT、TODO）                                                                        |
-| [ModNumbers](./docs/math/ModNumbers)                     | 剰余演算ラッパー ModInt / ModLong（逆元・冪乗付き）                                                           |
-| [PersistentSegmentTree](./docs/ds/PersistentSegmentTree) | 📝 永続セグメント木（TODO）                                                                                   |
-| [PersistentUnionFind](./docs/ds/PersistentUnionFind)     | 📝 永続Union-Find（TODO）                                                                                     |
-| [PriorityQueue](./docs/ds/PriorityQueue)                 | 遅延ヒープ構築、generic / primitive Comparator、generic / int / longのindex付き更新に対応する優先度キュー     |
-| [RingBuffer](./docs/ds/RingBuffer)                       | 容量を2の冪に正規化した高速リングバッファ（汎用 / int / long）                                                |
-| [SegmentTree](./docs/ds/SegmentTree)                     | セグメント木・遅延評価セグメント木・区間アフィン変換+二乗和（各 int / long 特化版あり）                       |
-| [SegmentTree2D](./docs/ds/SegmentTree2D)                 | 📝 2次元セグメント木（TODO）                                                                                  |
-| [SkipList](./docs/ds/SkipList)                           | 📝 スキップリスト（TODO）                                                                                     |
-| [SparseTable](./docs/ds/SparseTable)                     | 📝 Sparse Table（TODO）                                                                                       |
-| [Trie](./docs/ds/Trie)                                   | Trie / SuffixTrie / RadixTrie / PatriciaTrie / 三分探索木 / DoubleArrayTrie / SuffixArray ※SuffixAutomaton 📝 |
-| [UnionFind](./docs/ds/UnionFind)                         | 経路圧縮 + rank 併用の素集合データ構造（グループ数・サイズ・辺数の管理付き）                                  |
-| [WaveletTree](./docs/ds/WaveletTree)                     | 📝 Wavelet Tree（TODO）                                                                                       |
+| モジュール                                               | 内容                                                                                                                 |
+|----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| [Primitive Array Utilities](docs/ds/Arrays)              | プリミティブ配列、集計・探索・反転、1D/2D/3D累積和・剰余累積和、循環配列、deque、2D配列、座標圧縮、LIS・窓・部分集合 |
+| [AVLTree](./docs/ds/AVLTree)                             | AVL 木による順序付き Set / Multiset（順位検索・近傍検索対応、int / long 特化版あり）                                 |
+| [BinaryIndexedTree](docs/ds/fenwick)                     | BIT（点更新区間和・2D・区間加算区間和、BIT 上の二分探索 `lowerBound` / `upperBound` 付き）                           |
+| [BinarySearchTree](./docs/ds/BinarySearchTree)           | 基本 BST・Treap（順序統計付き乱択平衡 BST）※赤黒木・B木・vEB木 📝                                                    |
+| [CartesianTree](./src/lib/ds/CartesianTree.java)         | 📝 デカルト木（TODO）                                                                                                |
+| [EulerTour](./docs/ds/EulerTour)                         | 📝 オイラーツアー（TODO）                                                                                            |
+| [FastIO/Java17](./docs/io/Java17)                        | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                        |
+| [FastIO/Java24](./docs/io/Java24)                        | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)                 |
+| [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（O(1) clear、ペア/トリプルキー対応）                              |
+| [LiChaoTree](./docs/ds/LiChaoTree)                       | 📝 Li Chao Tree（直線群へのCHT、TODO）                                                                               |
+| [ModNumbers](./docs/math/ModNumbers)                     | 剰余演算ラッパー ModInt / ModLong（逆元・冪乗付き）                                                                  |
+| [PersistentSegmentTree](./docs/ds/PersistentSegmentTree) | 📝 永続セグメント木（TODO）                                                                                          |
+| [PersistentUnionFind](./docs/ds/PersistentUnionFind)     | 📝 永続Union-Find（TODO）                                                                                            |
+| [PriorityQueue](./docs/ds/PriorityQueue)                 | 遅延ヒープ構築、generic / primitive Comparator、generic / int / longのindex付き更新に対応する優先度キュー            |
+| [RingBuffer](./docs/ds/RingBuffer)                       | 容量を2の冪に正規化した高速リングバッファ（汎用 / int / long）                                                       |
+| [SegmentTree](./docs/ds/SegmentTree)                     | セグメント木・遅延評価セグメント木・区間アフィン変換+二乗和（各 int / long 特化版あり）                              |
+| [SegmentTree2D](./docs/ds/SegmentTree2D)                 | 📝 2次元セグメント木（TODO）                                                                                         |
+| [SkipList](./docs/ds/SkipList)                           | 📝 スキップリスト（TODO）                                                                                            |
+| [SparseTable](./docs/ds/SparseTable)                     | 📝 Sparse Table（TODO）                                                                                              |
+| [Trie](./docs/ds/Trie)                                   | Trie / SuffixTrie / RadixTrie / PatriciaTrie / 三分探索木 / DoubleArrayTrie / SuffixArray ※SuffixAutomaton 📝        |
+| [UnionFind](./docs/ds/UnionFind)                         | 経路圧縮 + rank 併用の素集合データ構造（グループ数・サイズ・辺数の管理付き）                                         |
+| [WaveletTree](./docs/ds/WaveletTree)                     | 📝 Wavelet Tree（TODO）                                                                                              |
 
 ## ベンチマーク
 

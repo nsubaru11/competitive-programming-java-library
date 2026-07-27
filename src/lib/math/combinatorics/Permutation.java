@@ -1,10 +1,131 @@
 package lib.math.combinatorics;
 
+import lib.util.ArrayUtils;
+
+import lib.math.numbertheory.*;
+
 /**
- * 順列列挙に関するクラスです。
+ * 順列の辞書順位置と列挙に関するクラスです。
  */
 @SuppressWarnings("unused")
 public final class Permutation {
+
+	/**
+	 * 重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr 対象の配列
+	 * @return 辞書順における位置
+	 */
+	public static long index(final int[] arr) {
+		return index(arr, 0, arr.length);
+	}
+
+	/**
+	 * 指定範囲の、重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr     対象の配列
+	 * @param fromIdx 始点_include
+	 * @param toIdx   終点_exclude
+	 * @return 辞書順における位置
+	 */
+	public static long index(final int[] arr, final int fromIdx, final int toIdx) {
+		long permutations = 1;
+		for (int i = fromIdx; i < toIdx; i++) {
+			int cnt = 1;
+			for (int j = fromIdx; j < i; j++) if (arr[j] == arr[i]) cnt++;
+			permutations = mulDiv(permutations, i - fromIdx + 1, cnt);
+		}
+		long index = 0;
+		for (int i = fromIdx; i < toIdx; i++) {
+			int smaller = 0, same = 0;
+			for (int j = i; j < toIdx; j++) {
+				if (arr[j] < arr[i]) smaller++;
+				else if (arr[j] == arr[i]) same++;
+			}
+			final int rem = toIdx - i;
+			index += mulDiv(permutations, smaller, rem);
+			permutations = mulDiv(permutations, same, rem);
+		}
+		return index;
+	}
+
+	/**
+	 * 重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr 対象の配列
+	 * @return 辞書順における位置
+	 */
+	public static long index(final long[] arr) {
+		return index(arr, 0, arr.length);
+	}
+
+	/**
+	 * 指定範囲の、重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr     対象の配列
+	 * @param fromIdx 始点_include
+	 * @param toIdx   終点_exclude
+	 * @return 辞書順における位置
+	 */
+	public static long index(final long[] arr, final int fromIdx, final int toIdx) {
+		long permutations = 1;
+		for (int i = fromIdx; i < toIdx; i++) {
+			int cnt = 1;
+			for (int j = fromIdx; j < i; j++) if (arr[j] == arr[i]) cnt++;
+			permutations = mulDiv(permutations, i - fromIdx + 1, cnt);
+		}
+		long index = 0;
+		for (int i = fromIdx; i < toIdx; i++) {
+			int smaller = 0, same = 0;
+			for (int j = i; j < toIdx; j++) {
+				if (arr[j] < arr[i]) smaller++;
+				else if (arr[j] == arr[i]) same++;
+			}
+			final int rem = toIdx - i;
+			index += mulDiv(permutations, smaller, rem);
+			permutations = mulDiv(permutations, same, rem);
+		}
+		return index;
+	}
+
+	/**
+	 * 重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr 対象の配列
+	 * @return 辞書順における位置
+	 */
+	public static long index(final char[] arr) {
+		return index(arr, 0, arr.length);
+	}
+
+	/**
+	 * 指定範囲の、重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr     対象の配列
+	 * @param fromIdx 始点_include
+	 * @param toIdx   終点_exclude
+	 * @return 辞書順における位置
+	 */
+	public static long index(final char[] arr, final int fromIdx, final int toIdx) {
+		long permutations = 1;
+		for (int i = fromIdx; i < toIdx; i++) {
+			int cnt = 1;
+			for (int j = fromIdx; j < i; j++) if (arr[j] == arr[i]) cnt++;
+			permutations = mulDiv(permutations, i - fromIdx + 1, cnt);
+		}
+		long index = 0;
+		for (int i = fromIdx; i < toIdx; i++) {
+			int smaller = 0, same = 0;
+			for (int j = i; j < toIdx; j++) {
+				if (arr[j] < arr[i]) smaller++;
+				else if (arr[j] == arr[i]) same++;
+			}
+			final int rem = toIdx - i;
+			index += mulDiv(permutations, smaller, rem);
+			permutations = mulDiv(permutations, same, rem);
+		}
+		return index;
+	}
 
 	/**
 	 * 辞書順で次の順列に並び替えます。
@@ -18,8 +139,8 @@ public final class Permutation {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i] < arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -41,8 +162,8 @@ public final class Permutation {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i] < arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -63,8 +184,8 @@ public final class Permutation {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i] > arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -86,8 +207,8 @@ public final class Permutation {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i] > arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -108,8 +229,8 @@ public final class Permutation {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i] < arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -131,8 +252,8 @@ public final class Permutation {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i] < arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -153,8 +274,8 @@ public final class Permutation {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i] > arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -176,8 +297,8 @@ public final class Permutation {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i] > arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -198,8 +319,8 @@ public final class Permutation {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i] < arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -221,8 +342,8 @@ public final class Permutation {
 			if (arr[i] < arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i] < arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -243,8 +364,8 @@ public final class Permutation {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i] > arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -266,8 +387,8 @@ public final class Permutation {
 			if (arr[i] > arr[i + 1]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i] > arr[j]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swap(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -276,34 +397,82 @@ public final class Permutation {
 		return false;
 	}
 
-	private static void swap(final int[] a, final int i, final int j) {
-		int swap = a[i];
-		a[i] = a[j];
-		a[j] = swap;
+	/**
+	 * 指定列を基準とする、重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr 対象の配列
+	 * @param idx 比較する列
+	 * @return 辞書順における位置
+	 */
+	public static long index(final int[][] arr, final int idx) {
+		return index(arr, idx, 0, arr.length);
 	}
 
-	private static void swap(final long[] a, final int i, final int j) {
-		long swap = a[i];
-		a[i] = a[j];
-		a[j] = swap;
+	/**
+	 * 指定範囲を指定列で比較した、重複を除く辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr     対象の配列
+	 * @param idx     比較する列
+	 * @param fromIdx 始点_include
+	 * @param toIdx   終点_exclude
+	 * @return 辞書順における位置
+	 */
+	public static long index(final int[][] arr, final int idx, final int fromIdx, final int toIdx) {
+		final int[] key = new int[toIdx - fromIdx];
+		for (int i = fromIdx; i < toIdx; i++) key[i - fromIdx] = arr[i][idx];
+		return index(key);
 	}
 
-	private static void swap(final char[] a, final int i, final int j) {
-		char swap = a[i];
-		a[i] = a[j];
-		a[j] = swap;
+	/**
+	 * 指定列を基準とする、重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr 対象の配列
+	 * @param idx 比較する列
+	 * @return 辞書順における位置
+	 */
+	public static long index(final long[][] arr, final int idx) {
+		return index(arr, idx, 0, arr.length);
 	}
 
-	private static void reverseRange(final int[] a, int i, int j) {
-		while (i < j) swap(a, i++, --j);
+	/**
+	 * 指定範囲を指定列で比較した、重複を除く辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr     対象の配列
+	 * @param idx     比較する列
+	 * @param fromIdx 始点_include
+	 * @param toIdx   終点_exclude
+	 * @return 辞書順における位置
+	 */
+	public static long index(final long[][] arr, final int idx, final int fromIdx, final int toIdx) {
+		final long[] key = new long[toIdx - fromIdx];
+		for (int i = fromIdx; i < toIdx; i++) key[i - fromIdx] = arr[i][idx];
+		return index(key);
 	}
 
-	private static void reverseRange(final long[] a, int i, int j) {
-		while (i < j) swap(a, i++, --j);
+	/**
+	 * 指定列を基準とする、重複を除いた辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr 対象の配列
+	 * @param idx 比較する列
+	 * @return 辞書順における位置
+	 */
+	public static long index(final char[][] arr, final int idx) {
+		return index(arr, idx, 0, arr.length);
 	}
 
-	private static void reverseRange(final char[] a, int i, int j) {
-		while (i < j) swap(a, i++, --j);
+	/**
+	 * 指定範囲を指定列で比較した、重複を除く辞書順における0始まりの位置を返します。
+	 *
+	 * @param arr     対象の配列
+	 * @param idx     比較する列
+	 * @param fromIdx 始点_include
+	 * @param toIdx   終点_exclude
+	 * @return 辞書順における位置
+	 */
+	public static long index(final char[][] arr, final int idx, final int fromIdx, final int toIdx) {
+		final char[] key = new char[toIdx - fromIdx];
+		for (int i = fromIdx; i < toIdx; i++) key[i - fromIdx] = arr[i][idx];
+		return index(key);
 	}
 
 	/**
@@ -318,8 +487,8 @@ public final class Permutation {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i][idx] < arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -341,8 +510,8 @@ public final class Permutation {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i][idx] < arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -363,8 +532,8 @@ public final class Permutation {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i][idx] > arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -386,8 +555,8 @@ public final class Permutation {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i][idx] > arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -408,8 +577,8 @@ public final class Permutation {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i][idx] < arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -431,8 +600,8 @@ public final class Permutation {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i][idx] < arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -453,8 +622,8 @@ public final class Permutation {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i][idx] > arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -476,8 +645,8 @@ public final class Permutation {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i][idx] > arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -498,8 +667,8 @@ public final class Permutation {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i][idx] < arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -521,8 +690,8 @@ public final class Permutation {
 			if (arr[i][idx] < arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i][idx] < arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -543,8 +712,8 @@ public final class Permutation {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = len - 1; i < j; --j) {
 					if (arr[i][idx] > arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, len);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, len);
 						return true;
 					}
 				}
@@ -566,8 +735,8 @@ public final class Permutation {
 			if (arr[i][idx] > arr[i + 1][idx]) {
 				for (int j = toIdx - 1; i < j; --j) {
 					if (arr[i][idx] > arr[j][idx]) {
-						swap(arr, i, j);
-						reverseRange(arr, i + 1, toIdx);
+						ArrayUtils.swapRow(arr, i, j);
+						ArrayUtils.reverse(arr, i + 1, toIdx);
 						return true;
 					}
 				}
@@ -576,34 +745,10 @@ public final class Permutation {
 		return false;
 	}
 
-	private static void swap(final int[][] a, int i, int j) {
-		final int[] swap = a[i];
-		a[i] = a[j];
-		a[j] = swap;
+	private static long mulDiv(long a, long b, long d) {
+		final long g = NumberTheoryUtils.fastGcd(b, d);
+		b /= g;
+		d /= g;
+		return a / d * b;
 	}
-
-	private static void swap(final long[][] a, int i, int j) {
-		final long[] swap = a[i];
-		a[i] = a[j];
-		a[j] = swap;
-	}
-
-	private static void swap(final char[][] a, int i, int j) {
-		final char[] swap = a[i];
-		a[i] = a[j];
-		a[j] = swap;
-	}
-
-	private static void reverseRange(final int[][] a, int i, int j) {
-		while (i < j) swap(a, i++, --j);
-	}
-
-	private static void reverseRange(final long[][] a, int i, int j) {
-		while (i < j) swap(a, i++, --j);
-	}
-
-	private static void reverseRange(final char[][] a, int i, int j) {
-		while (i < j) swap(a, i++, --j);
-	}
-
 }
