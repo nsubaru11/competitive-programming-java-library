@@ -1,8 +1,12 @@
 package lib.util;
 
+import static java.util.Arrays.*;
+
 import java.util.*;
+import java.util.function.*;
 
 import lib.ds.arrays.*;
+import lib.search.*;
 
 /**
  * 配列に対する代表的なアルゴリズムを提供します。
@@ -12,7 +16,7 @@ public final class ArrayUtils {
 	private ArrayUtils() {
 	}
 
-	// region < basic >
+	// region < statistics >
 
 	/**
 	 * 配列の総和を返します。
@@ -231,6 +235,9 @@ public final class ArrayUtils {
 		}
 		return idx;
 	}
+	// endregion
+
+	// region < linear search >
 
 	/**
 	 * 指定値の出現回数を返します。
@@ -331,6 +338,9 @@ public final class ArrayUtils {
 		for (int i = a.size() - 1; i >= 0; i--) if (a.get(i) == t) return i;
 		return -1;
 	}
+	// endregion
+
+	// region < rearrange >
 
 	/**
 	 * 配列を反転します。
@@ -515,6 +525,9 @@ public final class ArrayUtils {
 		a[i] = a[j];
 		a[j] = row;
 	}
+	// endregion
+
+	// region < distribution >
 
 	/**
 	 * 異なる値の個数を返します。
@@ -658,6 +671,9 @@ public final class ArrayUtils {
 		}
 		for (int i = 0; ; i++) if (!used[i]) return i;
 	}
+	// endregion
+
+	// region < predicates >
 
 	/**
 	 * 配列が広義昇順ならtrueを返します。
@@ -721,6 +737,70 @@ public final class ArrayUtils {
 	public static boolean allEqual(final LongArray a) {
 		for (int i = 1; i < a.size(); i++) if (a.get(i - 1) != a.get(i)) return false;
 		return true;
+	}
+
+	/**
+	 * 全要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean allMatch(final int[] a, final IntPredicate tester) {
+		for (int ai : a) if (!tester.test(ai)) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean allMatch(final long[] a, final LongPredicate tester) {
+		for (long ai : a) if (!tester.test(ai)) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean allMatch(final IntArray a, final IntPredicate tester) {
+		for (int i = 0; i < a.size(); i++) if (!tester.test(a.get(i))) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean allMatch(final LongArray a, final LongPredicate tester) {
+		for (int i = 0; i < a.size(); i++) if (!tester.test(a.get(i))) return false;
+		return true;
+	}
+
+	/**
+	 * ある要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean anyMatch(final int[] a, final IntPredicate tester) {
+		for (int ai : a) if (tester.test(ai)) return true;
+		return false;
+	}
+
+	/**
+	 * ある要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean anyMatch(final long[] a, final LongPredicate tester) {
+		for (long ai : a) if (tester.test(ai)) return true;
+		return false;
+	}
+
+	/**
+	 * ある要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean anyMatch(final IntArray a, final IntPredicate tester) {
+		for (int i = 0; i < a.size(); i++) if (tester.test(a.get(i))) return true;
+		return false;
+	}
+
+	/**
+	 * ある要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean anyMatch(final LongArray a, final LongPredicate tester) {
+		for (int i = 0; i < a.size(); i++) if (tester.test(a.get(i))) return true;
+		return false;
 	}
 	// endregion
 
@@ -796,16 +876,16 @@ public final class ArrayUtils {
 	}
 	// endregion
 
-	// region < runLen >
+	// region < maxRunLen >
 
 	/**
 	 * 同じ値が連続する最長区間の長さを返します。
 	 */
-	public static int runLen(final int[] a) {
-		return runLen(a, a.length);
+	public static int maxRunLen(final int[] a) {
+		return maxRunLen(a, a.length);
 	}
 
-	public static int runLen(final int[] a, final int len) {
+	public static int maxRunLen(final int[] a, final int len) {
 		if (len == 0) return 0;
 		int ans = 1, cnt = 1;
 		for (int i = 1; i < len; i++) {
@@ -816,11 +896,11 @@ public final class ArrayUtils {
 		return ans;
 	}
 
-	public static int runLen(final long[] a) {
-		return runLen(a, a.length);
+	public static int maxRunLen(final long[] a) {
+		return maxRunLen(a, a.length);
 	}
 
-	public static int runLen(final long[] a, final int len) {
+	public static int maxRunLen(final long[] a, final int len) {
 		if (len == 0) return 0;
 		int ans = 1, cnt = 1;
 		for (int i = 1; i < len; i++) {
@@ -831,7 +911,7 @@ public final class ArrayUtils {
 		return ans;
 	}
 
-	public static int runLen(final IntArray a) {
+	public static int maxRunLen(final IntArray a) {
 		int len = a.size();
 		if (len == 0) return 0;
 		int ans = 1, cnt = 1;
@@ -843,7 +923,7 @@ public final class ArrayUtils {
 		return ans;
 	}
 
-	public static int runLen(final LongArray a) {
+	public static int maxRunLen(final LongArray a) {
 		int len = a.size();
 		if (len == 0) return 0;
 		int ans = 1, cnt = 1;
@@ -1223,7 +1303,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = a[i];
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1243,7 +1323,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = a[i];
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1263,7 +1343,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = a[i];
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1281,7 +1361,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = a[i];
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1299,7 +1379,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = -a[i];
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1319,7 +1399,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = -a[i];
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1339,7 +1419,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = -a[i];
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1357,7 +1437,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = -a[i];
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1372,7 +1452,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = a.get(i);
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1389,7 +1469,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = a.get(i);
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1406,7 +1486,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = a.get(i);
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1421,7 +1501,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = a.get(i);
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1435,7 +1515,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = -a.get(i);
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1451,7 +1531,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = -a.get(i);
-			int pos = bs(dp, ans, v);
+			int pos = binarySearch(dp, 0, ans, v);
 			if (pos < 0) {
 				pos = ~pos;
 				dp[pos] = v;
@@ -1467,7 +1547,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final int v = -a.get(i);
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1481,7 +1561,7 @@ public final class ArrayUtils {
 		int ans = 0;
 		for (int i = 0; i < len; i++) {
 			final long v = -a.get(i);
-			int pos = bsUpper(dp, ans, v);
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
 			pos = pos < 0 ? ~pos : pos + 1;
 			dp[pos] = v;
 			if (pos == ans) ans++;
@@ -1675,58 +1755,6 @@ public final class ArrayUtils {
 		if (k == 0) return t == 0 ? 1 : 0;
 		if (i == a.size() || a.size() - i < k) return 0;
 		return subsetRec(a, i + 1, t - a.get(i), k - 1) + subsetRec(a, i + 1, t, k);
-	}
-	// endregion
-
-	// region < binary search >
-	private static int bs(final int[] a, final int len, final int t) {
-		int l = 0, r = len - 1;
-		while (l <= r) {
-			final int m = l + ((r - l) >>> 1);
-			if (a[m] > t) r = m - 1;
-			else if (a[m] < t) l = m + 1;
-			else return m;
-		}
-		return ~l;
-	}
-
-	private static int bs(final long[] a, final int len, final long t) {
-		int l = 0, r = len - 1;
-		while (l <= r) {
-			final int m = l + ((r - l) >>> 1);
-			if (a[m] > t) r = m - 1;
-			else if (a[m] < t) l = m + 1;
-			else return m;
-		}
-		return ~l;
-	}
-
-	private static int bsUpper(final int[] a, final int len, final int t) {
-		int ans = -1;
-		int l = 0, r = len - 1;
-		while (l <= r) {
-			final int m = l + ((r - l) >>> 1);
-			if (a[m] > t) r = m - 1;
-			else {
-				if (a[m] == t) ans = m;
-				l = m + 1;
-			}
-		}
-		return ans == -1 ? ~l : ans;
-	}
-
-	private static int bsUpper(final long[] a, final int len, final long t) {
-		int ans = -1;
-		int l = 0, r = len - 1;
-		while (l <= r) {
-			final int m = l + ((r - l) >>> 1);
-			if (a[m] > t) r = m - 1;
-			else {
-				if (a[m] == t) ans = m;
-				l = m + 1;
-			}
-		}
-		return ans == -1 ? ~l : ans;
 	}
 	// endregion
 }

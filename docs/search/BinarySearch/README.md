@@ -21,8 +21,9 @@
 
 - **用途**: ソート済み配列に対する効率的な二分探索を提供
 - **特徴**:
-	- 複数のデータ型 (int[], long[], double[], Comparable<T>[]) に対応
+	- 複数のデータ型 (`int[]`, `long[]`, `double[]`, `Comparable<T>[]`, `IntArray`, `LongArray`) に対応
 	- 探索範囲の指定が可能
+	- `contains` による包含判定と `count` による出現数取得に対応
 	- 重複値がある場合、`lowerBoundSearch` は一致する左端インデックス、`upperBoundSearch` は一致する右端インデックスを返却
 
 ## 注意事項
@@ -38,5 +39,6 @@
 ## 更新履歴
 
 - **v3.0 (2026-04-17)**: `origin/main` との差分を反映。`BinarySearch` の `CompareFunction` を `int` 戻り値へ統一し、
-  `validateRange`/`BSException` 依存を削除。`ArrayBinarySearch` も同様に軽量化された現在実装に合わせて説明を更新し、重複値時の
-  lower/upper の意味を明記。
+  `validateRange`/`BSException` 依存を削除。`ArrayBinarySearch` も同様に軽量化された現在実装に合わせて説明を更新し、重複値時の lower/upper の意味を明記。
+- **v4.0 (2026-07-31)**: `ArrayBinarySearch.normalSearch` を廃止し、配列版の包含判定を `Arrays.binarySearch` へ委譲。
+  `IntArray` / `LongArray` の下限・上限探索、包含判定、カウントを追加。

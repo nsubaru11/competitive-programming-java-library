@@ -20,6 +20,7 @@
 
 - `java.util.HashMap`
 - `java.util.Arrays`
+- [`lib.search.ArrayBinarySearch`](../../search/BinarySearch/ArrayBinarySearchGuide.md)
 - [`lib.ds.arrays.IntArray`](../../../src/lib/ds/arrays/IntArray.java)
 - [`lib.ds.arrays.LongArray`](../../../src/lib/ds/arrays/LongArray.java)
 - [`lib.ds.arrays.IntMutableArray`](../../../src/lib/ds/arrays/IntMutableArray.java)
@@ -55,6 +56,8 @@
 | `mex(IntArray a)` / `mex(LongArray a)`                                              |          `int` | 配列インターフェース版                            |
 | `isSorted(...)`                                                                     |      `boolean` | 広義昇順かを判定                                  |
 | `allEqual(...)`                                                                     |      `boolean` | 全要素が等しいかを判定                            |
+| `allMatch(..., tester)`                                                             |      `boolean` | 全要素が条件を満たすかを判定                      |
+| `anyMatch(..., tester)`                                                             |      `boolean` | いずれかの要素が条件を満たすかを判定              |
 
 `argMin` / `argMax`、`min` / `max` は空でない配列を前提とします。`uniqueSize` はコピーをソートするため元配列を変更しません。
 
@@ -68,9 +71,9 @@
 | `localMinCnt(int[] a)` / `localMinCnt(int[] a, int len)`   | `int`      | 両隣より真に小さい内部要素の個数 |
 | `localMinCnt(long[] a)` / `localMinCnt(long[] a, int len)` | `int`      | long 配列版                      |
 | `localMinCnt(IntArray a)` / `localMinCnt(LongArray a)`     | `int`      | 配列インターフェース版           |
-| `runLen(int[] a)` / `runLen(int[] a, int len)`             | `int`      | 同じ値が連続する最長区間の長さ   |
-| `runLen(long[] a)` / `runLen(long[] a, int len)`           | `int`      | long 配列版                      |
-| `runLen(IntArray a)` / `runLen(LongArray a)`               | `int`      | 配列インターフェース版           |
+| `maxRunLen(int[] a)` / `maxRunLen(int[] a, int len)`       | `int`      | 同じ値が連続する最長区間の長さ   |
+| `maxRunLen(long[] a)` / `maxRunLen(long[] a, int len)`     | `int`      | long 配列版                      |
+| `maxRunLen(IntArray a)` / `maxRunLen(LongArray a)`         | `int`      | 配列インターフェース版           |
 
 端点は局所最大・局所最小に数えません。
 
@@ -138,7 +141,7 @@ System.out.println(ArrayUtils.sum(a));       // 23
 System.out.println(ArrayUtils.argMax(a));    // 5
 System.out.println(ArrayUtils.uniqueSize(a));// 5
 System.out.println(ArrayUtils.lis(a));       // 4
-System.out.println(ArrayUtils.runLen(a));    // 1
+System.out.println(ArrayUtils.maxRunLen(a)); // 1
 System.out.println(ArrayUtils.maxWin(a, 3)); // 15
 ```
 
@@ -165,12 +168,12 @@ int pairs = ArrayUtils.subsetRecursion(values, 8, 2);  // 2
 
 ## パフォーマンス特性
 
-- `sum`, `min`, `max`, `argMin`, `argMax`, `count`, `indexOf`, `lastIndexOf`, `reverse`, `isSorted`, `allEqual`: 時間 O(n)、追加メモリ O(1)
+- `sum`, `min`, `max`, `argMin`, `argMax`, `count`, `indexOf`, `lastIndexOf`, `reverse`, `isSorted`, `allEqual`, `allMatch`, `anyMatch`: 時間 O(n)、追加メモリ O(1)
 - `swap`: 時間 O(1)、追加メモリ O(1)
 - `uniqueSize`: 時間 O(n log n)、追加メモリ O(n)
 - `freq`: 時間 O(n + size)、追加メモリ O(size)
 - `mex`: 時間 O(n)、追加メモリ O(n)
-- `localMaxCnt`, `localMinCnt`, `runLen`, `maxWin`, `minWin`: 時間 O(n)、追加メモリ O(1)
+- `localMaxCnt`, `localMinCnt`, `maxRunLen`, `maxWin`, `minWin`: 時間 O(n)、追加メモリ O(1)
 - `winMaxLen`, `winMinLen`: 時間 O(n)、追加メモリ O(n)
 - `lis`, `lnds`, `lds`, `lnis`: 時間 O(n log n)、追加メモリ O(n)
 - `subsetMitm`: 時間 O(n 2^ (n/2))、追加メモリ O(2^ (n/2))
@@ -182,7 +185,8 @@ int pairs = ArrayUtils.subsetRecursion(values, 8, 2);  // 2
 | バージョン番号     | 年月日     | 詳細                                                                                                                                                           |
 |:-------------------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-07-12 | 旧一次元配列クラス内のアルゴリズムを static utility へ分離し、プリミティブ配列と `IntArray` / `LongArray` のオーバーロードを備える `ArrayUtils` として初回実装 |
-| **バージョン 2.0** | 2026-07-27 | 集計、線形探索、範囲・行反転、要素・行交換、異なる値の個数、頻度表、MEX、整列判定、全要素一致判定を追加し、配列操作を集約                                      |
+| **バージョン 2.0** | 2026-07-27 | 集計、線形探索、範囲・行反転、要素・行交換、異なる値の個数、頻度表、MEX、整列・一致・条件判定を追加し、配列操作を集約                                          |
+| **バージョン 3.0** | 2026-07-31 | `runLen` を `maxRunLen` へ改名し、LIS系の内部二分探索を標準APIおよび `ArrayBinarySearch` への委譲へ変更                                                        |
 
 ### バージョン管理について
 

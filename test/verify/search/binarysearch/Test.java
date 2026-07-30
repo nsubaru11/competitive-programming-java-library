@@ -27,22 +27,11 @@ public final class Test {
 		System.out.println("配列: " + Arrays.toString(sortedArray));
 		System.out.println("--------------------------------");
 
-		// 通常の二分探索（成功ケース）
-		int target = 30;
-		int index = ArrayBinarySearch.normalSearch(sortedArray, target);
-		System.out.println("【成功】通常探索: 値 " + target + " のインデックス = " + index + " → 値: " + sortedArray[index]);
-
-		// 存在しない値の探索（失敗ケース）
-		target = 35;
-		index = ArrayBinarySearch.normalSearch(sortedArray, target);
-		System.out.print("【失敗】通常探索: 存在しない値 " + target + " の結果 = " + index);
-		int insertPos = -index - 1; // 挿入位置の計算
-		System.out.println(", 挿入位置 = " + insertPos + " (この位置に挿入すると配列はソート状態を維持する)");
-		System.out.println("--------------------------------");
+		int insertPos;
 
 		// 上限探索(Upper Bound)
-		target = 30;
-		index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
+		int target = 30;
+		int index = ArrayBinarySearch.upperBoundSearch(sortedArray, target);
 		System.out.println("上限探索: " + target + " と一致する右端インデックス = " + index + " → 値: " + sortedArray[index]);
 
 		target = 70;
@@ -77,12 +66,6 @@ public final class Test {
 			System.out.println(", 挿入位置 = " + insertPos + " (検索値が配列の最小値よりも小さい)");
 		} else {
 			System.out.println(" → 値: " + sortedArray[index]);
-		}
-		System.out.println("--------------------------------");
-		try {
-			ArrayBinarySearch.normalSearch(sortedArray, -1, sortedArray.length + 1, 10);
-		} catch (Exception e) {
-			System.out.println("【例外テスト】範囲外: " + e.getMessage());
 		}
 	}
 
