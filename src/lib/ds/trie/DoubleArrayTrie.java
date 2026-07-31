@@ -6,7 +6,7 @@ public final class DoubleArrayTrie {
 	private int[] base;  // BASE配列
 	private int[] check; // CHECK配列
 	private boolean[] terminal; // 終端フラグ
-	private int size;
+	private final int size;
 
 	public DoubleArrayTrie(int capacity) {
 		this.base = new int[capacity];

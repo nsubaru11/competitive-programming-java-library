@@ -19,19 +19,19 @@
 
 ## 公開フィールド
 
-| フィールド | 型 | 説明 |
-|---|---|---|
-| `cost` | `long` | 全域森に採用された辺の総コスト |
-| `edgeIds` | `int[]` | 入力グラフ上の論理辺ID。アルゴリズムが採用した順序で格納 |
-| `componentCount` | `int` | 入力グラフの連結成分数 |
+| フィールド       | 型      | 説明                                                     |
+|------------------|---------|----------------------------------------------------------|
+| `cost`           | `long`  | 全域森に採用された辺の総コスト                           |
+| `edgeIds`        | `int[]` | 入力グラフ上の論理辺ID。アルゴリズムが採用した順序で格納 |
+| `componentCount` | `int`   | 入力グラフの連結成分数                                   |
 
 ## 主な機能（メソッド一覧）
 
-| メソッド | 戻り値の型 | 説明 |
-|---|---|---|
-| `edgeCount()` | `int` | 採用辺数、すなわち`edgeIds.length`を返す |
-| `isSpanningTree()` | `boolean` | 入力グラフが連結で、結果が1本の全域木なら`true` |
-| `toString()` | `String` | cost、edgeIds、componentCountを複数行で返す |
+| メソッド           | 戻り値の型 | 説明                                            |
+|--------------------|------------|-------------------------------------------------|
+| `edgeCount()`      | `int`      | 採用辺数、すなわち`edgeIds.length`を返す        |
+| `isSpanningTree()` | `boolean`  | 入力グラフが連結で、結果が1本の全域木なら`true` |
+| `toString()`       | `String`   | cost、edgeIds、componentCountを複数行で返す     |
 
 コンストラクタはpackage-privateであり、通常はKruskal法またはPrim法の戻り値として取得します。
 
@@ -68,15 +68,15 @@ for (int edgeId : result.edgeIds) {
 
 ## パフォーマンス特性
 
-- `edgeCount()`: `O(1)`
-- `isSpanningTree()`: `O(1)`
-- `toString()`: `O(edgeIds.length)`
-- Result自体の追加メモリ: `O(edgeIds.length)`
+- `edgeCount()`: $\mathcal{O}(1)$
+- `isSpanningTree()`: $\mathcal{O}(1)$
+- `toString()`: $\mathcal{O}(edgeIds.length)$
+- Result自体の追加メモリ: $\mathcal{O}(edgeIds.length)$
 
 ## バージョン情報
 
-| バージョン番号 | 年月日 | 詳細 |
-|:---|:---|:---|
+| バージョン番号     | 年月日     | 詳細                                          |
+|:-------------------|:-----------|:----------------------------------------------|
 | **バージョン 1.0** | 2026-07-24 | Kruskal法・Prim法共通の全域森Resultとして追加 |
 
 ### バージョン管理について

@@ -1,26 +1,30 @@
-# LinearAlgebra（📝 未実装）
+# lib.math.linearalgebra
 
-## 概要
-
-ガウスの消去法による連立一次方程式の求解・行列式・ランク計算を提供します。
+行列演算と線形代数を扱うパッケージです。
 
 ## 実装クラス
 
-### [LinearAlgebra](../../../src/lib/math/LinearAlgebra.java)
+### [IntMatrixUtils](../../../src/lib/math/linearalgebra/IntMatrixUtils.java)
 
-- **用途**：
-	- 連立一次方程式の求解・行列式・ランク計算
-- **特徴**：
-	- （TODO）
-- **時間計算量**：
-	- （TODO）
-- **空間計算量**：
-	- （TODO）
+- `int[][]`の行列加減算・乗算・累乗・剰余演算
+- 戻り値を新しい配列にする版と、引数を書き換える`Raw`版を提供
 
-## アルゴリズム（データ構造）選択ガイド
+### [LongMatrixUtils](../../../src/lib/math/linearalgebra/LongMatrixUtils.java)
 
-（TODO）
+- `long[][]`向けの同等API
+
+### [LinearAlgebra](../../../src/lib/math/linearalgebra/LinearAlgebra.java)
+
+- 掃き出し法、行列式、ランク計算を配置するクラス
+- 現在は未実装
+
+### [Matrix](../../../src/lib/math/linearalgebra/Matrix.java)
+
+- `Fraction`を内部表現に使う行列型
+- 現在はパッケージ外から構築できないため、公開APIとしては利用不可
 
 ## 注意事項
 
-- 本モジュールは雛形のみで、内部ロジックは未実装です（src/内の TODO コメント参照）。
+- `Raw`版は入力配列を直接変更します。
+- 行列の形状と演算可能性は呼び出し側で保証します。
+- 整数演算のオーバーフローは呼び出し側の制約で避けます。

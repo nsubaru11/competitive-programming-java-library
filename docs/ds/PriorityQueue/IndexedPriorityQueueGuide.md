@@ -11,14 +11,14 @@
 - generic / int / longの3種類
 - generic版はComparable costの自然順序構築と、比較不能なcost型向けのComparator構築に対応
 - primitive版は昇順、降順、`IntComparator` / `LongComparator`に対応
-- indexからヒープ位置をO(1)で取得
+- indexからヒープ位置を$\mathcal{O}(1)$で取得
 - `add`はinactiveなindexを登録し、重複時はfalse
 - `set`は無条件更新または登録
 - `relax`はより優先されるcostだけ反映し、削除済みindexを再登録しない
 - `remove`は削除成否をbooleanで返す
 - `get`系と`getLast`系でactive限定値と削除後を含む値を分離
 - `peekOrDefault` / `pollOrDefault`とindex版を提供
-- `position`配列とstampによるO (1) `clear`
+- `position`配列とstampによる$\mathcal{O}(1)$ `clear`
 - 一括追加、配列構築、`setAll`、`generate`のヒープ構築を遅延
 - iteratorはcostを内部順で走査し、indexは付属情報として扱う
 
@@ -138,7 +138,7 @@
 | `size()`                              |                      `int` | activeなindex数                        |
 | `indexCount()`                        |                      `int` | 使用可能なindex数                      |
 | `isEmpty()`                           |                  `boolean` | active要素がないか判定                 |
-| `clear()`                             |                     `void` | active要素と現在世代の記録をO(1)で消去 |
+| `clear()`                             |                     `void` | active要素と現在世代の記録を$\mathcal{O}(1)$で消去 |
 | `IndexedPriorityQueue.iterator()`     |              `Iterator<T>` | generic costを内部順で走査             |
 | `IntIndexedPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int costを内部順で走査                 |
 | `LongIndexedPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long costを内部順で走査                |
@@ -197,16 +197,16 @@ int first = q.pollIndex(); // 7
 
 ## パフォーマンス特性
 
-- `add`: O (1)
-- `addAll`: O (k)
-- 配列構築、`generate`、`setAll`: O (n)で登録し、ヒープ構築を遅延
-- `set`, `relax`: clean領域ならO (log n)、未整列領域ならO (1)
-- `remove`: cleanならO (log n)、dirtyなら先にヒープ構築を伴う
-- `peek`, `peekIndex`, `peekSecond`: cleanならO (1)、dirtyならO (n)またはO (k log n)の構築を伴う
-- `poll`, `pollIndex`: cleanならO (log n)、dirtyなら構築コストを伴う
-- getter、状態判定、`size`、`indexCount`、`clear`、iterator生成: O (1)
-- iteratorとCollection由来の走査・変換: O (n)
-- 使用メモリ: O(n)。cost、heap、positionの3配列を保持
+- `add`: $\mathcal{O}(1)$
+- `addAll`: $\mathcal{O}(k)$
+- 配列構築、`generate`、`setAll`: $\mathcal{O}(n)$で登録し、ヒープ構築を遅延
+- `set`, `relax`: clean領域なら$\mathcal{O}(\log n)$、未整列領域なら$\mathcal{O}(1)$
+- `remove`: cleanなら$\mathcal{O}(\log n)$、dirtyなら先にヒープ構築を伴う
+- `peek`, `peekIndex`, `peekSecond`: cleanなら$\mathcal{O}(1)$、dirtyなら$\mathcal{O}(n)$または$\mathcal{O}(k \log n)$の構築を伴う
+- `poll`, `pollIndex`: cleanなら$\mathcal{O}(\log n)$、dirtyなら構築コストを伴う
+- getter、状態判定、`size`、`indexCount`、`clear`、iterator生成: $\mathcal{O}(1)$
+- iteratorとCollection由来の走査・変換: $\mathcal{O}(n)$
+- 使用メモリ: $\mathcal{O}(n)$。cost、heap、positionの3配列を保持
 
 ## バージョン情報
 
@@ -214,7 +214,7 @@ int first = q.pollIndex(); // 7
 |:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 4.0** | 2026-07-20 | generic版の自然順序/Comparator構築、Primitive Comparator、`add` / `remove`のboolean化、default系、配列構築、`generate`、`indexCount`を追加し、bulk操作とiteratorのheapifyを遅延 |
 | **バージョン 3.0** | 2026-07-18 | `setAll`を追加し、`set` / `relax`が未整列領域を展開しないよう改善                                                                                                               |
-| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによるO(1) clear、`set`、active限定getter、`getLast`を追加                                                                                             |
+| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによる$\mathcal{O}(1)$ clear、`set`、active限定getter、`getLast`を追加                                                                                             |
 | **バージョン 1.0** | 2025-10-07 | long costのIndexedPriorityQueueとして初回実装                                                                                                                                   |
 
 ### バージョン管理について

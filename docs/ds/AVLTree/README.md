@@ -2,67 +2,65 @@
 
 ## 概要
 
-AVL木は、平衡二分探索木の一種です。
-このフォルダには、ジェネリック型およびプリミティブ型（`int`, `long`）に対応したAVL木の実装が含まれています。
-Set（重複なし）とMultiset（重複あり）の両方を提供します。
+AVL木は、平衡二分探索木の一種です。 このフォルダには、ジェネリック型およびプリミティブ型（`int`, `long`）に対応したAVL木の実装が含まれています。 Set（重複なし）とMultiset（重複あり）の両方を提供します。
 
 ## 実装クラス
 
-### [AVLSet](../../../src/lib/ds/AVLSet.java)
+### [AVLSet](../../../src/lib/ds/set/AVLSet.java)
 
 - **用途**: 重複を許さない要素の集合を管理します。
 - **特徴**:
 	- ジェネリック型 `T` に対応しています。
 	- 木が自動で平衡するため、各操作が安定して高速です。
 - **時間計算量**:
-	- 追加、削除、検索: O(log n)
-- **空間計算量**: O(n)
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
 
-### [AVLMultiset](../../../src/lib/ds/AVLMultiset.java)
+### [AVLMultiset](../../../src/lib/ds/set/AVLMultiset.java)
 
 - **用途**: 重複を許す要素の集合を管理します。
 - **特徴**:
 	- ジェネリック型 `T` に対応しています。
 	- 同じ値の要素を複数個保持できます。
 - **時間計算量**:
-	- 追加、削除、検索: O(log n)
-- **空間計算量**: O(n)
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
 
-### [IntAVLSet](../../../src/lib/ds/IntAVLSet.java)
+### [IntAVLSet](../../../src/lib/ds/set/IntAVLSet.java)
 
 - **用途**: `int` 型の重複を許さない要素の集合を管理します。
 - **特徴**:
 	- `int` プリミティブ型に特化しているため、ジェネリック版より高速でメモリ効率が良いです。
 - **時間計算量**:
-	- 追加、削除、検索: O(log n)
-- **空間計算量**: O(n)
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
 
-### [IntAVLMultiset](../../../src/lib/ds/IntAVLMultiset.java)
+### [IntAVLMultiset](../../../src/lib/ds/set/IntAVLMultiset.java)
 
 - **用途**: `int` 型の重複を許す要素の集合を管理します。
 - **特徴**:
 	- `int` プリミティブ型に特化しており、重複した値を保持できます。
 - **時間計算量**:
-	- 追加、削除、検索: O(log n)
-- **空間計算量**: O(n)
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
 
-### [LongAVLSet](../../../src/lib/ds/LongAVLSet.java)
+### [LongAVLSet](../../../src/lib/ds/set/LongAVLSet.java)
 
 - **用途**: `long` 型の重複を許さない要素の集合を管理します。
 - **特徴**:
 	- `long` プリミティブ型に特化しているため、ジェネリック版より高速でメモリ効率が良いです。
 - **時間計算量**:
-	- 追加、削除、検索: O(log n)
-- **空間計算量**: O(n)
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
 
-### [LongAVLMultiset](../../../src/lib/ds/LongAVLMultiset.java)
+### [LongAVLMultiset](../../../src/lib/ds/set/LongAVLMultiset.java)
 
 - **用途**: `long` 型の重複を許す要素の集合を管理します。
 - **特徴**:
 	- `long` プリミティブ型に特化しており、重複した値を保持できます。
 - **時間計算量**:
-	- 追加、削除、検索: O(log n)
-- **空間計算量**: O(n)
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
 
 ## アルゴリズム（データ構造）選択ガイド
 

@@ -6,6 +6,9 @@ package lib.math.linearalgebra;
  */
 @SuppressWarnings("unused")
 public final class LinearAlgebra {
+	private LinearAlgebra() {
+	}
+
 	// TODO: ガウスの消去法（連立一次方程式の解、ランク、行列式）の実装を行う
 	// TODO: mod付き版（有限体上の掃き出し法）の実装を行う
 }

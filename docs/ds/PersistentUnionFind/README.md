@@ -6,7 +6,7 @@
 
 ## 実装クラス
 
-### [PersistentUnionFind](../../../src/lib/ds/PersistentUnionFind.java)
+### [PersistentUnionFind](../../../src/lib/ds/unionfind/PersistentUnionFind.java)
 
 - **用途**：
 	- 永続的な連結判定・グループ管理

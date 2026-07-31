@@ -8,7 +8,7 @@ public final class DivideConquer {
 	}
 
 	/**
-	 * i < j && a_i > a_j
+	 * {@code i < j && a_i > a_j}
 	 */
 	public static long inversionCount(final int[] a, final int n) {
 		for (int b = (int) sqrt(n); b < n; b *= 2) {

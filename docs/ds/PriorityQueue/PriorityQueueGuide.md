@@ -125,7 +125,7 @@
 | `size()`                       |                      `int` | 現在の要素数                          |
 | `capacity()`                   |                      `int` | 現在の内部配列容量                    |
 | `isEmpty()`                    |                  `boolean` | 空か判定。primitive版はCollection由来 |
-| `clear()`                      |                     `void` | O(1)で論理的に空にする                |
+| `clear()`                      |                     `void` | $\mathcal{O}(1)$で論理的に空にする                |
 | `PriorityQueue.iterator()`     |              `Iterator<T>` | 内部順で走査                          |
 | `IntPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int値を内部順で走査                   |
 | `LongPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long値を内部順で走査                  |
@@ -179,13 +179,13 @@ PriorityQueue<Integer> natural = new PriorityQueue<>();
 
 ## パフォーマンス特性
 
-- `add`: 償却O (1)、拡張時O (n)
-- `addAll`: O (k)、拡張時は既存要素コピーも実行
-- `peek`, `peekSecond`: cleanならO (1)、dirtyならO (n)またはO (k log n)の構築を伴う
-- `poll`, `replaceTop`: cleanならO (log n)、dirtyなら構築コストを伴う
-- `size`, `capacity`, `isEmpty`, `clear`, iterator生成: O (1)
-- iteratorとprimitive Collectionの走査・変換: O (n)
-- 使用メモリ: O(capacity)
+- `add`: 償却$\mathcal{O}(1)$、拡張時$\mathcal{O}(n)$
+- `addAll`: $\mathcal{O}(k)$、拡張時は既存要素コピーも実行
+- `peek`, `peekSecond`: cleanなら$\mathcal{O}(1)$、dirtyなら$\mathcal{O}(n)$または$\mathcal{O}(k \log n)$の構築を伴う
+- `poll`, `replaceTop`: cleanなら$\mathcal{O}(\log n)$、dirtyなら構築コストを伴う
+- `size`, `capacity`, `isEmpty`, `clear`, iterator生成: $\mathcal{O}(1)$
+- iteratorとprimitive Collectionの走査・変換: $\mathcal{O}(n)$
+- 使用メモリ: $\mathcal{O}(capacity)$
 
 ## バージョン情報
 

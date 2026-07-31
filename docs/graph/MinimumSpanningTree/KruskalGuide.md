@@ -79,12 +79,12 @@ long maximum = Kruskal.maximumCost(graph); // 12
 ## パフォーマンス特性
 
 - Result版
-	- 時間計算量: `O(|E| log |E|)`
-	- 追加メモリ: `O(|V| + |E|)`
+	- 時間計算量: $\mathcal{O}(\lvert E\rvert \log \lvert E\rvert)$
+	- 追加メモリ: $\mathcal{O}(\lvert V\rvert + \lvert E\rvert)$
 	- 辺の処理順、Union-Find、採用辺IDを保持
 - cost-only版
-	- 時間計算量: `O(|E| log |E|)`
-	- 追加メモリ: `O(|V| + |E|)`
+	- 時間計算量: $\mathcal{O}(\lvert E\rvert \log \lvert E\rvert)$
+	- 追加メモリ: $\mathcal{O}(\lvert V\rvert + \lvert E\rvert)$
 	- 採用辺ID配列とResult生成を省略
 - 入力が連結で`|V|-1`辺を採用した場合は、不要な残りの辺走査を打ち切ります。非連結の場合は全辺を確認します。
 

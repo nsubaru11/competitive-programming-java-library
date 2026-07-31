@@ -2,7 +2,7 @@
 
 ## 概要
 
-[`IntArray2D`](../../../src/lib/ds/arrays/IntArray2D.java) と [`LongArray2D`](../../../src/lib/ds/arrays/LongArray2D.java) は、`h * w` 要素を一次元配列へ圧縮して保持する2次元配列です。90度単位の論理回転ではデータを移動せず、座標変換によって O(1) でアクセスします。
+[`IntArray2D`](../../../src/lib/ds/arrays/IntArray2D.java) と [`LongArray2D`](../../../src/lib/ds/arrays/LongArray2D.java) は、`h * w` 要素を一次元配列へ圧縮して保持する2次元配列です。90度単位の論理回転ではデータを移動せず、座標変換によって $\mathcal{O}(1)$ でアクセスします。
 
 ## 特徴
 
@@ -84,10 +84,10 @@ System.out.println(grid);
 
 ## パフォーマンス特性
 
-- 構築: O(hw)
-- `get`, `set`, `lRotate`, `rRotate`, `transpose`: O(1)
-- iterator と `toString()` による全走査: O(hw)
-- 使用メモリ: O(hw)
+- 構築: $\mathcal{O}(hw)$
+- `get`, `set`, `lRotate`, `rRotate`, `transpose`: $\mathcal{O}(1)$
+- iterator と `toString()` による全走査: $\mathcal{O}(hw)$
+- 使用メモリ: $\mathcal{O}(hw)$
 
 ## バージョン情報
 

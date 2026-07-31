@@ -6,7 +6,7 @@
 
 ## 実装クラス
 
-### [Trie](../../../src/lib/ds/Trie.java)
+### [Trie](../../../src/lib/ds/trie/Trie.java)
 
 - **用途**：
 	- 文字列集合に対する前方一致（プレフィックス）検索、完全一致検索、挿入
@@ -15,11 +15,11 @@
 	- ノードに `frequency`（そのノード以下の通過回数）を保持 → プレフィックス件数取得に利用
 	- `insert` は自身を返すためメソッドチェーン可能
 - **時間計算量**：
-	- `insert`, `search`, `countPrefix` いずれも平均 O(L)（L は文字列長）
+	- `insert`, `search`, `countPrefix` いずれも平均 $\mathcal{O}(L)$（L は文字列長）
 - **空間計算量**：
-	- O(N)（N は挿入した全単語長の総和に比例）
+	- $\mathcal{O}(N)$（N は挿入した全単語長の総和に比例）
 
-### [SuffixTrie](../../../src/lib/ds/SuffixTrie.java)
+### [SuffixTrie](../../../src/lib/ds/trie/SuffixTrie.java)
 
 - **用途**：
 	- 語尾一致（サフィックス）条件での件数取得や完全一致検索（逆向き格納）
@@ -28,18 +28,18 @@
 	- 内部は `HashMap<Character, TrieNode>` を用いた素直な実装
 	- `insert` は自身を返し、チェーン可能
 - **時間計算量**：
-	- `insert`, `search`, `countPrefix` いずれも平均 O(L)（L は文字列長）
+	- `insert`, `search`, `countPrefix` いずれも平均 $\mathcal{O}(L)$（L は文字列長）
 - **空間計算量**：
-	- O(N)（N は挿入した全単語長の総和に比例）
+	- $\mathcal{O}(N)$（N は挿入した全単語長の総和に比例）
 
 ### その他の実装クラス
 
-- [RadixTrie](../../../src/lib/ds/RadixTrie.java)：パス圧縮Trie。共通プレフィックスを1ノードにまとめてメモリと走査を削減
-- [PatriciaTrie](../../../src/lib/ds/PatriciaTrie.java)：ビット単位の分岐による二分Trie（葉でキー照合）
-- [TernarySearchTree](../../../src/lib/ds/TernarySearchTree.java)：三分探索木。文字比較の三方向分岐で省メモリにプレフィックス検索を提供
-- [DoubleArrayTrie](../../../src/lib/ds/DoubleArrayTrie.java)：BASE/CHECK 2配列による静的構築Trie。検索が高速
-- [SuffixArray](../../../src/lib/ds/SuffixArray.java)：接尾辞配列+LCP配列（簡易構築版、部分文字列検索 `contains` 付き）
-- [CompactTrie](../../../src/lib/ds/CompactTrie.java)（未実装）：ビットマップ圧縮Trie（TODO）
+- [RadixTrie](../../../src/lib/ds/trie/RadixTrie.java)：パス圧縮Trie。共通プレフィックスを1ノードにまとめてメモリと走査を削減
+- [PatriciaTrie](../../../src/lib/ds/trie/PatriciaTrie.java)：ビット単位の分岐による二分Trie（葉でキー照合）
+- [TernarySearchTree](../../../src/lib/ds/trie/TernarySearchTree.java)：三分探索木。文字比較の三方向分岐で省メモリにプレフィックス検索を提供
+- [DoubleArrayTrie](../../../src/lib/ds/trie/DoubleArrayTrie.java)：BASE/CHECK 2配列による静的構築Trie。検索が高速
+- [SuffixArray](../../../src/lib/string/suffix/SuffixArray.java)：接尾辞配列+LCP配列（簡易構築版、部分文字列検索 `contains` 付き）
+- [CompactTrie](../../../src/lib/ds/trie/CompactTrie.java)（未実装）：ビットマップ圧縮Trie（TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

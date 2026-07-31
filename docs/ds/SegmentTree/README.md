@@ -7,7 +7,7 @@ Segment Tree（セグメント木）に関連するクラス群を提供しま�
 
 ## 実装クラス
 
-### [SegmentTree](../../../src/lib/ds/SegmentTree.java) / [IntSegmentTree](../../../src/lib/ds/IntSegmentTree.java) / [LongSegmentTree](../../../src/lib/ds/LongSegmentTree.java)
+### [SegmentTree](../../../src/lib/ds/segmenttree/SegmentTree.java) / [IntSegmentTree](../../../src/lib/ds/segmenttree/IntSegmentTree.java) / [LongSegmentTree](../../../src/lib/ds/segmenttree/LongSegmentTree.java)
 
 - **用途**：点更新 + 範囲集約クエリ向けの標準セグメント木。
 - **特徴**：
@@ -15,11 +15,11 @@ Segment Tree（セグメント木）に関連するクラス群を提供しま�
 	- `SegmentTree` は任意型、`IntSegmentTree` / `LongSegmentTree` は高速なプリミティブ特化。
 	- `add` / `multiply` / `apply(a, b)` など（プリミティブ版）を備え、点更新表現が豊富。
 - **時間計算量**：
-	- 構築: $O(N)$
-	- 更新 / クエリ / 境界探索: $O(\log N)$
-- **空間計算量**：$O(N)$
+	- 構築: $\mathcal{O}(N)$
+	- 更新 / クエリ / 境界探索: $\mathcal{O}(\log N)$
+- **空間計算量**：$\mathcal{O}(N)$
 
-### [LazySegmentTree](../../../src/lib/ds/LazySegmentTree.java) / [IntLazySegmentTree](../../../src/lib/ds/IntLazySegmentTree.java) / [LongLazySegmentTree](../../../src/lib/ds/LongLazySegmentTree.java)
+### [LazySegmentTree](../../../src/lib/ds/segmenttree/LazySegmentTree.java) / [IntLazySegmentTree](../../../src/lib/ds/segmenttree/IntLazySegmentTree.java) / [LongLazySegmentTree](../../../src/lib/ds/segmenttree/LongLazySegmentTree.java)
 
 - **用途**：区間更新 + 範囲集約クエリ向けの遅延セグメント木。
 - **特徴**：
@@ -27,11 +27,11 @@ Segment Tree（セグメント木）に関連するクラス群を提供しま�
 	- `mapping` / `composition` により更新則を差し替え可能。
 	- `maxRight` / `minLeft` など探索 API も利用可能。
 - **時間計算量**：
-	- 構築: $O(N)$
-	- 区間更新 / 区間クエリ / 境界探索: $O(\log N)$
-- **空間計算量**：$O(N)$
+	- 構築: $\mathcal{O}(N)$
+	- 区間更新 / 区間クエリ / 境界探索: $\mathcal{O}(\log N)$
+- **空間計算量**：$\mathcal{O}(N)$
 
-### [IntSquareSumSegmentTree](../../../src/lib/ds/IntSquareSumSegmentTree.java) / [LongSquareSumSegmentTree](../../../src/lib/ds/LongSquareSumSegmentTree.java)
+### [IntSquareSumSegmentTree](../../../src/lib/ds/segmenttree/IntSquareSumSegmentTree.java) / [LongSquareSumSegmentTree](../../../src/lib/ds/segmenttree/LongSquareSumSegmentTree.java)
 
 - **用途**：区間の一次和・二乗和を同時に扱う専用セグメント木。
 - **特徴**：
@@ -39,9 +39,9 @@ Segment Tree（セグメント木）に関連するクラス群を提供しま�
 	- `add` / `multiply` / `set` / `apply(a, b)` を点・区間の両方に適用可能。
 	- すべて法 `mod`（既定値 `998244353`）で計算。
 - **時間計算量**：
-	- 構築: $O(N)$
-	- 各更新 / 各クエリ: $O(\log N)$
-- **空間計算量**：$O(N)$
+	- 構築: $\mathcal{O}(N)$
+	- 各更新 / 各クエリ: $\mathcal{O}(\log N)$
+- **空間計算量**：$\mathcal{O}(N)$
 
 ## アルゴリズム（データ構造）選択ガイド
 

@@ -6,7 +6,7 @@
 
 ## 実装クラス
 
-### [PersistentSegmentTree](../../../src/lib/ds/PersistentSegmentTree.java)
+### [PersistentSegmentTree](../../../src/lib/ds/segmenttree/PersistentSegmentTree.java)
 
 - **用途**：
 	- 永続的な区間クエリ・更新

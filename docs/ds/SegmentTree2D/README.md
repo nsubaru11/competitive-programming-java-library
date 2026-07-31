@@ -6,7 +6,7 @@
 
 ## 実装クラス
 
-### [SegmentTree2D](../../../src/lib/ds/SegmentTree2D.java)
+### [SegmentTree2D](../../../src/lib/ds/segmenttree/SegmentTree2D.java)
 
 - **用途**：
 	- 2次元の点更新・矩形クエリ

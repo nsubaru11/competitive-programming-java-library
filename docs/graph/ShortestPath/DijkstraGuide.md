@@ -69,10 +69,10 @@ int[] path = result.pathTo(4);    // {0, 2, 1, 3, 4}
 
 ## パフォーマンス特性
 
-- `solve`、`dist(graph, s)`、`path`: O((V + E) log V)
-- `dist(graph, s, g)`: 最悪O((V + E) log V)。`g`の距離確定時に探索を終了
-- 追加領域: O(V)
-- `pathTo`: O(V)の配列を作成し、経路長に比例して復元
+- `solve`、`dist(graph, s)`、`path`: $\mathcal{O}((V + E) \log V)$
+- `dist(graph, s, g)`: 最悪$\mathcal{O}((V + E) \log V)$。`g`の距離確定時に探索を終了
+- 追加領域: $\mathcal{O}(V)$
+- `pathTo`: $\mathcal{O}(V)$の配列を作成し、経路長に比例して復元
 
 ## バージョン情報
 

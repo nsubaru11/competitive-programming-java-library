@@ -7,9 +7,9 @@
 ## 特徴
 
 - `int` / `long` 特化によりボクシングを回避
-- 先頭・末尾の追加を償却 O(1) で実行
+- 先頭・末尾の追加を償却 $\mathcal{O}(1)$ で実行
 - 2のべき乗容量とビットマスクによる循環バッファ
-- 正負の論理添字による O(1) のランダムアクセス・更新
+- 正負の論理添字による $\mathcal{O}(1)$ のランダムアクセス・更新
 - 配列、`IntArray` / `LongArray`、supplierからの初期化に対応
 - `fill` と `setAll` による一括更新
 - 満杯時は容量を2倍にして論理順へ再配置
@@ -112,12 +112,12 @@ deque.set(-1, 10);                    // 2 10
 
 ## パフォーマンス特性
 
-- `addFirst`, `addLast`: 償却 O(1)、拡張時 O(n)
-- `peekFirst`, `peekLast`, `pollFirst`, `pollLast`, `get`, `set`, `size`, `clear`: O(1)
-- 配列・`IntArray` / `LongArray`・supplierからの構築: O(n)
-- `fill`, `setAll`, `contains`, `equals`, `hashCode`, `toArray`, `iterator`, `toString`: O(n)
-- `clone`: O(capacity)
-- 使用メモリ: O(capacity)
+- `addFirst`, `addLast`: 償却 $\mathcal{O}(1)$、拡張時 $\mathcal{O}(n)$
+- `peekFirst`, `peekLast`, `pollFirst`, `pollLast`, `get`, `set`, `size`, `clear`: $\mathcal{O}(1)$
+- 配列・`IntArray` / `LongArray`・supplierからの構築: $\mathcal{O}(n)$
+- `fill`, `setAll`, `contains`, `equals`, `hashCode`, `toArray`, `iterator`, `toString`: $\mathcal{O}(n)$
+- `clone`: $\mathcal{O}(capacity)$
+- 使用メモリ: $\mathcal{O}(capacity)$
 
 ## バージョン情報
 

@@ -29,9 +29,9 @@
 	- `nextIntMat(h, w)`, `nextLongMat(h, w)`, `nextCharMat(h, w)`
 	- `nextCollection(n, element, collection)`
 - **時間計算量**：
-	- 単一の読み込み操作: 平均 O(1)
-	- 配列・行列・コレクション読み込み: O(n)
-- **空間計算量**：O(B + n)
+	- 単一の読み込み操作: 平均 $\mathcal{O}(1)$
+	- 配列・行列・コレクション読み込み: $\mathcal{O}(n)$
+- **空間計算量**：$\mathcal{O}(B + n)$
 
 ### [FastPrinter](../../../src/lib/io/compat17/FastPrinter.java)
 
@@ -50,9 +50,9 @@
 	- `printRepeat(...)`, `printlnRepeat(...)`, `printReverse(...)`, `printlnReverse(...)`
 	- `printf()`, `flush()`
 - **時間計算量**：
-	- 単一の出力操作: 平均 O(1)
-	- 配列・行列・イテラブル出力: O(n)
-- **空間計算量**：O(B + n)
+	- 単一の出力操作: 平均 $\mathcal{O}(1)$
+	- 配列・行列・イテラブル出力: $\mathcal{O}(n)$
+- **空間計算量**：$\mathcal{O}(B + n)$
 
 ## 使い方
 

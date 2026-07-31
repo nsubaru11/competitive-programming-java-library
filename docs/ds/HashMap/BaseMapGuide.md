@@ -29,44 +29,44 @@
 
 ### 1. 参照・判定系メソッド
 
-| メソッド                              | 戻り値の型          | 説明                          |
-|-----------------------------------|----------------|-----------------------------|
-| `get(key)`                        | `int` / `long` | 値取得。キー未存在時は例外。              |
+| メソッド                          | 戻り値の型     | 説明                                   |
+|-----------------------------------|----------------|----------------------------------------|
+| `get(key)`                        | `int` / `long` | 値取得。キー未存在時は例外。           |
 | `getOrDefault(key, defaultValue)` | `int` / `long` | キー未存在時は `defaultValue` を返す。 |
-| `containsKey(key)`                | `boolean`      | キー存在判定。                     |
-| `size()`                          | `int`          | 要素数。                        |
-| `isEmpty()`                       | `boolean`      | 空判定。                        |
+| `containsKey(key)`                | `boolean`      | キー存在判定。                         |
+| `size()`                          | `int`          | 要素数。                               |
+| `isEmpty()`                       | `boolean`      | 空判定。                               |
 
 ### 2. 更新系メソッド
 
-| メソッド                                     | 戻り値の型          | 説明                                      |
-|------------------------------------------|----------------|-----------------------------------------|
-| `put(key, value)`                        | `int` / `long` | 値を設定して設定後の値を返す。                         |
-| `putIfAbsent(key, value)`                | `int` / `long` | 未存在時のみ挿入。                               |
-| `add(key, delta)`                        | `int` / `long` | 既存値に加算。未存在時は `delta` で作成。               |
-| `increment(key)` / `decrement(key)`      | `int` / `long` | `+1` / `-1` の加算更新。                      |
-| `addOrDefault(key, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。               |
+| メソッド                                 | 戻り値の型     | 説明                                                 |
+|------------------------------------------|----------------|------------------------------------------------------|
+| `put(key, value)`                        | `int` / `long` | 値を設定して設定後の値を返す。                       |
+| `putIfAbsent(key, value)`                | `int` / `long` | 未存在時のみ挿入。                                   |
+| `add(key, delta)`                        | `int` / `long` | 既存値に加算。未存在時は `delta` で作成。            |
+| `increment(key)` / `decrement(key)`      | `int` / `long` | `+1` / `-1` の加算更新。                             |
+| `addOrDefault(key, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。                   |
 | `merge(key, value, op)`                  | `int` / `long` | 既存時 `op(old, value)`、未存在時は `value` で作成。 |
-| `remove(key)`                            | `boolean`      | キー削除。                                   |
-| `clear()`                                | `void`         | 全削除。                                    |
+| `remove(key)`                            | `boolean`      | キー削除。                                           |
+| `clear()`                                | `void`         | 全削除。                                             |
 
 ### 3. 走査・抽出系メソッド
 
-| メソッド                                  | 戻り値の型                  | 説明                      |
-|---------------------------------------|------------------------|-------------------------|
-| `forEach(action)`                     | `void`                 | 全エントリ走査。                |
-| `forEachKey(action)`                  | `void`                 | 全キー走査。                  |
-| `forEachValue(action)`                | `void`                 | 全値走査。                   |
-| `reduce(identity, accumulator)`       | `long`                 | `(key, value)` を使って集約。  |
-| `reduceKeys(identity, accumulator)`   | `long`                 | キーのみを集約。                |
-| `reduceValues(identity, accumulator)` | `long`                 | 値のみを集約。                 |
-| `keys()`                              | `int[]` / `long[]`     | キー配列を返す。                |
-| `values()`                            | `int[]` / `long[]`     | 値配列を返す。                 |
+| メソッド                              | 戻り値の型             | 説明                               |
+|---------------------------------------|------------------------|------------------------------------|
+| `forEach(action)`                     | `void`                 | 全エントリ走査。                   |
+| `forEachKey(action)`                  | `void`                 | 全キー走査。                       |
+| `forEachValue(action)`                | `void`                 | 全値走査。                         |
+| `reduce(identity, accumulator)`       | `long`                 | `(key, value)` を使って集約。      |
+| `reduceKeys(identity, accumulator)`   | `long`                 | キーのみを集約。                   |
+| `reduceValues(identity, accumulator)` | `long`                 | 値のみを集約。                     |
+| `keys()`                              | `int[]` / `long[]`     | キー配列を返す。                   |
+| `values()`                            | `int[]` / `long[]`     | 値配列を返す。                     |
 | `entries()`                           | `int[][]` / `long[][]` | `[2][size]` 形式でキーと値を返す。 |
 
 ### 4. クラス別差分
 
-| クラス               | キー型    | 値型     | `merge` の演算子型        |
+| クラス            | キー型 | 値型   | `merge` の演算子型   |
 |-------------------|--------|--------|----------------------|
 | `BaseIntIntMap`   | `int`  | `int`  | `IntBinaryOperator`  |
 | `BaseLongIntMap`  | `long` | `int`  | `IntBinaryOperator`  |
@@ -90,25 +90,25 @@ public class Example {
 
 - `get` は未存在キーで例外を投げるため、安全側に倒す場合は `getOrDefault` を使ってください。
 - 反復順序はハッシュ配置順であり、挿入順ではありません。
-- 線形探索なので、最悪ケースでは参照・更新ともに $O(N)$ になります。
+- 線形探索なので、最悪ケースでは参照・更新ともに $\mathcal{O}(N)$ になります。
 
 ## パフォーマンス特性
 
 - 平均時間計算量:
-	- 参照・更新: $O(1)$
+	- 参照・更新: $\mathcal{O}(1)$
 - 最悪時間計算量:
-	- 参照・更新: $O(N)$
+	- 参照・更新: $\mathcal{O}(N)$
 - 走査:
-	- `forEach` / `keys` / `entries`: $O(capacity)$
+	- `forEach` / `keys` / `entries`: $\mathcal{O}(capacity)$
 - 空間計算量:
-	- $O(capacity)$
+	- $\mathcal{O}(capacity)$
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                               |
-|:--------------|:-----------|:-----------------------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                                       |
+|:-------------------|:-----------|:-------------------------------------------------------------------------------------------|
 | **バージョン 2.0** | 2026-05-10 | `forEach`/`forEachKey`/`forEachValue` の引数修飾子や配列生成まわりの軽微な実装調整を実施。 |
-| **バージョン 1.0** | 2026-04-27 | Base 系3クラス初期実装。                                                  |
+| **バージョン 1.0** | 2026-04-27 | Base 系3クラス初期実装。                                                                   |
 
 ### バージョン管理について
 

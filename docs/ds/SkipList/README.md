@@ -2,11 +2,11 @@
 
 ## 概要
 
-乱択により期待O(log N)の操作を提供するスキップリストです。
+乱択により期待$\mathcal{O}(\log N)$の操作を提供するスキップリストです。
 
 ## 実装クラス
 
-### [SkipList](../../../src/lib/ds/SkipList.java)
+### [SkipList](../../../src/lib/ds/set/SkipList.java)
 
 - **用途**：
 	- 順序付き集合の探索・挿入・削除

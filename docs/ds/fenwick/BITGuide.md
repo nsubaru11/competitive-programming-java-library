@@ -67,9 +67,9 @@ int sum = bit.sum(1, 3); // [1,3] の和
 
 ## パフォーマンス特性
 
-- 点更新 / 区間和: $O (\log N)$
-- 2次元の点更新 / 矩形和: $O (\log H \log W)$
-- 区間加算 / 区間和（RangeBIT）: $O (\log N)$
+- 点更新 / 区間和: $\mathcal{O}(\log N)$
+- 2次元の点更新 / 矩形和: $\mathcal{O}(\log H \log W)$
+- 区間加算 / 区間和（RangeBIT）: $\mathcal{O}(\log N)$
 
 ## バージョン情報
 

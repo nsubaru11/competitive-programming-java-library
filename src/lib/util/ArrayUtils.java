@@ -57,6 +57,15 @@ public final class ArrayUtils {
 	/**
 	 * 配列の最小値を返します。
 	 */
+	public static char min(final char[] a) {
+		char min = a[0];
+		for (int i = 1; i < a.length; i++) if (a[i] < min) min = a[i];
+		return min;
+	}
+
+	/**
+	 * 配列の最小値を返します。
+	 */
 	public static int min(final int[] a) {
 		int min = a[0];
 		for (int i = 1; i < a.length; i++) if (a[i] < min) min = a[i];
@@ -99,6 +108,15 @@ public final class ArrayUtils {
 	/**
 	 * 配列の最大値を返します。
 	 */
+	public static char max(final char[] a) {
+		char max = a[0];
+		for (int i = 1; i < a.length; i++) if (a[i] > max) max = a[i];
+		return max;
+	}
+
+	/**
+	 * 配列の最大値を返します。
+	 */
 	public static int max(final int[] a) {
 		int max = a[0];
 		for (int i = 1; i < a.length; i++) if (a[i] > max) max = a[i];
@@ -136,6 +154,15 @@ public final class ArrayUtils {
 			if (v > max) max = v;
 		}
 		return max;
+	}
+
+	/**
+	 * 最小値が最初に現れる添字を返します。
+	 */
+	public static int argMin(final char[] a) {
+		int idx = 0;
+		for (int i = 1; i < a.length; i++) if (a[i] < a[idx]) idx = i;
+		return idx;
 	}
 
 	/**
@@ -184,6 +211,15 @@ public final class ArrayUtils {
 				idx = i;
 			}
 		}
+		return idx;
+	}
+
+	/**
+	 * 最大値が最初に現れる添字を返します。
+	 */
+	public static int argMax(final char[] a) {
+		int idx = 0;
+		for (int i = 1; i < a.length; i++) if (a[i] > a[idx]) idx = i;
 		return idx;
 	}
 
@@ -242,6 +278,15 @@ public final class ArrayUtils {
 	/**
 	 * 指定値の出現回数を返します。
 	 */
+	public static int count(final char[] a, final char t) {
+		int cnt = 0;
+		for (final int v : a) if (v == t) cnt++;
+		return cnt;
+	}
+
+	/**
+	 * 指定値の出現回数を返します。
+	 */
 	public static int count(final int[] a, final int t) {
 		int cnt = 0;
 		for (final int v : a) if (v == t) cnt++;
@@ -278,6 +323,14 @@ public final class ArrayUtils {
 	/**
 	 * 指定値が最初に現れる添字を返します。
 	 */
+	public static int indexOf(final char[] a, final char t) {
+		for (int i = 0; i < a.length; i++) if (a[i] == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最初に現れる添字を返します。
+	 */
 	public static int indexOf(final int[] a, final int t) {
 		for (int i = 0; i < a.length; i++) if (a[i] == t) return i;
 		return -1;
@@ -304,6 +357,14 @@ public final class ArrayUtils {
 	 */
 	public static int indexOf(final LongArray a, final long t) {
 		for (int i = 0; i < a.size(); i++) if (a.get(i) == t) return i;
+		return -1;
+	}
+
+	/**
+	 * 指定値が最後に現れる添字を返します。
+	 */
+	public static int lastIndexOf(final char[] a, final char t) {
+		for (int i = a.length - 1; i >= 0; i--) if (a[i] == t) return i;
 		return -1;
 	}
 
@@ -345,6 +406,20 @@ public final class ArrayUtils {
 	/**
 	 * 配列を反転します。
 	 */
+	public static void reverse(final char[] a) {
+		reverse(a, 0, a.length);
+	}
+
+	/**
+	 * 配列の指定範囲を反転します。
+	 */
+	public static void reverse(final char[] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	}
+
+	/**
+	 * 配列を反転します。
+	 */
 	public static void reverse(final int[] a) {
 		reverse(a, 0, a.length);
 	}
@@ -371,17 +446,17 @@ public final class ArrayUtils {
 	}
 
 	/**
-	 * 配列を反転します。
+	 * 配列の行を反転します。
 	 */
-	public static void reverse(final char[] a) {
+	public static void reverse(final char[][] a) {
 		reverse(a, 0, a.length);
 	}
 
 	/**
-	 * 配列の指定範囲を反転します。
+	 * 配列の指定範囲の行を反転します。
 	 */
-	public static void reverse(final char[] a, int fromIdx, int toIdx) {
-		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
+	public static void reverse(final char[][] a, int fromIdx, int toIdx) {
+		while (fromIdx < toIdx) swapRow(a, fromIdx++, --toIdx);
 	}
 
 	/**
@@ -409,20 +484,6 @@ public final class ArrayUtils {
 	 * 配列の指定範囲の行を反転します。
 	 */
 	public static void reverse(final long[][] a, int fromIdx, int toIdx) {
-		while (fromIdx < toIdx) swapRow(a, fromIdx++, --toIdx);
-	}
-
-	/**
-	 * 配列の行を反転します。
-	 */
-	public static void reverse(final char[][] a) {
-		reverse(a, 0, a.length);
-	}
-
-	/**
-	 * 配列の指定範囲の行を反転します。
-	 */
-	public static void reverse(final char[][] a, int fromIdx, int toIdx) {
 		while (fromIdx < toIdx) swapRow(a, fromIdx++, --toIdx);
 	}
 
@@ -457,6 +518,15 @@ public final class ArrayUtils {
 	/**
 	 * 二要素を交換します。
 	 */
+	public static void swap(final char[] a, final int i, final int j) {
+		final char v = a[i];
+		a[i] = a[j];
+		a[j] = v;
+	}
+
+	/**
+	 * 二要素を交換します。
+	 */
 	public static void swap(final int[] a, final int i, final int j) {
 		final int v = a[i];
 		a[i] = a[j];
@@ -468,15 +538,6 @@ public final class ArrayUtils {
 	 */
 	public static void swap(final long[] a, final int i, final int j) {
 		final long v = a[i];
-		a[i] = a[j];
-		a[j] = v;
-	}
-
-	/**
-	 * 二要素を交換します。
-	 */
-	public static void swap(final char[] a, final int i, final int j) {
-		final char v = a[i];
 		a[i] = a[j];
 		a[j] = v;
 	}
@@ -502,6 +563,15 @@ public final class ArrayUtils {
 	/**
 	 * 二つの行を交換します。
 	 */
+	public static void swapRow(final char[][] a, final int i, final int j) {
+		final char[] row = a[i];
+		a[i] = a[j];
+		a[j] = row;
+	}
+
+	/**
+	 * 二つの行を交換します。
+	 */
 	public static void swapRow(final int[][] a, final int i, final int j) {
 		final int[] row = a[i];
 		a[i] = a[j];
@@ -518,16 +588,43 @@ public final class ArrayUtils {
 	}
 
 	/**
-	 * 二つの行を交換します。
+	 * char[] 降順でソート
 	 */
-	public static void swapRow(final char[][] a, final int i, final int j) {
-		final char[] row = a[i];
-		a[i] = a[j];
-		a[j] = row;
+	public static void descendingSort(final char[] arr) {
+		sort(arr);
+		reverse(arr);
+	}
+
+	/**
+	 * int[] 降順ソート
+	 */
+	public static void descendingSort(final int[] arr) {
+		sort(arr);
+		reverse(arr);
+	}
+
+	/**
+	 * long[] 降順ソート
+	 */
+	public static void descendingSort(final long[] arr) {
+		sort(arr);
+		reverse(arr);
 	}
 	// endregion
 
 	// region < distribution >
+
+	/**
+	 * 異なる値の個数を返します。
+	 */
+	public static int uniqueSize(final char[] a) {
+		if (a.length == 0) return 0;
+		final char[] b = a.clone();
+		Arrays.sort(b);
+		int size = 1;
+		for (int i = 1; i < b.length; i++) if (b[i - 1] != b[i]) size++;
+		return size;
+	}
 
 	/**
 	 * 異なる値の個数を返します。
@@ -582,6 +679,24 @@ public final class ArrayUtils {
 	}
 
 	/**
+	 * 小文字 {@code 'a'} 以上 {@code 'z'} 以下の各文字の出現回数を返します。
+	 */
+	public static int[] freqLower(final char[] a) {
+		final int[] freq = new int[26];
+		for (final char v : a) freq[v - 'a']++;
+		return freq;
+	}
+
+	/**
+	 * 大文字 {@code 'A'} 以上 {@code 'Z'} 以下の各文字の出現回数を返します。
+	 */
+	public static int[] freqUpper(final char[] a) {
+		final int[] freq = new int[26];
+		for (final char v : a) freq[v - 'A']++;
+		return freq;
+	}
+
+	/**
 	 * 0以上size未満の各値の出現回数を返します。
 	 */
 	public static int[] freq(final int[] a, final int size) {
@@ -618,12 +733,23 @@ public final class ArrayUtils {
 	}
 
 	/**
-	 * base以上base+size未満の各文字の出現回数を返します。
+	 * 配列に含まれない最小の小文字を返します。全小文字を含む場合は {@code '\0'} を返します。
 	 */
-	public static int[] freq(final char[] a, final char base, final int size) {
-		final int[] freq = new int[size];
-		for (final char c : a) freq[c - base]++;
-		return freq;
+	public static char mexLower(final char[] a) {
+		final boolean[] used = new boolean[26];
+		for (final int v : a) used[v - 'a'] = true;
+		for (int i = 0; i < 26; i++) if (!used[i]) return (char) (i + 'a');
+		return 0;
+	}
+
+	/**
+	 * 配列に含まれない最小の大文字を返します。全大文字を含む場合は {@code '\0'} を返します。
+	 */
+	public static char mexUpper(final char[] a) {
+		final boolean[] used = new boolean[26];
+		for (final int v : a) used[v - 'A'] = true;
+		for (int i = 0; i < 26; i++) if (!used[i]) return (char) (i + 'A');
+		return 0;
 	}
 
 	/**
@@ -678,6 +804,14 @@ public final class ArrayUtils {
 	/**
 	 * 配列が広義昇順ならtrueを返します。
 	 */
+	public static boolean isSorted(final char[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
+		return true;
+	}
+
+	/**
+	 * 配列が広義昇順ならtrueを返します。
+	 */
 	public static boolean isSorted(final int[] a) {
 		for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
 		return true;
@@ -704,6 +838,14 @@ public final class ArrayUtils {
 	 */
 	public static boolean isSorted(final LongArray a) {
 		for (int i = 1; i < a.size(); i++) if (a.get(i - 1) > a.get(i)) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が等しければtrueを返します。
+	 */
+	public static boolean allEqual(final char[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] != a[i]) return false;
 		return true;
 	}
 
@@ -742,6 +884,14 @@ public final class ArrayUtils {
 	/**
 	 * 全要素が条件を満たす場合trueを返します。
 	 */
+	public static boolean allMatch(final char[] a, final IntPredicate tester) {
+		for (int ai : a) if (!tester.test(ai)) return false;
+		return true;
+	}
+
+	/**
+	 * 全要素が条件を満たす場合trueを返します。
+	 */
 	public static boolean allMatch(final int[] a, final IntPredicate tester) {
 		for (int ai : a) if (!tester.test(ai)) return false;
 		return true;
@@ -769,6 +919,14 @@ public final class ArrayUtils {
 	public static boolean allMatch(final LongArray a, final LongPredicate tester) {
 		for (int i = 0; i < a.size(); i++) if (!tester.test(a.get(i))) return false;
 		return true;
+	}
+
+	/**
+	 * ある要素が条件を満たす場合trueを返します。
+	 */
+	public static boolean anyMatch(final char[] a, final IntPredicate tester) {
+		for (int ai : a) if (tester.test(ai)) return true;
+		return false;
 	}
 
 	/**
@@ -805,6 +963,24 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < localMaxCnt >
+
+	/**
+	 * 両隣より真に大きい内部要素の個数を返します。
+	 */
+	public static int localMaxCnt(final char[] a) {
+		return localMaxCnt(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素について、両隣より真に大きい内部要素の個数を返します。
+	 */
+	public static int localMaxCnt(final char[] a, final int len) {
+		if (len < 3) return 0;
+		int cnt = 0;
+		for (int i = 1; i < len - 1; i++) if (a[i - 1] < a[i] && a[i] > a[i + 1]) cnt++;
+		return cnt;
+	}
+
 	public static int localMaxCnt(final int[] a) {
 		return localMaxCnt(a, a.length);
 	}
@@ -841,6 +1017,24 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < localMinCnt >
+
+	/**
+	 * 両隣より真に小さい内部要素の個数を返します。
+	 */
+	public static int localMinCnt(final char[] a) {
+		return localMinCnt(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素について、両隣より真に小さい内部要素の個数を返します。
+	 */
+	public static int localMinCnt(final char[] a, final int len) {
+		if (len < 3) return 0;
+		int cnt = 0;
+		for (int i = 1; i < len - 1; i++) if (a[i - 1] > a[i] && a[i] < a[i + 1]) cnt++;
+		return cnt;
+	}
+
 	public static int localMinCnt(final int[] a) {
 		return localMinCnt(a, a.length);
 	}
@@ -877,6 +1071,27 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < maxRunLen >
+
+	/**
+	 * 同じ値が連続する最長区間の長さを返します。
+	 */
+	public static int maxRunLen(final char[] a) {
+		return maxRunLen(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素における、同じ値が連続する最長区間の長さを返します。
+	 */
+	public static int maxRunLen(final char[] a, final int len) {
+		if (len == 0) return 0;
+		int ans = 1, cnt = 1;
+		for (int i = 1; i < len; i++) {
+			if (a[i - 1] == a[i]) {
+				if (ans < ++cnt) ans = cnt;
+			} else cnt = 1;
+		}
+		return ans;
+	}
 
 	/**
 	 * 同じ値が連続する最長区間の長さを返します。
@@ -1293,6 +1508,33 @@ public final class ArrayUtils {
 	// endregion
 
 	// region < lis, lnds, lds, lnis >
+
+	/**
+	 * 最長狭義増加部分列の長さを返します。
+	 */
+	public static int lis(final char[] a) {
+		return lis(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素における最長狭義増加部分列の長さを返します。
+	 */
+	public static int lis(final char[] a, final int len) {
+		if (len <= 1) return len;
+		final int[] dp = new int[len];
+		int ans = 0;
+		for (int i = 0; i < len; i++) {
+			final int v = a[i];
+			int pos = binarySearch(dp, 0, ans, v);
+			if (pos < 0) {
+				pos = ~pos;
+				dp[pos] = v;
+			}
+			if (pos == ans) ans++;
+		}
+		return ans;
+	}
+
 	public static int lis(final int[] a) {
 		return lis(a, a.length);
 	}
@@ -1328,6 +1570,30 @@ public final class ArrayUtils {
 				pos = ~pos;
 				dp[pos] = v;
 			}
+			if (pos == ans) ans++;
+		}
+		return ans;
+	}
+
+	/**
+	 * 最長広義増加部分列の長さを返します。
+	 */
+	public static int lnds(final char[] a) {
+		return lnds(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素における最長広義増加部分列の長さを返します。
+	 */
+	public static int lnds(final char[] a, final int len) {
+		if (len <= 1) return len;
+		final int[] dp = new int[len];
+		int ans = 0;
+		for (int i = 0; i < len; i++) {
+			final int v = a[i];
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
+			pos = pos < 0 ? ~pos : pos + 1;
+			dp[pos] = v;
 			if (pos == ans) ans++;
 		}
 		return ans;
@@ -1369,6 +1635,32 @@ public final class ArrayUtils {
 		return ans;
 	}
 
+	/**
+	 * 最長狭義減少部分列の長さを返します。
+	 */
+	public static int lds(final char[] a) {
+		return lds(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素における最長狭義減少部分列の長さを返します。
+	 */
+	public static int lds(final char[] a, final int len) {
+		if (len <= 1) return len;
+		final int[] dp = new int[len];
+		int ans = 0;
+		for (int i = 0; i < len; i++) {
+			final int v = -a[i];
+			int pos = binarySearch(dp, 0, ans, v);
+			if (pos < 0) {
+				pos = ~pos;
+				dp[pos] = v;
+			}
+			if (pos == ans) ans++;
+		}
+		return ans;
+	}
+
 	public static int lds(final int[] a) {
 		return lds(a, a.length);
 	}
@@ -1404,6 +1696,30 @@ public final class ArrayUtils {
 				pos = ~pos;
 				dp[pos] = v;
 			}
+			if (pos == ans) ans++;
+		}
+		return ans;
+	}
+
+	/**
+	 * 最長広義減少部分列の長さを返します。
+	 */
+	public static int lnis(final char[] a) {
+		return lnis(a, a.length);
+	}
+
+	/**
+	 * 先頭 {@code len} 要素における最長広義減少部分列の長さを返します。
+	 */
+	public static int lnis(final char[] a, final int len) {
+		if (len <= 1) return len;
+		final int[] dp = new int[len];
+		int ans = 0;
+		for (int i = 0; i < len; i++) {
+			final int v = -a[i];
+			int pos = ArrayBinarySearch.upperBoundSearch(dp, 0, ans, v);
+			pos = pos < 0 ? ~pos : pos + 1;
+			dp[pos] = v;
 			if (pos == ans) ans++;
 		}
 		return ans;

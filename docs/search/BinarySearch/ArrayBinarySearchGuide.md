@@ -2,8 +2,7 @@
 
 ## 概要
 
-`ArrayBinarySearch` は、昇順ソート済みの配列に対して下限探索、上限探索、包含判定、出現数の取得を行うユーティリティクラスです。
-プリミティブ配列、`Comparable` 配列、`IntArray`、`LongArray` に対応し、配列全体または半開区間 `[l, r)` を探索できます。
+`ArrayBinarySearch` は、昇順ソート済みの配列に対して下限探索、上限探索、包含判定、出現数の取得を行うユーティリティクラスです。 プリミティブ配列、`Comparable` 配列、`IntArray`、`LongArray` に対応し、配列全体または半開区間 `[l, r)` を探索できます。
 
 ## 特徴
 
@@ -136,8 +135,8 @@ int count = ArrayBinarySearch.count(a, 1, 4, 2);      // 2
 
 ## パフォーマンス特性
 
-- `lowerBoundSearch`, `upperBoundSearch`, `contains`: 時間 O(log n)、追加メモリ O(1)
-- `count`: 時間 O(log n)、追加メモリ O(1)
+- `lowerBoundSearch`, `upperBoundSearch`, `contains`: 時間 $\mathcal{O}(\log n)$、追加メモリ $\mathcal{O}(1)$
+- `count`: 時間 $\mathcal{O}(\log n)$、追加メモリ $\mathcal{O}(1)$
 
 ## バージョン情報
 

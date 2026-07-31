@@ -7,6 +7,8 @@ import static java.lang.Math.*;
  */
 @SuppressWarnings("unused")
 public final class NumberFormatUtils {
+	private NumberFormatUtils() {
+	}
 
 	/**
 	 * doubleの高速なフォーマット。小数点第n - 1位を四捨五入します。

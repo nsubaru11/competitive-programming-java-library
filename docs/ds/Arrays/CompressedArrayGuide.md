@@ -10,7 +10,7 @@
 - 2D版も内部では一次元配列へ圧縮し、全要素を共通の順位空間へ変換
 - 0-based / 1-based の順位を選択可能
 - 3種類の同順位処理を `RankType` で選択可能
-- 値から順位、順位から値への O(log n) 変換
+- 値から順位、順位から値への $\mathcal{O}(\log n)$ 変換
 - 元配列の復元、出現判定、出現回数の取得に対応
 - 圧縮結果・ソート済み値・順位配列をコピーとして取得可能
 - `LongCompressedArray` も圧縮後の順位は `int` のため `IntArray` を実装
@@ -74,8 +74,7 @@
 | `toArray()`         | `int[]`    | 元配列順の圧縮結果のコピーを返す   |
 | `compressed()`      | `int[]`    | 元配列順の圧縮結果のコピーを返す   |
 
-2D版の `toArray()` / `compressed()` は `int[][]` を返します。`h`, `w`, `length`, `uniqueSize` は public final フィールドです。
-1D版は `length` と `uniqueSize` を公開しています。
+2D版の `toArray()` / `compressed()` は `int[][]` を返します。`h`, `w`, `length`, `uniqueSize` は public final フィールドです。 1D版は `length` と `uniqueSize` を公開しています。
 
 ### 4. 値・順位の変換
 
@@ -138,12 +137,12 @@ System.out.println(a);
 
 ## パフォーマンス特性
 
-- 構築: O(n log n)。2D版のnは全要素数
-- `get`, `size`, `uniqueSize`, `rankType`, `isOneBased`: O(1)
-- `rankOfValue`, `valueOfRank`, `containsValue`, `count`: O(log n)
-- `restore`: O(n log n)
-- `toArray`, `compressed`, `sorted`, `ranks`, iterator, `toString`: O(n)
-- 使用メモリ: O(n)
+- 構築: $\mathcal{O}(n \log n)$。2D版のnは全要素数
+- `get`, `size`, `uniqueSize`, `rankType`, `isOneBased`: $\mathcal{O}(1)$
+- `rankOfValue`, `valueOfRank`, `containsValue`, `count`: $\mathcal{O}(\log n)$
+- `restore`: $\mathcal{O}(n \log n)$
+- `toArray`, `compressed`, `sorted`, `ranks`, iterator, `toString`: $\mathcal{O}(n)$
+- 使用メモリ: $\mathcal{O}(n)$
 
 ## バージョン情報
 

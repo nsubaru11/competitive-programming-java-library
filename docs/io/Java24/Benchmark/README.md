@@ -5,15 +5,15 @@
 
 ## 構成
 
-| ファイル                                      | 役割                                              |
-|-------------------------------------------|-------------------------------------------------|
-| `test/verify/io/bench24/FastScanner2.java` / `FastPrinter2.java` | 比較用実装（ライブラリ本体ではない）                              |
-| `test/verify/io/bench24/Test1.java`                              | 本体実装（FastScanner / FastPrinter）の計測ドライバ          |
-| `test/verify/io/bench24/Test2.java`                              | 比較実装（FastScanner2 / FastPrinter2）の計測ドライバ        |
+| ファイル                                                         | 役割                                                                            |
+|------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| `test/verify/io/bench24/FastScanner2.java` / `FastPrinter2.java` | 比較用実装（ライブラリ本体ではない）                                            |
+| `test/verify/io/bench24/Test1.java`                              | 本体実装（FastScanner / FastPrinter）の計測ドライバ                             |
+| `test/verify/io/bench24/Test2.java`                              | 比較実装（FastScanner2 / FastPrinter2）の計測ドライバ                           |
 | `test/verify/io/bench24/GenerateTestInput.java`                  | ベンチマーク入力（int/long/文字列 各1000万件）の生成。第1引数で出力先を指定可能 |
-| `run_tests_24.sh`                         | Linux/WSL 用ランナー（コンパイル→入力生成→ドライラン→計測→集計）         |
-| `run_tests_24.bat`                        | Windows ネイティブ用ランナー（同上）                          |
-| `work/`                                   | 生成物の出力先（クラス・入力・CSV・各種ログ）。gitignore 対象           |
+| `run_tests_24.sh`                                                | Linux/WSL 用ランナー（コンパイル→入力生成→ドライラン→計測→集計）                |
+| `run_tests_24.bat`                                               | Windows ネイティブ用ランナー（同上）                                            |
+| `work/`                                                          | 生成物の出力先（クラス・入力・CSV・各種ログ）。gitignore 対象                   |
 
 ## 使い方
 

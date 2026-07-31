@@ -57,8 +57,8 @@ System.out.println(a.get(2)); // 10
 
 ## パフォーマンス特性
 
-- 現在の実装クラスでは `set` は O(1)
-- `fill`, `setAll`: O(n)
+- 現在の実装クラスでは `set` は $\mathcal{O}(1)$
+- `fill`, `setAll`: $\mathcal{O}(n)$
 - `set` 自体は追加メモリを使用しない
 
 ## バージョン情報

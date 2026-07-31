@@ -29,91 +29,91 @@
 
 ### 基本的な入力メソッド
 
-| メソッド                  | 戻り値の型           | 説明                                 |
-|-----------------------|-----------------|------------------------------------|
-| `nextInt()`           | `int`           | 次の整数値を読み込みます。                      |
-| `nextLong()`          | `long`          | 次の長整数値を読み込みます。                     |
-| `nextDouble()`        | `double`        | 次の浮動小数点値を読み込みます。                   |
-| `nextChar()`          | `char`          | 次の非空白 1 文字を読み込みます。                 |
-| `next()`              | `String`        | 次のトークンを文字列として読み込みます。               |
-| `nextStringBuilder()` | `StringBuilder` | 次のトークンを `StringBuilder` として読み込みます。 |
-| `nextLine()`          | `String`        | 次の 1 行を読み込みます（改行文字は含みません）。         |
-| `nextBigInteger()`    | `BigInteger`    | 次の整数トークンを `BigInteger` として読み込みます。  |
-| `nextBigDecimal()`    | `BigDecimal`    | 次の数値トークンを `BigDecimal` として読み込みます。  |
+| メソッド              | 戻り値の型      | 説明                                                 |
+|-----------------------|-----------------|------------------------------------------------------|
+| `nextInt()`           | `int`           | 次の整数値を読み込みます。                           |
+| `nextLong()`          | `long`          | 次の長整数値を読み込みます。                         |
+| `nextDouble()`        | `double`        | 次の浮動小数点値を読み込みます。                     |
+| `nextChar()`          | `char`          | 次の非空白 1 文字を読み込みます。                    |
+| `next()`              | `String`        | 次のトークンを文字列として読み込みます。             |
+| `nextStringBuilder()` | `StringBuilder` | 次のトークンを `StringBuilder` として読み込みます。  |
+| `nextLine()`          | `String`        | 次の 1 行を読み込みます（改行文字は含みません）。    |
+| `nextBigInteger()`    | `BigInteger`    | 次の整数トークンを `BigInteger` として読み込みます。 |
+| `nextBigDecimal()`    | `BigDecimal`    | 次の数値トークンを `BigDecimal` として読み込みます。 |
 
 ### 0-index 補助メソッド
 
-| メソッド               | 戻り値の型    | 説明                                  |
-|--------------------|----------|-------------------------------------|
-| `nextInt0()`       | `int`    | `nextInt() - 1` を返します。              |
-| `nextLong0()`      | `long`   | `nextLong() - 1` を返します。             |
-| `nextInt0(int n)`  | `int[]`  | 各要素を 1 減らした長さ `n` の `int[]` を返します。  |
-| `nextLong0(int n)` | `long[]` | 各要素を 1 減らした長さ `n` の `long[]` を返します。 |
+| メソッド           | 戻り値の型 | 説明                                                 |
+|--------------------|------------|------------------------------------------------------|
+| `nextInt0()`       | `int`      | `nextInt() - 1` を返します。                         |
+| `nextLong0()`      | `long`     | `nextLong() - 1` を返します。                        |
+| `nextInt0(int n)`  | `int[]`    | 各要素を 1 減らした長さ `n` の `int[]` を返します。  |
+| `nextLong0(int n)` | `long[]`   | 各要素を 1 減らした長さ `n` の `long[]` を返します。 |
 
 ### 配列入力メソッド
 
-| メソッド                             | 戻り値の型        | 説明                             |
-|----------------------------------|--------------|--------------------------------|
+| メソッド                         | 戻り値の型   | 説明                                          |
+|----------------------------------|--------------|-----------------------------------------------|
 | `nextInt(int n)`                 | `int[]`      | 長さ `n` の整数配列を読み込みます。           |
-| `nextLong(int n)`                | `long[]`     | 長さ `n` の長整数配列を読み込みます。          |
-| `nextDouble(int n)`              | `double[]`   | 長さ `n` の浮動小数点配列を読み込みます。        |
-| `nextChars()`                    | `char[]`     | 次のトークンを `char[]` として読み込みます。    |
-| `nextChars(int n)`               | `char[]`     | 非空白文字を `n` 個読み込みます。            |
-| `nextStrings(int n)`             | `String[]`   | 長さ `n` の文字列配列を読み込みます。          |
-| `nextIntMat(int h, int w)`       | `int[][]`    | `h × w` の整数行列を読み込みます。          |
-| `nextLongMat(int h, int w)`      | `long[][]`   | `h × w` の長整数行列を読み込みます。         |
-| `nextDoubleMat(int h, int w)`    | `double[][]` | `h × w` の浮動小数点行列を読み込みます。       |
-| `nextCharMat(int h, int w)`      | `char[][]`   | `h × w` の文字行列を読み込みます。          |
+| `nextLong(int n)`                | `long[]`     | 長さ `n` の長整数配列を読み込みます。         |
+| `nextDouble(int n)`              | `double[]`   | 長さ `n` の浮動小数点配列を読み込みます。     |
+| `nextChars()`                    | `char[]`     | 次のトークンを `char[]` として読み込みます。  |
+| `nextChars(int n)`               | `char[]`     | 非空白文字を `n` 個読み込みます。             |
+| `nextStrings(int n)`             | `String[]`   | 長さ `n` の文字列配列を読み込みます。         |
+| `nextIntMat(int h, int w)`       | `int[][]`    | `h × w` の整数行列を読み込みます。            |
+| `nextLongMat(int h, int w)`      | `long[][]`   | `h × w` の長整数行列を読み込みます。          |
+| `nextDoubleMat(int h, int w)`    | `double[][]` | `h × w` の浮動小数点行列を読み込みます。      |
+| `nextCharMat(int h, int w)`      | `char[][]`   | `h × w` の文字行列を読み込みます。            |
 | `nextInt3D(int x, int y, int z)` | `int[][][]`  | `x × y × z` の 3 次元整数配列を読み込みます。 |
 
 ### 真偽値入力メソッド
 
-| メソッド                                            | 戻り値の型         | 説明                                               |
-|-------------------------------------------------|---------------|--------------------------------------------------|
-| `nextBoolean()`                                 | `boolean`     | 次トークンを `true/false` として読み込みます（先頭文字で判定）。          |
-| `nextBoolean(char c)`                           | `boolean`     | 次の 1 文字が `c` と一致する場合に `true` を返します。              |
-| `nextBoolean(int i)`                            | `boolean`     | 次の整数が `i` と一致する場合に `true` を返します。                 |
-| `nextBoolean(long l)`                           | `boolean`     | 次の長整数が `l` と一致する場合に `true` を返します。                |
-| `nextBoolean(CharPredicate p)`                  | `boolean`     | 次の 1 文字を `CharPredicate` で判定します。                 |
-| `nextBoolean(IntPredicate p)`                   | `boolean`     | 次の整数を `IntPredicate` で判定します。                     |
-| `nextBoolean(LongPredicate p)`                  | `boolean`     | 次の長整数を `LongPredicate` で判定します。                   |
-| `nextBoolean(int n, char c)`                    | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `char` 一致判定で生成します。       |
-| `nextBoolean(int n, int i)`                     | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `int` 一致判定で生成します。        |
-| `nextBoolean(int n, long l)`                    | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `long` 一致判定で生成します。       |
-| `nextBoolean(int n, CharPredicate p)`           | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `CharPredicate` で判定します。  |
-| `nextBoolean(int n, IntPredicate p)`            | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `IntPredicate` で判定します。   |
-| `nextBoolean(int n, LongPredicate p)`           | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `LongPredicate` で判定します。  |
-| `nextBooleanMat(int h, int w, char c)`          | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `char` 一致判定で生成します。      |
-| `nextBooleanMat(int h, int w, int n)`           | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `int` 一致判定で生成します。       |
-| `nextBooleanMat(int h, int w, long l)`          | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `long` 一致判定で生成します。      |
-| `nextBooleanMat(int h, int w, CharPredicate p)` | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `CharPredicate` で判定します。 |
-| `nextBooleanMat(int h, int w, IntPredicate p)`  | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `IntPredicate` で判定します。  |
-| `nextBooleanMat(int h, int w, LongPredicate p)` | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `LongPredicate` で判定します。 |
+| メソッド                                        | 戻り値の型    | 説明                                                                     |
+|-------------------------------------------------|---------------|--------------------------------------------------------------------------|
+| `nextBoolean()`                                 | `boolean`     | 次トークンを `true/false` として読み込みます（先頭文字で判定）。         |
+| `nextBoolean(char c)`                           | `boolean`     | 次の 1 文字が `c` と一致する場合に `true` を返します。                   |
+| `nextBoolean(int i)`                            | `boolean`     | 次の整数が `i` と一致する場合に `true` を返します。                      |
+| `nextBoolean(long l)`                           | `boolean`     | 次の長整数が `l` と一致する場合に `true` を返します。                    |
+| `nextBoolean(CharPredicate p)`                  | `boolean`     | 次の 1 文字を `CharPredicate` で判定します。                             |
+| `nextBoolean(IntPredicate p)`                   | `boolean`     | 次の整数を `IntPredicate` で判定します。                                 |
+| `nextBoolean(LongPredicate p)`                  | `boolean`     | 次の長整数を `LongPredicate` で判定します。                              |
+| `nextBoolean(int n, char c)`                    | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `char` 一致判定で生成します。  |
+| `nextBoolean(int n, int i)`                     | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `int` 一致判定で生成します。   |
+| `nextBoolean(int n, long l)`                    | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `long` 一致判定で生成します。  |
+| `nextBoolean(int n, CharPredicate p)`           | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `CharPredicate` で判定します。 |
+| `nextBoolean(int n, IntPredicate p)`            | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `IntPredicate` で判定します。  |
+| `nextBoolean(int n, LongPredicate p)`           | `boolean[]`   | 長さ `n` の真偽値配列を読み込み、各要素を `LongPredicate` で判定します。 |
+| `nextBooleanMat(int h, int w, char c)`          | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `char` 一致判定で生成します。   |
+| `nextBooleanMat(int h, int w, int n)`           | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `int` 一致判定で生成します。    |
+| `nextBooleanMat(int h, int w, long l)`          | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `long` 一致判定で生成します。   |
+| `nextBooleanMat(int h, int w, CharPredicate p)` | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `CharPredicate` で判定します。  |
+| `nextBooleanMat(int h, int w, IntPredicate p)`  | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `IntPredicate` で判定します。   |
+| `nextBooleanMat(int h, int w, LongPredicate p)` | `boolean[][]` | `h × w` の真偽値行列を読み込み、各要素を `LongPredicate` で判定します。  |
 
 ### ソート済み・累積和・逆写像
 
-| メソッド                             | 戻り値の型     | 説明                         |
-|----------------------------------|-----------|----------------------------|
-| `nextSortedInt(int n)`           | `int[]`   | 整数配列を読み込み、ソートして返します。       |
-| `nextIntPrefixSum(int n)`        | `int[]`   | 整数の累積和配列を返します。             |
-| `nextIntPrefixSum(int h, int w)` | `int[][]` | 整数の 2 次元累積和配列を返します。        |
-| `nextIntInverseMapping(int n)`   | `int[]`   | 1-indexed の値に対する逆写像を生成します。 |
+| メソッド                         | 戻り値の型 | 説明                                       |
+|----------------------------------|------------|--------------------------------------------|
+| `nextSortedInt(int n)`           | `int[]`    | 整数配列を読み込み、ソートして返します。   |
+| `nextIntPrefixSum(int n)`        | `int[]`    | 整数の累積和配列を返します。               |
+| `nextIntPrefixSum(int h, int w)` | `int[][]`  | 整数の 2 次元累積和配列を返します。        |
+| `nextIntInverseMapping(int n)`   | `int[]`    | 1-indexed の値に対する逆写像を生成します。 |
 
 ### コレクション・マルチセット入力
 
-| メソッド                            | 戻り値の型                       | 説明                           |
-|---------------------------------|-----------------------------|------------------------------|
-| `nextIntAL(int n)`              | `ArrayList<Integer>`        | 整数 `ArrayList` を読み込みます。      |
-| `nextIntHS(int n)`              | `HashSet<Integer>`          | 整数 `HashSet` を読み込みます。        |
+| メソッド                        | 戻り値の型                  | 説明                                          |
+|---------------------------------|-----------------------------|-----------------------------------------------|
+| `nextIntAL(int n)`              | `ArrayList<Integer>`        | 整数 `ArrayList` を読み込みます。             |
+| `nextIntHS(int n)`              | `HashSet<Integer>`          | 整数 `HashSet` を読み込みます。               |
 | `nextIntMultisetHM(int n)`      | `HashMap<Integer, Integer>` | 整数マルチセットを `HashMap` で読み込みます。 |
 | `nextIntMultiset(int n, int m)` | `int[]`                     | 整数マルチセットを `int[]` で読み込みます。   |
 
 ### ユーティリティ/状態確認メソッド
 
-| メソッド        | 戻り値の型     | 説明                                  |
-|-------------|-----------|-------------------------------------|
-| `hasNext()` | `boolean` | 次に読み込めるトークンが残っているか判定します。            |
-| `peek()`    | `char`    | 次の非空白文字を消費せずに返します。EOF では `0` を返します。 |
+| メソッド    | 戻り値の型 | 説明                                                          |
+|-------------|------------|---------------------------------------------------------------|
+| `hasNext()` | `boolean`  | 次に読み込めるトークンが残っているか判定します。              |
+| `peek()`    | `char`     | 次の非空白文字を消費せずに返します。EOF では `0` を返します。 |
 
 ## 利用例
 
@@ -150,17 +150,17 @@ try (FastScanner sc = new FastScanner()) {
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                                                               |
-|:--------------|:-----------|:-----------------------------------------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。                                                                                         |
-| **バージョン 1.1** | 2025-06-09 | `nextStringBuilder` や `nextLine` 内の変数宣言を `final` に統一するなどのリファクタリングを行いました。                                         |
-| **バージョン 1.2** | 2025-06-09 | `nextLine` メソッドの改行文字処理を改善しました。                                                                                   |
-| **バージョン 1.3** | 2025-06-25 | `nextDouble` の小数構築処理を、ループ内の浮動小数点演算を削減する方式に変更しました。                                                                |
-| **バージョン 2.0** | 2025-09-22 | `hasNext` / `peek` を追加し、EOF ハンドリングと数値解析ロジックを改善しました。                                                              |
-| **バージョン 3.0** | 2026-02-15 | `ContestScanner` と `CompressedFastScanner` を統合し、拡張入力メソッドを `FastScanner` に集約しました。                                 |
+| バージョン番号     | 年月日     | 詳細                                                                                                                                                           |
+|:-------------------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2025-04-07 | 初期バージョンとしてファイルを新規作成しました。                                                                                                               |
+| **バージョン 1.1** | 2025-06-09 | `nextStringBuilder` や `nextLine` 内の変数宣言を `final` に統一するなどのリファクタリングを行いました。                                                        |
+| **バージョン 1.2** | 2025-06-09 | `nextLine` メソッドの改行文字処理を改善しました。                                                                                                              |
+| **バージョン 1.3** | 2025-06-25 | `nextDouble` の小数構築処理を、ループ内の浮動小数点演算を削減する方式に変更しました。                                                                          |
+| **バージョン 2.0** | 2025-09-22 | `hasNext` / `peek` を追加し、EOF ハンドリングと数値解析ロジックを改善しました。                                                                                |
+| **バージョン 3.0** | 2026-02-15 | `ContestScanner` と `CompressedFastScanner` を統合し、拡張入力メソッドを `FastScanner` に集約しました。                                                        |
 | **バージョン 4.0** | 2026-02-18 | `nextInt0` / `nextLong0` とその配列版を追加。`next()` / `nextLine()` / `nextDouble()` の内部処理を見直し、既定コンストラクタを標準入力直結の形に整理しました。 |
-| **バージョン 4.1** | 2026-03-12 | 機能の拡張とリファクタリング                                                                                                   |
-| **バージョン 5.0** | 2026-04-18 | 一括読み込み用と、インタラクティブ用に分割し、分岐の削減および最適化                                                                               |
+| **バージョン 4.1** | 2026-03-12 | 機能の拡張とリファクタリング                                                                                                                                   |
+| **バージョン 5.0** | 2026-04-18 | 一括読み込み用と、インタラクティブ用に分割し、分岐の削減および最適化                                                                                           |
 | **バージョン 6.0** | 2026-05-11 | `nextBoolean` 系 API（単一値一致・述語判定・1次元配列・2次元配列）を追加し、`InteractiveScanner` と同等の真偽値入力機能に揃えました。                          |
 
 ### バージョン管理について

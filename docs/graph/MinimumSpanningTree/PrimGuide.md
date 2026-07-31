@@ -77,12 +77,12 @@ long maximum = Prim.maximumCost(graph); // 12
 ## パフォーマンス特性
 
 - Result版
-	- 時間計算量: `O((|V| + |E|) log |V|)`
-	- 追加メモリ: `O(|V|)`
+	- 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
+	- 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
 	- 優先度キュー、親辺、採用辺IDを保持
 - cost-only版
-	- 時間計算量: `O((|V| + |E|) log |V|)`
-	- 追加メモリ: `O(|V|)`
+	- 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
+	- 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
 	- 親辺配列、採用辺ID配列、Result生成を省略
 - `LongIndexedPriorityQueue`のコスト履歴を訪問済み判定にも再利用し、別の`boolean[]`を確保しません。
 

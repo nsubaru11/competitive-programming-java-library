@@ -3,7 +3,7 @@
 ## 概要
 
 `IntPrefixSum` / `LongPrefixSum` とその2D・3D版は、構築後に更新しない配列の累積和を保持します。
-`IntPrefixModSum` / `LongPrefixModSum` とその2D・3D版は、同じ累積和を法 `mod` で保持します。 1Dの閉区間、2Dの閉矩形、3Dの閉直方体の和をいずれも O(1) で取得できます。
+`IntPrefixModSum` / `LongPrefixModSum` とその2D・3D版は、同じ累積和を法 `mod` で保持します。 1Dの閉区間、2Dの閉矩形、3Dの閉直方体の和をいずれも $\mathcal{O}(1)$ で取得できます。
 
 ## 特徴
 
@@ -64,14 +64,14 @@
 
 ### 2. 1Dアクセス・区間和
 
-| メソッド            | 戻り値の型                           | 説明                       |
-|---------------------|--------------------------------------|----------------------------|
-| `get(int i)`        | `int` / `long`                       | 元配列のi番目を返す        |
-| `sum()`             | `int` / `long`                       | 全要素の和を返す           |
-| `sum(int i)`        | `int` / `long`                       | 閉区間 `[0, i]` の和を返す |
-| `sum(int i, int j)` | `int` / `long`                       | 閉区間 `[i, j]` の和を返す |
-| `size()`            | `int`                                | 元配列の要素数を返す       |
-| `iterator()`        | `PrimitiveIterator.OfInt` / `OfLong` | 元配列順に走査する         |
+| メソッド            | 戻り値の型                           | 説明                             |
+|---------------------|--------------------------------------|----------------------------------|
+| `get(int i)`        | `int` / `long`                       | 元配列のi番目を返す              |
+| `sum()`             | `int` / `long`                       | 全要素の和を返す                 |
+| `sum(int i)`        | `int` / `long`                       | 閉区間 `[0, i]` の和を返す       |
+| `sum(int i, int j)` | `int` / `long`                       | 閉区間 `[i, j]` の和を返す       |
+| `size()`            | `int`                                | 元配列の要素数を返す             |
+| `iterator()`        | `PrimitiveIterator.OfInt` / `OfLong` | 元配列順に走査する               |
 | `toString()`        | `String`                             | 元配列を半角スペース区切りで返す |
 
 MOD版の `get` と各 `sum` は `[0, mod)` の値を返します。 1Dのint版は `int`、long版は `long` を返します。
@@ -171,12 +171,12 @@ System.out.println(ps);
 
 ## パフォーマンス特性
 
-- 構築: 全次元で O(要素数)
-- `get`, `sum`: O(1)
-- `toString`: O(要素数)
-- 1D追加メモリ: O(n)
-- 2D追加メモリ: O((h + 1)(w + 1))
-- 3D追加メモリ: O((d + 1)(h + 1)(w + 1))
+- 構築: 全次元で $\mathcal{O}(\text{要素数})$
+- `get`, `sum`: $\mathcal{O}(1)$
+- `toString`: $\mathcal{O}(\text{要素数})$
+- 1D追加メモリ: $\mathcal{O}(n)$
+- 2D追加メモリ: $\mathcal{O}((h + 1)(w + 1))$
+- 3D追加メモリ: $\mathcal{O}((d + 1)(h + 1)(w + 1))$
 - 全ての多次元版は累積値を一次元配列へ圧縮して保持
 
 ## バージョン情報

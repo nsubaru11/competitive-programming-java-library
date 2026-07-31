@@ -24,24 +24,24 @@
 
 ### 1. 配列アクセス
 
-| メソッド                   | 戻り値の型                                | 説明                    |
-|------------------------|--------------------------------------|-----------------------|
-| `IntArray.get(int i)`  | `int`                                | 論理添字 `i` の値を返す        |
-| `LongArray.get(int i)` | `long`                               | 論理添字 `i` の値を返す        |
-| `size()`               | `int`                                | 要素数を返す                |
+| メソッド               | 戻り値の型                           | 説明                             |
+|------------------------|--------------------------------------|----------------------------------|
+| `IntArray.get(int i)`  | `int`                                | 論理添字 `i` の値を返す          |
+| `LongArray.get(int i)` | `long`                               | 論理添字 `i` の値を返す          |
+| `size()`               | `int`                                | 要素数を返す                     |
 | `iterator()`           | `PrimitiveIterator.OfInt` / `OfLong` | 論理順に走査する iterator を返す |
-| `spliterator()`        | `Spliterator.OfInt` / `OfLong`       | 順序付き spliterator を返す  |
+| `spliterator()`        | `Spliterator.OfInt` / `OfLong`       | 順序付き spliterator を返す      |
 
 ### 2. Collection 由来の既定メソッド
 
-| メソッド                                         | 戻り値の型                          | 説明                 |
-|----------------------------------------------|--------------------------------|--------------------|
-| `isEmpty()`                                  | `boolean`                      | `size() == 0` か判定  |
-| `contains(value)`                            | `boolean`                      | 値が含まれるか線形探索        |
-| `forEachInt(action)` / `forEachLong(action)` | `void`                         | 全要素へ処理を適用          |
-| `intStream()` / `longStream()`               | `IntStream` / `LongStream`     | プリミティブ Stream を返す  |
+| メソッド                                     | 戻り値の型                     | 説明                           |
+|----------------------------------------------|--------------------------------|--------------------------------|
+| `isEmpty()`                                  | `boolean`                      | `size() == 0` か判定           |
+| `contains(value)`                            | `boolean`                      | 値が含まれるか線形探索         |
+| `forEachInt(action)` / `forEachLong(action)` | `void`                         | 全要素へ処理を適用             |
+| `intStream()` / `longStream()`               | `IntStream` / `LongStream`     | プリミティブ Stream を返す     |
 | `toList()`                                   | `List<Integer>` / `List<Long>` | ボックス化した不変 List を返す |
-| `toArray()`                                  | `int[]` / `long[]`             | 論理順のプリミティブ配列を返す    |
+| `toArray()`                                  | `int[]` / `long[]`             | 論理順のプリミティブ配列を返す |
 
 ## 利用例
 
@@ -67,15 +67,15 @@ System.out.println(sum(a)); // 10
 
 ## パフォーマンス特性
 
-- 現在の `lib.ds.arrays` 実装では `get` と `size` は O(1)
-- `contains`, `forEachInt` / `forEachLong`, `toList`, `toArray` は O(n)
-- `toList` と `toArray` は O(n) の追加メモリを使用
+- 現在の `lib.ds.arrays` 実装では `get` と `size` は $\mathcal{O}(1)$
+- `contains`, `forEachInt` / `forEachLong`, `toList`, `toArray` は $\mathcal{O}(n)$
+- `toList` と `toArray` は $\mathcal{O}(n)$ の追加メモリを使用
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                               |
-|:--------------|:-----------|:---------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2026-07-12 | 配列データ構造の共通インターフェースとして初回実装                                                        |
+| バージョン番号     | 年月日     | 詳細                                                                                                    |
+|:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2026-07-12 | 配列データ構造の共通インターフェースとして初回実装                                                      |
 | **バージョン 2.0** | 2026-07-15 | `IntCollection` / `LongCollection` を継承する読み取り専用 API へ分離し、順序付き `spliterator()` を追加 |
 
 ### バージョン管理について

@@ -6,7 +6,7 @@
 
 ## 実装クラス
 
-### [EulerTour](../../../src/lib/ds/EulerTour.java)
+### [EulerTour](../../../src/lib/graph/tree/EulerTour.java)
 
 - **用途**：
 	- DFS入退場時刻の計算と部分木区間の取得

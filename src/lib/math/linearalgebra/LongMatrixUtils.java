@@ -5,7 +5,6 @@ import static java.util.Arrays.*;
 @SuppressWarnings("unused")
 public final class LongMatrixUtils {
 	private LongMatrixUtils() {
-		throw new AssertionError();
 	}
 
 	public static long[][] copy(final long[][] a) {

@@ -27,44 +27,44 @@
 
 ### 1. 参照・判定系メソッド
 
-| メソッド                               | 戻り値の型          | 説明             |
-|------------------------------------|----------------|----------------|
+| メソッド                           | 戻り値の型     | 説明                         |
+|------------------------------------|----------------|------------------------------|
 | `get(a, b)`                        | `int` / `long` | 値取得。キー未存在時は例外。 |
-| `getOrDefault(a, b, defaultValue)` | `int` / `long` | 未存在時に既定値を返す。   |
-| `containsKey(a, b)`                | `boolean`      | キー存在判定。        |
-| `size()`                           | `int`          | 要素数。           |
-| `isEmpty()`                        | `boolean`      | 空判定。           |
+| `getOrDefault(a, b, defaultValue)` | `int` / `long` | 未存在時に既定値を返す。     |
+| `containsKey(a, b)`                | `boolean`      | キー存在判定。               |
+| `size()`                           | `int`          | 要素数。                     |
+| `isEmpty()`                        | `boolean`      | 空判定。                     |
 
 ### 2. 更新系メソッド
 
-| メソッド                                      | 戻り値の型          | 説明                        |
-|-------------------------------------------|----------------|---------------------------|
-| `put(a, b, value)`                        | `int` / `long` | 値を設定。                     |
+| メソッド                                  | 戻り値の型     | 説明                               |
+|-------------------------------------------|----------------|------------------------------------|
+| `put(a, b, value)`                        | `int` / `long` | 値を設定。                         |
 | `putIfAbsent(a, b, value)`                | `int` / `long` | 未存在時のみ挿入。                 |
-| `add(a, b, delta)`                        | `int` / `long` | 既存値へ加算。                   |
-| `increment(a, b)` / `decrement(a, b)`     | `int` / `long` | `+1` / `-1` 更新。           |
+| `add(a, b, delta)`                        | `int` / `long` | 既存値へ加算。                     |
+| `increment(a, b)` / `decrement(a, b)`     | `int` / `long` | `+1` / `-1` 更新。                 |
 | `addOrDefault(a, b, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。 |
-| `merge(a, b, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。 |
-| `remove(a, b)`                            | `boolean`      | キー削除。                     |
-| `clear()`                                 | `void`         | 全削除。                      |
+| `merge(a, b, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。   |
+| `remove(a, b)`                            | `boolean`      | キー削除。                         |
+| `clear()`                                 | `void`         | 全削除。                           |
 
 ### 3. 走査・抽出系メソッド
 
-| メソッド                                  | 戻り値の型                  | 説明                                 |
-|---------------------------------------|------------------------|------------------------------------|
-| `forEach(action)`                     | `void`                 | `(a, b, value)` で全要素を走査。           |
+| メソッド                              | 戻り値の型             | 説明                                      |
+|---------------------------------------|------------------------|-------------------------------------------|
+| `forEach(action)`                     | `void`                 | `(a, b, value)` で全要素を走査。          |
 | `forEachKey(action)`                  | `void`                 | `(a, b)` で全キー走査。                   |
-| `forEachValue(action)`                | `void`                 | 値のみ走査。                             |
+| `forEachValue(action)`                | `void`                 | 値のみ走査。                              |
 | `reduce(identity, accumulator)`       | `long`                 | `(a, b, value)` を使って集約。            |
-| `reduceKeys(identity, accumulator)`   | `long`                 | `(a, b)` のキーのみを集約。                 |
+| `reduceKeys(identity, accumulator)`   | `long`                 | `(a, b)` のキーのみを集約。               |
 | `reduceValues(identity, accumulator)` | `long`                 | 値のみを集約。                            |
-| `keys()`                              | `int[][]` / `long[][]` | `[2][size]` 形式でキー集合を返す。            |
+| `keys()`                              | `int[][]` / `long[][]` | `[2][size]` 形式でキー集合を返す。        |
 | `values()`                            | `int[]` / `long[]`     | 値配列を返す。                            |
 | `entries()`                           | `int[][]` / `long[][]` | `[3][size]` 形式で `(a,b,value)` を返す。 |
 
 ### 4. クラス別差分
 
-| クラス              | 値型     | `merge` の演算子型        |
+| クラス           | 値型   | `merge` の演算子型   |
 |------------------|--------|----------------------|
 | `IntPairIntMap`  | `int`  | `IntBinaryOperator`  |
 | `IntPairLongMap` | `long` | `LongBinaryOperator` |
@@ -92,18 +92,18 @@ public class Example {
 ## パフォーマンス特性
 
 - 平均時間計算量:
-	- 参照・更新: $O(1)$
+	- 参照・更新: $\mathcal{O}(1)$
 - 最悪時間計算量:
-	- 参照・更新: $O(N)$
+	- 参照・更新: $\mathcal{O}(N)$
 - 空間計算量:
-	- $O(capacity)$
+	- $\mathcal{O}(capacity)$
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                           |
-|:--------------|:-----------|:-----------------------------------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                                           |
+|:-------------------|:-----------|:-----------------------------------------------------------------------------------------------|
 | **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加。その他軽微な実装調整。 |
-| **バージョン 1.0** | 2026-04-27 | Pair 系2クラス初期実装。                                                              |
+| **バージョン 1.0** | 2026-04-27 | Pair 系2クラス初期実装。                                                                       |
 
 ### バージョン管理について
 

@@ -8,8 +8,10 @@ import lib.math.number.*;
 public final class Matrix {
 	// 行列 -> 分数の2次元配列
 	// m * n次行列
-	private Fraction[][] matrix;
-	private int m, n, rank;
+	private final Fraction[][] matrix;
+	private final int m;
+	private final int n;
+	private int rank;
 	private Fraction determinant;
 
 	Matrix(int[][] A) {
@@ -205,9 +207,7 @@ public final class Matrix {
 				Fraction[][] minor = new Fraction[m - 1][m - 1];
 				for (int k = 0, s = 0; k < m; k++) {
 					if (k == i) continue;
-					for (int t = 0; t < m - 1; t++) {
-						minor[s][t] = matrix[k][t + 1];
-					}
+					System.arraycopy(matrix[k], 1, minor[s], 0, m - 1);
 					s++;
 				}
 				Fraction D = matrix[i][0].multiply(LaplaceExpansion(i, m - 1, minor));
@@ -235,9 +235,7 @@ public final class Matrix {
 			Fraction[][] minor = new Fraction[m - 1][m - 1];
 			for (int k = 0, s = 0; k < m; k++) {
 				if (k == i) continue;
-				for (int t = 0; t < m - 1; t++) {
-					minor[s][t] = matrix[k][t + 1];
-				}
+				System.arraycopy(matrix[k], 1, minor[s], 0, m - 1);
 				s++;
 			}
 			Fraction D = matrix[i][0].multiply(LaplaceExpansion(i, m - 1, minor));

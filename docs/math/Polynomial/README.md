@@ -1,27 +1,22 @@
-# Polynomial
+# lib.math.polynomial
 
-## 概要
-
-多項式の四則演算・微分・積分・評価を行うユーティリティクラスを提供します（旧 MathFunctions/PolynomialUtils から分割）。
+多項式演算と各種畳み込みを扱うパッケージです。
 
 ## 実装クラス
 
-### [PolynomialUtils](../../../src/lib/math/PolynomialUtils.java)
+### [PolynomialUtils](../../../src/lib/math/polynomial/PolynomialUtils.java)
 
-- **用途**：
-	- 多項式の加算・減算・乗算・微分・積分・評価
-- **特徴**：
-	- 係数配列（`double[]`）による多項式表現
-	- 多項式同士の四則演算と、任意の点での値の評価
-- **時間計算量**：
-	- 加減算 $O(N)$ / 乗算 $O(N^2)$（素朴な実装）
-- **空間計算量**：
-	- $O(N)$
+- `double[]`を係数列とする加算・減算・乗算・微分・積分・評価・次数・GCD
+- 素朴な乗算は時間計算量$\mathcal{O}(NM)$
+- 浮動小数点演算の丸め誤差を含みます。
 
-## アルゴリズム（データ構造）選択ガイド
+### [Convolution](../../../src/lib/math/polynomial/Convolution.java)
 
-- 多項式乗算を高速化したい場合は[Convolution](../Convolution)（NTT/FFT、開発中）の利用を検討してください。
+- NTT、FFT、XOR・AND・OR、GCD・LCM畳み込みの公開API
+- 内部変換とGarner復元は未実装であり、現在は正しい結果を返しません。
+- 設計は[Convolution設計書](./ConvolutionArchitecture.md)を参照してください。
 
 ## 注意事項
 
-- `double`を用いるため、桁数が大きい場合や厳密な整数演算が必要な場合は誤差に注意してください。
+- `Convolution`は実装完了まで利用できません。
+- `PolynomialUtils`の係数は次数の昇順に格納します。

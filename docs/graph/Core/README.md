@@ -30,28 +30,28 @@
 - **特徴**: グラフの内部配列を直接走査し、オブジェクト生成を抑制
 - **詳細**: [GraphUtilsGuide.md](./GraphUtilsGuide.md)
 
-### [Tree](../../../src/lib/graph/Tree.java)
+### [Tree](../../../src/lib/graph/tree/Tree.java)
 
 - **用途**: 重み付き・重みなし木の保持と直径計算
 - **特徴**: `n - 1`本の無向辺に特化した固定長表現
 
-### [RootedTree](../../../src/lib/graph/RootedTree.java)
+### [RootedTree](../../../src/lib/graph/tree/RootedTree.java)
 
 - **用途**: 根付き木の親・深さ・部分木サイズ・LCA・HLD
 - **特徴**: 必要になるまで構築処理を遅延
 
 ## 選択ガイド
 
-| 目的            | 使用するクラス・メソッド                                         |
-|---------------|------------------------------------------------------|
-| 有向グラフを構築する    | `DirectedGraph`                                      |
-| 無向グラフを構築する    | `UndirectedGraph`                                    |
-| 重みを無視した探索・距離  | `GraphUtils.bfs` / `GraphUtils.dist`                 |
-| DAG判定・トポロジカル順 | `GraphUtils.hasCycle` / `GraphUtils.topologicalSort` |
-| 強連結成分分解       | `GraphUtils.scc`                                     |
-| 無向グラフの二部判定    | `GraphUtils.isBipartite`                             |
-| 木の直径          | `Tree`                                               |
-| 根付き木・LCA・HLD  | `RootedTree`                                         |
+| 目的                     | 使用するクラス・メソッド                             |
+|--------------------------|------------------------------------------------------|
+| 有向グラフを構築する     | `DirectedGraph`                                      |
+| 無向グラフを構築する     | `UndirectedGraph`                                    |
+| 重みを無視した探索・距離 | `GraphUtils.bfs` / `GraphUtils.dist`                 |
+| DAG判定・トポロジカル順  | `GraphUtils.hasCycle` / `GraphUtils.topologicalSort` |
+| 強連結成分分解           | `GraphUtils.scc`                                     |
+| 無向グラフの二部判定     | `GraphUtils.isBipartite`                             |
+| 木の直径                 | `Tree`                                               |
+| 根付き木・LCA・HLD       | `RootedTree`                                         |
 
 ## 注意事項
 

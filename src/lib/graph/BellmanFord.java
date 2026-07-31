@@ -86,8 +86,8 @@ public final class BellmanFord {
 	 * Bellman-Ford法による単一始点最短経路の計算結果。
 	 */
 	public static final class Result {
-		public final boolean hasNegCycle;
 		public final int s;
+		public final boolean hasNegCycle;
 		public final long[] dist;
 		public final int[] parent;
 

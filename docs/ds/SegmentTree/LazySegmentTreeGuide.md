@@ -25,47 +25,47 @@
 
 ### 1. コンストラクタ系メソッド
 
-| メソッド                                                                                                                                       | 戻り値の型 | 説明                             |
-|--------------------------------------------------------------------------------------------------------------------------------------------|-------|--------------------------------|
-| `LazySegmentTree(int n, BinaryOperator<T> operator, T identity)`                                                                           | `-`   | 既定の遅延関数（代入型）で汎用遅延セグ木を構築します。    |
-| `LazySegmentTree(int n, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)`               | `-`   | 遅延反映/合成関数を明示して構築します。           |
-| `LazySegmentTree(T[] data, BinaryOperator<T> operator, T identity)`                                                                        | `-`   | 初期配列付きで構築します。                  |
-| `LazySegmentTree(T[] data, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)`            | `-`   | 初期配列 + 遅延関数指定で構築します。           |
-| `IntLazySegmentTree(int n, IntBinaryOperator operator, int identity)`                                                                      | `-`   | 既定の遅延関数で `int` 版を構築します。        |
-| `IntLazySegmentTree(int n, IntBinaryOperator operator, int identity, IntBinaryOperator mapping, IntBinaryOperator composition)`            | `-`   | `int` 版の遅延関数を明示して構築します。        |
-| `IntLazySegmentTree(int[] data, IntBinaryOperator operator, int identity)`                                                                 | `-`   | 初期配列付き `int` 版を構築します。          |
-| `IntLazySegmentTree(int[] data, IntBinaryOperator operator, int identity, IntBinaryOperator mapping, IntBinaryOperator composition)`       | `-`   | 初期配列 + 遅延関数指定の `int` 版を構築します。  |
-| `LongLazySegmentTree(int n, LongBinaryOperator operator, long identity)`                                                                   | `-`   | 既定の遅延関数で `long` 版を構築します。       |
-| `LongLazySegmentTree(int n, LongBinaryOperator operator, long identity, LongBinaryOperator mapping, LongBinaryOperator composition)`       | `-`   | `long` 版の遅延関数を明示して構築します。       |
-| `LongLazySegmentTree(long[] data, LongBinaryOperator operator, long identity)`                                                             | `-`   | 初期配列付き `long` 版を構築します。         |
-| `LongLazySegmentTree(long[] data, LongBinaryOperator operator, long identity, LongBinaryOperator mapping, LongBinaryOperator composition)` | `-`   | 初期配列 + 遅延関数指定の `long` 版を構築します。 |
+| メソッド                                                                                                                                   | 戻り値の型 | 説明                                                   |
+|--------------------------------------------------------------------------------------------------------------------------------------------|------------|--------------------------------------------------------|
+| `LazySegmentTree(int n, BinaryOperator<T> operator, T identity)`                                                                           | `-`        | 既定の遅延関数（代入型）で汎用遅延セグ木を構築します。 |
+| `LazySegmentTree(int n, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)`               | `-`        | 遅延反映/合成関数を明示して構築します。                |
+| `LazySegmentTree(T[] data, BinaryOperator<T> operator, T identity)`                                                                        | `-`        | 初期配列付きで構築します。                             |
+| `LazySegmentTree(T[] data, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)`            | `-`        | 初期配列 + 遅延関数指定で構築します。                  |
+| `IntLazySegmentTree(int n, IntBinaryOperator operator, int identity)`                                                                      | `-`        | 既定の遅延関数で `int` 版を構築します。                |
+| `IntLazySegmentTree(int n, IntBinaryOperator operator, int identity, IntBinaryOperator mapping, IntBinaryOperator composition)`            | `-`        | `int` 版の遅延関数を明示して構築します。               |
+| `IntLazySegmentTree(int[] data, IntBinaryOperator operator, int identity)`                                                                 | `-`        | 初期配列付き `int` 版を構築します。                    |
+| `IntLazySegmentTree(int[] data, IntBinaryOperator operator, int identity, IntBinaryOperator mapping, IntBinaryOperator composition)`       | `-`        | 初期配列 + 遅延関数指定の `int` 版を構築します。       |
+| `LongLazySegmentTree(int n, LongBinaryOperator operator, long identity)`                                                                   | `-`        | 既定の遅延関数で `long` 版を構築します。               |
+| `LongLazySegmentTree(int n, LongBinaryOperator operator, long identity, LongBinaryOperator mapping, LongBinaryOperator composition)`       | `-`        | `long` 版の遅延関数を明示して構築します。              |
+| `LongLazySegmentTree(long[] data, LongBinaryOperator operator, long identity)`                                                             | `-`        | 初期配列付き `long` 版を構築します。                   |
+| `LongLazySegmentTree(long[] data, LongBinaryOperator operator, long identity, LongBinaryOperator mapping, LongBinaryOperator composition)` | `-`        | 初期配列 + 遅延関数指定の `long` 版を構築します。      |
 
 ### 2. 更新系メソッド
 
-| メソッド                                                          | 戻り値の型  | 説明                          |
-|---------------------------------------------------------------|--------|-----------------------------|
-| `set(int i, T/int/long v)`                                    | `void` | 位置 `i` を直接更新します。            |
-| `apply(int i, T/int/long v)`                                  | `void` | 単一点 `[i, i+1)` に遅延更新を適用します。 |
-| `apply(int l, int r, T/int/long v)`                           | `void` | 区間 `[l, r)` に遅延更新を適用します。    |
-| `fill(T/int/long val)`                                        | `void` | 全要素を同じ値で再初期化します。            |
-| `setAll(IntFunction/IntUnaryOperator/LongUnaryOperator func)` | `void` | 全要素を関数で再設定します。              |
+| メソッド                                                      | 戻り値の型 | 説明                                       |
+|---------------------------------------------------------------|------------|--------------------------------------------|
+| `set(int i, T/int/long v)`                                    | `void`     | 位置 `i` を直接更新します。                |
+| `apply(int i, T/int/long v)`                                  | `void`     | 単一点 `[i, i+1)` に遅延更新を適用します。 |
+| `apply(int l, int r, T/int/long v)`                           | `void`     | 区間 `[l, r)` に遅延更新を適用します。     |
+| `fill(T/int/long val)`                                        | `void`     | 全要素を同じ値で再初期化します。           |
+| `setAll(IntFunction/IntUnaryOperator/LongUnaryOperator func)` | `void`     | 全要素を関数で再設定します。               |
 
 ### 3. 取得・探索系メソッド
 
-| メソッド                                                           | 戻り値の型            | 説明                            |
-|----------------------------------------------------------------|------------------|-------------------------------|
+| メソッド                                                       | 戻り値の型       | 説明                                                  |
+|----------------------------------------------------------------|------------------|-------------------------------------------------------|
 | `get(int i)`                                                   | `T / int / long` | 位置 `i` の値を取得します（必要に応じて遅延を伝播）。 |
-| `query(int l, int r)`                                          | `T / int / long` | 区間 `[l, r)` の集約値を返します。        |
-| `queryAll()`                                                   | `T / int / long` | 全体区間の集約値を返します。                |
-| `maxRight(int l, Predicate/IntPredicate/LongPredicate tester)` | `int`            | 条件が真でいられる最大右端を探索します。          |
-| `minLeft(int r, Predicate/IntPredicate/LongPredicate tester)`  | `int`            | 条件が真でいられる最小左端を探索します。          |
+| `query(int l, int r)`                                          | `T / int / long` | 区間 `[l, r)` の集約値を返します。                    |
+| `queryAll()`                                                   | `T / int / long` | 全体区間の集約値を返します。                          |
+| `maxRight(int l, Predicate/IntPredicate/LongPredicate tester)` | `int`            | 条件が真でいられる最大右端を探索します。              |
+| `minLeft(int r, Predicate/IntPredicate/LongPredicate tester)`  | `int`            | 条件が真でいられる最小左端を探索します。              |
 
 ### 4. その他
 
-| メソッド         | 戻り値の型                             | 説明                      |
-|--------------|-----------------------------------|-------------------------|
-| `size()`     | `int`                             | 要素数を返します。               |
-| `iterator()` | `Iterator<T> / PrimitiveIterator` | 葉要素を順に走査します。            |
+| メソッド     | 戻り値の型                        | 説明                                           |
+|--------------|-----------------------------------|------------------------------------------------|
+| `size()`     | `int`                             | 要素数を返します。                             |
+| `iterator()` | `Iterator<T> / PrimitiveIterator` | 葉要素を順に走査します。                       |
 | `toString()` | `String`                          | 葉要素を空白区切りで連結した文字列を返します。 |
 
 ## 利用例
@@ -105,17 +105,17 @@ System.out.println(seg.query(0, 4));
 ## パフォーマンス特性
 
 - **時間計算量**:
-	- 構築: $O(N)$
-	- `set` / `apply`（区間・点）: $O(\log N)$
-	- `query` / `maxRight` / `minLeft`: $O(\log N)$
-	- `get`: $O(\log N)$
+	- 構築: $\mathcal{O}(N)$
+	- `set` / `apply`（区間・点）: $\mathcal{O}(\log N)$
+	- `query` / `maxRight` / `minLeft`: $\mathcal{O}(\log N)$
+	- `get`: $\mathcal{O}(\log N)$
 - **空間計算量**:
-	- $O(N)$
+	- $\mathcal{O}(N)$
 
 ## バージョン情報
 
-| バージョン番号       | 年月日        | 詳細                                                                                                           |
-|:--------------|:-----------|:-------------------------------------------------------------------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                                                                        |
+|:-------------------|:-----------|:----------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-04-30 | `LazySegmentTree<T>` / `IntLazySegmentTree` / `LongLazySegmentTree` を初期実装（`apply(l,r,v)` による区間更新 + `query`）。 |
 
 ### バージョン管理について

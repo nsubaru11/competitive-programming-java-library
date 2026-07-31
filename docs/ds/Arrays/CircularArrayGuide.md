@@ -2,13 +2,13 @@
 
 ## 概要
 
-[`IntCircularArray`](../../../src/lib/ds/arrays/IntCircularArray.java) と [`LongCircularArray`](../../../src/lib/ds/arrays/LongCircularArray.java) は、固定長配列を物理移動せず O(1) で左右へ論理回転するプリミティブ配列です。要素更新と全体和の保持にも対応します。
+[`IntCircularArray`](../../../src/lib/ds/arrays/IntCircularArray.java) と [`LongCircularArray`](../../../src/lib/ds/arrays/LongCircularArray.java) は、固定長配列を物理移動せず $\mathcal{O}(1)$ で左右へ論理回転するプリミティブ配列です。要素更新と全体和の保持にも対応します。
 
 ## 特徴
 
 - `offset` の更新だけで左右の論理回転を実現
-- 現在の論理順に対する O(1) の `get` / `set`
-- 更新時に合計値を差分更新し、`sum()` を O(1) で提供
+- 現在の論理順に対する $\mathcal{O}(1)$ の `get` / `set`
+- 更新時に合計値を差分更新し、`sum()` を $\mathcal{O}(1)$ で提供
 - 左回転を正、右回転を負とする総回転数を保持
 - `fill` と `setAll` による一括更新と回転状態の正規化
 - 配列、`IntArray` / `LongArray`、supplierからの初期化に対応
@@ -100,10 +100,10 @@ System.out.println(a);       // 5 10 2 3 4
 
 ## パフォーマンス特性
 
-- `get`, `set`, `sum`, `size`, `rotation`, 各回転操作: O(1)
-- 各コンストラクタと `generate`: O(n)
-- `fill`, `setAll`, `contains`, `toArray`, `iterator`, `toString`: O(n)
-- 使用メモリ: O(n)
+- `get`, `set`, `sum`, `size`, `rotation`, 各回転操作: $\mathcal{O}(1)$
+- 各コンストラクタと `generate`: $\mathcal{O}(n)$
+- `fill`, `setAll`, `contains`, `toArray`, `iterator`, `toString`: $\mathcal{O}(n)$
+- 使用メモリ: $\mathcal{O}(n)$
 - `toArray` と `toString` は結果用の追加メモリを使用
 
 ## バージョン情報

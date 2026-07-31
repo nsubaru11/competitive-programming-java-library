@@ -2,17 +2,18 @@
 
 ## 概要
 
-[`ArrayUtils`](../../../src/lib/util/ArrayUtils.java) は、`int[]`, `long[]`, `IntArray`, `LongArray` に対する代表的な配列処理とアルゴリズムを提供する static utility クラスです。集計、探索、配列操作、局所値、連長、固定幅窓、最長単調部分列、部分集合の個数を扱います。
+[`ArrayUtils`](../../../src/lib/util/ArrayUtils.java) は、`char[]`, `int[]`, `long[]`, `IntArray`, `LongArray` に対する代表的な配列処理とアルゴリズムを提供する static utility クラスです。集計、探索、配列操作、局所値、連長、固定幅窓、最長単調部分列、部分集合の個数を扱います。
 
 ## 特徴
 
-- `int[]` / `long[]` と配列インターフェースの両方に対応
+- 基本処理とLIS系は`char[]` / `int[]` / `long[]`に対応
+- `int[]` / `long[]`では配列インターフェース版も提供
 - 総和、最小・最大、線形探索、異なる値の個数などの基本処理を提供
 - プリミティブ配列と可変配列インターフェースの反転・交換に対応
 - プリミティブ配列版は先頭 `len` 要素だけを対象にするオーバーロードを提供
-- 固定幅窓の和を追加メモリ O(1) で計算
-- monotonic deque による窓最大・最小担当位置の O(n) 解析
-- 二分探索による LIS 系4種類を O(n log n) で計算
+- 固定幅窓の和を追加メモリ $\mathcal{O}(1)$ で計算
+- monotonic deque による窓最大・最小担当位置の $\mathcal{O}(n)$ 解析
+- 二分探索による LIS 系4種類を $\mathcal{O}(n \log n)$ で計算
 - 半分全列挙、HashMap DP、個数指定再帰の3種類の部分集合数え上げを提供
 - `reverse` / `swap` を除いて入力配列を変更しない
 
@@ -34,9 +35,9 @@
 |-------------------------------------------------------------------------------------|---------------:|---------------------------------------------------|
 | `sum(int[] a)` / `sum(long[] a)`                                                    |         `long` | 配列の総和                                        |
 | `sum(IntArray a)` / `sum(LongArray a)`                                              |         `long` | 配列インターフェース版                            |
-| `min(int[] a)` / `min(long[] a)`                                                    | `int` / `long` | 最小値                                            |
+| `min(char[] a)` / `min(int[] a)` / `min(long[] a)`                                  |       各要素型 | 最小値                                            |
 | `min(IntArray a)` / `min(LongArray a)`                                              | `int` / `long` | 配列インターフェース版                            |
-| `max(int[] a)` / `max(long[] a)`                                                    | `int` / `long` | 最大値                                            |
+| `max(char[] a)` / `max(int[] a)` / `max(long[] a)`                                  |       各要素型 | 最大値                                            |
 | `max(IntArray a)` / `max(LongArray a)`                                              | `int` / `long` | 配列インターフェース版                            |
 | `argMin(...)` / `argMax(...)`                                                       |          `int` | 最小値・最大値が最初に現れる添字                  |
 | `count(..., t)`                                                                     |          `int` | 未ソート配列における `t` の出現回数               |
@@ -48,10 +49,12 @@
 | `reverse(int[][] a, ...)` / `reverse(long[][] a, ...)` / `reverse(char[][] a, ...)` |         `void` | 行全体・指定範囲の行順を反転                      |
 | `swap(..., int i, int j)`                                                           |         `void` | `i`, `j` の要素を交換                             |
 | `swapRow(..., int i, int j)`                                                        |         `void` | 2次元プリミティブ配列の `i`, `j` 行を交換         |
+| `descendingSort(char[]/int[]/long[] a)`                                             |         `void` | 配列を降順にソート                                |
 | `uniqueSize(...)`                                                                   |          `int` | 異なる値の個数                                    |
 | `freq(int[] a, int size)` / `freq(long[] a, int size)`                              |        `int[]` | `[0, size)` の各値の出現回数                      |
 | `freq(IntArray a, int size)` / `freq(LongArray a, int size)`                        |        `int[]` | 配列インターフェース版                            |
-| `freq(char[] a, char base, int size)`                                               |        `int[]` | `[base, base + size)` の各文字の出現回数          |
+| `freqLower(char[] a)` / `freqUpper(char[] a)`                                       |        `int[]` | 英小文字／英大文字26種の出現回数                  |
+| `mexLower(char[] a)` / `mexUpper(char[] a)`                                         |         `char` | 含まれない最小の英小文字／英大文字                |
 | `mex(int[] a)` / `mex(long[] a)`                                                    |          `int` | 含まれない最小の非負整数                          |
 | `mex(IntArray a)` / `mex(LongArray a)`                                              |          `int` | 配列インターフェース版                            |
 | `isSorted(...)`                                                                     |      `boolean` | 広義昇順かを判定                                  |
@@ -68,12 +71,15 @@
 | `localMaxCnt(int[] a)` / `localMaxCnt(int[] a, int len)`   | `int`      | 両隣より真に大きい内部要素の個数 |
 | `localMaxCnt(long[] a)` / `localMaxCnt(long[] a, int len)` | `int`      | long 配列版                      |
 | `localMaxCnt(IntArray a)` / `localMaxCnt(LongArray a)`     | `int`      | 配列インターフェース版           |
+| `localMaxCnt(char[] a)` / `localMaxCnt(char[] a, int len)` | `int`      | char配列版                       |
 | `localMinCnt(int[] a)` / `localMinCnt(int[] a, int len)`   | `int`      | 両隣より真に小さい内部要素の個数 |
 | `localMinCnt(long[] a)` / `localMinCnt(long[] a, int len)` | `int`      | long 配列版                      |
 | `localMinCnt(IntArray a)` / `localMinCnt(LongArray a)`     | `int`      | 配列インターフェース版           |
+| `localMinCnt(char[] a)` / `localMinCnt(char[] a, int len)` | `int`      | char配列版                       |
 | `maxRunLen(int[] a)` / `maxRunLen(int[] a, int len)`       | `int`      | 同じ値が連続する最長区間の長さ   |
 | `maxRunLen(long[] a)` / `maxRunLen(long[] a, int len)`     | `int`      | long 配列版                      |
 | `maxRunLen(IntArray a)` / `maxRunLen(LongArray a)`         | `int`      | 配列インターフェース版           |
+| `maxRunLen(char[] a)` / `maxRunLen(char[] a, int len)`     | `int`      | char配列版                       |
 
 端点は局所最大・局所最小に数えません。
 
@@ -117,6 +123,7 @@
 | `lnis(int[] a)` / `lnis(int[] a, int len)`   | `int`      | 最長広義減少部分列の長さ |
 | `lnis(long[] a)` / `lnis(long[] a, int len)` | `int`      | long 配列版              |
 | `lnis(IntArray a)` / `lnis(LongArray a)`     | `int`      | 配列インターフェース版   |
+| `lis/lnds/lds/lnis(char[] a, ...)`           | `int`      | char配列版               |
 
 ### 6. 部分集合の個数
 
@@ -156,7 +163,8 @@ int pairs = ArrayUtils.subsetRecursion(values, 8, 2);  // 2
 
 - `(a, len, ...)` 形式は配列の先頭 `len` 要素を対象とし、`0 <= len <= a.length` を前提とします。
 - `min` / `max` / `argMin` / `argMax` は空でない配列を前提とします。
-- 数値版の `freq` は全要素が `[0, size)`、文字版は全要素が `[base, base + size)` に含まれることを前提とします。
+- 数値版の `freq` は全要素が `[0, size)` に含まれることを前提とします。`freqLower` / `mexLower`は英小文字、`freqUpper` / `mexUpper`は英大文字だけを受け取ります。
+- `mexLower` / `mexUpper`は26文字を全て含む場合にNUL文字を返します。
 - `reverse` / `swap` は入力配列を直接変更します。
 - 範囲指定 `reverse` は `[fromIdx, toIdx)` を対象とします。2次元版は各行の内容ではなく、行の並びを反転します。
 - 固定幅窓は問題の定義に合う `k` で使用します。
@@ -168,25 +176,26 @@ int pairs = ArrayUtils.subsetRecursion(values, 8, 2);  // 2
 
 ## パフォーマンス特性
 
-- `sum`, `min`, `max`, `argMin`, `argMax`, `count`, `indexOf`, `lastIndexOf`, `reverse`, `isSorted`, `allEqual`, `allMatch`, `anyMatch`: 時間 O(n)、追加メモリ O(1)
-- `swap`: 時間 O(1)、追加メモリ O(1)
-- `uniqueSize`: 時間 O(n log n)、追加メモリ O(n)
-- `freq`: 時間 O(n + size)、追加メモリ O(size)
-- `mex`: 時間 O(n)、追加メモリ O(n)
-- `localMaxCnt`, `localMinCnt`, `maxRunLen`, `maxWin`, `minWin`: 時間 O(n)、追加メモリ O(1)
-- `winMaxLen`, `winMinLen`: 時間 O(n)、追加メモリ O(n)
-- `lis`, `lnds`, `lds`, `lnis`: 時間 O(n log n)、追加メモリ O(n)
-- `subsetMitm`: 時間 O(n 2^ (n/2))、追加メモリ O(2^ (n/2))
-- `subsetDp`: 到達可能な異なる和の個数を S として時間 O(nS)、追加メモリ O(S)
-- `subsetRecursion`: 最悪時間 O(2^n)、再帰深さ O(n)
+- `sum`, `min`, `max`, `argMin`, `argMax`, `count`, `indexOf`, `lastIndexOf`, `reverse`, `isSorted`, `allEqual`, `allMatch`, `anyMatch`: 時間 $\mathcal{O}(n)$、追加メモリ $\mathcal{O}(1)$
+- `swap`: 時間 $\mathcal{O}(1)$、追加メモリ $\mathcal{O}(1)$
+- `uniqueSize`: 時間 $\mathcal{O}(n \log n)$、追加メモリ $\mathcal{O}(n)$
+- `freq`: 時間 $\mathcal{O}(n + size)$、追加メモリ $\mathcal{O}(size)$
+- `mex`: 時間 $\mathcal{O}(n)$、追加メモリ $\mathcal{O}(n)$
+- `localMaxCnt`, `localMinCnt`, `maxRunLen`, `maxWin`, `minWin`: 時間 $\mathcal{O}(n)$、追加メモリ $\mathcal{O}(1)$
+- `winMaxLen`, `winMinLen`: 時間 $\mathcal{O}(n)$、追加メモリ $\mathcal{O}(n)$
+- `lis`, `lnds`, `lds`, `lnis`: 時間 $\mathcal{O}(n \log n)$、追加メモリ $\mathcal{O}(n)$
+- `subsetMitm`: 時間 $\mathcal{O}(n 2^{n/2})$、追加メモリ $\mathcal{O}(2^{n/2})$
+- `subsetDp`: 到達可能な異なる和の個数を S として時間 $\mathcal{O}(nS)$、追加メモリ $\mathcal{O}(S)$
+- `subsetRecursion`: 最悪時間 $\mathcal{O}(2^n)$、再帰深さ $\mathcal{O}(n)$
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                                                                                                                           |
-|:-------------------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2026-07-12 | 旧一次元配列クラス内のアルゴリズムを static utility へ分離し、プリミティブ配列と `IntArray` / `LongArray` のオーバーロードを備える `ArrayUtils` として初回実装 |
-| **バージョン 2.0** | 2026-07-27 | 集計、線形探索、範囲・行反転、要素・行交換、異なる値の個数、頻度表、MEX、整列・一致・条件判定を追加し、配列操作を集約                                          |
-| **バージョン 3.0** | 2026-07-31 | `runLen` を `maxRunLen` へ改名し、LIS系の内部二分探索を標準APIおよび `ArrayBinarySearch` への委譲へ変更                                                        |
+| バージョン番号     | 年月日     | 詳細                                                                                                                  |
+|:-------------------|:-----------|:----------------------------------------------------------------------------------------------------------------------|
+| **バージョン 4.0** | 2026-08-01 | 基本処理・局所値・連長・LIS系へ`char[]`版を追加し、英字頻度・MEXと降順ソートを追加                                    |
+| **バージョン 1.0** | 2026-07-12 | プリミティブ配列と `IntArray` / `LongArray` のオーバーロードを備える `ArrayUtils` を実装                              |
+| **バージョン 2.0** | 2026-07-27 | 集計、線形探索、範囲・行反転、要素・行交換、異なる値の個数、頻度表、MEX、整列・一致・条件判定を追加し、配列操作を集約 |
+| **バージョン 3.0** | 2026-07-31 | 最長連長とLIS系を追加し、内部二分探索を標準APIおよび `ArrayBinarySearch` へ委譲                                       |
 
 ### バージョン管理について
 

@@ -5,7 +5,6 @@ import static java.util.Arrays.*;
 @SuppressWarnings("unused")
 public final class IntMatrixUtils {
 	private IntMatrixUtils() {
-		throw new AssertionError();
 	}
 
 	public static int[][] copy(final int[][] a) {

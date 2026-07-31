@@ -13,8 +13,8 @@
 - 辺を重み順に処理し、`UnionFind`で閉路を除外
 - `minimum` / `maximum`で採用辺ID・総コスト・連結成分数を取得
 - `minimumCost` / `maximumCost`で総コストだけを軽量に計算
-- 時間計算量: `O(|E| log |E|)`
-- 追加メモリ: `O(|V| + |E|)`
+- 時間計算量: $\mathcal{O}(\lvert E\rvert \log \lvert E\rvert)$
+- 追加メモリ: $\mathcal{O}(\lvert V\rvert + \lvert E\rvert)$
 
 ### [Prim](./PrimGuide.md)
 
@@ -22,8 +22,8 @@
 - 非連結グラフでは、頂点番号が小さい未訪問頂点から次の成分を開始
 - `minimum` / `maximum`で採用辺ID・総コスト・連結成分数を取得
 - `minimumCost` / `maximumCost`では採用辺ID・親辺配列を確保しない
-- 時間計算量: `O((|V| + |E|) log |V|)`
-- 追加メモリ: `O(|V|)`
+- 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
+- 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
 
 ### Edmonds
 

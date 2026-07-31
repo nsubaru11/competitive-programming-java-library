@@ -7,7 +7,7 @@
 
 ## 実装クラス
 
-### [BaseIntIntMap](../../../src/lib/ds/BaseIntIntMap.java)
+### [BaseIntIntMap](../../../src/lib/ds/map/BaseIntIntMap.java)
 
 - **用途**：`int -> int` の高速マップ
 - **特徴**：
@@ -15,12 +15,12 @@
 	- `put`/`add`/`merge`/`putIfAbsent` をサポート
 	- `reduce`/`reduceKeys`/`reduceValues` をサポート
 - **時間計算量**：
-	- 平均: 参照・更新ともに $O(1)$
-	- 最悪: $O(N)$
-- **空間計算量**：$O(N)$
+	- 平均: 参照・更新ともに $\mathcal{O}(1)$
+	- 最悪: $\mathcal{O}(N)$
+- **空間計算量**：$\mathcal{O}(N)$
 - **ガイド**：[BaseMapGuide](./BaseMapGuide.md)
 
-### [BaseLongIntMap](../../../src/lib/ds/BaseLongIntMap.java)
+### [BaseLongIntMap](../../../src/lib/ds/map/BaseLongIntMap.java)
 
 - **用途**：`long -> int` の高速マップ
 - **特徴**：
@@ -31,7 +31,7 @@
 - **空間計算量**：`BaseIntIntMap` と同様
 - **ガイド**：[BaseMapGuide](./BaseMapGuide.md)
 
-### [BaseLongLongMap](../../../src/lib/ds/BaseLongLongMap.java)
+### [BaseLongLongMap](../../../src/lib/ds/map/BaseLongLongMap.java)
 
 - **用途**：`long -> long` の高速マップ
 - **特徴**：
@@ -42,7 +42,7 @@
 - **空間計算量**：`BaseIntIntMap` と同様
 - **ガイド**：[BaseMapGuide](./BaseMapGuide.md)
 
-### [IntPairIntMap](../../../src/lib/ds/IntPairIntMap.java) / [IntPairLongMap](../../../src/lib/ds/IntPairLongMap.java)
+### [IntPairIntMap](../../../src/lib/ds/map/IntPairIntMap.java) / [IntPairLongMap](../../../src/lib/ds/map/IntPairLongMap.java)
 
 - **用途**：`(int, int)` をキーにしたマップ
 - **特徴**：
@@ -53,7 +53,7 @@
 - **空間計算量**：ベース実装と同様
 - **ガイド**：[PairMapGuide](./PairMapGuide.md)
 
-### [IntTripleIntMap](../../../src/lib/ds/IntTripleIntMap.java) / [IntTripleLongMap](../../../src/lib/ds/IntTripleLongMap.java)
+### [IntTripleIntMap](../../../src/lib/ds/map/IntTripleIntMap.java) / [IntTripleLongMap](../../../src/lib/ds/map/IntTripleLongMap.java)
 
 - **用途**：`(int, int, int)` をキーにしたマップ
 - **特徴**：
