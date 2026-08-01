@@ -247,6 +247,40 @@ public final class MathUtils {
 		return n == cbrt * cbrt * cbrt;
 	}
 
+	public static int digit2(long n) {
+		if (n == 0) return 1;
+		if (n == Long.MIN_VALUE) return 63;
+		return 64 - Long.numberOfLeadingZeros(Math.abs(n));
+	}
+
+	public static int digit2(int n) {
+		if (n == 0) return 1;
+		if (n == Integer.MIN_VALUE) return 31;
+		return 32 - Integer.numberOfLeadingZeros(Math.abs(n));
+	}
+
+	public static int digit10(long n) {
+		if (n == Long.MIN_VALUE) return 19;
+		if (n < 0) n = -n;
+		int res = 0;
+		do {
+			res++;
+			n /= 10;
+		} while (n > 0);
+		return res;
+	}
+
+	public static int digit10(int n) {
+		if (n == Integer.MIN_VALUE) return 10;
+		if (n < 0) n = -n;
+		int res = 0;
+		do {
+			res++;
+			n /= 10;
+		} while (n > 0);
+		return res;
+	}
+
 	/**
 	 * 2つの {@code int} の最小公倍数を返します。
 	 */

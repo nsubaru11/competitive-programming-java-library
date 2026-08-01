@@ -10,8 +10,6 @@ public final class Conversions {
 	private Conversions() {
 	}
 
-	/* -------------- toInt -------------- */
-
 	/**
 	 * char[] -> int 変換
 	 */
@@ -22,33 +20,11 @@ public final class Conversions {
 	}
 
 	/**
-	 * String -> int 変換
-	 */
-	public static int toInt(final String s) {
-		int intVal = 0;
-		for (int i = 0, len = s.length(); i < len; i++)
-			intVal = intVal * 10 + s.charAt(i) - '0';
-		return intVal;
-	}
-
-	/* -------------- toLong -------------- */
-
-	/**
 	 * char[] -> long 変換
 	 */
 	public static long toLong(final char[] arr) {
 		long longVal = 0;
 		for (char c : arr) longVal = longVal * 10 + c - '0';
-		return longVal;
-	}
-
-	/**
-	 * String -> long 変換
-	 */
-	public static long toLong(final String s) {
-		long longVal = 0;
-		for (int i = 0, len = s.length(); i < len; i++)
-			longVal = longVal * 10 + s.charAt(i) - '0';
 		return longVal;
 	}
 

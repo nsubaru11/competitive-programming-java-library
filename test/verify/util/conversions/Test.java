@@ -26,8 +26,6 @@ public final class Test {
 		out.println("===== 文字から整数への変換 =====");
 		out.print("char[] -> int: ");
 		out.println(Conversions.toInt("1234567890".toCharArray()));
-		out.print("String -> int: ");
-		out.println(Conversions.toInt("1234567890"));
 		out.println();
 	}
 
