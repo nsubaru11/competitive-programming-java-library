@@ -42,6 +42,7 @@
 ## Developer Workflows
 
 - There is no Maven or Gradle build. Compile the source roots directly with `javac`.
+- Before creating a commit, read `.github/COMMIT_MESSAGE_TEMPLATE.md` and follow it. Commit messages must be written in Japanese using one of the documented prefixes (`feat`, `refactor`, `docs`, `style`, `test`, `perf`, `fix`) in the form `prefix: 概要`; add the `詳細:` section with bullet points when useful.
 - Full Java 24 smoke compile in PowerShell:
 
   `javac --release 24 -encoding UTF-8 -d out (rg --files src -g '*.java')`
