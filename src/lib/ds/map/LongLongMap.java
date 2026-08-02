@@ -19,7 +19,7 @@ public final class LongLongMap {
 		this(initialCapacity, 0);
 	}
 
-	public LongLongMap(final int initialCapacity, long defaultValue) {
+	public LongLongMap(final int initialCapacity, final long defaultValue) {
 		this.defaultValue = defaultValue;
 		capacity = normalizeCapacity(initialCapacity);
 		size = 0;
@@ -77,10 +77,14 @@ public final class LongLongMap {
 
 	public long addOrDefault(final long key, final long delta, final long defaultValue) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] += delta;
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
@@ -89,10 +93,14 @@ public final class LongLongMap {
 
 	public long put(final long key, final long value) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = value;
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
@@ -100,7 +108,7 @@ public final class LongLongMap {
 	}
 
 	public boolean remove(final long key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] != key) continue;
 			int hole = hash;
 			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
@@ -120,7 +128,7 @@ public final class LongLongMap {
 	}
 
 	public boolean containsKey(final long key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return true;
 		}
 		return false;
@@ -128,10 +136,14 @@ public final class LongLongMap {
 
 	public long merge(final long key, final long value, final LongBinaryOperator op) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = op.applyAsLong(values[hash], value);
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
@@ -140,10 +152,14 @@ public final class LongLongMap {
 
 	public long putIfAbsent(final long key, final long value) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;

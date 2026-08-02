@@ -55,7 +55,7 @@ public final class IntIntMap {
 	}
 
 	public int getOrDefault(final int key, final int defaultValue) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
 		return defaultValue;
@@ -70,15 +70,19 @@ public final class IntIntMap {
 	}
 
 	public int add(final int key, final int delta) {
-		return addOrDefault(key, delta, delta + defaultValue);
+		return addOrDefault(key, delta, defaultValue + delta);
 	}
 
 	public int addOrDefault(final int key, final int delta, final int defaultValue) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] += delta;
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
@@ -87,10 +91,14 @@ public final class IntIntMap {
 
 	public int put(final int key, final int value) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = value;
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
@@ -98,7 +106,7 @@ public final class IntIntMap {
 	}
 
 	public boolean remove(final int key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] != key) continue;
 			int hole = hash;
 			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
@@ -118,7 +126,7 @@ public final class IntIntMap {
 	}
 
 	public boolean containsKey(final int key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return true;
 		}
 		return false;
@@ -126,10 +134,14 @@ public final class IntIntMap {
 
 	public int merge(final int key, final int value, final IntBinaryOperator op) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = op.applyAsInt(values[hash], value);
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
@@ -138,10 +150,14 @@ public final class IntIntMap {
 
 	public int putIfAbsent(final int key, final int value) {
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
-		if (size >= resizeThreshold) resize();
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
