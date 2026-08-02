@@ -1,13 +1,14 @@
 # Conversions
 
-[`Conversions`](../../../src/lib/util/Conversions.java) は、数字文字列・配列・整数の相互変換と、十進桁の反転・並べ替えを提供します。
+[`Conversions`](../../../src/lib/util/Conversions.java) は、数値・文字配列・数字配列の相互変換を提供します。
 
-| 分類       | メソッド                                                             |
-|------------|----------------------------------------------------------------------|
-| 整数化     | `toInt(char[])`, `toInt(String)`, `toLong(char[])`, `toLong(String)` |
-| 文字配列化 | `toCharArray(int/long)`, 桁数指定版, `toCharArray(int[])`            |
-| 文字列化   | `toString(int[])`, `toString(long[])`, 2次元配列版                   |
-| 数字配列化 | `toIntArray(char[])`, `toIntArray(String)`                           |
-| 十進桁操作 | `reverse(int/long)`, `sort(int/long/String)`, `descendingSort(...)`  |
+エンディアンを指定しない変換はビッグエンディアンです。例えば `00121` はビッグエンディアンでは `121`、リトルエンディアンでは `12100` として解釈されます。
 
-符号や区切りを含まない数字列など、各メソッドが想定する競技入力を前提とします。桁数指定の`toCharArray`は不足分を`0`で埋め、指定桁数を超える上位桁を切り捨てます。配列の一般操作は`ArrayUtils`が提供します。
+| 分類       | メソッド                                                                               |
+|------------|----------------------------------------------------------------------------------------|
+| 整数化     | `toInt(char[])`, `toInt(char[], boolean)`, `toLong(char[])`, `toLong(char[], boolean)` |
+| 数字配列化 | `toInt(int[])`, `toInt(int[], boolean)`, `toLong(int[])`, `toLong(int[], boolean)`     |
+| 文字配列化 | `toCharArray(int/long)`, 桁数指定版、エンディアン指定版、`toCharArray(int[])`          |
+| 数字配列化 | `toIntArray(char[])`, `toIntArray(String)`                                             |
+
+数値を受け取るメソッドは非負整数、数字配列の各要素は `0` 以上 `9` 以下を前提とします。桁数指定版は不足分を `0` で埋め、指定桁数を超える上位桁を切り捨てます。

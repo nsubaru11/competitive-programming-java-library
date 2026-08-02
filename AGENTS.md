@@ -12,6 +12,7 @@
 ## Coding Conventions
 
 - Follow `.github/copilot-instructions.md` as project-local policy.
+- Use wildcard imports such as `import java.util.*;` and `import lib.math.*;` throughout the repository to keep source code short. Do not replace them with explicit imports merely for import-list cleanliness.
 - Write JavaDoc for non-compressed public classes and methods; keep constants in `UPPER_SNAKE_CASE`.
 - Use tabs for Java indentation and keep a trailing newline at end-of-file.
 - Prefer bit operations and low-level optimizations where they measurably help performance.
@@ -25,6 +26,7 @@
 - Prefer speed, short hot paths, and readable contest code over exhaustive validation, fail-fast checks, or general-purpose collection contracts.
 - Add validation or special-case handling only when it is required for valid contest inputs, prevents a realistic wrong answer, or has negligible cost and clearly improves the API.
 - Documentation should state the expected preconditions instead of implying that every invalid argument is checked.
+- Do not add utility methods that merely wrap functionality already provided by the Java standard library, such as `Integer.parseInt`, `Long.parseLong`, `Integer.toString`, or `Long.toString`. Add a custom API only when it provides a different representation, avoids a relevant allocation, or combines contest-specific operations.
 
 ## Architecture and Dependency Rules
 
@@ -35,6 +37,7 @@
 - Library classes may depend on other `lib.*` classes through normal imports. Keep the dependency graph small and acyclic where practical.
 - Do not restore private copies of shared primitives inside higher-level algorithms. For example, `lib.graph.Kruskal` uses `lib.ds.UnionFind`.
 - Imports from `lib.*` are expanded transitively by the AtCoder-side bundler. Static imports from `lib.*` and fully qualified `lib.*` references in method bodies are not bundler-compatible.
+- For APIs that expose digit or byte order, document the order with a concrete example. Big-endian places the most significant unit first: `00121` represents `121`; little-endian places the least significant unit first: `00121` represents `12100` when interpreted as decimal digits.
 
 ## Developer Workflows
 

@@ -1,245 +1,242 @@
 package lib.util;
 
-import java.util.*;
-
 /**
  * 数値、文字列、数字配列の相互変換を提供するユーティリティです。
+ *
+ * <p>数値を受け取るメソッドは非負整数を前提とします。エンディアンを指定しない
+ * メソッドはビッグエンディアンとして扱います。
  */
-@SuppressWarnings("unused")
 public final class Conversions {
 	private Conversions() {
 	}
 
 	/**
-	 * char[] -> int 変換
+	 * {@code char[]} を {@code int} に変換します。
 	 */
 	public static int toInt(final char[] arr) {
-		int intVal = 0;
-		for (char c : arr) intVal = intVal * 10 + c - '0';
-		return intVal;
+		return toInt(arr, false);
 	}
 
 	/**
-	 * char[] -> long 変換
+	 * {@code char[]} を {@code int} に変換します。
+	 *
+	 * <p>ビッグエンディアンでは {@code "00121"} は {@code 121}、
+	 * リトルエンディアンでは {@code 12100} になります。
+	 *
+	 * @param arr          十進数字の配列
+	 * @param littleEndian リトルエンディアンで解釈するか
+	 */
+	public static int toInt(final char[] arr, final boolean littleEndian) {
+		int result = 0;
+		if (littleEndian) {
+			for (int i = arr.length; i-- > 0; ) result = result * 10 + arr[i] - '0';
+		} else {
+			for (final char c : arr) result = result * 10 + c - '0';
+		}
+		return result;
+	}
+
+	/**
+	 * {@code char[]} を {@code long} に変換します。
 	 */
 	public static long toLong(final char[] arr) {
-		long longVal = 0;
-		for (char c : arr) longVal = longVal * 10 + c - '0';
-		return longVal;
+		return toLong(arr, false);
 	}
 
-	/* -------------- toCharArray -------------- */
+	/**
+	 * {@code char[]} を {@code long} に変換します。
+	 *
+	 * <p>ビッグエンディアンでは {@code "00121"} は {@code 121}、
+	 * リトルエンディアンでは {@code 12100} になります。
+	 *
+	 * @param arr          十進数字の配列
+	 * @param littleEndian リトルエンディアンで解釈するか
+	 */
+	public static long toLong(final char[] arr, final boolean littleEndian) {
+		long result = 0;
+		if (littleEndian) {
+			for (int i = arr.length; i-- > 0; ) result = result * 10 + arr[i] - '0';
+		} else {
+			for (final char c : arr) result = result * 10 + c - '0';
+		}
+		return result;
+	}
 
 	/**
-	 * int -> char[] 変換
+	 * 数字配列を {@code int} に変換します。
+	 */
+	public static int toInt(final int[] arr) {
+		return toInt(arr, false);
+	}
+
+	/**
+	 * 数字配列を {@code int} に変換します。
+	 *
+	 * <p>ビッグエンディアンでは {@code {0, 0, 1, 2, 1}} は {@code 121}、
+	 * リトルエンディアンでは {@code 12100} になります。
+	 *
+	 * @param arr          {@code 0} 以上 {@code 9} 以下の数字配列
+	 * @param littleEndian リトルエンディアンで解釈するか
+	 */
+	public static int toInt(final int[] arr, final boolean littleEndian) {
+		int result = 0;
+		if (littleEndian) {
+			for (int i = arr.length; i-- > 0; ) result = result * 10 + arr[i];
+		} else {
+			for (final int v : arr) result = result * 10 + v;
+		}
+		return result;
+	}
+
+	/**
+	 * 数字配列を {@code long} に変換します。
+	 */
+	public static long toLong(final int[] arr) {
+		return toLong(arr, false);
+	}
+
+	/**
+	 * 数字配列を {@code long} に変換します。
+	 *
+	 * <p>ビッグエンディアンでは {@code {0, 0, 1, 2, 1}} は {@code 121}、
+	 * リトルエンディアンでは {@code 12100} になります。
+	 *
+	 * @param arr          {@code 0} 以上 {@code 9} 以下の数字配列
+	 * @param littleEndian リトルエンディアンで解釈するか
+	 */
+	public static long toLong(final int[] arr, final boolean littleEndian) {
+		long result = 0;
+		if (littleEndian) {
+			for (int i = arr.length; i-- > 0; ) result = result * 10 + arr[i];
+		} else {
+			for (final int v : arr) result = result * 10 + v;
+		}
+		return result;
+	}
+
+	/**
+	 * {@code int} をビッグエンディアンの {@code char[]} に変換します。
 	 */
 	public static char[] toCharArray(final int n) {
-		return String.valueOf(n).toCharArray();
+		return toCharArray(n, DigitUtils.digits10(n));
 	}
 
 	/**
-	 * int -> char[] 変換（桁数指定）
-	 * 指定した桁数に満たない場合0で埋める
-	 * 指定桁数を超える上位桁は切り捨てる
-	 * (ビッグエンディアン)
+	 * {@code int} を指定桁数のビッグエンディアンの {@code char[]} に変換します。
+	 * 不足分は {@code 0} で埋め、超過分は上位桁から切り捨てます。
 	 */
-	public static char[] toCharArray(int n, final int l) {
-		final char[] c = new char[l];
-		for (int i = l - 1; i >= 0; i--) {
-			c[i] = (char) (n % 10 + '0');
-			n /= 10;
-		}
-		return c;
+	public static char[] toCharArray(final int n, final int length) {
+		return toCharArray(n, length, false);
 	}
 
 	/**
-	 * long -> char[] 変換
+	 * {@code int} を指定桁数の {@code char[]} に変換します。
+	 *
+	 * <p>{@code n = 121, length = 5} のとき、ビッグエンディアンでは
+	 * {@code "00121"}、リトルエンディアンでは {@code "12100"} になります。
+	 *
+	 * @param n            変換する非負整数
+	 * @param length       配列の長さ
+	 * @param littleEndian リトルエンディアンで出力するか
+	 */
+	public static char[] toCharArray(int n, final int length, final boolean littleEndian) {
+		final char[] chars = new char[length];
+		if (littleEndian) {
+			for (int i = 0; i < length; i++) {
+				chars[i] = (char) (n % 10 + '0');
+				n /= 10;
+			}
+		} else {
+			for (int i = length; i-- > 0; ) {
+				chars[i] = (char) (n % 10 + '0');
+				n /= 10;
+			}
+		}
+		return chars;
+	}
+
+	/**
+	 * {@code long} をビッグエンディアンの {@code char[]} に変換します。
 	 */
 	public static char[] toCharArray(final long n) {
-		return String.valueOf(n).toCharArray();
+		return toCharArray(n, DigitUtils.digits10(n));
 	}
 
 	/**
-	 * long -> char[] 変換（桁数指定）
-	 * 指定した桁数に満たない場合0で埋める
-	 * 指定桁数を超える上位桁は切り捨てる
-	 * (ビッグエンディアン)
+	 * {@code long} を指定桁数のビッグエンディアンの {@code char[]} に変換します。
+	 * 不足分は {@code 0} で埋め、超過分は上位桁から切り捨てます。
 	 */
-	public static char[] toCharArray(long n, final int l) {
-		final char[] c = new char[l];
-		for (int i = l - 1; i >= 0; i--) {
-			c[i] = (char) (n % 10 + '0');
-			n /= 10;
-		}
-		return c;
+	public static char[] toCharArray(final long n, final int length) {
+		return toCharArray(n, length, false);
 	}
 
 	/**
-	 * int[] -> char[] 変換
+	 * {@code long} を指定桁数の {@code char[]} に変換します。
+	 *
+	 * <p>{@code n = 121, length = 5} のとき、ビッグエンディアンでは
+	 * {@code "00121"}、リトルエンディアンでは {@code "12100"} になります。
+	 *
+	 * @param n            変換する非負整数
+	 * @param length       配列の長さ
+	 * @param littleEndian リトルエンディアンで出力するか
+	 */
+	public static char[] toCharArray(long n, final int length, final boolean littleEndian) {
+		final char[] chars = new char[length];
+		if (littleEndian) {
+			for (int i = 0; i < length; i++) {
+				chars[i] = (char) (n % 10 + '0');
+				n /= 10;
+			}
+		} else {
+			for (int i = length; i-- > 0; ) {
+				chars[i] = (char) (n % 10 + '0');
+				n /= 10;
+			}
+		}
+		return chars;
+	}
+
+	/**
+	 * 数字配列をビッグエンディアンの {@code char[]} に変換します。
 	 */
 	public static char[] toCharArray(final int[] arr) {
+		return toCharArray(arr, false);
+	}
+
+	/**
+	 * 数字配列を {@code char[]} に変換します。
+	 *
+	 * @param arr          {@code 0} 以上 {@code 9} 以下の数字配列
+	 * @param littleEndian リトルエンディアンで出力するか
+	 */
+	public static char[] toCharArray(final int[] arr, final boolean littleEndian) {
 		final int len = arr.length;
-		final char[] res = new char[len];
-		for (int i = 0; i < len; i++) {
-			res[i] = (char) (arr[i] + '0');
+		final char[] chars = new char[len];
+		if (littleEndian) {
+			for (int i = 0; i < len; i++) chars[i] = (char) (arr[len - 1 - i] + '0');
+		} else {
+			for (int i = 0; i < len; i++) chars[i] = (char) (arr[i] + '0');
 		}
-		return res;
-	}
-
-	/* -------------- toString -------------- */
-
-	/**
-	 * int[] -> String 変換（半角スペース区切り）
-	 */
-	public static String toString(final int[] arr) {
-		final StringJoiner sj = new StringJoiner(" ");
-		for (final int a : arr) sj.add(Integer.toString(a));
-		return sj.toString();
+		return chars;
 	}
 
 	/**
-	 * long[] -> String 変換（半角スペース区切り）
-	 */
-	public static String toString(final long[] arr) {
-		final StringJoiner sj = new StringJoiner(" ");
-		for (final long a : arr) sj.add(Long.toString(a));
-		return sj.toString();
-	}
-
-	/**
-	 * int[][] -> String 変換（半角スペース区切り）
-	 */
-	public static String toString(final int[][] arr) {
-		final StringBuilder sb = new StringBuilder();
-		for (final int[] a : arr) {
-			sb.append(a[0]);
-			for (int i = 1, len = a.length; i < len; i++)
-				sb.append(' ').append(a[i]);
-			sb.append('\n');
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * long[][] -> String 変換（半角スペース区切り）
-	 */
-	public static String toString(final long[][] arr) {
-		final StringBuilder sb = new StringBuilder();
-		for (final long[] a : arr) {
-			sb.append(a[0]);
-			for (int i = 1, len = a.length; i < len; i++)
-				sb.append(' ').append(a[i]);
-			sb.append('\n');
-		}
-		return sb.toString();
-	}
-
-	/* -------------- toIntArray -------------- */
-
-	/**
-	 * char[] -> int[] 変換
+	 * {@code char[]} を各桁の値を格納した {@code int[]} に変換します。
 	 */
 	public static int[] toIntArray(final char[] arr) {
 		final int len = arr.length;
-		final int[] res = new int[len];
-		for (int i = 0; i < len; i++) res[i] = arr[i] - '0';
-		return res;
+		final int[] result = new int[len];
+		for (int i = 0; i < len; i++) result[i] = arr[i] - '0';
+		return result;
 	}
 
 	/**
-	 * String -> int[] 変換
+	 * {@link String} を各桁の値を格納した {@code int[]} に変換します。
 	 */
 	public static int[] toIntArray(final String s) {
 		final int len = s.length();
-		final int[] res = new int[len];
-		for (int i = 0; i < len; i++) res[i] = s.charAt(i) - '0';
-		return res;
+		final int[] result = new int[len];
+		for (int i = 0; i < len; i++) result[i] = s.charAt(i) - '0';
+		return result;
 	}
-
-	/* -------------- reverse -------------- */
-
-	/**
-	 * int値の反転
-	 */
-	public static int reverse(int n) {
-		int iReverse = 0;
-		while (n > 0) {
-			iReverse = iReverse * 10 + n % 10;
-			n /= 10;
-		}
-		return iReverse;
-	}
-
-	/**
-	 * long値の反転
-	 */
-	public static long reverse(long n) {
-		long lReverse = 0;
-		while (n > 0) {
-			lReverse = lReverse * 10 + n % 10;
-			n /= 10;
-		}
-		return lReverse;
-	}
-
-	/* -------------- sort -------------- */
-
-	/**
-	 * int値 各桁昇順でソート
-	 */
-	public static int sort(final int n) {
-		final char[] c = toCharArray(n);
-		Arrays.sort(c);
-		return toInt(c);
-	}
-
-	/**
-	 * long値 各桁昇順でソート
-	 */
-	public static long sort(final long n) {
-		char[] c = toCharArray(n);
-		Arrays.sort(c);
-		return toLong(c);
-	}
-
-	/**
-	 * String ソート（戻り値あり）
-	 */
-	public static String sort(final String str) {
-		final char[] arr = str.toCharArray();
-		Arrays.sort(arr);
-		return new String(arr);
-	}
-
-	/* -------------- descendingSort -------------- */
-
-	/**
-	 * int値 各桁降順でソート
-	 */
-	public static int descendingSort(final int n) {
-		final char[] c = toCharArray(n);
-		Arrays.sort(c);
-		ArrayUtils.reverse(c);
-		return toInt(c);
-	}
-
-	/**
-	 * long値 各桁降順でソート
-	 */
-	public static long descendingSort(final long n) {
-		final char[] c = toCharArray(n);
-		Arrays.sort(c);
-		ArrayUtils.reverse(c);
-		return toLong(c);
-	}
-
-	/**
-	 * String 降順ソート（戻り値あり）
-	 */
-	public static String descendingSort(final String str) {
-		final char[] arr = str.toCharArray();
-		ArrayUtils.descendingSort(arr);
-		return new String(arr);
-	}
-
 }

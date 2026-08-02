@@ -6,7 +6,7 @@
 
 ## 特徴
 
-- `int` / `long`の整数結果を返すべき乗、平方根、立方根
+- `int` / `long`の整数結果を返すべき乗、平方根、立方根、対数
 - 2値・3値・可変長の最小値／最大値
 - binary GCD、LCM、拡張Euclid、Eulerのトーシェント関数
 - 前計算を作らない階乗・組み合わせ計算
@@ -21,16 +21,20 @@
 
 ### 基本整数演算
 
-| メソッド                                |         戻り値 | 説明       |
-|-----------------------------------------|---------------:|------------|
-| `min(int/long a, b)`、3引数版、可変長版 | `int` / `long` | 最小値     |
-| `max(int/long a, b)`、3引数版、可変長版 | `int` / `long` | 最大値     |
-| `diff(int/long a, b)`                   | `int` / `long` | 差の絶対値 |
-| `pow(long a, int b)`                    |         `long` | 整数乗     |
-| `sqrt(int/long n)`                      | `int` / `long` | 床平方根   |
-| `cbrt(int/long n)`                      |          `int` | 床立方根   |
-| `isSquare(int/long n)`                  |      `boolean` | 平方数判定 |
-| `isCube(int/long n)`                    |      `boolean` | 立方数判定 |
+| メソッド                                   |         戻り値 | 説明                     |
+|--------------------------------------------|---------------:|--------------------------|
+| `min(int/long a, b)`、3引数版、可変長版    | `int` / `long` | 最小値                   |
+| `max(int/long a, b)`、3引数版、可変長版    | `int` / `long` | 最大値                   |
+| `diff(int/long a, b)`                      | `int` / `long` | 差の絶対値               |
+| `pow(long a, int b)`                       |         `long` | 整数乗                   |
+| `floorSqrt(int/long n)`                    | `int` / `long` | 床平方根                 |
+| `ceilSqrt(int/long n)`                     | `int` / `long` | 天井平方根               |
+| `floorCbrt(int/long n)`                    |          `int` | 床立方根                 |
+| `ceilCbrt(int/long n)`                     |          `int` | 天井立方根               |
+| `floorLog2(int/long n)`、`ceilLog2(...)`   |          `int` | 2を底とする床・天井対数  |
+| `floorLog10(int/long n)`、`ceilLog10(...)` |          `int` | 10を底とする床・天井対数 |
+| `isSquare(int/long n)`                     |      `boolean` | 平方数判定               |
+| `isCube(int/long n)`                       |      `boolean` | 立方数判定               |
 
 ### 剰余演算
 
@@ -78,6 +82,7 @@ int gcd = MathUtils.gcd(84, 30);
 ## 注意事項
 
 - 整数演算のオーバーフローは呼び出し側の制約で避けます。
+- `floorSqrt`、`ceilSqrt`、`floorCbrt`、`ceilCbrt`、各対数は `n > 0` の入力を前提とします。`n <= 0` では 0 を返します。
 - `modInv`、`invFact`、mod付き`nCr`は素数modを前提とします。
 - `modPow`、`modFact`、mod付き`nPr`自体は素数modを必要としません。
 - 同じmodで多数の組み合わせを求める場合は`FactorialTable`を使用します。

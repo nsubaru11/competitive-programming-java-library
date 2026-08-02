@@ -66,7 +66,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 
 | モジュール                                                        | 内容                                                                                |
 |-------------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| [Conversions](./docs/util/Conversions)                            | 数字文字列・配列・整数の相互変換と十進桁操作                                        |
+| [Conversions](./docs/util/Conversions)                            | 数値・文字配列・数字配列の相互変換                                                  |
 | [Dice](./docs/util/Dice)                                          | 6面体の向きと3方向の回転操作                                                        |
 | [DP](./src/patterns/dp)                                           | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                            |
 | [DivideAndConquer/MoAlgorithm](./docs/util/MoAlgorithm)           | Mo's Algorithm（オフライン区間クエリの平方分割、add/remove関数によるジグザグ走査）  |
@@ -87,16 +87,17 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Math/Number types](./docs/math/number)                           | Fraction / Int128 / ModInt / ModLong                                                |
 | [Math/NumberPredicates](./docs/math/NumberPredicates)             | 完全数・回文数・フィボナッチ数・アームストロング数・ハッピー数の判定                |
 | [Util/Permutation](./docs/util/Permutation)                       | 配列の辞書順 index/next/prev（int / long / char / 2次元配列対応）                   |
-| [Util/NumberFormatUtils](./docs/util/format)                      | 小数の固定桁表示と整数のゼロ埋め                                                    |
+| [Util/FormatUtils](./docs/util/FormatUtils)                       | 数値・配列の文字列化、小数の固定桁表示、整数のゼロ埋め                              |
+| [Util/DigitUtils](./docs/util/DigitUtils)                         | 桁数取得、十進表現の反転・並べ替え                                                  |
 | [Math/Polynomial](./docs/math/Polynomial)                         | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                          |
 | [Math/PrimeUtils](./docs/math/PrimeUtils)                         | 一回限りの素数判定・素数個数・エラトステネスの篩                                    |
 | [Math/PrimeTable](./docs/math/PrimeTable)                         | 再利用可能な素数表、近傍検索・素因数分解・k番目の素数                               |
-| [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 $\mathcal{O}(n)$ で取得）                                       |
+| [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 $\mathcal{O}(n)$ で取得）                           |
 | [Search/BinarySearch](./docs/search/BinarySearch)                 | 条件関数・ソート済み配列に対する二分探索（lower/upper bound、`-(挿入位置+1)` 形式） |
 | [Search/UnimodalUtils](./docs/search/UnimodalUtils)               | 📝 三分探索・黄金分割探索・ニュートン法（TODO）                                     |
 | [Sort](./docs/sort)                                               | 学習用ソートアルゴリズム11種 ※FordJohnson 📝                                        |
 | [String/Levenshtein](./docs/string/Levenshtein)                   | 編集距離（標準 DP・距離制限付き banded DP）※Myers / Wu 📝                           |
-| [String/Palindrome](./docs/string/Palindrome)                     | Manacher（全回文検出 $\mathcal{O}(n)$）・素朴な回文判定/生成 ※Eertree 📝                        |
+| [String/Palindrome](./docs/string/Palindrome)                     | Manacher（全回文検出 $\mathcal{O}(n)$）・素朴な回文判定/生成 ※Eertree 📝            |
 | [String/StringSearch](./docs/string/StringSearch)                 | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝                                |
 
 ### データ構造（`lib.ds`）
@@ -111,7 +112,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [EulerTour](./docs/ds/EulerTour)                         | 📝 オイラーツアー（TODO）                                                                                            |
 | [FastIO/Java17](./docs/io/Java17)                        | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                        |
 | [FastIO/Java24](./docs/io/Java24)                        | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)                 |
-| [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（$\mathcal{O}(1)$ clear、ペア/トリプルキー対応）                              |
+| [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（$\mathcal{O}(1)$ clear、ペア/トリプルキー対応）                  |
 | [LiChaoTree](./docs/ds/LiChaoTree)                       | 📝 Li Chao Tree（直線群へのCHT、TODO）                                                                               |
 | [PersistentSegmentTree](./docs/ds/PersistentSegmentTree) | 📝 永続セグメント木（TODO）                                                                                          |
 | [PersistentUnionFind](./docs/ds/PersistentUnionFind)     | 📝 永続Union-Find（TODO）                                                                                            |

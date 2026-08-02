@@ -178,48 +178,166 @@ public final class MathUtils {
 	}
 
 	/**
-	 * {@code n} 以下の最大の平方根を返します。{@code n <= 0} では 0 を返します。
+	 * {@code n} の平方根の床関数を返します。
 	 */
-	public static int sqrt(final int n) {
+	public static int floorSqrt(final int n) {
 		if (n <= 0) return 0;
 		return (int) Math.sqrt(n);
 	}
 
 	/**
-	 * {@code n} 以下の最大の立方根を返します。{@code n <= 0} では 0 を返します。
+	 * {@code n} の平方根の天井関数を返します。
 	 */
-	public static int cbrt(final int n) {
+	public static int ceilSqrt(final int n) {
+		if (n <= 0) return 0;
+		final int x = floorSqrt(n);
+		return x * x == n ? x : x + 1;
+	}
+
+	/**
+	 * {@code n} の平方根の床関数を返します。
+	 */
+	public static long floorSqrt(final long n) {
+		if (n <= 0) return 0;
+		long x = (long) Math.sqrt(n);
+		if (x > n / x) x--;
+		else if (x + 1 <= n / (x + 1)) x++;
+		return x;
+	}
+
+	/**
+	 * {@code n} の平方根の天井関数を返します。
+	 */
+	public static long ceilSqrt(final long n) {
+		if (n <= 0) return 0;
+		final long x = floorSqrt(n);
+		return x * x == n ? x : x + 1;
+	}
+
+	/**
+	 * {@code n} の立方根の床関数を返します。
+	 */
+	public static int floorCbrt(final int n) {
 		if (n <= 0) return 0;
 		return (int) Math.cbrt(n);
 	}
 
 	/**
-	 * {@code n} 以下の最大の平方根を返します。{@code n <= 0} では 0 を返します。
+	 * {@code n} の立方根の天井関数を返します。
 	 */
-	public static long sqrt(final long n) {
+	public static int ceilCbrt(final int n) {
 		if (n <= 0) return 0;
-		long x = (long) Math.sqrt(n);
-		if (x * x > n) x--;
-		else if ((x + 1) * (x + 1) <= n) x++;
-		return x;
+		final int x = floorCbrt(n);
+		return x * x * x == n ? x : x + 1;
 	}
 
 	/**
-	 * {@code n} 以下の最大の立方根を返します。{@code n <= 0} では 0 を返します。
+	 * {@code n} の立方根の床関数を返します。
 	 */
-	public static int cbrt(final long n) {
+	public static int floorCbrt(final long n) {
 		if (n <= 0) return 0;
 		long x = (long) Math.cbrt(n);
-		if (x * x * x > n) x--;
-		else if ((x + 1) * (x + 1) * (x + 1) <= n) x++;
+		if (x > n / x / x) x--;
+		else if (x + 1 <= n / (x + 1) / (x + 1)) x++;
 		return (int) x;
+	}
+
+	/**
+	 * {@code n} の立方根の天井関数を返します。
+	 */
+	public static int ceilCbrt(final long n) {
+		if (n <= 0) return 0;
+		final long x = floorCbrt(n);
+		return x * x * x == n ? (int) x : (int) x + 1;
+	}
+
+	/**
+	 * {@code n} 以下の最大の {@code 2} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int floorLog2(final int n) {
+		if (n <= 1) return 0;
+		return 31 - Integer.numberOfLeadingZeros(n);
+	}
+
+	/**
+	 * {@code n} 以上の最小の {@code 2} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int ceilLog2(final int n) {
+		if (n <= 1) return 0;
+		return 32 - Integer.numberOfLeadingZeros(n - 1);
+	}
+
+	/**
+	 * {@code n} 以下の最大の {@code 10} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int floorLog10(final int n) {
+		if (n <= 1) return 0;
+		int res = 0;
+		for (int x = n; x >= 10; x /= 10) res++;
+		return res;
+	}
+
+	/**
+	 * {@code n} 以上の最小の {@code 10} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int ceilLog10(final int n) {
+		if (n <= 1) return 0;
+		final int floor = floorLog10(n);
+		int pow10 = 1;
+		for (int i = 0; i < floor; i++) pow10 *= 10;
+		return n == pow10 ? floor : floor + 1;
+	}
+
+	/**
+	 * {@code n} 以下の最大の {@code 2} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int floorLog2(final long n) {
+		if (n <= 1) return 0;
+		return 63 - Long.numberOfLeadingZeros(n);
+	}
+
+	/**
+	 * {@code n} 以上の最小の {@code 2} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int ceilLog2(final long n) {
+		if (n <= 1) return 0;
+		return 64 - Long.numberOfLeadingZeros(n - 1);
+	}
+
+	/**
+	 * {@code n} 以下の最大の {@code 10} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int floorLog10(final long n) {
+		if (n <= 1) return 0;
+		int res = 0;
+		for (long x = n; x >= 10; x /= 10) res++;
+		return res;
+	}
+
+	/**
+	 * {@code n} 以上の最小の {@code 10} の指数を返します。
+	 * {@code n <= 0} では 0 を返します。
+	 */
+	public static int ceilLog10(final long n) {
+		if (n <= 1) return 0;
+		final int floor = floorLog10(n);
+		long pow10 = 1;
+		for (int i = 0; i < floor; i++) pow10 *= 10;
+		return n == pow10 ? floor : floor + 1;
 	}
 
 	/**
 	 * {@code n} が平方数か判定します。
 	 */
 	public static boolean isSquare(final int n) {
-		int sqrt = sqrt(n);
+		int sqrt = floorSqrt(n);
 		return n == sqrt * sqrt;
 	}
 
@@ -227,7 +345,7 @@ public final class MathUtils {
 	 * {@code n} が立方数か判定します。
 	 */
 	public static boolean isCube(final int n) {
-		int cbrt = cbrt(n);
+		int cbrt = floorCbrt(n);
 		return n == cbrt * cbrt * cbrt;
 	}
 
@@ -235,7 +353,7 @@ public final class MathUtils {
 	 * {@code n} が平方数か判定します。
 	 */
 	public static boolean isSquare(final long n) {
-		long sqrt = sqrt(n);
+		long sqrt = floorSqrt(n);
 		return n == sqrt * sqrt;
 	}
 
@@ -243,42 +361,8 @@ public final class MathUtils {
 	 * {@code n} が立方数か判定します。
 	 */
 	public static boolean isCube(final long n) {
-		long cbrt = cbrt(n);
+		long cbrt = floorCbrt(n);
 		return n == cbrt * cbrt * cbrt;
-	}
-
-	public static int digit2(long n) {
-		if (n == 0) return 1;
-		if (n == Long.MIN_VALUE) return 63;
-		return 64 - Long.numberOfLeadingZeros(Math.abs(n));
-	}
-
-	public static int digit2(int n) {
-		if (n == 0) return 1;
-		if (n == Integer.MIN_VALUE) return 31;
-		return 32 - Integer.numberOfLeadingZeros(Math.abs(n));
-	}
-
-	public static int digit10(long n) {
-		if (n == Long.MIN_VALUE) return 19;
-		if (n < 0) n = -n;
-		int res = 0;
-		do {
-			res++;
-			n /= 10;
-		} while (n > 0);
-		return res;
-	}
-
-	public static int digit10(int n) {
-		if (n == Integer.MIN_VALUE) return 10;
-		if (n < 0) n = -n;
-		int res = 0;
-		do {
-			res++;
-			n /= 10;
-		} while (n > 0);
-		return res;
 	}
 
 	/**
