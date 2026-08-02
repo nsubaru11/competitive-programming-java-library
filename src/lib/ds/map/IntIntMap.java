@@ -5,29 +5,22 @@ import static java.lang.Math.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
-public final class BaseIntIntMap {
-	private final int defaultValue;
+public final class IntIntMap {
 	private int[] keys, values, stamps;
-	private int stamp;
-	private int size;
-	private int capacity;
-	private int occupied;
-	private int resizeThreshold;
-	private int mask;
+	private int defaultValue, stamp, size, capacity, resizeThreshold, mask;
 
-	public BaseIntIntMap() {
+	public IntIntMap() {
 		this(1024, 0);
 	}
 
-	public BaseIntIntMap(final int initialCapacity) {
+	public IntIntMap(final int initialCapacity) {
 		this(initialCapacity, 0);
 	}
 
-	public BaseIntIntMap(final int initialCapacity, final int defaultValue) {
+	public IntIntMap(final int initialCapacity, final int defaultValue) {
 		this.defaultValue = defaultValue;
 		capacity = normalizeCapacity(initialCapacity);
 		size = 0;
-		occupied = 0;
 		stamp = 1;
 		resizeThreshold = capacity - (capacity >>> 2);
 		stamps = new int[capacity];
@@ -49,80 +42,75 @@ public final class BaseIntIntMap {
 		return cap + 1;
 	}
 
-	public int get(final int key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			return values[hash];
-		}
+	public int getDefaultValue() {
 		return defaultValue;
 	}
 
+	public void setDefaultValue(final int defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public int get(final int key) {
+		return getOrDefault(key, defaultValue);
+	}
+
 	public int getOrDefault(final int key, final int defaultValue) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			return values[hash];
+		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash];
 		}
 		return defaultValue;
 	}
 
 	public int increment(final int key) {
-		return addOrDefault(key, 1, 1);
+		return addOrDefault(key, 1, defaultValue + 1);
 	}
 
 	public int decrement(final int key) {
-		return addOrDefault(key, -1, -1);
+		return addOrDefault(key, -1, defaultValue - 1);
 	}
 
 	public int add(final int key, final int delta) {
-		return addOrDefault(key, delta, delta);
+		return addOrDefault(key, delta, delta + defaultValue);
 	}
 
 	public int addOrDefault(final int key, final int delta, final int defaultValue) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash] += delta;
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash] += delta;
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = defaultValue;
+		return values[hash] = defaultValue;
 	}
 
 	public int put(final int key, final int value) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash] = value;
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash] = value;
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = value;
+		return values[hash] = value;
 	}
 
 	public boolean remove(final int key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			stamps[hash] = -stamp;
+		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] != key) continue;
+			int hole = hash;
+			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
+				final int home = hash(keys[next]);
+				if (((next - home) & mask) >= ((next - hole) & mask)) {
+					keys[hole] = keys[next];
+					values[hole] = values[next];
+					stamps[hole] = stamp;
+					hole = next;
+				}
+			}
+			stamps[hole] = 0;
 			size--;
 			return true;
 		}
@@ -130,58 +118,38 @@ public final class BaseIntIntMap {
 	}
 
 	public boolean containsKey(final int key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			return true;
+		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return true;
 		}
 		return false;
 	}
 
 	public int merge(final int key, final int value, final IntBinaryOperator op) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash] = op.applyAsInt(values[hash], value);
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash] = op.applyAsInt(values[hash], value);
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = value;
+		return values[hash] = value;
 	}
 
 	public int putIfAbsent(final int key, final int value) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash];
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash];
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = value;
+		return values[hash] = value;
 	}
 
 	public void clear() {
 		size = 0;
-		occupied = 0;
 		stamp++;
 	}
 
@@ -278,7 +246,6 @@ public final class BaseIntIntMap {
 		keys = new int[capacity];
 		values = new int[capacity];
 		stamps = new int[capacity];
-		occupied = 0;
 		mask = capacity - 1;
 		for (int i = 0; i < oldCapacity; i++) {
 			if (oldStamps[i] != stamp) continue;
@@ -288,7 +255,6 @@ public final class BaseIntIntMap {
 			stamps[hash] = stamp;
 			keys[hash] = key;
 			values[hash] = oldValues[i];
-			occupied++;
 		}
 	}
 

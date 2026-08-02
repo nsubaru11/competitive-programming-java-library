@@ -5,10 +5,10 @@ import java.util.function.*;
 @SuppressWarnings("unused")
 public final class IntTripleIntMap {
 	private static final long MASK = 0x1FFFFFL;
-	private final BaseLongIntMap baseMap;
+	private final LongIntMap baseMap;
 
 	public IntTripleIntMap(final int initialCapacity) {
-		baseMap = new BaseLongIntMap(initialCapacity);
+		baseMap = new LongIntMap(initialCapacity);
 	}
 
 	private static long pack(final int a, final int b, final int c) {

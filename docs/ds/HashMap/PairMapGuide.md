@@ -7,12 +7,12 @@
 - `IntPairIntMap`（`(int, int) -> int`）
 - `IntPairLongMap`（`(int, int) -> long`）
 
-2つの `int` キーを `long` にパックして、`BaseLongIntMap` / `BaseLongLongMap` に委譲する構成です。
+2つの `int` キーを `long` にパックして、`LongIntMap` / `LongLongMap` に委譲する構成です。
 
 ## 特徴
 
 - `(a, b)` をそのまま受け取る API で可読性が高い
-- 内部実装はベースマップへ委譲するため挙動が一貫
+- 内部実装は整数型マップへ委譲するため挙動が一貫
 - `forEach` / `forEachKey` でキーを自動復元
 - `merge` / `putIfAbsent` をサポート
 
@@ -27,26 +27,26 @@
 
 ### 1. 参照・判定系メソッド
 
-| メソッド                           | 戻り値の型     | 説明                         |
-|------------------------------------|----------------|------------------------------|
-| `get(a, b)`                        | `int` / `long` | 値取得。キー未存在時は例外。 |
-| `getOrDefault(a, b, defaultValue)` | `int` / `long` | 未存在時に既定値を返す。     |
-| `containsKey(a, b)`                | `boolean`      | キー存在判定。               |
-| `size()`                           | `int`          | 要素数。                     |
-| `isEmpty()`                        | `boolean`      | 空判定。                     |
+| メソッド                           | 戻り値の型     | 説明                            |
+|------------------------------------|----------------|---------------------------------|
+| `get(a, b)`                        | `int` / `long` | 値取得。キー未存在時は0を返す。 |
+| `getOrDefault(a, b, defaultValue)` | `int` / `long` | 未存在時に既定値を返す。        |
+| `containsKey(a, b)`                | `boolean`      | キー存在判定。                  |
+| `size()`                           | `int`          | 要素数。                        |
+| `isEmpty()`                        | `boolean`      | 空判定。                        |
 
 ### 2. 更新系メソッド
 
-| メソッド                                  | 戻り値の型     | 説明                               |
-|-------------------------------------------|----------------|------------------------------------|
-| `put(a, b, value)`                        | `int` / `long` | 値を設定。                         |
-| `putIfAbsent(a, b, value)`                | `int` / `long` | 未存在時のみ挿入。                 |
-| `add(a, b, delta)`                        | `int` / `long` | 既存値へ加算。                     |
-| `increment(a, b)` / `decrement(a, b)`     | `int` / `long` | `+1` / `-1` 更新。                 |
-| `addOrDefault(a, b, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。 |
-| `merge(a, b, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。   |
-| `remove(a, b)`                            | `boolean`      | キー削除。                         |
-| `clear()`                                 | `void`         | 全削除。                           |
+| メソッド                                  | 戻り値の型     | 説明                                      |
+|-------------------------------------------|----------------|-------------------------------------------|
+| `put(a, b, value)`                        | `int` / `long` | 値を設定。                                |
+| `putIfAbsent(a, b, value)`                | `int` / `long` | 未存在時のみ挿入。                        |
+| `add(a, b, delta)`                        | `int` / `long` | 既存値へ加算。未存在時は `delta` で作成。 |
+| `increment(a, b)` / `decrement(a, b)`     | `int` / `long` | `+1` / `-1` 更新。                        |
+| `addOrDefault(a, b, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。        |
+| `merge(a, b, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。          |
+| `remove(a, b)`                            | `boolean`      | キー削除。                                |
+| `clear()`                                 | `void`         | 全削除。                                  |
 
 ### 3. 走査・抽出系メソッド
 
@@ -85,7 +85,9 @@ public class Example {
 
 ## 注意事項
 
-- `get(a, b)` は未存在時に例外を送出します。
+- `get(a, b)` は未存在時に0を返します。内部の `LongIntMap` / `LongLongMap` の `defaultValue` はラッパーから変更できません。
+- `getOrDefault(a, b, defaultValue)` は呼び出し単位の既定値を返します。
+- `add(a, b, delta)` は未存在時に0から加算するため、格納値は `delta` になります。明示的な初期格納値には `addOrDefault` を使います。
 - キーの順序は `(a,b)` と `(b,a)` で別物です。
 - 反復順序は挿入順ではありません。
 
@@ -102,8 +104,9 @@ public class Example {
 
 | バージョン番号     | 年月日     | 詳細                                                                                           |
 |:-------------------|:-----------|:-----------------------------------------------------------------------------------------------|
-| **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加。その他軽微な実装調整。 |
 | **バージョン 1.0** | 2026-04-27 | Pair 系2クラス初期実装。                                                                       |
+| **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加。その他軽微な実装調整。 |
+| **バージョン 3.0** | 2026-08-02 | 委譲先を `LongIntMap` / `LongLongMap` に変更し、未存在キーの `get` が0を返す仕様に対応。       |
 
 ### バージョン管理について
 

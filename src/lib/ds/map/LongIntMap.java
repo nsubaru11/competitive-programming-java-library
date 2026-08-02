@@ -2,19 +2,26 @@ package lib.ds.map;
 
 import static java.lang.Math.*;
 
-import java.util.*;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
-public final class BaseLongIntMap {
+public final class LongIntMap {
 	private long[] keys;
 	private int[] values, stamps;
-	private int stamp, size, capacity, occupied, resizeThreshold, mask;
+	private int defaultValue, stamp, size, capacity, resizeThreshold, mask;
 
-	public BaseLongIntMap(final int initialCapacity) {
+	public LongIntMap() {
+		this(1024, 0);
+	}
+
+	public LongIntMap(final int initialCapacity) {
+		this(initialCapacity, 0);
+	}
+
+	public LongIntMap(final int initialCapacity, final int defaultValue) {
+		this.defaultValue = defaultValue;
 		capacity = normalizeCapacity(initialCapacity);
 		size = 0;
-		occupied = 0;
 		stamp = 1;
 		resizeThreshold = capacity - (capacity >>> 2);
 		stamps = new int[capacity];
@@ -36,80 +43,75 @@ public final class BaseLongIntMap {
 		return cap + 1;
 	}
 
+	public int getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(final int defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 	public int get(final long key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			return values[hash];
-		}
-		throw new NoSuchElementException();
+		return getOrDefault(key, defaultValue);
 	}
 
 	public int getOrDefault(final long key, final int defaultValue) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			return values[hash];
+		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash];
 		}
 		return defaultValue;
 	}
 
 	public int increment(final long key) {
-		return addOrDefault(key, 1, 1);
+		return addOrDefault(key, 1, defaultValue + 1);
 	}
 
 	public int decrement(final long key) {
-		return addOrDefault(key, -1, -1);
+		return addOrDefault(key, -1, defaultValue - 1);
 	}
 
 	public int add(final long key, final int delta) {
-		return addOrDefault(key, delta, delta);
+		return addOrDefault(key, delta, defaultValue + delta);
 	}
 
 	public int addOrDefault(final long key, final int delta, final int defaultValue) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash] += delta;
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash] += delta;
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = defaultValue;
+		return values[hash] = defaultValue;
 	}
 
 	public int put(final long key, final int value) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash] = value;
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash] = value;
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = value;
+		return values[hash] = value;
 	}
 
 	public boolean remove(final long key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			stamps[hash] = -stamp;
+		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] != key) continue;
+			int hole = hash;
+			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
+				final int home = hash(keys[next]);
+				if (((next - home) & mask) >= ((next - hole) & mask)) {
+					keys[hole] = keys[next];
+					values[hole] = values[next];
+					stamps[hole] = stamp;
+					hole = next;
+				}
+			}
+			stamps[hole] = 0;
 			size--;
 			return true;
 		}
@@ -117,58 +119,38 @@ public final class BaseLongIntMap {
 	}
 
 	public boolean containsKey(final long key) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s < 0 || keys[hash] != key) continue;
-			return true;
+		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return true;
 		}
 		return false;
 	}
 
 	public int merge(final long key, final int value, final IntBinaryOperator op) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash] = op.applyAsInt(values[hash], value);
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash] = op.applyAsInt(values[hash], value);
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = value;
+		return values[hash] = value;
 	}
 
 	public int putIfAbsent(final long key, final int value) {
-		if (occupied >= resizeThreshold) resize();
-		int pos = -1;
 		int hash = hash(key);
-		for (int s = stamps[hash]; s == stamp || s == -stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
-			if (s == -stamp) {
-				if (pos == -1) pos = hash;
-				continue;
-			} else if (keys[hash] != key) continue;
-			return values[hash];
+		for (int s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+			if (keys[hash] == key) return values[hash];
 		}
-		if (pos == -1) {
-			pos = hash;
-			occupied++;
-		}
-		stamps[pos] = stamp;
-		keys[pos] = key;
+		if (size >= resizeThreshold) resize();
+		stamps[hash] = stamp;
+		keys[hash] = key;
 		size++;
-		return values[pos] = value;
+		return values[hash] = value;
 	}
 
 	public void clear() {
 		size = 0;
-		occupied = 0;
 		stamp++;
 	}
 
@@ -266,7 +248,6 @@ public final class BaseLongIntMap {
 		keys = new long[capacity];
 		values = new int[capacity];
 		stamps = new int[capacity];
-		occupied = 0;
 		mask = capacity - 1;
 		for (int i = 0; i < oldCapacity; i++) {
 			if (oldStamps[i] != stamp) continue;
@@ -276,7 +257,6 @@ public final class BaseLongIntMap {
 			stamps[hash] = stamp;
 			keys[hash] = key;
 			values[hash] = oldValues[i];
-			occupied++;
 		}
 	}
 

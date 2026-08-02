@@ -7,7 +7,7 @@
 - `IntTripleIntMap`（`(int, int, int) -> int`）
 - `IntTripleLongMap`（`(int, int, int) -> long`）
 
-3つの `int` キーを 21bit ずつ `long` にパックして、ベースマップに委譲する構成です。
+3つの `int` キーを 21bit ずつ `long` にパックして、整数型マップに委譲する構成です。
 
 ## 特徴
 
@@ -27,26 +27,26 @@
 
 ### 1. 参照・判定系メソッド
 
-| メソッド                              | 戻り値の型     | 説明                     |
-|---------------------------------------|----------------|--------------------------|
-| `get(a, b, c)`                        | `int` / `long` | 値取得。未存在時は例外。 |
-| `getOrDefault(a, b, c, defaultValue)` | `int` / `long` | 未存在時に既定値を返す。 |
-| `containsKey(a, b, c)`                | `boolean`      | キー存在判定。           |
-| `size()`                              | `int`          | 要素数。                 |
-| `isEmpty()`                           | `boolean`      | 空判定。                 |
+| メソッド                              | 戻り値の型     | 説明                        |
+|---------------------------------------|----------------|-----------------------------|
+| `get(a, b, c)`                        | `int` / `long` | 値取得。未存在時は0を返す。 |
+| `getOrDefault(a, b, c, defaultValue)` | `int` / `long` | 未存在時に既定値を返す。    |
+| `containsKey(a, b, c)`                | `boolean`      | キー存在判定。              |
+| `size()`                              | `int`          | 要素数。                    |
+| `isEmpty()`                           | `boolean`      | 空判定。                    |
 
 ### 2. 更新系メソッド
 
-| メソッド                                     | 戻り値の型     | 説明                               |
-|----------------------------------------------|----------------|------------------------------------|
-| `put(a, b, c, value)`                        | `int` / `long` | 値を設定。                         |
-| `putIfAbsent(a, b, c, value)`                | `int` / `long` | 未存在時のみ挿入。                 |
-| `add(a, b, c, delta)`                        | `int` / `long` | 既存値へ加算。                     |
-| `increment(a, b, c)` / `decrement(a, b, c)`  | `int` / `long` | `+1` / `-1` 更新。                 |
-| `addOrDefault(a, b, c, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。 |
-| `merge(a, b, c, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。   |
-| `remove(a, b, c)`                            | `boolean`      | キー削除。                         |
-| `clear()`                                    | `void`         | 全削除。                           |
+| メソッド                                     | 戻り値の型     | 説明                                      |
+|----------------------------------------------|----------------|-------------------------------------------|
+| `put(a, b, c, value)`                        | `int` / `long` | 値を設定。                                |
+| `putIfAbsent(a, b, c, value)`                | `int` / `long` | 未存在時のみ挿入。                        |
+| `add(a, b, c, delta)`                        | `int` / `long` | 既存値へ加算。未存在時は `delta` で作成。 |
+| `increment(a, b, c)` / `decrement(a, b, c)`  | `int` / `long` | `+1` / `-1` 更新。                        |
+| `addOrDefault(a, b, c, delta, defaultValue)` | `int` / `long` | 未存在時は `defaultValue` で作成。        |
+| `merge(a, b, c, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。          |
+| `remove(a, b, c)`                            | `boolean`      | キー削除。                                |
+| `clear()`                                    | `void`         | 全削除。                                  |
 
 ### 3. 走査・抽出系メソッド
 
@@ -86,7 +86,9 @@ public class Example {
 ## 注意事項
 
 - キーは 21bit ごとにパックされます（`MASK = 0x1FFFFF`）。
-- `get(a, b, c)` は未存在時に例外を送出します。
+- `get(a, b, c)` は未存在時に0を返します。内部の `LongIntMap` / `LongLongMap` の `defaultValue` はラッパーから変更できません。
+- `getOrDefault(a, b, c, defaultValue)` は呼び出し単位の既定値を返します。
+- `add(a, b, c, delta)` は未存在時に0から加算するため、格納値は `delta` になります。明示的な初期格納値には `addOrDefault` を使います。
 - 反復順序は挿入順ではありません。
 
 ## パフォーマンス特性
@@ -102,8 +104,9 @@ public class Example {
 
 | バージョン番号     | 年月日     | 詳細                                                                                                                                           |
 |:-------------------|:-----------|:-----------------------------------------------------------------------------------------------------------------------------------------------|
-| **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加し、`final` 修飾子の付与やキー分解コードの統一など軽微な実装調整を実施。 |
 | **バージョン 1.0** | 2026-04-27 | Triple 系2クラス初期実装。                                                                                                                     |
+| **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加し、`final` 修飾子の付与やキー分解コードの統一など軽微な実装調整を実施。 |
+| **バージョン 3.0** | 2026-08-02 | 委譲先を `LongIntMap` / `LongLongMap` に変更し、未存在キーの `get` が0を返す仕様に対応。                                                       |
 
 ### バージョン管理について
 

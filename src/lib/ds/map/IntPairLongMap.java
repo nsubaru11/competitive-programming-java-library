@@ -5,10 +5,10 @@ import java.util.function.*;
 @SuppressWarnings("unused")
 public final class IntPairLongMap {
 	private static final long MASK = 0xFFFFFFFFL;
-	private final BaseLongLongMap baseMap;
+	private final LongLongMap baseMap;
 
 	public IntPairLongMap(final int initialCapacity) {
-		baseMap = new BaseLongLongMap(initialCapacity);
+		baseMap = new LongLongMap(initialCapacity);
 	}
 
 	private static long pack(final int a, final int b) {
