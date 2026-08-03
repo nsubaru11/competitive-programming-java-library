@@ -4,23 +4,28 @@ import static java.lang.Math.*;
 
 import java.util.function.*;
 
+/**
+ * {@code long} 型のキーと {@code int} 型の値を保持する、オープンアドレス方式の高速マップです。
+ * 線形探索、backward-shift deletion、世代番号による {@code O(1)} の {@link #clear()} を使用し、
+ * 未存在キーの取得では設定済みの既定値を返します。
+ */
 @SuppressWarnings("unused")
 public final class LongIntMap {
-	private long[] keys;
-	private int[] values, stamps;
+	long[] keys;
+	int[] values, stamps;
 	private int defaultValue, stamp, size, capacity, resizeThreshold, mask;
 
 	public LongIntMap() {
 		this(1024, 0);
 	}
 
-	public LongIntMap(final int initialCapacity) {
-		this(initialCapacity, 0);
+	public LongIntMap(final int expectedSize) {
+		this(expectedSize, 0);
 	}
 
-	public LongIntMap(final int initialCapacity, final int defaultValue) {
+	public LongIntMap(final int expectedSize, final int defaultValue) {
 		this.defaultValue = defaultValue;
-		capacity = normalizeCapacity(initialCapacity);
+		capacity = normalizeCapacity(expectedSize);
 		size = 0;
 		stamp = 1;
 		resizeThreshold = capacity - (capacity >>> 2);
@@ -30,8 +35,8 @@ public final class LongIntMap {
 		mask = capacity - 1;
 	}
 
-	private static int normalizeCapacity(final int c) {
-		final long required = (long) c * 4 / 3 + 1;
+	private static int normalizeCapacity(final int expectedSize) {
+		final long required = ((long) expectedSize * 4 + 2) / 3;
 		int cap = max(16, (int) required);
 		if ((cap & (cap - 1)) == 0) return cap;
 		cap--;
@@ -74,7 +79,7 @@ public final class LongIntMap {
 		return addOrDefault(key, delta, defaultValue + delta);
 	}
 
-	public int addOrDefault(final long key, final int delta, final int defaultValue) {
+	public int addOrDefault(final long key, final int delta, final int absentValue) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] += delta;
@@ -87,7 +92,7 @@ public final class LongIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
-		return values[hash] = defaultValue;
+		return values[hash] = absentValue;
 	}
 
 	public int put(final long key, final int value) {
@@ -176,6 +181,10 @@ public final class LongIntMap {
 
 	public boolean isEmpty() {
 		return size == 0;
+	}
+
+	int currentStamp() {
+		return stamp;
 	}
 
 	public void forEach(final LongIntConsumer action) {

@@ -2,17 +2,38 @@ package lib.ds.map;
 
 import java.util.function.*;
 
+/**
+ * 2つの {@code int} をキー、{@code int} を値として保持する高速マップです。
+ * キーの組を1つの {@code long} に可逆圧縮し、{@link LongIntMap} に処理を委譲します。
+ * 未存在キーの取得では設定済みの既定値を返します。
+ */
 @SuppressWarnings("unused")
 public final class IntPairIntMap {
-	private static final long MASK = 0xFFFFFFFFL;
+	private static final long KEY_MASK = (1L << 32) - 1;
 	private final LongIntMap baseMap;
 
-	public IntPairIntMap(final int initialCapacity) {
-		baseMap = new LongIntMap(initialCapacity);
+	public IntPairIntMap() {
+		baseMap = new LongIntMap();
+	}
+
+	public IntPairIntMap(final int expectedSize) {
+		baseMap = new LongIntMap(expectedSize);
+	}
+
+	public IntPairIntMap(final int expectedSize, final int defaultValue) {
+		baseMap = new LongIntMap(expectedSize, defaultValue);
 	}
 
 	private static long pack(final int a, final int b) {
-		return ((long) a << 32) | (b & MASK);
+		return ((long) a << 32) | (b & KEY_MASK);
+	}
+
+	public int getDefaultValue() {
+		return baseMap.getDefaultValue();
+	}
+
+	public void setDefaultValue(final int defaultValue) {
+		baseMap.setDefaultValue(defaultValue);
 	}
 
 	public int put(final int a, final int b, final int value) {
@@ -28,19 +49,19 @@ public final class IntPairIntMap {
 	}
 
 	public int increment(final int a, final int b) {
-		return addOrDefault(a, b, 1, 1);
+		return baseMap.increment(pack(a, b));
 	}
 
 	public int decrement(final int a, final int b) {
-		return addOrDefault(a, b, -1, -1);
+		return baseMap.decrement(pack(a, b));
 	}
 
 	public int add(final int a, final int b, final int delta) {
-		return addOrDefault(a, b, delta, delta);
+		return baseMap.add(pack(a, b), delta);
 	}
 
-	public int addOrDefault(final int a, final int b, final int delta, final int defaultValue) {
-		return baseMap.addOrDefault(pack(a, b), delta, defaultValue);
+	public int addOrDefault(final int a, final int b, final int delta, final int absentValue) {
+		return baseMap.addOrDefault(pack(a, b), delta, absentValue);
 	}
 
 	public boolean remove(final int a, final int b) {
@@ -72,17 +93,11 @@ public final class IntPairIntMap {
 	}
 
 	public void forEach(final IntPairIntConsumer action) {
-		baseMap.forEach((key, value) -> {
-			final int a = (int) (key >>> 32), b = (int) key;
-			action.accept(a, b, value);
-		});
+		baseMap.forEach((key, value) -> action.accept((int) (key >>> 32), (int) key, value));
 	}
 
 	public void forEachKey(final IntPairConsumer action) {
-		baseMap.forEachKey(key -> {
-			final int a = (int) (key >>> 32), b = (int) key;
-			action.accept(a, b);
-		});
+		baseMap.forEachKey(key -> action.accept((int) (key >>> 32), (int) key));
 	}
 
 	public void forEachValue(final IntConsumer action) {
@@ -90,17 +105,11 @@ public final class IntPairIntMap {
 	}
 
 	public long reduce(final long identity, final EntryToLongAccumulator accumulator) {
-		return baseMap.reduce(identity, (acc, key, value) -> {
-			final int a = (int) (key >>> 32), b = (int) key;
-			return accumulator.apply(acc, a, b, value);
-		});
+		return baseMap.reduce(identity, (acc, key, value) -> accumulator.apply(acc, (int) (key >>> 32), (int) key, value));
 	}
 
 	public long reduceKeys(final long identity, final KeysToLongAccumulator accumulator) {
-		return baseMap.reduceKeys(identity, (acc, key) -> {
-			final int a = (int) (key >>> 32), b = (int) key;
-			return accumulator.apply(acc, a, b);
-		});
+		return baseMap.reduceKeys(identity, (acc, key) -> accumulator.apply(acc, (int) (key >>> 32), (int) key));
 	}
 
 	public long reduceValues(final long identity, final LongBinaryOperator accumulator) {
@@ -108,14 +117,14 @@ public final class IntPairIntMap {
 	}
 
 	public int[][] keys() {
-		final int size = baseMap.size();
-		final int[][] res = new int[2][size];
-		final long[] keys = baseMap.keys();
-		for (int i = 0; i < size; i++) {
-			final long key = keys[i];
-			final int a = (int) (key >>> 32), b = (int) key;
-			res[0][i] = a;
-			res[1][i] = b;
+		final int[][] res = new int[2][baseMap.size()];
+		final int stamp = baseMap.currentStamp();
+		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
+			if (baseMap.stamps[i] != stamp) continue;
+			final long key = baseMap.keys[i];
+			res[0][idx] = (int) (key >>> 32);
+			res[1][idx] = (int) key;
+			idx++;
 		}
 		return res;
 	}
@@ -125,15 +134,15 @@ public final class IntPairIntMap {
 	}
 
 	public int[][] entries() {
-		final int size = baseMap.size();
-		final int[][] res = new int[3][size];
-		final long[][] entries = baseMap.entries();
-		for (int i = 0; i < size; i++) {
-			final long key = entries[0][i], value = entries[1][i];
-			final int a = (int) (key >>> 32), b = (int) key;
-			res[0][i] = a;
-			res[1][i] = b;
-			res[2][i] = (int) value;
+		final int[][] res = new int[3][baseMap.size()];
+		final int stamp = baseMap.currentStamp();
+		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
+			if (baseMap.stamps[i] != stamp) continue;
+			final long key = baseMap.keys[i];
+			res[0][idx] = (int) (key >>> 32);
+			res[1][idx] = (int) key;
+			res[2][idx] = baseMap.values[i];
+			idx++;
 		}
 		return res;
 	}

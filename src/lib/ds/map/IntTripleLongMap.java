@@ -2,17 +2,44 @@ package lib.ds.map;
 
 import java.util.function.*;
 
+/**
+ * 3つの {@code int} をキー、{@code long} を値として保持する高速マップです。
+ * 各キー成分をオフセット付きの符号付き21bitとして1つの {@code long} に圧縮し、
+ * {@link LongLongMap} に処理を委譲します。各成分の有効範囲は
+ * {@code -1_048_576} 以上 {@code 1_048_575} 以下です。
+ */
 @SuppressWarnings("unused")
 public final class IntTripleLongMap {
-	private static final long MASK = 0x1FFFFFL;
+	private static final int KEY_OFFSET = 1 << 20;
+	private static final long KEY_MASK = (1L << 21) - 1;
 	private final LongLongMap baseMap;
 
-	public IntTripleLongMap(final int initialCapacity) {
-		baseMap = new LongLongMap(initialCapacity);
+	public IntTripleLongMap() {
+		baseMap = new LongLongMap();
+	}
+
+	public IntTripleLongMap(final int expectedSize) {
+		baseMap = new LongLongMap(expectedSize);
+	}
+
+	public IntTripleLongMap(final int expectedSize, final long defaultValue) {
+		baseMap = new LongLongMap(expectedSize, defaultValue);
 	}
 
 	private static long pack(final int a, final int b, final int c) {
-		return (((long) a & MASK) << 42) | (((long) b & MASK) << 21) | (c & MASK);
+		return ((((long) a + KEY_OFFSET) & KEY_MASK) << 42) | (((long) b + KEY_OFFSET) & KEY_MASK) << 21 | (((long) c + KEY_OFFSET) & KEY_MASK);
+	}
+
+	private static int unpack(final long key) {
+		return (int) (key & KEY_MASK) - KEY_OFFSET;
+	}
+
+	public long getDefaultValue() {
+		return baseMap.getDefaultValue();
+	}
+
+	public void setDefaultValue(final long defaultValue) {
+		baseMap.setDefaultValue(defaultValue);
 	}
 
 	public long put(final int a, final int b, final int c, final long value) {
@@ -28,19 +55,19 @@ public final class IntTripleLongMap {
 	}
 
 	public long increment(final int a, final int b, final int c) {
-		return addOrDefault(a, b, c, 1, 1);
+		return baseMap.increment(pack(a, b, c));
 	}
 
 	public long decrement(final int a, final int b, final int c) {
-		return addOrDefault(a, b, c, -1, -1);
+		return baseMap.decrement(pack(a, b, c));
 	}
 
 	public long add(final int a, final int b, final int c, final long delta) {
-		return addOrDefault(a, b, c, delta, delta);
+		return baseMap.add(pack(a, b, c), delta);
 	}
 
-	public long addOrDefault(final int a, final int b, final int c, final long delta, final long defaultValue) {
-		return baseMap.addOrDefault(pack(a, b, c), delta, defaultValue);
+	public long addOrDefault(final int a, final int b, final int c, final long delta, final long absentValue) {
+		return baseMap.addOrDefault(pack(a, b, c), delta, absentValue);
 	}
 
 	public boolean remove(final int a, final int b, final int c) {
@@ -73,18 +100,18 @@ public final class IntTripleLongMap {
 
 	public void forEach(final IntTripleLongConsumer action) {
 		baseMap.forEach((key, value) -> {
-			final int a = (int) (key >>> 42);
-			final int b = (int) (key >>> 21 & MASK);
-			final int c = (int) (key & MASK);
+			final int a = unpack(key >>> 42);
+			final int b = unpack(key >>> 21);
+			final int c = unpack(key);
 			action.accept(a, b, c, value);
 		});
 	}
 
 	public void forEachKey(final IntTripleConsumer action) {
 		baseMap.forEachKey(key -> {
-			final int a = (int) (key >>> 42);
-			final int b = (int) (key >>> 21 & MASK);
-			final int c = (int) (key & MASK);
+			final int a = unpack(key >>> 42);
+			final int b = unpack(key >>> 21);
+			final int c = unpack(key);
 			action.accept(a, b, c);
 		});
 	}
@@ -95,18 +122,18 @@ public final class IntTripleLongMap {
 
 	public long reduce(final long identity, final EntryToLongAccumulator accumulator) {
 		return baseMap.reduce(identity, (acc, key, value) -> {
-			final int a = (int) (key >>> 42);
-			final int b = (int) (key >>> 21 & MASK);
-			final int c = (int) (key & MASK);
+			final int a = unpack(key >>> 42);
+			final int b = unpack(key >>> 21);
+			final int c = unpack(key);
 			return accumulator.apply(acc, a, b, c, value);
 		});
 	}
 
 	public long reduceKeys(final long identity, final KeysToLongAccumulator accumulator) {
 		return baseMap.reduceKeys(identity, (acc, key) -> {
-			final int a = (int) (key >>> 42);
-			final int b = (int) (key >>> 21 & MASK);
-			final int c = (int) (key & MASK);
+			final int a = unpack(key >>> 42);
+			final int b = unpack(key >>> 21);
+			final int c = unpack(key);
 			return accumulator.apply(acc, a, b, c);
 		});
 	}
@@ -116,17 +143,15 @@ public final class IntTripleLongMap {
 	}
 
 	public int[][] keys() {
-		final int size = baseMap.size();
-		final int[][] res = new int[3][size];
-		final long[] keys = baseMap.keys();
-		for (int i = 0; i < size; i++) {
-			final long key = keys[i];
-			final int a = (int) (key >>> 42);
-			final int b = (int) (key >>> 21 & MASK);
-			final int c = (int) (key & MASK);
-			res[0][i] = a;
-			res[1][i] = b;
-			res[2][i] = c;
+		final int[][] res = new int[3][baseMap.size()];
+		final int stamp = baseMap.currentStamp();
+		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
+			if (baseMap.stamps[i] != stamp) continue;
+			final long key = baseMap.keys[i];
+			res[0][idx] = unpack(key >>> 42);
+			res[1][idx] = unpack(key >>> 21);
+			res[2][idx] = unpack(key);
+			idx++;
 		}
 		return res;
 	}
@@ -136,18 +161,16 @@ public final class IntTripleLongMap {
 	}
 
 	public long[][] entries() {
-		final int size = baseMap.size();
-		final long[][] res = new long[4][size];
-		final long[][] entries = baseMap.entries();
-		for (int i = 0; i < size; i++) {
-			final long key = entries[0][i], value = entries[1][i];
-			final int a = (int) (key >>> 42);
-			final int b = (int) (key >>> 21 & MASK);
-			final int c = (int) (key & MASK);
-			res[0][i] = a;
-			res[1][i] = b;
-			res[2][i] = c;
-			res[3][i] = value;
+		final long[][] res = new long[4][baseMap.size()];
+		final int stamp = baseMap.currentStamp();
+		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
+			if (baseMap.stamps[i] != stamp) continue;
+			final long key = baseMap.keys[i];
+			res[0][idx] = unpack(key >>> 42);
+			res[1][idx] = unpack(key >>> 21);
+			res[2][idx] = unpack(key);
+			res[3][idx] = baseMap.values[i];
+			idx++;
 		}
 		return res;
 	}

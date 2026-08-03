@@ -29,17 +29,17 @@
 
 ### 1. コンストラクタ
 
-| クラス        | コンストラクタ                               | 説明                                |
-|---------------|----------------------------------------------|-------------------------------------|
-| `IntIntMap`   | `IntIntMap()`                                | 初期容量1024、`defaultValue`は0。   |
-| `IntIntMap`   | `IntIntMap(initialCapacity)`                 | 初期容量を指定。`defaultValue`は0。 |
-| `IntIntMap`   | `IntIntMap(initialCapacity, defaultValue)`   | 初期容量と未存在時の既定値を指定。  |
-| `LongIntMap`  | `LongIntMap()`                               | 初期容量1024、`defaultValue`は0。   |
-| `LongIntMap`  | `LongIntMap(initialCapacity)`                | 初期容量を指定。`defaultValue`は0。 |
-| `LongIntMap`  | `LongIntMap(initialCapacity, defaultValue)`  | 初期容量と未存在時の既定値を指定。  |
-| `LongLongMap` | `LongLongMap()`                              | 初期容量1024、`defaultValue`は0。   |
-| `LongLongMap` | `LongLongMap(initialCapacity)`               | 初期容量を指定。`defaultValue`は0。 |
-| `LongLongMap` | `LongLongMap(initialCapacity, defaultValue)` | 初期容量と未存在時の既定値を指定。  |
+| クラス        | コンストラクタ                               | 説明                                      |
+|---------------|----------------------------------------------|-------------------------------------------|
+| `IntIntMap`   | `IntIntMap()`                                | 初期想定要素数1024、`defaultValue`は0。   |
+| `IntIntMap`   | `IntIntMap(expectedSize)`                    | 初期想定要素数を指定。`defaultValue`は0。 |
+| `IntIntMap`   | `IntIntMap(expectedSize, defaultValue)`      | 初期想定要素数と未存在時の既定値を指定。  |
+| `LongIntMap`  | `LongIntMap()`                               | 初期想定要素数1024、`defaultValue`は0。   |
+| `LongIntMap`  | `LongIntMap(expectedSize)`                   | 初期想定要素数を指定。`defaultValue`は0。 |
+| `LongIntMap`  | `LongIntMap(expectedSize, defaultValue)`     | 初期想定要素数と未存在時の既定値を指定。  |
+| `LongLongMap` | `LongLongMap()`                              | 初期想定要素数1024、`defaultValue`は0。   |
+| `LongLongMap` | `LongLongMap(expectedSize)`                  | 初期想定要素数を指定。`defaultValue`は0。 |
+| `LongLongMap` | `LongLongMap(expectedSize, defaultValue)`    | 初期想定要素数と未存在時の既定値を指定。  |
 
 ### 2. 参照・判定系メソッド
 
@@ -61,7 +61,7 @@
 | `putIfAbsent(key, value)`                | `int` / `long` | 未存在時のみ挿入。                                             |
 | `add(key, delta)`                        | `int` / `long` | 既存値に加算。未存在時は `defaultValue + delta` で作成。       |
 | `increment(key)` / `decrement(key)`      | `int` / `long` | `defaultValue + 1` / `defaultValue - 1` を未存在時の値とする。 |
-| `addOrDefault(key, delta, defaultValue)` | `int` / `long` | 未存在時は引数の `defaultValue` をそのまま格納。               |
+| `addOrDefault(key, delta, absentValue)`  | `int` / `long` | 未存在時は引数の `absentValue` をそのまま格納。                |
 | `merge(key, value, op)`                  | `int` / `long` | 既存時 `op(old, value)`、未存在時は `value` で作成。           |
 | `remove(key)`                            | `boolean`      | キー削除。                                                     |
 | `clear()`                                | `void`         | 全削除。                                                       |
@@ -107,8 +107,10 @@ public class Example {
 
 - `get` は未存在キーに対して設定済みの `defaultValue` を返しますが、キーを挿入しません。
 - `getOrDefault` は呼び出し単位の既定値であり、設定済みの `defaultValue` は変更しません。
+- `setDefaultValue` は既存エントリの値を変更せず、未存在キーの取得と今後の `add` / `increment` / `decrement` に適用されます。
 - `add` は未存在キーを `defaultValue + delta` で作成します。明示的な初期格納値を指定する場合は `addOrDefault` を使います。
 - `containsKey` を使うと、格納値が `defaultValue` と同じ場合でも存在性を判定できます。
+- `expectedSize` は内部配列長ではなく、リサイズせずに保持したい初期想定要素数です。
 - 反復順序はハッシュ配置順であり、挿入順ではありません。
 - backward-shift deletion は削除時に同一クラスタの要素を移動する場合があります。
 
@@ -131,6 +133,7 @@ public class Example {
 | **バージョン 1.0** | 2026-04-27 | 整数型マップ3クラス初期実装。                                                                            |
 | **バージョン 2.0** | 2026-05-10 | `forEach`/`forEachKey`/`forEachValue` の引数修飾子や配列生成まわりの軽微な実装調整を実施。               |
 | **バージョン 3.0** | 2026-08-02 | 整数型マップのクラス名を変更し、`defaultValue`、`get()` の未存在時返却、backward-shift deletion を追加。 |
+| **バージョン 3.1** | 2026-08-03 | Pair/Triple Map の直接抽出に対応するため内部フィールドの可視性を調整。                                   |
 
 ### バージョン管理について
 
