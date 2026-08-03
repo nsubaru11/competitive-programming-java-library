@@ -57,7 +57,7 @@ public final class LongLongMap {
 	}
 
 	public long getOrDefault(final long key, final long defaultValue) {
-		for (int hash = hash(key), s = stamps[hash]; s == stamp; hash = (hash + 1) & mask, s = stamps[hash]) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
 		return defaultValue;
