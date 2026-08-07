@@ -23,6 +23,9 @@
 	- `IntBinaryOperator`（`IntTripleIntMap#merge`）
 	- `LongBinaryOperator`（`IntTripleLongMap#merge`）
 	- `IntConsumer`, `LongConsumer`
+- `lib.util.function.*`
+	- `IntTernaryConsumer`, `IntQuaternaryConsumer`, `IntTernaryLongConsumer`
+	- `IntTernaryOperator`, `IntTernaryToLongFunction`
 
 ## 主な機能（メソッド一覧）
 
@@ -49,16 +52,19 @@
 
 ### 3. 更新系メソッド
 
-| メソッド                                     | 戻り値の型     | 説明                                                                           |
-|----------------------------------------------|----------------|--------------------------------------------------------------------------------|
-| `put(a, b, c, value)`                        | `int` / `long` | 値を設定。                                                                     |
-| `putIfAbsent(a, b, c, value)`                | `int` / `long` | 未存在時のみ挿入。                                                             |
-| `add(a, b, c, delta)`                        | `int` / `long` | 既存値へ加算。未存在時は `defaultValue + delta` で作成。                       |
-| `increment(a, b, c)` / `decrement(a, b, c)`  | `int` / `long` | 既存値へ`+1` / `-1`。未存在時は`defaultValue + 1` / `defaultValue - 1`で作成。 |
-| `addOrDefault(a, b, c, delta, absentValue)`  | `int` / `long` | 未存在時は `absentValue` で作成。                                              |
-| `merge(a, b, c, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。                                               |
-| `remove(a, b, c)`                            | `boolean`      | キー削除。                                                                     |
-| `clear()`                                    | `void`         | 全削除。                                                                       |
+| メソッド                                    | 戻り値の型     | 説明                                                                           |
+|---------------------------------------------|----------------|--------------------------------------------------------------------------------|
+| `put(a, b, c, value)`                       | `int` / `long` | 値を設定。                                                                     |
+| `putIfAbsent(a, b, c, value)`               | `int` / `long` | 未存在時のみ挿入。                                                             |
+| `computeIfAbsent(a, b, c, op)`              | `int` / `long` | 未存在時だけ3成分のキーへ `op` を適用して挿入。                                |
+| `computeMin(a, b, c, value)`                | `int` / `long` | 既存値との最小値を格納。未存在時は `value` を格納。                            |
+| `computeMax(a, b, c, value)`                | `int` / `long` | 既存値との最大値を格納。未存在時は `value` を格納。                            |
+| `add(a, b, c, delta)`                       | `int` / `long` | 既存値へ加算。未存在時は `defaultValue + delta` で作成。                       |
+| `increment(a, b, c)` / `decrement(a, b, c)` | `int` / `long` | 既存値へ`+1` / `-1`。未存在時は`defaultValue + 1` / `defaultValue - 1`で作成。 |
+| `addOrDefault(a, b, c, delta, absentValue)` | `int` / `long` | 未存在時は `absentValue` で作成。                                              |
+| `merge(a, b, c, value, op)`                 | `int` / `long` | 既存時 `op(old, value)` を適用。                                               |
+| `remove(a, b, c)`                           | `boolean`      | キー削除。                                                                     |
+| `clear()`                                   | `void`         | 全削除。                                                                       |
 
 ### 4. 走査・抽出系メソッド
 
@@ -76,10 +82,12 @@
 
 ### 5. クラス別差分
 
-| クラス             | 値型   | `merge` の演算子型   |
-|--------------------|--------|----------------------|
-| `IntTripleIntMap`  | `int`  | `IntBinaryOperator`  |
-| `IntTripleLongMap` | `long` | `LongBinaryOperator` |
+| クラス             | 値型   | `computeIfAbsent` の関数型 | `forEach` の型           | `merge` の演算子型   |
+|--------------------|--------|----------------------------|--------------------------|----------------------|
+| `IntTripleIntMap`  | `int`  | `IntTernaryOperator`       | `IntQuaternaryConsumer`  | `IntBinaryOperator`  |
+| `IntTripleLongMap` | `long` | `IntTernaryToLongFunction` | `IntTernaryLongConsumer` | `LongBinaryOperator` |
+
+`reduce` / `reduceKeys` は各クラス内の `EntryToLongAccumulator` / `KeysToLongAccumulator` を使います。いずれも第1引数は現在の累積値です。
 
 ## 利用例
 
@@ -127,6 +135,7 @@ public class Example {
 | **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加し、`final` 修飾子の付与やキー分解コードの統一など軽微な実装調整を実施。 |
 | **バージョン 3.0** | 2026-08-02 | 委譲先を `LongIntMap` / `LongLongMap` に変更し、未存在キーの `get` が0を返す仕様に対応。                                                       |
 | **バージョン 4.0** | 2026-08-03 | 符号付き21bitのオフセットパック、変更可能な `defaultValue`、抽出時の中間配列削除に対応。                                                       |
+| **バージョン 5.0** | 2026-08-08 | compute 系 API を追加。走査・通常変換は汎用 function 型、reduce は用途固有 Accumulator 型へ整理。                                              |
 
 ### バージョン管理について
 

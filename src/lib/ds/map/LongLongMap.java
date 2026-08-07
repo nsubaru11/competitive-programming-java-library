@@ -2,7 +2,10 @@ package lib.ds.map;
 
 import static java.lang.Math.*;
 
+import java.util.concurrent.*;
 import java.util.function.*;
+
+import lib.util.function.*;
 
 /**
  * {@code long} 型のキーと値を保持する、オープンアドレス方式の高速マップです。
@@ -11,10 +14,12 @@ import java.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class LongLongMap {
+	private static final long SALT64 = ThreadLocalRandom.current().nextLong();
+
 	long[] keys, values;
 	int[] stamps;
-	private int stamp, size, capacity, resizeThreshold, mask;
 	private long defaultValue;
+	private int stamp, size, capacity, resizeThreshold, mask;
 
 	public LongLongMap() {
 		this(1024, 0);
@@ -37,10 +42,10 @@ public final class LongLongMap {
 	}
 
 	private static int normalizeCapacity(final int expectedSize) {
-		final long required = ((long) expectedSize * 4 + 2) / 3;
-		int cap = max(16, (int) required);
+		final int required = (expectedSize * 4 + 2) / 3;
+		if (required <= 16) return 16;
+		int cap = required;
 		if ((cap & (cap - 1)) == 0) return cap;
-		cap--;
 		cap |= cap >>> 1;
 		cap |= cap >>> 2;
 		cap |= cap >>> 4;
@@ -171,6 +176,46 @@ public final class LongLongMap {
 		return values[hash] = value;
 	}
 
+	public long computeIfAbsent(final long key, final LongUnaryOperator op) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash];
+		}
+		return putIfAbsent(key, op.applyAsLong(key));
+	}
+
+	public long computeMin(final long key, final long value) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash] = min(values[hash], value);
+		}
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		return values[hash] = value;
+	}
+
+	public long computeMax(final long key, final long value) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash] = max(values[hash], value);
+		}
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		return values[hash] = value;
+	}
+
 	public void clear() {
 		size = 0;
 		stamp++;
@@ -188,7 +233,7 @@ public final class LongLongMap {
 		return stamp;
 	}
 
-	public void forEach(final LongLongConsumer action) {
+	public void forEach(final LongBinaryConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(keys[i], values[i]);
@@ -287,18 +332,23 @@ public final class LongLongMap {
 	}
 
 	private int hash(final long key) {
-		long h = key;
+		long h = key ^ SALT64;
 		h ^= h >>> 33;
 		h *= 0xff51afd7ed558ccdL;
 		h ^= h >>> 33;
 		return (int) h & mask;
 	}
 
+	/**
+	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 */
 	public interface EntryToLongAccumulator {
+		/**
+		 * @param accumulator 現在の累積値
+		 * @param key         キー
+		 * @param value       値
+		 * @return 次の累積値
+		 */
 		long apply(long accumulator, long key, long value);
-	}
-
-	public interface LongLongConsumer {
-		void accept(long key, long value);
 	}
 }

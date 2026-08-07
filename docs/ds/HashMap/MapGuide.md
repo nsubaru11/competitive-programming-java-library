@@ -2,9 +2,10 @@
 
 ## 概要
 
-このガイドは以下3クラスをまとめて説明します。
+このガイドは以下4クラスをまとめて説明します。
 
 - `IntIntMap`（`int -> int`）
+- `IntLongMap`（`int -> long`）
 - `LongIntMap`（`long -> int`）
 - `LongLongMap`（`long -> long`）
 
@@ -22,8 +23,10 @@
 
 - `java.util.function.*`
 	- `IntBinaryOperator`（`IntIntMap`, `LongIntMap`）
-	- `LongBinaryOperator`（`LongLongMap`）
+	- `LongBinaryOperator`（`IntLongMap`, `LongLongMap`）
 	- `IntConsumer`, `LongConsumer`
+- `lib.util.function.*`
+	- `IntBinaryConsumer`, `IntLongConsumer`, `LongIntConsumer`, `LongBinaryConsumer`
 
 ## 主な機能（メソッド一覧）
 
@@ -34,6 +37,9 @@
 | `IntIntMap`   | `IntIntMap()`                                | 初期想定要素数1024、`defaultValue`は0。   |
 | `IntIntMap`   | `IntIntMap(expectedSize)`                    | 初期想定要素数を指定。`defaultValue`は0。 |
 | `IntIntMap`   | `IntIntMap(expectedSize, defaultValue)`      | 初期想定要素数と未存在時の既定値を指定。  |
+| `IntLongMap`  | `IntLongMap()`                               | 初期想定要素数1024、`defaultValue`は0。   |
+| `IntLongMap`  | `IntLongMap(expectedSize)`                   | 初期想定要素数を指定。`defaultValue`は0。 |
+| `IntLongMap`  | `IntLongMap(expectedSize, defaultValue)`     | 初期想定要素数と未存在時の既定値を指定。  |
 | `LongIntMap`  | `LongIntMap()`                               | 初期想定要素数1024、`defaultValue`は0。   |
 | `LongIntMap`  | `LongIntMap(expectedSize)`                   | 初期想定要素数を指定。`defaultValue`は0。 |
 | `LongIntMap`  | `LongIntMap(expectedSize, defaultValue)`     | 初期想定要素数と未存在時の既定値を指定。  |
@@ -59,6 +65,9 @@
 |------------------------------------------|----------------|----------------------------------------------------------------|
 | `put(key, value)`                        | `int` / `long` | 値を設定して設定後の値を返す。                                 |
 | `putIfAbsent(key, value)`                | `int` / `long` | 未存在時のみ挿入。                                             |
+| `computeIfAbsent(key, op)`               | `int` / `long` | 未存在時だけキーへ `op` を適用して挿入。                       |
+| `computeMin(key, value)`                 | `int` / `long` | 既存値との最小値を格納。未存在時は `value` を格納。            |
+| `computeMax(key, value)`                 | `int` / `long` | 既存値との最大値を格納。未存在時は `value` を格納。            |
 | `add(key, delta)`                        | `int` / `long` | 既存値に加算。未存在時は `defaultValue + delta` で作成。       |
 | `increment(key)` / `decrement(key)`      | `int` / `long` | `defaultValue + 1` / `defaultValue - 1` を未存在時の値とする。 |
 | `addOrDefault(key, delta, absentValue)`  | `int` / `long` | 未存在時は引数の `absentValue` をそのまま格納。                |
@@ -82,11 +91,14 @@
 
 ### 5. クラス別差分
 
-| クラス        | キー型 | 値型   | `merge` の演算子型   |
-|---------------|--------|--------|----------------------|
-| `IntIntMap`   | `int`  | `int`  | `IntBinaryOperator`  |
-| `LongIntMap`  | `long` | `int`  | `IntBinaryOperator`  |
-| `LongLongMap` | `long` | `long` | `LongBinaryOperator` |
+| クラス        | キー型 | 値型   | `forEach` の型       | `merge` の演算子型   |
+|---------------|--------|--------|----------------------|----------------------|
+| `IntIntMap`   | `int`  | `int`  | `IntBinaryConsumer`  | `IntBinaryOperator`  |
+| `IntLongMap`  | `int`  | `long` | `IntLongConsumer`    | `LongBinaryOperator` |
+| `LongIntMap`  | `long` | `int`  | `LongIntConsumer`    | `IntBinaryOperator`  |
+| `LongLongMap` | `long` | `long` | `LongBinaryConsumer` | `LongBinaryOperator` |
+
+`reduce` は各クラス固有の `EntryToLongAccumulator` を受け取ります。第1引数が現在の累積値、その後がキーと値です。
 
 ## 利用例
 
@@ -128,12 +140,13 @@ public class Example {
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                                                                     |
-|:-------------------|:-----------|:---------------------------------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2026-04-27 | 整数型マップ3クラス初期実装。                                                                            |
-| **バージョン 2.0** | 2026-05-10 | `forEach`/`forEachKey`/`forEachValue` の引数修飾子や配列生成まわりの軽微な実装調整を実施。               |
-| **バージョン 3.0** | 2026-08-02 | 整数型マップのクラス名を変更し、`defaultValue`、`get()` の未存在時返却、backward-shift deletion を追加。 |
-| **バージョン 3.1** | 2026-08-03 | Pair/Triple Map の直接抽出に対応するため内部フィールドの可視性を調整。                                   |
+| バージョン番号     | 年月日     | 詳細                                                                                                                      |
+|:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2026-04-27 | 整数型マップ3クラス初期実装。                                                                                             |
+| **バージョン 2.0** | 2026-05-10 | `forEach`/`forEachKey`/`forEachValue` の引数修飾子や配列生成まわりの軽微な実装調整を実施。                                |
+| **バージョン 3.0** | 2026-08-02 | 整数型マップのクラス名を変更し、`defaultValue`、`get()` の未存在時返却、backward-shift deletion を追加。                  |
+| **バージョン 3.1** | 2026-08-03 | Pair/Triple Map の直接抽出に対応するため内部フィールドの可視性を調整。                                                    |
+| **バージョン 4.0** | 2026-08-08 | `IntLongMap` と compute 系 API を追加し、走査 callback を汎用 function 型へ統一。reduce は用途固有 Accumulator 名を維持。 |
 
 ### バージョン管理について
 

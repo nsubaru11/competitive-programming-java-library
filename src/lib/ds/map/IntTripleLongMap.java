@@ -2,6 +2,8 @@ package lib.ds.map;
 
 import java.util.function.*;
 
+import lib.util.function.*;
+
 /**
  * 3つの {@code int} をキー、{@code long} を値として保持する高速マップです。
  * 各キー成分をオフセット付きの符号付き21bitとして1つの {@code long} に圧縮し、
@@ -86,6 +88,18 @@ public final class IntTripleLongMap {
 		return baseMap.putIfAbsent(pack(a, b, c), value);
 	}
 
+	public long computeIfAbsent(final int a, final int b, final int c, final IntTernaryToLongFunction op) {
+		return baseMap.computeIfAbsent(pack(a, b, c), _ -> op.applyAsLong(a, b, c));
+	}
+
+	public long computeMin(final int a, final int b, final int c, final long value) {
+		return baseMap.computeMin(pack(a, b, c), value);
+	}
+
+	public long computeMax(final int a, final int b, final int c, final long value) {
+		return baseMap.computeMax(pack(a, b, c), value);
+	}
+
 	public void clear() {
 		baseMap.clear();
 	}
@@ -98,7 +112,7 @@ public final class IntTripleLongMap {
 		return baseMap.isEmpty();
 	}
 
-	public void forEach(final IntTripleLongConsumer action) {
+	public void forEach(final IntTernaryLongConsumer action) {
 		baseMap.forEach((key, value) -> {
 			final int a = unpack(key >>> 42);
 			final int b = unpack(key >>> 21);
@@ -107,7 +121,7 @@ public final class IntTripleLongMap {
 		});
 	}
 
-	public void forEachKey(final IntTripleConsumer action) {
+	public void forEachKey(final IntTernaryConsumer action) {
 		baseMap.forEachKey(key -> {
 			final int a = unpack(key >>> 42);
 			final int b = unpack(key >>> 21);
@@ -175,19 +189,31 @@ public final class IntTripleLongMap {
 		return res;
 	}
 
+	/**
+	 * 現在の累積値と3成分のキーを受け取り、次の累積値を返します。
+	 */
 	public interface KeysToLongAccumulator {
+		/**
+		 * @param accumulator 現在の累積値
+		 * @param key1        キー1
+		 * @param key2        キー2
+		 * @param key3        キー3
+		 * @return 次の累積値
+		 */
 		long apply(long accumulator, int key1, int key2, int key3);
 	}
 
+	/**
+	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 */
 	public interface EntryToLongAccumulator {
+		/**
+		 * @param accumulator 現在の累積値
+		 * @param key1        キー1
+		 * @param key2        キー2
+		 * @param key3        キー3
+		 * @return 次の累積値
+		 */
 		long apply(long accumulator, int key1, int key2, int key3, long value);
-	}
-
-	public interface IntTripleLongConsumer {
-		void accept(int a, int b, int c, long value);
-	}
-
-	public interface IntTripleConsumer {
-		void accept(int a, int b, int c);
 	}
 }

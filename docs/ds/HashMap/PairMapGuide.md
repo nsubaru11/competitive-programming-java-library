@@ -23,6 +23,9 @@
 	- `IntBinaryOperator`（`IntPairIntMap#merge`）
 	- `LongBinaryOperator`（`IntPairLongMap#merge`）
 	- `IntConsumer`, `LongConsumer`
+- `lib.util.function.*`
+	- `IntBinaryConsumer`, `IntTernaryConsumer`, `IntBinaryLongConsumer`
+	- `IntBinaryToLongFunction`
 
 ## 主な機能（メソッド一覧）
 
@@ -49,16 +52,19 @@
 
 ### 3. 更新系メソッド
 
-| メソッド                                  | 戻り値の型     | 説明                                                                           |
-|-------------------------------------------|----------------|--------------------------------------------------------------------------------|
-| `put(a, b, value)`                        | `int` / `long` | 値を設定。                                                                     |
-| `putIfAbsent(a, b, value)`                | `int` / `long` | 未存在時のみ挿入。                                                             |
-| `add(a, b, delta)`                        | `int` / `long` | 既存値へ加算。未存在時は `defaultValue + delta` で作成。                       |
-| `increment(a, b)` / `decrement(a, b)`     | `int` / `long` | 既存値へ`+1` / `-1`。未存在時は`defaultValue + 1` / `defaultValue - 1`で作成。 |
-| `addOrDefault(a, b, delta, absentValue)`  | `int` / `long` | 未存在時は `absentValue` で作成。                                              |
-| `merge(a, b, value, op)`                  | `int` / `long` | 既存時 `op(old, value)` を適用。                                               |
-| `remove(a, b)`                            | `boolean`      | キー削除。                                                                     |
-| `clear()`                                 | `void`         | 全削除。                                                                       |
+| メソッド                                 | 戻り値の型     | 説明                                                                           |
+|------------------------------------------|----------------|--------------------------------------------------------------------------------|
+| `put(a, b, value)`                       | `int` / `long` | 値を設定。                                                                     |
+| `putIfAbsent(a, b, value)`               | `int` / `long` | 未存在時のみ挿入。                                                             |
+| `computeIfAbsent(a, b, op)`              | `int` / `long` | 未存在時だけ2成分のキーへ `op` を適用して挿入。                                |
+| `computeMin(a, b, value)`                | `int` / `long` | 既存値との最小値を格納。未存在時は `value` を格納。                            |
+| `computeMax(a, b, value)`                | `int` / `long` | 既存値との最大値を格納。未存在時は `value` を格納。                            |
+| `add(a, b, delta)`                       | `int` / `long` | 既存値へ加算。未存在時は `defaultValue + delta` で作成。                       |
+| `increment(a, b)` / `decrement(a, b)`    | `int` / `long` | 既存値へ`+1` / `-1`。未存在時は`defaultValue + 1` / `defaultValue - 1`で作成。 |
+| `addOrDefault(a, b, delta, absentValue)` | `int` / `long` | 未存在時は `absentValue` で作成。                                              |
+| `merge(a, b, value, op)`                 | `int` / `long` | 既存時 `op(old, value)` を適用。                                               |
+| `remove(a, b)`                           | `boolean`      | キー削除。                                                                     |
+| `clear()`                                | `void`         | 全削除。                                                                       |
 
 ### 4. 走査・抽出系メソッド
 
@@ -76,10 +82,12 @@
 
 ### 5. クラス別差分
 
-| クラス           | 値型   | `merge` の演算子型   |
-|------------------|--------|----------------------|
-| `IntPairIntMap`  | `int`  | `IntBinaryOperator`  |
-| `IntPairLongMap` | `long` | `LongBinaryOperator` |
+| クラス           | 値型   | `computeIfAbsent` の関数型 | `forEach` の型          | `merge` の演算子型   |
+|------------------|--------|----------------------------|-------------------------|----------------------|
+| `IntPairIntMap`  | `int`  | `IntBinaryOperator`        | `IntTernaryConsumer`    | `IntBinaryOperator`  |
+| `IntPairLongMap` | `long` | `IntBinaryToLongFunction`  | `IntBinaryLongConsumer` | `LongBinaryOperator` |
+
+`reduce` / `reduceKeys` は各クラス内の `EntryToLongAccumulator` / `KeysToLongAccumulator` を使います。いずれも第1引数は現在の累積値です。
 
 ## 利用例
 
@@ -119,12 +127,13 @@ public class Example {
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                                                           |
-|:-------------------|:-----------|:-----------------------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2026-04-27 | Pair 系2クラス初期実装。                                                                       |
-| **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加。その他軽微な実装調整。 |
-| **バージョン 3.0** | 2026-08-02 | 委譲先を `LongIntMap` / `LongLongMap` に変更し、未存在キーの `get` が0を返す仕様に対応。       |
-| **バージョン 4.0** | 2026-08-03 | コンストラクタと変更可能な `defaultValue` を追加し、抽出時の中間配列生成を削除。               |
+| バージョン番号     | 年月日     | 詳細                                                                                              |
+|:-------------------|:-----------|:--------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2026-04-27 | Pair 系2クラス初期実装。                                                                          |
+| **バージョン 2.0** | 2026-05-10 | `reduce` / `reduceKeys` / `reduceValues` と対応 Accumulator API を追加。その他軽微な実装調整。    |
+| **バージョン 3.0** | 2026-08-02 | 委譲先を `LongIntMap` / `LongLongMap` に変更し、未存在キーの `get` が0を返す仕様に対応。          |
+| **バージョン 4.0** | 2026-08-03 | コンストラクタと変更可能な `defaultValue` を追加し、抽出時の中間配列生成を削除。                  |
+| **バージョン 5.0** | 2026-08-08 | compute 系 API を追加。走査・通常変換は汎用 function 型、reduce は用途固有 Accumulator 型へ整理。 |
 
 ### バージョン管理について
 

@@ -2,7 +2,10 @@ package lib.ds.map;
 
 import static java.lang.Math.*;
 
+import java.util.concurrent.*;
 import java.util.function.*;
+
+import lib.util.function.*;
 
 /**
  * {@code int} 型のキーと値を保持する、オープンアドレス方式の高速マップです。
@@ -11,6 +14,8 @@ import java.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class IntIntMap {
+	private static final int SALT32 = ThreadLocalRandom.current().nextInt();
+
 	int[] keys, values, stamps;
 	private int defaultValue, stamp, size, capacity, resizeThreshold, mask;
 
@@ -35,10 +40,10 @@ public final class IntIntMap {
 	}
 
 	private static int normalizeCapacity(final int expectedSize) {
-		final long required = ((long) expectedSize * 4 + 2) / 3;
-		int cap = max(16, (int) required);
+		final int required = (expectedSize * 4 + 2) / 3;
+		if (required <= 16) return 16;
+		int cap = required;
 		if ((cap & (cap - 1)) == 0) return cap;
-		cap--;
 		cap |= cap >>> 1;
 		cap |= cap >>> 2;
 		cap |= cap >>> 4;
@@ -169,6 +174,46 @@ public final class IntIntMap {
 		return values[hash] = value;
 	}
 
+	public int computeIfAbsent(final int key, final IntUnaryOperator op) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash];
+		}
+		return putIfAbsent(key, op.applyAsInt(key));
+	}
+
+	public int computeMin(final int key, final int value) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash] = min(values[hash], value);
+		}
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		return values[hash] = value;
+	}
+
+	public int computeMax(final int key, final int value) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash] = max(values[hash], value);
+		}
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		return values[hash] = value;
+	}
+
 	public void clear() {
 		size = 0;
 		stamp++;
@@ -182,11 +227,7 @@ public final class IntIntMap {
 		return size == 0;
 	}
 
-	int currentStamp() {
-		return stamp;
-	}
-
-	public void forEach(final IntIntConsumer action) {
+	public void forEach(final IntBinaryConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(keys[i], values[i]);
@@ -284,7 +325,7 @@ public final class IntIntMap {
 	}
 
 	private int hash(final int key) {
-		int h = key;
+		int h = key ^ SALT32;
 		h ^= h >>> 16;
 		h *= 0x7feb352d;
 		h ^= h >>> 15;
@@ -293,11 +334,16 @@ public final class IntIntMap {
 		return h & mask;
 	}
 
+	/**
+	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 */
 	public interface EntryToLongAccumulator {
+		/**
+		 * @param accumulator 現在の累積値
+		 * @param key         キー
+		 * @param value       値
+		 * @return 次の累積値
+		 */
 		long apply(long accumulator, int key, int value);
-	}
-
-	public interface IntIntConsumer {
-		void accept(int key, int value);
 	}
 }

@@ -2,6 +2,8 @@ package lib.ds.map;
 
 import java.util.function.*;
 
+import lib.util.function.*;
+
 /**
  * 2つの {@code int} をキー、{@code int} を値として保持する高速マップです。
  * キーの組を1つの {@code long} に可逆圧縮し、{@link LongIntMap} に処理を委譲します。
@@ -80,6 +82,18 @@ public final class IntPairIntMap {
 		return baseMap.putIfAbsent(pack(a, b), value);
 	}
 
+	public int computeIfAbsent(final int a, final int b, final IntBinaryOperator op) {
+		return baseMap.computeIfAbsent(pack(a, b), _ -> op.applyAsInt(a, b));
+	}
+
+	public int computeMin(final int a, final int b, final int value) {
+		return baseMap.computeMin(pack(a, b), value);
+	}
+
+	public int computeMax(final int a, final int b, final int value) {
+		return baseMap.computeMax(pack(a, b), value);
+	}
+
 	public void clear() {
 		baseMap.clear();
 	}
@@ -92,11 +106,11 @@ public final class IntPairIntMap {
 		return baseMap.isEmpty();
 	}
 
-	public void forEach(final IntPairIntConsumer action) {
+	public void forEach(final IntTernaryConsumer action) {
 		baseMap.forEach((key, value) -> action.accept((int) (key >>> 32), (int) key, value));
 	}
 
-	public void forEachKey(final IntPairConsumer action) {
+	public void forEachKey(final IntBinaryConsumer action) {
 		baseMap.forEachKey(key -> action.accept((int) (key >>> 32), (int) key));
 	}
 
@@ -147,19 +161,30 @@ public final class IntPairIntMap {
 		return res;
 	}
 
+	/**
+	 * 現在の累積値と2成分のキーを受け取り、次の累積値を返します。
+	 */
 	public interface KeysToLongAccumulator {
+		/**
+		 * @param accumulator 現在の累積値
+		 * @param key1        キー1
+		 * @param key2        キー2
+		 * @return 次の累積値
+		 */
 		long apply(long accumulator, int key1, int key2);
 	}
 
+	/**
+	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 */
 	public interface EntryToLongAccumulator {
+		/**
+		 * @param accumulator 現在の累積値
+		 * @param key1        キー1
+		 * @param key2        キー2
+		 * @param value       値
+		 * @return 次の累積値
+		 */
 		long apply(long accumulator, int key1, int key2, int value);
-	}
-
-	public interface IntPairIntConsumer {
-		void accept(int a, int b, int value);
-	}
-
-	public interface IntPairConsumer {
-		void accept(int a, int b);
 	}
 }

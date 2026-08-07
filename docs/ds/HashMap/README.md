@@ -36,6 +36,19 @@
 - **空間計算量**：`IntIntMap` と同様
 - **ガイド**：[MapGuide](./MapGuide.md)
 
+### [IntLongMap](../../../src/lib/ds/map/IntLongMap.java)
+
+- **用途**：`int -> long` の高速マップ
+- **特徴**：
+	- backward-shift deletion による削除
+	- 世代番号を使った `clear()` の O(1) 初期化
+	- 未存在キー用の `defaultValue` を設定可能
+	- `long` 値のカウンタや距離を、`int` キーに対して直接保持可能
+	- `reduce`/`reduceKeys`/`reduceValues` をサポート
+- **時間計算量**：`IntIntMap` と同様
+- **空間計算量**：`IntIntMap` と同様
+- **ガイド**：[MapGuide](./MapGuide.md)
+
 ### [LongLongMap](../../../src/lib/ds/map/LongLongMap.java)
 
 - **用途**：`long -> long` の高速マップ
@@ -82,6 +95,8 @@
 	- 単純な整数キー・整数値の管理なら最優先。
 - **`LongIntMap`**:
 	- 64bit キーや、複合キーを自前で `long` にパックして管理したい場合に選択。
+- **`IntLongMap`**:
+	- キーは32bitで足りる一方、値に64bit整数が必要な場合に選択。
 - **`LongLongMap`**:
 	- 値も `long` で保持したい場合に選択。
 - **`IntPair*Map`**:

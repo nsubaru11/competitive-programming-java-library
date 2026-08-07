@@ -8,35 +8,36 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * {@code long} 型のキーと {@code int} 型の値を保持する、オープンアドレス方式の高速マップです。
+ * {@code int} 型のキーと {@code long} 型の値を保持する、オープンアドレス方式の高速マップです。
  * 線形探索、backward-shift deletion、世代番号による {@code O(1)} の {@link #clear()} を使用し、
  * 未存在キーの取得では設定済みの既定値を返します。
  */
 @SuppressWarnings("unused")
-public final class LongIntMap {
-	private static final long SALT64 = ThreadLocalRandom.current().nextLong();
+public final class IntLongMap {
+	private static final int SALT32 = ThreadLocalRandom.current().nextInt();
 
-	long[] keys;
-	int[] values, stamps;
-	private int defaultValue, stamp, size, capacity, resizeThreshold, mask;
+	int[] keys, stamps;
+	long[] values;
+	private long defaultValue;
+	private int stamp, size, capacity, resizeThreshold, mask;
 
-	public LongIntMap() {
+	public IntLongMap() {
 		this(1024, 0);
 	}
 
-	public LongIntMap(final int expectedSize) {
+	public IntLongMap(final int expectedSize) {
 		this(expectedSize, 0);
 	}
 
-	public LongIntMap(final int expectedSize, final int defaultValue) {
+	public IntLongMap(final int expectedSize, final long defaultValue) {
 		this.defaultValue = defaultValue;
 		capacity = normalizeCapacity(expectedSize);
 		size = 0;
 		stamp = 1;
 		resizeThreshold = capacity - (capacity >>> 2);
 		stamps = new int[capacity];
-		keys = new long[capacity];
-		values = new int[capacity];
+		keys = new int[capacity];
+		values = new long[capacity];
 		mask = capacity - 1;
 	}
 
@@ -53,38 +54,38 @@ public final class LongIntMap {
 		return cap + 1;
 	}
 
-	public int getDefaultValue() {
+	public long getDefaultValue() {
 		return defaultValue;
 	}
 
-	public void setDefaultValue(final int defaultValue) {
+	public void setDefaultValue(final long defaultValue) {
 		this.defaultValue = defaultValue;
 	}
 
-	public int get(final long key) {
+	public long get(final int key) {
 		return getOrDefault(key, defaultValue);
 	}
 
-	public int getOrDefault(final long key, final int defaultValue) {
+	public long getOrDefault(final int key, final long defaultValue) {
 		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
 		return defaultValue;
 	}
 
-	public int increment(final long key) {
+	public long increment(final int key) {
 		return addOrDefault(key, 1, defaultValue + 1);
 	}
 
-	public int decrement(final long key) {
+	public long decrement(final int key) {
 		return addOrDefault(key, -1, defaultValue - 1);
 	}
 
-	public int add(final long key, final int delta) {
+	public long add(final int key, final long delta) {
 		return addOrDefault(key, delta, defaultValue + delta);
 	}
 
-	public int addOrDefault(final long key, final int delta, final int absentValue) {
+	public long addOrDefault(final int key, final long delta, final long absentValue) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] += delta;
@@ -100,7 +101,7 @@ public final class LongIntMap {
 		return values[hash] = absentValue;
 	}
 
-	public int put(final long key, final int value) {
+	public long put(final int key, final long value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = value;
@@ -116,7 +117,7 @@ public final class LongIntMap {
 		return values[hash] = value;
 	}
 
-	public boolean remove(final long key) {
+	public boolean remove(final int key) {
 		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] != key) continue;
 			int hole = hash;
@@ -136,17 +137,17 @@ public final class LongIntMap {
 		return false;
 	}
 
-	public boolean containsKey(final long key) {
+	public boolean containsKey(final int key) {
 		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return true;
 		}
 		return false;
 	}
 
-	public int merge(final long key, final int value, final IntBinaryOperator op) {
+	public long merge(final int key, final long value, final LongBinaryOperator op) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return values[hash] = op.applyAsInt(values[hash], value);
+			if (keys[hash] == key) return values[hash] = op.applyAsLong(values[hash], value);
 		}
 		if (size >= resizeThreshold) {
 			resize();
@@ -159,7 +160,7 @@ public final class LongIntMap {
 		return values[hash] = value;
 	}
 
-	public int putIfAbsent(final long key, final int value) {
+	public long putIfAbsent(final int key, final long value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
@@ -175,15 +176,15 @@ public final class LongIntMap {
 		return values[hash] = value;
 	}
 
-	public int computeIfAbsent(final long key, final LongToIntFunction op) {
+	public long computeIfAbsent(final int key, final IntToLongFunction op) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
-		return putIfAbsent(key, op.applyAsInt(key));
+		return putIfAbsent(key, op.applyAsLong(key));
 	}
 
-	public int computeMin(final long key, final int value) {
+	public long computeMin(final int key, final long value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = min(values[hash], value);
@@ -199,7 +200,7 @@ public final class LongIntMap {
 		return values[hash] = value;
 	}
 
-	public int computeMax(final long key, final int value) {
+	public long computeMax(final int key, final long value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = max(values[hash], value);
@@ -228,25 +229,21 @@ public final class LongIntMap {
 		return size == 0;
 	}
 
-	int currentStamp() {
-		return stamp;
-	}
-
-	public void forEach(final LongIntConsumer action) {
+	public void forEach(final IntLongConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(keys[i], values[i]);
 		}
 	}
 
-	public void forEachKey(final LongConsumer action) {
+	public void forEachKey(final IntConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(keys[i]);
 		}
 	}
 
-	public void forEachValue(final IntConsumer action) {
+	public void forEachValue(final LongConsumer action) {
 		for (int i = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			action.accept(values[i]);
@@ -280,8 +277,8 @@ public final class LongIntMap {
 		return result;
 	}
 
-	public long[] keys() {
-		final long[] res = new long[size];
+	public int[] keys() {
+		final int[] res = new int[size];
 		for (int i = 0, idx = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			res[idx++] = keys[i];
@@ -289,8 +286,8 @@ public final class LongIntMap {
 		return res;
 	}
 
-	public int[] values() {
-		final int[] res = new int[size];
+	public long[] values() {
+		final long[] res = new long[size];
 		for (int i = 0, idx = 0; i < capacity; i++) {
 			if (stamps[i] != stamp) continue;
 			res[idx++] = values[i];
@@ -311,17 +308,17 @@ public final class LongIntMap {
 
 	private void resize() {
 		final int oldCapacity = capacity;
-		final long[] oldKeys = keys;
-		final int[] oldValues = values, oldStamps = stamps;
+		final long[] oldValues = values;
+		final int[] oldKeys = keys, oldStamps = stamps;
 		capacity <<= 1;
 		resizeThreshold = capacity - (capacity >>> 2);
-		keys = new long[capacity];
-		values = new int[capacity];
+		keys = new int[capacity];
+		values = new long[capacity];
 		stamps = new int[capacity];
 		mask = capacity - 1;
 		for (int i = 0; i < oldCapacity; i++) {
 			if (oldStamps[i] != stamp) continue;
-			final long key = oldKeys[i];
+			final int key = oldKeys[i];
 			int hash = hash(key);
 			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
 			stamps[hash] = stamp;
@@ -330,12 +327,14 @@ public final class LongIntMap {
 		}
 	}
 
-	private int hash(final long key) {
-		long h = key ^ SALT64;
-		h ^= h >>> 33;
-		h *= 0xff51afd7ed558ccdL;
-		h ^= h >>> 33;
-		return (int) h & mask;
+	private int hash(final int key) {
+		int h = key ^ SALT32;
+		h ^= h >>> 16;
+		h *= 0x7feb352d;
+		h ^= h >>> 15;
+		h *= 0x846ca68b;
+		h ^= h >>> 16;
+		return h & mask;
 	}
 
 	/**
@@ -348,7 +347,6 @@ public final class LongIntMap {
 		 * @param value       値
 		 * @return 次の累積値
 		 */
-		long apply(long accumulator, long key, int value);
+		long apply(long accumulator, int key, long value);
 	}
-
 }

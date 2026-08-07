@@ -88,6 +88,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Math/NumberPredicates](./docs/math/NumberPredicates)             | 完全数・回文数・フィボナッチ数・アームストロング数・ハッピー数の判定                |
 | [Util/Permutation](./docs/util/Permutation)                       | 配列の辞書順 index/next/prev（int / long / char / 2次元配列対応）                   |
 | [Util/FormatUtils](./docs/util/FormatUtils)                       | 数値・配列の文字列化、小数の固定桁表示、整数のゼロ埋め                              |
+| [Util/Function](./docs/util/Function)                             | プリミティブ特化の汎用関数型インターフェース                                        |
 | [Util/DigitUtils](./docs/util/DigitUtils)                         | 桁数取得、十進表現の反転・並べ替え                                                  |
 | [Math/Polynomial](./docs/math/Polynomial)                         | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                          |
 | [Math/PrimeUtils](./docs/math/PrimeUtils)                         | 一回限りの素数判定・素数個数・エラトステネスの篩                                    |
