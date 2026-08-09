@@ -17,7 +17,7 @@ public final class IntIntMap {
 	private static final int SALT32 = ThreadLocalRandom.current().nextInt();
 
 	int[] keys, values, stamps;
-	private int defaultValue, stamp, size, capacity, resizeThreshold, mask;
+	private int defaultValue, stamp, size, capacity, resizeThreshold, mask, modCount;
 
 	public IntIntMap() {
 		this(1024, 0);
@@ -96,6 +96,7 @@ public final class IntIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = absentValue;
 	}
 
@@ -112,6 +113,7 @@ public final class IntIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
@@ -130,6 +132,7 @@ public final class IntIntMap {
 			}
 			stamps[hole] = 0;
 			size--;
+			modCount++;
 			return true;
 		}
 		return false;
@@ -155,6 +158,7 @@ public final class IntIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
@@ -171,6 +175,7 @@ public final class IntIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
@@ -179,10 +184,22 @@ public final class IntIntMap {
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
-		return putIfAbsent(key, op.applyAsInt(key));
+		final int expectedModCount = modCount;
+		final int value = op.applyAsInt(key);
+		if (modCount != expectedModCount) return putIfAbsent(key, value);
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		modCount++;
+		return values[hash] = value;
 	}
 
-	public int computeMin(final int key, final int value) {
+	public int mergeMin(final int key, final int value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = min(values[hash], value);
@@ -195,10 +212,11 @@ public final class IntIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
-	public int computeMax(final int key, final int value) {
+	public int mergeMax(final int key, final int value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = max(values[hash], value);
@@ -211,12 +229,14 @@ public final class IntIntMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
 	public void clear() {
 		size = 0;
 		stamp++;
+		modCount++;
 	}
 
 	public int size() {

@@ -16,7 +16,7 @@
 - backward-shift deletion による削除対応
 - 世代番号を使った `clear()` の O(1) 初期化
 - `defaultValue` と `getOrDefault` による2種類の未存在時の既定値
-- `put` / `addOrDefault` / `merge` / `putIfAbsent` など更新 API が揃っている
+- `put` / `addOrDefault` / `merge` / `mergeMin` / `mergeMax` / `putIfAbsent` など更新 API が揃っている
 - `forEach` / `keys` / `entries` による一括取得が可能
 
 ## 依存関係
@@ -24,7 +24,10 @@
 - `java.util.function.*`
 	- `IntBinaryOperator`（`IntIntMap`, `LongIntMap`）
 	- `LongBinaryOperator`（`IntLongMap`, `LongLongMap`）
+	- `IntUnaryOperator`, `IntToLongFunction`, `LongToIntFunction`, `LongUnaryOperator`（`computeIfAbsent`）
 	- `IntConsumer`, `LongConsumer`
+- `java.util.concurrent.*`
+	- `ThreadLocalRandom`（ハッシュsaltの生成）
 - `lib.util.function.*`
 	- `IntBinaryConsumer`, `IntLongConsumer`, `LongIntConsumer`, `LongBinaryConsumer`
 
@@ -66,8 +69,8 @@
 | `put(key, value)`                        | `int` / `long` | 値を設定して設定後の値を返す。                                 |
 | `putIfAbsent(key, value)`                | `int` / `long` | 未存在時のみ挿入。                                             |
 | `computeIfAbsent(key, op)`               | `int` / `long` | 未存在時だけキーへ `op` を適用して挿入。                       |
-| `computeMin(key, value)`                 | `int` / `long` | 既存値との最小値を格納。未存在時は `value` を格納。            |
-| `computeMax(key, value)`                 | `int` / `long` | 既存値との最大値を格納。未存在時は `value` を格納。            |
+| `mergeMin(key, value)`                   | `int` / `long` | 既存値との最小値を格納。未存在時は `value` を格納。            |
+| `mergeMax(key, value)`                   | `int` / `long` | 既存値との最大値を格納。未存在時は `value` を格納。            |
 | `add(key, delta)`                        | `int` / `long` | 既存値に加算。未存在時は `defaultValue + delta` で作成。       |
 | `increment(key)` / `decrement(key)`      | `int` / `long` | `defaultValue + 1` / `defaultValue - 1` を未存在時の値とする。 |
 | `addOrDefault(key, delta, absentValue)`  | `int` / `long` | 未存在時は引数の `absentValue` をそのまま格納。                |
@@ -91,12 +94,12 @@
 
 ### 5. クラス別差分
 
-| クラス        | キー型 | 値型   | `forEach` の型       | `merge` の演算子型   |
-|---------------|--------|--------|----------------------|----------------------|
-| `IntIntMap`   | `int`  | `int`  | `IntBinaryConsumer`  | `IntBinaryOperator`  |
-| `IntLongMap`  | `int`  | `long` | `IntLongConsumer`    | `LongBinaryOperator` |
-| `LongIntMap`  | `long` | `int`  | `LongIntConsumer`    | `IntBinaryOperator`  |
-| `LongLongMap` | `long` | `long` | `LongBinaryConsumer` | `LongBinaryOperator` |
+| クラス        | キー型 | 値型   | `computeIfAbsent` の関数型 | `forEach` の型       | `merge` の演算子型   |
+|---------------|--------|--------|----------------------------|----------------------|----------------------|
+| `IntIntMap`   | `int`  | `int`  | `IntUnaryOperator`         | `IntBinaryConsumer`  | `IntBinaryOperator`  |
+| `IntLongMap`  | `int`  | `long` | `IntToLongFunction`        | `IntLongConsumer`    | `LongBinaryOperator` |
+| `LongIntMap`  | `long` | `int`  | `LongToIntFunction`        | `LongIntConsumer`    | `IntBinaryOperator`  |
+| `LongLongMap` | `long` | `long` | `LongUnaryOperator`        | `LongBinaryConsumer` | `LongBinaryOperator` |
 
 `reduce` は各クラス固有の `EntryToLongAccumulator` を受け取ります。第1引数が現在の累積値、その後がキーと値です。
 
@@ -120,6 +123,7 @@ public class Example {
 - `get` は未存在キーに対して設定済みの `defaultValue` を返しますが、キーを挿入しません。
 - `getOrDefault` は呼び出し単位の既定値であり、設定済みの `defaultValue` は変更しません。
 - `setDefaultValue` は既存エントリの値を変更せず、未存在キーの取得と今後の `add` / `increment` / `decrement` に適用されます。
+- `computeIfAbsent` の関数内で同じマップが構造変更された場合は、関数適用後にキーを再探索します。
 - `add` は未存在キーを `defaultValue + delta` で作成します。明示的な初期格納値を指定する場合は `addOrDefault` を使います。
 - `containsKey` を使うと、格納値が `defaultValue` と同じ場合でも存在性を判定できます。
 - `expectedSize` は内部配列長ではなく、リサイズせずに保持したい初期想定要素数です。
@@ -140,13 +144,13 @@ public class Example {
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                                                                                      |
-|:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2026-04-27 | 整数型マップ3クラス初期実装。                                                                                             |
-| **バージョン 2.0** | 2026-05-10 | `forEach`/`forEachKey`/`forEachValue` の引数修飾子や配列生成まわりの軽微な実装調整を実施。                                |
-| **バージョン 3.0** | 2026-08-02 | 整数型マップのクラス名を変更し、`defaultValue`、`get()` の未存在時返却、backward-shift deletion を追加。                  |
-| **バージョン 3.1** | 2026-08-03 | Pair/Triple Map の直接抽出に対応するため内部フィールドの可視性を調整。                                                    |
-| **バージョン 4.0** | 2026-08-08 | `IntLongMap` と compute 系 API を追加し、走査 callback を汎用 function 型へ統一。reduce は用途固有 Accumulator 名を維持。 |
+| バージョン番号     | 年月日     | 詳細                                                                                                                                               |
+|:-------------------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2026-04-27 | 整数型マップ3クラス初期実装。                                                                                                                      |
+| **バージョン 2.0** | 2026-05-10 | `forEach`/`forEachKey`/`forEachValue` の引数修飾子や配列生成まわりの軽微な実装調整を実施。                                                         |
+| **バージョン 3.0** | 2026-08-02 | 整数型マップのクラス名を変更し、`defaultValue`、`get()` の未存在時返却、backward-shift deletion を追加。                                           |
+| **バージョン 3.1** | 2026-08-03 | Pair/Triple Map の直接抽出に対応するため内部フィールドの可視性を調整。                                                                             |
+| **バージョン 4.0** | 2026-08-08 | `IntLongMap`、`computeIfAbsent`、`mergeMin`、`mergeMax` を追加し、走査 callback を汎用 function 型へ統一。reduce は用途固有 Accumulator 名を維持。 |
 
 ### バージョン管理について
 

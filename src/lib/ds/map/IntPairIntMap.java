@@ -86,12 +86,12 @@ public final class IntPairIntMap {
 		return baseMap.computeIfAbsent(pack(a, b), _ -> op.applyAsInt(a, b));
 	}
 
-	public int computeMin(final int a, final int b, final int value) {
-		return baseMap.computeMin(pack(a, b), value);
+	public int mergeMin(final int a, final int b, final int value) {
+		return baseMap.mergeMin(pack(a, b), value);
 	}
 
-	public int computeMax(final int a, final int b, final int value) {
-		return baseMap.computeMax(pack(a, b), value);
+	public int mergeMax(final int a, final int b, final int value) {
+		return baseMap.mergeMax(pack(a, b), value);
 	}
 
 	public void clear() {

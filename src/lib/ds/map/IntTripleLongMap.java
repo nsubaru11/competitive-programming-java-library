@@ -92,12 +92,12 @@ public final class IntTripleLongMap {
 		return baseMap.computeIfAbsent(pack(a, b, c), _ -> op.applyAsLong(a, b, c));
 	}
 
-	public long computeMin(final int a, final int b, final int c, final long value) {
-		return baseMap.computeMin(pack(a, b, c), value);
+	public long mergeMin(final int a, final int b, final int c, final long value) {
+		return baseMap.mergeMin(pack(a, b, c), value);
 	}
 
-	public long computeMax(final int a, final int b, final int c, final long value) {
-		return baseMap.computeMax(pack(a, b, c), value);
+	public long mergeMax(final int a, final int b, final int c, final long value) {
+		return baseMap.mergeMax(pack(a, b, c), value);
 	}
 
 	public void clear() {
@@ -212,6 +212,7 @@ public final class IntTripleLongMap {
 		 * @param key1        キー1
 		 * @param key2        キー2
 		 * @param key3        キー3
+		 * @param value       値
 		 * @return 次の累積値
 		 */
 		long apply(long accumulator, int key1, int key2, int key3, long value);

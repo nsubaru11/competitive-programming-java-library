@@ -19,7 +19,7 @@ public final class IntLongMap {
 	int[] keys, stamps;
 	long[] values;
 	private long defaultValue;
-	private int stamp, size, capacity, resizeThreshold, mask;
+	private int stamp, size, capacity, resizeThreshold, mask, modCount;
 
 	public IntLongMap() {
 		this(1024, 0);
@@ -98,6 +98,7 @@ public final class IntLongMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = absentValue;
 	}
 
@@ -114,6 +115,7 @@ public final class IntLongMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
@@ -132,6 +134,7 @@ public final class IntLongMap {
 			}
 			stamps[hole] = 0;
 			size--;
+			modCount++;
 			return true;
 		}
 		return false;
@@ -157,6 +160,7 @@ public final class IntLongMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
@@ -173,6 +177,7 @@ public final class IntLongMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
@@ -181,10 +186,22 @@ public final class IntLongMap {
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
-		return putIfAbsent(key, op.applyAsLong(key));
+		final int expectedModCount = modCount;
+		final long value = op.applyAsLong(key);
+		if (modCount != expectedModCount) return putIfAbsent(key, value);
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		modCount++;
+		return values[hash] = value;
 	}
 
-	public long computeMin(final int key, final long value) {
+	public long mergeMin(final int key, final long value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = min(values[hash], value);
@@ -197,10 +214,11 @@ public final class IntLongMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
-	public long computeMax(final int key, final long value) {
+	public long mergeMax(final int key, final long value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash] = max(values[hash], value);
@@ -213,12 +231,14 @@ public final class IntLongMap {
 		stamps[hash] = stamp;
 		keys[hash] = key;
 		size++;
+		modCount++;
 		return values[hash] = value;
 	}
 
 	public void clear() {
 		size = 0;
 		stamp++;
+		modCount++;
 	}
 
 	public int size() {

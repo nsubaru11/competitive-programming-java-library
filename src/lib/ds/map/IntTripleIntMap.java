@@ -92,12 +92,12 @@ public final class IntTripleIntMap {
 		return baseMap.computeIfAbsent(pack(a, b, c), _ -> op.applyAsInt(a, b, c));
 	}
 
-	public int computeMin(final int a, final int b, final int c, final int value) {
-		return baseMap.computeMin(pack(a, b, c), value);
+	public int mergeMin(final int a, final int b, final int c, final int value) {
+		return baseMap.mergeMin(pack(a, b, c), value);
 	}
 
-	public int computeMax(final int a, final int b, final int c, final int value) {
-		return baseMap.computeMax(pack(a, b, c), value);
+	public int mergeMax(final int a, final int b, final int c, final int value) {
+		return baseMap.mergeMax(pack(a, b, c), value);
 	}
 
 	public void clear() {
