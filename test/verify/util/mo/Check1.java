@@ -1,16 +1,15 @@
-// #if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};
-// #end
-// #parse("File Header.java")
+package verify.util.mo;
 
 import static java.util.Arrays.*;
 
 import java.util.*;
 import java.util.stream.*;
 
+import lib.ds.arrays.*;
 import lib.io.compat17.*;
+import lib.util.*;
 
-// public final class ${NAME} {
-public final class Check {
+public final class Check1 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -24,7 +23,22 @@ public final class Check {
 	// endregion
 
 	private static void solve() {
-
+		int n = sc.nextInt(), q = sc.nextInt();
+		if (n == 0) {
+			out.printlnRepeat('0', q);
+			return;
+		}
+		IntCompressedArray a = new IntCompressedArray(sc.nextInt(n));
+		int[] freq = new int[a.uniqueSize()];
+		int[][] lr = sc.nextIntMatInv(q, 2);
+		int[] ans = {0};
+		int[] res = new int[q];
+		MoAlgorithm.run(n, lr, i -> {
+			if (++freq[a.get(i)] == 1) ans[0]++;
+		}, i -> {
+			if (--freq[a.get(i)] == 0) ans[0]--;
+		}, i -> res[i] = ans[0]);
+		out.println(res);
 	}
 
 	// region < main & debug >
@@ -41,11 +55,7 @@ public final class Check {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			// #if (${NAME} == "E")
-			// else System.err.println(stream(args).map(o -> stringify(o)).collect(Collectors.joining("\n", "\n", "")));
-			// #else
-			// else System.err.println(stream(args).map(${NAME}::stringify).collect(Collectors.joining("\n", "\n", "")));
-			// #end
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -54,11 +64,7 @@ public final class Check {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			// #if (${NAME} == "E")
-			// else System.err.println(stream(args).map(o -> stringify(o)).collect(Collectors.joining(", ", "", "")));
-			// #else
-			// else System.err.println(stream(args).map(${NAME}::stringify).collect(Collectors.joining(", ", "", "")));
-			// #end
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

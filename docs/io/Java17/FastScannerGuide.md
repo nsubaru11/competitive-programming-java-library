@@ -11,7 +11,7 @@
 
 - **効率的な入力**: バッファリングと低レベル最適化により高速に入力を処理します。
 - **多機能**: 1 次元〜3 次元配列、ソート済み配列、累積和、逆写像、各種コレクション、マルチセットを一括生成できます。
-- **0-index 補助**: `nextInt0()` / `nextLong0()` とその配列版で、1-indexed 入力を即座に 0-indexed 化できます。
+- **0-index 補助**: `nextInt0()` / `nextLong0()` とその配列版、行列・3 次元配列版で、1-indexed 入力を即座に 0-indexed 化できます。
 - **EOF/状態確認**: `hasNext()` と `peek()` により、終端判定や先読みが可能です。
 - **行入力対応**: `nextLine()` は `LF` / `CRLF` の両改行形式を処理します。
 - **真偽値入力の拡張**: `nextBoolean` 系で、文字/数値の単一値一致・述語判定・配列/行列入力に対応します。
@@ -52,19 +52,28 @@
 
 ### 配列入力メソッド
 
-| メソッド                         | 戻り値の型   | 説明                                          |
-|----------------------------------|--------------|-----------------------------------------------|
-| `nextInt(int n)`                 | `int[]`      | 長さ `n` の整数配列を読み込みます。           |
-| `nextLong(int n)`                | `long[]`     | 長さ `n` の長整数配列を読み込みます。         |
-| `nextDouble(int n)`              | `double[]`   | 長さ `n` の浮動小数点配列を読み込みます。     |
-| `nextChars()`                    | `char[]`     | 次のトークンを `char[]` として読み込みます。  |
-| `nextChars(int n)`               | `char[]`     | 非空白文字を `n` 個読み込みます。             |
-| `nextStrings(int n)`             | `String[]`   | 長さ `n` の文字列配列を読み込みます。         |
-| `nextIntMat(int h, int w)`       | `int[][]`    | `h × w` の整数行列を読み込みます。            |
-| `nextLongMat(int h, int w)`      | `long[][]`   | `h × w` の長整数行列を読み込みます。          |
-| `nextDoubleMat(int h, int w)`    | `double[][]` | `h × w` の浮動小数点行列を読み込みます。      |
-| `nextCharMat(int h, int w)`      | `char[][]`   | `h × w` の文字行列を読み込みます。            |
-| `nextInt3D(int x, int y, int z)` | `int[][][]`  | `x × y × z` の 3 次元整数配列を読み込みます。 |
+| メソッド                           | 戻り値の型   | 説明                                                                |
+|------------------------------------|--------------|---------------------------------------------------------------------|
+| `nextInt(int n)`                   | `int[]`      | 長さ `n` の整数配列を読み込みます。                                 |
+| `nextLong(int n)`                  | `long[]`     | 長さ `n` の長整数配列を読み込みます。                               |
+| `nextDouble(int n)`                | `double[]`   | 長さ `n` の浮動小数点配列を読み込みます。                           |
+| `nextChars()`                      | `char[]`     | 次のトークンを `char[]` として読み込みます。                        |
+| `nextChars(int n)`                 | `char[]`     | 非空白文字を `n` 個読み込みます。                                   |
+| `nextStrings(int n)`               | `String[]`   | 長さ `n` の文字列配列を読み込みます。                               |
+| `nextIntMat(int h, int w)`         | `int[][]`    | `h × w` の整数行列を読み込みます。                                  |
+| `nextIntMat0(int h, int w)`        | `int[][]`    | 全要素を 1 減らした `h × w` の整数行列を読み込みます。              |
+| `nextIntMatInv(int h, int w)`      | `int[][]`    | 入力を `h × w` として読み、転置した `w × h` 行列を返します。        |
+| `nextIntMatInv0(int h, int w)`     | `int[][]`    | 全要素を 1 減らして、転置した `w × h` 整数行列を返します。          |
+| `nextLongMat(int h, int w)`        | `long[][]`   | `h × w` の長整数行列を読み込みます。                                |
+| `nextLongMat0(int h, int w)`       | `long[][]`   | 全要素を 1 減らした `h × w` の長整数行列を読み込みます。            |
+| `nextLongMatInv(int h, int w)`     | `long[][]`   | 入力を `h × w` として読み、転置した `w × h` 長整数行列を返します。  |
+| `nextLongMatInv0(int h, int w)`    | `long[][]`   | 全要素を 1 減らして、転置した `w × h` 長整数行列を返します。        |
+| `nextDoubleMat(int h, int w)`      | `double[][]` | `h × w` の浮動小数点行列を読み込みます。                            |
+| `nextCharMat(int h, int w)`        | `char[][]`   | `h × w` の文字行列を読み込みます。                                  |
+| `nextInt3D(int x, int y, int z)`   | `int[][][]`  | `x × y × z` の 3 次元整数配列を読み込みます。                       |
+| `nextInt3D0(int x, int y, int z)`  | `int[][][]`  | 全要素を 1 減らした `x × y × z` の 3 次元整数配列を読み込みます。   |
+| `nextLong3D(int x, int y, int z)`  | `long[][][]` | `x × y × z` の 3 次元長整数配列を読み込みます。                     |
+| `nextLong3D0(int x, int y, int z)` | `long[][][]` | 全要素を 1 減らした `x × y × z` の 3 次元長整数配列を読み込みます。 |
 
 ### 真偽値入力メソッド
 
@@ -101,12 +110,13 @@
 
 ### コレクション・マルチセット入力
 
-| メソッド                        | 戻り値の型                  | 説明                                          |
-|---------------------------------|-----------------------------|-----------------------------------------------|
-| `nextIntAL(int n)`              | `ArrayList<Integer>`        | 整数 `ArrayList` を読み込みます。             |
-| `nextIntHS(int n)`              | `HashSet<Integer>`          | 整数 `HashSet` を読み込みます。               |
-| `nextIntMultisetHM(int n)`      | `HashMap<Integer, Integer>` | 整数マルチセットを `HashMap` で読み込みます。 |
-| `nextIntMultiset(int n, int m)` | `int[]`                     | 整数マルチセットを `int[]` で読み込みます。   |
+| メソッド                         | 戻り値の型                  | 説明                                                             |
+|----------------------------------|-----------------------------|------------------------------------------------------------------|
+| `nextIntAL(int n)`               | `ArrayList<Integer>`        | 整数 `ArrayList` を読み込みます。                                |
+| `nextIntHS(int n)`               | `HashSet<Integer>`          | 整数 `HashSet` を読み込みます。                                  |
+| `nextIntMultisetHM(int n)`       | `HashMap<Integer, Integer>` | 整数マルチセットを `HashMap` で読み込みます。                    |
+| `nextIntMultiset(int n, int m)`  | `int[]`                     | 値域 `[0,m)` の整数マルチセットを `int[]` で読み込みます。       |
+| `nextIntMultiset0(int n, int m)` | `int[]`                     | 値域 `[1,m]` を 0-indexed 化して整数マルチセットを読み込みます。 |
 
 ### ユーティリティ/状態確認メソッド
 
@@ -162,6 +172,7 @@ try (FastScanner sc = new FastScanner()) {
 | **バージョン 4.1** | 2026-03-12 | 機能の拡張とリファクタリング                                                                                                                                   |
 | **バージョン 5.0** | 2026-04-18 | 一括読み込み用と、インタラクティブ用に分割し、分岐の削減および最適化                                                                                           |
 | **バージョン 6.0** | 2026-05-11 | `nextBoolean` 系 API（単一値一致・述語判定・1次元配列・2次元配列）を追加し、`InteractiveScanner` と同等の真偽値入力機能に揃えました。                          |
+| **バージョン 6.1** | 2026-08-10 | 行列・3 次元配列の `int` / `long` 向け 0-index・転置入力、`nextIntMultiset0` を追加。`nextIntMultiset` は 0-indexed の値域をそのまま読む仕様へ変更。           |
 
 ### バージョン管理について
 

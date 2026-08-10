@@ -8,7 +8,6 @@ import java.math.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.function.*;
 
 @SuppressWarnings("unused")
@@ -57,7 +56,6 @@ public final class InteractiveScanner implements AutoCloseable {
 		return b;
 	}
 
-	@Override
 	public void close() {
 		try {
 			in.close();
@@ -128,9 +126,8 @@ public final class InteractiveScanner implements AutoCloseable {
 
 	public int nextInt() {
 		int b = skipSpaces();
-		boolean negative = false;
-		if (b == '-') {
-			negative = true;
+		final boolean negative = b == '-';
+		if (negative) {
 			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			b = buffer[pos++];
 		}
@@ -141,7 +138,7 @@ public final class InteractiveScanner implements AutoCloseable {
 		final byte[] buf = buffer;
 		int p = pos, n = 0;
 		long a = (long) LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
-		long check = a & 0xF0F0F0F0F0F0F0F0L;
+		final long check = a & 0xF0F0F0F0F0F0F0F0L;
 		if (check == 0) {
 			a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
 			a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
@@ -180,9 +177,8 @@ public final class InteractiveScanner implements AutoCloseable {
 
 	public long nextLong() {
 		int b = skipSpaces();
-		boolean negative = false;
-		if (b == '-') {
-			negative = true;
+		final boolean negative = b == '-';
+		if (negative) {
 			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			b = buffer[pos++];
 		}
@@ -194,7 +190,7 @@ public final class InteractiveScanner implements AutoCloseable {
 		int p = pos;
 		long n = 0;
 		long a = (long) LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
-		long check = a & 0xF0F0F0F0F0F0F0F0L;
+		final long check = a & 0xF0F0F0F0F0F0F0F0L;
 		if (check == 0) {
 			a = (a * 10 + (a >>> 8)) & 0x00FF00FF00FF00FFL;
 			a = (a * 100 + (a >>> 16)) & 0x0000FFFF0000FFFFL;
@@ -203,7 +199,7 @@ public final class InteractiveScanner implements AutoCloseable {
 			p += 7;
 			b = buf[p++];
 			long a2 = (long) LONG_HANDLE.get(buf, p - 1) ^ 0x3030303030303030L;
-			long check2 = a2 & 0xF0F0F0F0F0F0F0F0L;
+			final long check2 = a2 & 0xF0F0F0F0F0F0F0F0L;
 			if (check2 == 0) {
 				a2 = (a2 * 10 + (a2 >>> 8)) & 0x00FF00FF00FF00FFL;
 				a2 = (a2 * 100 + (a2 >>> 16)) & 0x0000FFFF0000FFFFL;
@@ -243,9 +239,8 @@ public final class InteractiveScanner implements AutoCloseable {
 
 	public double nextDouble() {
 		int b = skipSpaces();
-		boolean negative = false;
-		if (b == '-') {
-			negative = true;
+		final boolean negative = b == '-';
+		if (negative) {
 			if (pos == bufferLength && !hasNextByte()) throw new NoSuchElementException();
 			b = buffer[pos++];
 		}
@@ -284,7 +279,6 @@ public final class InteractiveScanner implements AutoCloseable {
 			}
 			b = buf[p++];
 		} while ('0' <= b && b <= '9');
-
 		double result = intPart;
 		if (b == '.') result += parseFracPart(p, len, buf);
 		else pos = p;
@@ -540,11 +534,11 @@ public final class InteractiveScanner implements AutoCloseable {
 		return a;
 	}
 
-	public boolean[][] nextBooleanMat(final int h, final int w, final int n) {
+	public boolean[][] nextBooleanMat(final int h, final int w, final int i) {
 		final boolean[][] a = new boolean[h][w];
-		for (int i = 0; i < h; i++)
-			for (int j = 0; j < w; j++)
-				a[i][j] = nextBoolean(n);
+		for (int row = 0; row < h; row++)
+			for (int col = 0; col < w; col++)
+				a[row][col] = nextBoolean(i);
 		return a;
 	}
 
@@ -588,11 +582,59 @@ public final class InteractiveScanner implements AutoCloseable {
 		return a;
 	}
 
+	public int[][] nextIntMat0(final int h, final int w) {
+		final int[][] a = new int[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextInt() - 1;
+		return a;
+	}
+
+	public int[][] nextIntMatInv(final int h, final int w) {
+		final int[][] a = new int[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextInt();
+		return a;
+	}
+
+	public int[][] nextIntMatInv0(final int h, final int w) {
+		final int[][] a = new int[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextInt() - 1;
+		return a;
+	}
+
 	public long[][] nextLongMat(final int h, final int w) {
 		final long[][] a = new long[h][w];
 		for (int i = 0; i < h; i++)
 			for (int j = 0; j < w; j++)
 				a[i][j] = nextLong();
+		return a;
+	}
+
+	public long[][] nextLongMat0(final int h, final int w) {
+		final long[][] a = new long[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextLong() - 1;
+		return a;
+	}
+
+	public long[][] nextLongMatInv(final int h, final int w) {
+		final long[][] a = new long[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextLong();
+		return a;
+	}
+
+	public long[][] nextLongMatInv0(final int h, final int w) {
+		final long[][] a = new long[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextLong() - 1;
 		return a;
 	}
 
@@ -635,12 +677,30 @@ public final class InteractiveScanner implements AutoCloseable {
 		return a;
 	}
 
+	public int[][][] nextInt3D0(final int x, final int y, final int z) {
+		final int[][][] a = new int[x][y][z];
+		for (int i = 0; i < x; i++)
+			for (int j = 0; j < y; j++)
+				for (int k = 0; k < z; k++)
+					a[i][j][k] = nextInt() - 1;
+		return a;
+	}
+
 	public long[][][] nextLong3D(final int x, final int y, final int z) {
 		final long[][][] a = new long[x][y][z];
 		for (int i = 0; i < x; i++)
 			for (int j = 0; j < y; j++)
 				for (int k = 0; k < z; k++)
 					a[i][j][k] = nextLong();
+		return a;
+	}
+
+	public long[][][] nextLong3D0(final int x, final int y, final int z) {
+		final long[][][] a = new long[x][y][z];
+		for (int i = 0; i < x; i++)
+			for (int j = 0; j < y; j++)
+				for (int k = 0; k < z; k++)
+					a[i][j][k] = nextLong() - 1;
 		return a;
 	}
 
@@ -831,6 +891,12 @@ public final class InteractiveScanner implements AutoCloseable {
 
 	public int[] nextIntMultiset(final int n, final int m) {
 		final int[] multiset = new int[m];
+		for (int i = 0; i < n; i++) multiset[nextInt()]++;
+		return multiset;
+	}
+
+	public int[] nextIntMultiset0(final int n, final int m) {
+		final int[] multiset = new int[m];
 		for (int i = 0; i < n; i++) multiset[nextInt() - 1]++;
 		return multiset;
 	}
@@ -855,5 +921,4 @@ public final class InteractiveScanner implements AutoCloseable {
 	public interface CharPredicate {
 		boolean test(char value);
 	}
-
 }

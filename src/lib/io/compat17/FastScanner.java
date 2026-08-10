@@ -6,7 +6,6 @@ import java.io.*;
 import java.math.*;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.function.*;
 
 import sun.misc.*;
@@ -49,8 +48,8 @@ public final class FastScanner {
 	}
 
 	public boolean nextBoolean() {
-		int b = skipSpaces();
-		boolean flag = b == 't' || b == 'T';
+		final int b = skipSpaces();
+		final boolean flag = b == 't' || b == 'T';
 		if (flag) pos += 3;
 		else pos += 4;
 		return flag;
@@ -87,7 +86,7 @@ public final class FastScanner {
 
 	public int nextInt() {
 		int b = skipSpaces();
-		boolean negative = b == '-';
+		final boolean negative = b == '-';
 		final byte[] buf = buffer;
 		int p = pos, n = 0;
 		if (negative) b = buf[p++];
@@ -113,7 +112,7 @@ public final class FastScanner {
 
 	public long nextLong() {
 		int b = skipSpaces();
-		boolean negative = b == '-';
+		final boolean negative = b == '-';
 		final byte[] buf = buffer;
 		int p = pos;
 		if (negative) b = buf[p++];
@@ -321,11 +320,11 @@ public final class FastScanner {
 		return a;
 	}
 
-	public boolean[][] nextBooleanMat(final int h, final int w, final int n) {
+	public boolean[][] nextBooleanMat(final int h, final int w, final int i) {
 		final boolean[][] a = new boolean[h][w];
-		for (int i = 0; i < h; i++)
-			for (int j = 0; j < w; j++)
-				a[i][j] = nextBoolean(n);
+		for (int row = 0; row < h; row++)
+			for (int col = 0; col < w; col++)
+				a[row][col] = nextBoolean(i);
 		return a;
 	}
 
@@ -369,11 +368,59 @@ public final class FastScanner {
 		return a;
 	}
 
+	public int[][] nextIntMat0(final int h, final int w) {
+		final int[][] a = new int[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextInt() - 1;
+		return a;
+	}
+
+	public int[][] nextIntMatInv(final int h, final int w) {
+		final int[][] a = new int[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextInt();
+		return a;
+	}
+
+	public int[][] nextIntMatInv0(final int h, final int w) {
+		final int[][] a = new int[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextInt() - 1;
+		return a;
+	}
+
 	public long[][] nextLongMat(final int h, final int w) {
 		final long[][] a = new long[h][w];
 		for (int i = 0; i < h; i++)
 			for (int j = 0; j < w; j++)
 				a[i][j] = nextLong();
+		return a;
+	}
+
+	public long[][] nextLongMat0(final int h, final int w) {
+		final long[][] a = new long[h][w];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[i][j] = nextLong() - 1;
+		return a;
+	}
+
+	public long[][] nextLongMatInv(final int h, final int w) {
+		final long[][] a = new long[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextLong();
+		return a;
+	}
+
+	public long[][] nextLongMatInv0(final int h, final int w) {
+		final long[][] a = new long[w][h];
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				a[j][i] = nextLong() - 1;
 		return a;
 	}
 
@@ -416,12 +463,30 @@ public final class FastScanner {
 		return a;
 	}
 
+	public int[][][] nextInt3D0(final int x, final int y, final int z) {
+		final int[][][] a = new int[x][y][z];
+		for (int i = 0; i < x; i++)
+			for (int j = 0; j < y; j++)
+				for (int k = 0; k < z; k++)
+					a[i][j][k] = nextInt() - 1;
+		return a;
+	}
+
 	public long[][][] nextLong3D(final int x, final int y, final int z) {
 		final long[][][] a = new long[x][y][z];
 		for (int i = 0; i < x; i++)
 			for (int j = 0; j < y; j++)
 				for (int k = 0; k < z; k++)
 					a[i][j][k] = nextLong();
+		return a;
+	}
+
+	public long[][][] nextLong3D0(final int x, final int y, final int z) {
+		final long[][][] a = new long[x][y][z];
+		for (int i = 0; i < x; i++)
+			for (int j = 0; j < y; j++)
+				for (int k = 0; k < z; k++)
+					a[i][j][k] = nextLong() - 1;
 		return a;
 	}
 
@@ -611,6 +676,12 @@ public final class FastScanner {
 	}
 
 	public int[] nextIntMultiset(final int n, final int m) {
+		final int[] multiset = new int[m];
+		for (int i = 0; i < n; i++) multiset[nextInt()]++;
+		return multiset;
+	}
+
+	public int[] nextIntMultiset0(final int n, final int m) {
 		final int[] multiset = new int[m];
 		for (int i = 0; i < n; i++) multiset[nextInt() - 1]++;
 		return multiset;

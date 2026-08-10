@@ -69,7 +69,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Conversions](./docs/util/Conversions)                            | 数値・文字配列・数字配列の相互変換                                                  |
 | [Dice](./docs/util/Dice)                                          | 6面体の向きと3方向の回転操作                                                        |
 | [DP](./src/patterns/dp)                                           | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                            |
-| [DivideAndConquer/MoAlgorithm](./docs/util/MoAlgorithm)           | Mo's Algorithm（オフライン区間クエリの平方分割、add/remove関数によるジグザグ走査）  |
+| [DivideAndConquer/MoAlgorithm](./docs/util/MoAlgorithm)           | Mo's Algorithm（0-indexed半開区間、4方向callback、ジグザグ走査）                    |
 | [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                 |
 | [Graph/Connectivity](./docs/graph/Connectivity)                   | 📝 橋・関節点・二重連結成分分解（TODO）                                             |
 | [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD          |
