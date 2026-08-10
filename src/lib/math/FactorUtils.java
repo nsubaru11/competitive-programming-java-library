@@ -21,16 +21,22 @@ public final class FactorUtils {
 	 */
 	public static int uniquePrimeFactorCount(long n) {
 		if (n <= 1) return 0;
-		int cnt = 0;
-		if (n % 2 == 0) cnt++;
-		while (n % 2 == 0) n /= 2;
-		for (long i = 3; i * i <= n; i += 2) {
-			if (n % i != 0) continue;
-			cnt++;
-			while (n % i == 0) n /= i;
+		int cnt = 0, e = 0;
+		for (; n % 2 == 0; n /= 2, e++) ;
+		if (e > 0) cnt++;
+		e = 0;
+		for (; n % 3 == 0; n /= 3, e++) ;
+		if (e > 0) cnt++;
+		for (long i = 5, j = 7; i * i <= n; i += 6, j += 6) {
+			e = 0;
+			for (; n % i == 0; n /= i, e++) ;
+			if (e > 0) cnt++;
+			if (j * j > n) break;
+			e = 0;
+			for (; n % j == 0; n /= j, e++) ;
+			if (e > 0) cnt++;
 		}
-		if (n > 1) cnt++;
-		return cnt;
+		return n > 1 ? cnt + 1 : cnt;
 	}
 
 	/**
@@ -42,18 +48,14 @@ public final class FactorUtils {
 	public static int primeFactorCount(long n) {
 		if (n <= 1) return 0;
 		int cnt = 0;
-		while (n % 2 == 0) {
-			cnt++;
-			n /= 2;
+		for (; n % 2 == 0; n /= 2, cnt++) ;
+		for (; n % 3 == 0; n /= 3, cnt++) ;
+		for (long i = 5, j = 7; i * i <= n; i += 6, j += 6) {
+			for (; n % i == 0; n /= i, cnt++) ;
+			if (j * j > n) break;
+			for (; n % j == 0; n /= j, cnt++) ;
 		}
-		for (long i = 3; i * i <= n; i += 2) {
-			while (n % i == 0) {
-				cnt++;
-				n /= i;
-			}
-		}
-		if (n > 1) cnt++;
-		return cnt;
+		return n > 1 ? cnt + 1 : cnt;
 	}
 
 	/**
@@ -65,12 +67,11 @@ public final class FactorUtils {
 	 */
 	public static int[] primeFactors(final int n) {
 		if (n <= 1) return new int[0];
-		List<Integer> factors = primeFactors(n, () -> new ArrayList<Integer>(32));
-		int[] result = new int[factors.size()];
-		for (int i = 0; i < factors.size(); i++) {
-			result[i] = factors.get(i);
-		}
-		return result;
+		final List<Integer> factors = primeFactors(n, () -> new ArrayList<Integer>(32));
+		final int size = factors.size();
+		final int[] res = new int[size];
+		for (int i = 0; i < size; i++) res[i] = factors.get(i);
+		return res;
 	}
 
 	/**
@@ -82,12 +83,11 @@ public final class FactorUtils {
 	 */
 	public static long[] primeFactors(final long n) {
 		if (n <= 1) return new long[0];
-		List<Long> factors = primeFactors(n, () -> new ArrayList<>(32));
-		long[] result = new long[factors.size()];
-		for (int i = 0; i < factors.size(); i++) {
-			result[i] = factors.get(i);
-		}
-		return result;
+		final List<Long> factors = primeFactors(n, () -> new ArrayList<>(32));
+		final int size = factors.size();
+		final long[] res = new long[size];
+		for (int i = 0; i < size; i++) res[i] = factors.get(i);
+		return res;
 	}
 
 	/**
@@ -101,17 +101,14 @@ public final class FactorUtils {
 	 * @return 素因数を格納したコレクション。{@code n <= 1} では空
 	 */
 	public static <T extends Collection<Integer>> T primeFactors(int n, final Supplier<T> supplier) {
-		if (n <= 1) return supplier.get();
-		T factors = supplier.get();
-		while (n % 2 == 0) {
-			factors.add(2);
-			n /= 2;
-		}
-		for (int i = 3; i * i <= n; i += 2) {
-			while (n % i == 0) {
-				factors.add(i);
-				n /= i;
-			}
+		final T factors = supplier.get();
+		if (n <= 1) return factors;
+		for (; n % 2 == 0; n /= 2) factors.add(2);
+		for (; n % 3 == 0; n /= 3) factors.add(3);
+		for (int i = 5, j = 7; i * i <= n; i += 6, j += 6) {
+			for (; n % i == 0; n /= i) factors.add(i);
+			if (j * j > n) break;
+			for (; n % j == 0; n /= j) factors.add(j);
 		}
 		if (n > 1) factors.add(n);
 		return factors;
@@ -128,17 +125,14 @@ public final class FactorUtils {
 	 * @return 素因数を格納したコレクション。{@code n <= 1} では空
 	 */
 	public static <T extends Collection<Long>> T primeFactors(long n, final Supplier<T> supplier) {
-		if (n <= 1) return supplier.get();
-		T factors = supplier.get();
-		while (n % 2 == 0) {
-			factors.add(2L);
-			n /= 2;
-		}
-		for (long i = 3; i * i <= n; i += 2) {
-			while (n % i == 0) {
-				factors.add(i);
-				n /= i;
-			}
+		final T factors = supplier.get();
+		if (n <= 1) return factors;
+		for (; n % 2 == 0; n /= 2) factors.add(2L);
+		for (; n % 3 == 0; n /= 3) factors.add(3L);
+		for (long i = 5, j = 7; i * i <= n; i += 6, j += 6) {
+			for (; n % i == 0; n /= i) factors.add(i);
+			if (j * j > n) break;
+			for (; n % j == 0; n /= j) factors.add(j);
 		}
 		if (n > 1) factors.add(n);
 		return factors;
@@ -154,27 +148,33 @@ public final class FactorUtils {
 	 */
 	public static int[][] primeFactors2D(int n) {
 		if (n <= 1) return new int[2][0];
-		int count = uniquePrimeFactorCount(n);
-		int[][] res = new int[2][count];
+		final int count = uniquePrimeFactorCount(n);
+		final int[][] res = new int[2][count];
 		int idx = 0, e = 0;
-		while (n % 2 == 0) {
-			e++;
-			n /= 2;
-		}
+		for (; n % 2 == 0; n /= 2, e++) ;
 		if (e > 0) {
 			res[0][idx] = 2;
 			res[1][idx++] = e;
 		}
-		for (int i = 3; i * i <= n; i += 2) {
+		e = 0;
+		for (; n % 3 == 0; n /= 3, e++) ;
+		if (e > 0) {
+			res[0][idx] = 3;
+			res[1][idx++] = e;
+		}
+		for (int i = 5, j = 7; i * i <= n; i += 6, j += 6) {
 			e = 0;
-			while (n % i == 0) {
-				e++;
-				n /= i;
-			}
+			for (; n % i == 0; n /= i, e++) ;
 			if (e > 0) {
 				res[0][idx] = i;
-				res[1][idx] = e;
-				idx++;
+				res[1][idx++] = e;
+			}
+			if (j * j > n) break;
+			e = 0;
+			for (; n % j == 0; n /= j, e++) ;
+			if (e > 0) {
+				res[0][idx] = j;
+				res[1][idx++] = e;
 			}
 		}
 		if (n > 1) {
@@ -194,27 +194,33 @@ public final class FactorUtils {
 	 */
 	public static long[][] primeFactors2D(long n) {
 		if (n <= 1) return new long[2][0];
-		int count = uniquePrimeFactorCount(n);
-		long[][] res = new long[2][count];
+		final int count = uniquePrimeFactorCount(n);
+		final long[][] res = new long[2][count];
 		int idx = 0, e = 0;
-		while (n % 2 == 0) {
-			e++;
-			n /= 2;
-		}
+		for (; n % 2 == 0; n /= 2, e++) ;
 		if (e > 0) {
 			res[0][idx] = 2;
 			res[1][idx++] = e;
 		}
-		for (long i = 3; i * i <= n; i += 2) {
+		e = 0;
+		for (; n % 3 == 0; n /= 3, e++) ;
+		if (e > 0) {
+			res[0][idx] = 3;
+			res[1][idx++] = e;
+		}
+		for (long i = 5, j = 7; i * i <= n; i += 6, j += 6) {
 			e = 0;
-			while (n % i == 0) {
-				e++;
-				n /= i;
-			}
+			for (; n % i == 0; n /= i, e++) ;
 			if (e > 0) {
 				res[0][idx] = i;
-				res[1][idx] = e;
-				idx++;
+				res[1][idx++] = e;
+			}
+			if (j * j > n) break;
+			e = 0;
+			for (; n % j == 0; n /= j, e++) ;
+			if (e > 0) {
+				res[0][idx] = j;
+				res[1][idx++] = e;
 			}
 		}
 		if (n > 1) {
@@ -234,21 +240,22 @@ public final class FactorUtils {
 	 * @return 素因数をキー、指数を値とする Map
 	 */
 	public static <T extends Map<Long, Integer>> T primeFactorsMap(long n, final Supplier<T> supplier) {
-		if (n <= 1) return supplier.get();
-		T factors = supplier.get();
-		int cnt = 0;
-		while (n % 2 == 0) {
-			cnt++;
-			n /= 2;
-		}
-		if (cnt > 0) factors.put(2L, cnt);
-		for (long i = 3; i * i <= n; i += 2) {
-			cnt = 0;
-			while (n % i == 0) {
-				cnt++;
-				n /= i;
-			}
-			if (cnt > 0) factors.put(i, cnt);
+		final T factors = supplier.get();
+		if (n <= 1) return factors;
+		int e = 0;
+		for (; n % 2 == 0; n /= 2, e++) ;
+		if (e > 0) factors.put(2L, e);
+		e = 0;
+		for (; n % 3 == 0; n /= 3, e++) ;
+		if (e > 0) factors.put(3L, e);
+		for (long i = 5, j = 7; i * i <= n; i += 6, j += 6) {
+			e = 0;
+			for (; n % i == 0; n /= i, e++) ;
+			if (e > 0) factors.put(i, e);
+			if (j * j > n) break;
+			e = 0;
+			for (; n % j == 0; n /= j, e++) ;
+			if (e > 0) factors.put(j, e);
 		}
 		if (n > 1) factors.put(n, 1);
 		return factors;
@@ -264,21 +271,22 @@ public final class FactorUtils {
 	 * @return 素因数をキー、指数を値とする Map
 	 */
 	public static <T extends Map<Integer, Integer>> T primeFactorsMap(int n, final Supplier<T> supplier) {
-		if (n <= 1) return supplier.get();
-		T factors = supplier.get();
-		int cnt = 0;
-		while (n % 2 == 0) {
-			cnt++;
-			n /= 2;
-		}
-		if (cnt > 0) factors.put(2, cnt);
-		for (int i = 3; i * i <= n; i += 2) {
-			cnt = 0;
-			while (n % i == 0) {
-				cnt++;
-				n /= i;
-			}
-			if (cnt > 0) factors.put(i, cnt);
+		final T factors = supplier.get();
+		if (n <= 1) return factors;
+		int e = 0;
+		for (; n % 2 == 0; n /= 2, e++) ;
+		if (e > 0) factors.put(2, e);
+		e = 0;
+		for (; n % 3 == 0; n /= 3, e++) ;
+		if (e > 0) factors.put(3, e);
+		for (int i = 5, j = 7; i * i <= n; i += 6, j += 6) {
+			e = 0;
+			for (; n % i == 0; n /= i, e++) ;
+			if (e > 0) factors.put(i, e);
+			if (j * j > n) break;
+			e = 0;
+			for (; n % j == 0; n /= j, e++) ;
+			if (e > 0) factors.put(j, e);
 		}
 		if (n > 1) factors.put(n, 1);
 		return factors;
