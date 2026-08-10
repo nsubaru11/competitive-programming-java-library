@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`SpanningForestResult`](../../../src/lib/graph/SpanningForestResult.java)は、Kruskal法またはPrim法で求めた最小・最大全域森の共通結果型です。総コスト、採用辺ID、入力グラフの連結成分数を保持します。
+[`SpanningForestResult`](../../../src/lib/graph/SpanningForestResult.java)は、Kruskal法またはPrim法で求めた最小・最大全域森の共通結果型です。
+総コスト、採用辺ID、入力グラフの連結成分数を保持します。
 
 ## 特徴
 

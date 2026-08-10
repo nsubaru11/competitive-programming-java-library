@@ -2,9 +2,7 @@
 
 ## 概要
 
-[`PriorityQueue<T>`](../../../src/lib/ds/priorityqueue/PriorityQueue.java)、
-[`IntPriorityQueue`](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java)、
-[`LongPriorityQueue`](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java)は、追加を未整列領域へ蓄積し、優先順が必要になった時点でヒープを構築する可変容量優先度キューです。
+[`PriorityQueue<T>`](../../../src/lib/ds/priorityqueue/PriorityQueue.java)、[`IntPriorityQueue`](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java)、[`LongPriorityQueue`](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java)は、追加を未整列領域へ蓄積し、優先順が必要になった時点でヒープを構築する可変容量優先度キューです。
 
 ## 特徴
 
@@ -125,7 +123,7 @@
 | `size()`                       |                      `int` | 現在の要素数                          |
 | `capacity()`                   |                      `int` | 現在の内部配列容量                    |
 | `isEmpty()`                    |                  `boolean` | 空か判定。primitive版はCollection由来 |
-| `clear()`                      |                     `void` | $\mathcal{O}(1)$で論理的に空にする                |
+| `clear()`                      |                     `void` | $\mathcal{O}(1)$で論理的に空にする    |
 | `PriorityQueue.iterator()`     |              `Iterator<T>` | 内部順で走査                          |
 | `IntPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int値を内部順で走査                   |
 | `LongPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long値を内部順で走査                  |

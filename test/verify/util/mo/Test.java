@@ -36,7 +36,21 @@ public final class Test {
 		check(size[0] == 1);
 	}
 
+	private static void testCustomBlockSize() {
+		final int[] a = {1, 2, 1, 3};
+		final int[][] lr = {{0, 1}, {3, 4}};
+		final int[] freq = new int[4], answer = new int[2];
+		final int[] distinct = {0};
+		MoAlgorithm.run(a.length, lr, 2, i -> {
+			if (++freq[a[i]] == 1) distinct[0]++;
+		}, i -> {
+			if (--freq[a[i]] == 0) distinct[0]--;
+		}, i -> answer[i] = distinct[0]);
+		check(Arrays.equals(answer, new int[]{2, 3}));
+	}
+
 	public static void main(final String[] args) {
 		testFourDirections();
+		testCustomBlockSize();
 	}
 }

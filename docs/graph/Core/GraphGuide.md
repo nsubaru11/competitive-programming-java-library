@@ -2,7 +2,8 @@
 
 ## 概要
 
-`Graph`は、前方スター形式の隣接リストをプリミティブ配列で保持する抽象基底クラスです。 通常は`DirectedGraph`または`UndirectedGraph`を生成して使用します。
+`Graph`は、前方スター形式の隣接リストをプリミティブ配列で保持する抽象基底クラスです。
+通常は`DirectedGraph`または`UndirectedGraph`を生成して使用します。
 
 ## 特徴
 

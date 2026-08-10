@@ -7,21 +7,21 @@
 
 ## インターフェース
 
-| インターフェース | シグネチャ |
-|---|---|
-| `IntBinaryConsumer` | `(int, int) -> void` |
-| `IntTernaryConsumer` | `(int, int, int) -> void` |
-| `IntQuaternaryConsumer` | `(int, int, int, int) -> void` |
-| `IntLongConsumer` | `(int, long) -> void` |
-| `LongIntConsumer` | `(long, int) -> void` |
-| `LongBinaryConsumer` | `(long, long) -> void` |
-| `IntBinaryLongConsumer` | `(int, int, long) -> void` |
-| `IntTernaryLongConsumer` | `(int, int, int, long) -> void` |
-| `IntBinaryToLongFunction` | `(int, int) -> long` |
-| `IntTernaryOperator` | `(int, int, int) -> int` |
-| `IntTernaryToLongFunction` | `(int, int, int) -> long` |
-| `IntComparator` | `(int, int) -> int` |
-| `LongComparator` | `(long, long) -> int` |
+| インターフェース           | シグネチャ                      |
+|----------------------------|---------------------------------|
+| `IntBinaryConsumer`        | `(int, int) -> void`            |
+| `IntTernaryConsumer`       | `(int, int, int) -> void`       |
+| `IntQuaternaryConsumer`    | `(int, int, int, int) -> void`  |
+| `IntLongConsumer`          | `(int, long) -> void`           |
+| `LongIntConsumer`          | `(long, int) -> void`           |
+| `LongBinaryConsumer`       | `(long, long) -> void`          |
+| `IntBinaryLongConsumer`    | `(int, int, long) -> void`      |
+| `IntTernaryLongConsumer`   | `(int, int, int, long) -> void` |
+| `IntBinaryToLongFunction`  | `(int, int) -> long`            |
+| `IntTernaryOperator`       | `(int, int, int) -> int`        |
+| `IntTernaryToLongFunction` | `(int, int, int) -> long`       |
+| `IntComparator`            | `(int, int) -> int`             |
+| `LongComparator`           | `(long, long) -> int`           |
 
 ## 命名方針
 

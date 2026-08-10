@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`IntCircularArray`](../../../src/lib/ds/arrays/IntCircularArray.java) と [`LongCircularArray`](../../../src/lib/ds/arrays/LongCircularArray.java) は、固定長配列を物理移動せず $\mathcal{O}(1)$ で左右へ論理回転するプリミティブ配列です。要素更新と全体和の保持にも対応します。
+[`IntCircularArray`](../../../src/lib/ds/arrays/IntCircularArray.java) と [`LongCircularArray`](../../../src/lib/ds/arrays/LongCircularArray.java) は、固定長配列を物理移動せず $\mathcal{O}(1)$ で左右へ論理回転するプリミティブ配列です。
+要素更新と全体和の保持にも対応します。
 
 ## 特徴
 

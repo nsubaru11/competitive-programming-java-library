@@ -13,6 +13,12 @@ public final class Test {
 		if (!Arrays.equals(FactorUtils.primeFactors(360), new int[]{2, 2, 2, 3, 3, 5})) {
 			throw new AssertionError();
 		}
+		if (!Arrays.deepEquals(FactorUtils.primeFactors2D(360), new int[][]{{2, 3, 5}, {3, 2, 1}})) {
+			throw new AssertionError();
+		}
+		if (!Arrays.deepEquals(FactorUtils.primeFactors2D(360L), new long[][]{{2, 3, 5}, {3, 2, 1}})) {
+			throw new AssertionError();
+		}
 		if (!Arrays.equals(FactorUtils.divisors(36), new int[]{1, 2, 3, 4, 6, 9, 12, 18, 36})) {
 			throw new AssertionError();
 		}

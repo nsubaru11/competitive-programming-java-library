@@ -58,4 +58,4 @@
 - パッケージは`lib.graph`です。
 - 辺配列の容量はコンストラクタで固定され、自動拡張されません。
 - `Tree`と`RootedTree`は現在、`Graph`とは独立した木専用の内部表現を持ちます。
-- 検証例は[`test/verify/graph/core`](../../../test/verify/graph/core)を参照してください。
+- 検証例は[`test/verify/graph`](../../../test/verify/graph)を参照してください。

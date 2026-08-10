@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`IntArray`](../../../src/lib/ds/arrays/IntArray.java) と [`LongArray`](../../../src/lib/ds/arrays/LongArray.java) は、添字アクセス可能なプリミティブ配列の読み取り用インターフェースです。アルゴリズム側が具体的な格納形式に依存せず、複数の配列実装を同じ API で扱うために使用します。
+[`IntArray`](../../../src/lib/ds/arrays/IntArray.java) と [`LongArray`](../../../src/lib/ds/arrays/LongArray.java) は、添字アクセス可能なプリミティブ配列の読み取り用インターフェースです。
+アルゴリズム側が具体的な格納形式に依存せず、複数の配列実装を同じ API で扱うために使用します。
 
 ## 特徴
 

@@ -2,7 +2,8 @@
 
 ## 概要
 
-このフォルダには、前方一致（Trie）および語尾一致（SuffixTrie）に特化したシンプルな木構造の実装と、各種派生Trie（RadixTrie / PatriciaTrie / TernarySearchTree / DoubleArrayTrie / SuffixArray）の実装が含まれます。競技プログラミング環境でのコピペ利用を前提とした最小構成です。
+このフォルダには、前方一致（Trie）および語尾一致（SuffixTrie）に特化したシンプルな木構造の実装と、各種派生Trie（RadixTrie / PatriciaTrie / TernarySearchTree / DoubleArrayTrie / SuffixArray）の実装が含まれます。
+競技プログラミング環境でのコピペ利用を前提とした最小構成です。
 
 ## 実装クラス
 
@@ -40,6 +41,7 @@
 - [DoubleArrayTrie](../../../src/lib/ds/trie/DoubleArrayTrie.java)：BASE/CHECK 2配列による静的構築Trie。検索が高速
 - [SuffixArray](../../../src/lib/string/suffix/SuffixArray.java)：接尾辞配列+LCP配列（簡易構築版、部分文字列検索 `contains` 付き）
 - [CompactTrie](../../../src/lib/ds/trie/CompactTrie.java)（未実装）：ビットマップ圧縮Trie（TODO）
+- [SuffixAutomaton](../../../src/lib/string/suffix/SuffixAutomaton.java)（未実装）：全ての部分文字列を線形個の状態で表すオートマトン（TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

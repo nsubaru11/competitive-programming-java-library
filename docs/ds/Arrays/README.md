@@ -1,6 +1,7 @@
 # Primitive Array Utilities
 
-`lib.ds.arrays` のプリミティブ配列ラッパーと、`lib.util.ArrayUtils` の配列アルゴリズムをまとめます。 このドキュメントは 2026-07-27 時点の `src/` の実装を正とし、`int` 版と `long` 版を同じ Guide で説明します。
+`lib.ds.arrays` のプリミティブ配列ラッパーと、`lib.util.ArrayUtils` の配列アルゴリズムをまとめます。
+このドキュメントは 2026-07-27 時点の `src/` の実装を正とし、`int` 版と `long` 版を同じ Guide で説明します。
 
 ## Guide 一覧
 
@@ -9,7 +10,7 @@
 | [ArrayGuide](./ArrayGuide.md)                     | `IntArray`, `LongArray`                     | 読み取り専用配列インターフェース                     |
 | [MutableArrayGuide](./MutableArrayGuide.md)       | `IntMutableArray`, `LongMutableArray`       | 単一要素・全要素の更新インターフェース               |
 | [PrefixSumGuide](./PrefixSumGuide.md)             | 1D / 2D / 3D の `PrefixSum`・`PrefixModSum` | 静的配列・矩形・直方体の区間和                       |
-| [CircularArrayGuide](./CircularArrayGuide.md)     | `IntCircularArray`, `LongCircularArray`     | $\mathcal{O}(1)$ の論理回転と固定長更新                          |
+| [CircularArrayGuide](./CircularArrayGuide.md)     | `IntCircularArray`, `LongCircularArray`     | $\mathcal{O}(1)$ の論理回転と固定長更新              |
 | [ArrayDequeGuide](./ArrayDequeGuide.md)           | `IntArrayDeque`, `LongArrayDeque`           | プリミティブ特化の可変長 deque                       |
 | [Array2DGuide](./Array2DGuide.md)                 | `IntArray2D`, `LongArray2D`                 | 一次元圧縮された2次元配列と論理回転                  |
 | [CompressedArrayGuide](./CompressedArrayGuide.md) | 1D / 2D の `CompressedArray`                | 座標圧縮と順位変換                                   |

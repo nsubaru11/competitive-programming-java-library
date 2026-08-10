@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`ArrayUtils`](../../../src/lib/util/ArrayUtils.java) は、`char[]`, `int[]`, `long[]`, `IntArray`, `LongArray` に対する代表的な配列処理とアルゴリズムを提供する static utility クラスです。集計、探索、配列操作、局所値、連長、固定幅窓、最長単調部分列、部分集合の個数を扱います。
+[`ArrayUtils`](../../../src/lib/util/ArrayUtils.java) は、`char[]`, `int[]`, `long[]`, `IntArray`, `LongArray` に対する代表的な配列処理とアルゴリズムを提供する static utility クラスです。
+集計、探索、配列操作、局所値、連長、固定幅窓、最長単調部分列、部分集合の個数を扱います。
 
 ## 特徴
 

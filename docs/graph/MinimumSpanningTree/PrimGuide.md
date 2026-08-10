@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`Prim`](../../../src/lib/graph/Prim.java)は、`UndirectedGraph`の前方スター形式を直接走査し、最小または最大全域森を求める静的ユーティリティクラスです。各頂点を現在の森へ接続する最良コストを`LongIndexedPriorityQueue`で管理します。
+[`Prim`](../../../src/lib/graph/Prim.java)は、`UndirectedGraph`の前方スター形式を直接走査し、最小または最大全域森を求める静的ユーティリティクラスです。
+各頂点を現在の森へ接続する最良コストを`LongIndexedPriorityQueue`で管理します。
 
 ## 特徴
 

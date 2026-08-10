@@ -2,7 +2,8 @@
 
 ## 概要
 
-`IntCompressedArray` / `LongCompressedArray` とその2D版は、元配列の全要素をソート順の順位へ変換して保持する座標圧縮クラスです。dense ranking に加え、competition ranking と modified competition ranking に対応します。
+`IntCompressedArray` / `LongCompressedArray` とその2D版は、元配列の全要素をソート順の順位へ変換して保持する座標圧縮クラスです。
+dense ranking に加え、competition ranking と modified competition ranking に対応します。
 
 ## 特徴
 

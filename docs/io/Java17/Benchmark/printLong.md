@@ -1,8 +1,3 @@
-はい、承知いたしました。 7種類もの`FastPrinter`実装を比較する、非常に大規模なテストですね。提供された全ファイル（`TestOutputLongNumbers.java`,
-`output3.txt`, `test3.bat`）を基に、これまでで最も詳細かつ厳密な分析を行い、レポート形式でまとめます。
-
------
-
 ### 📝 Java `FastPrinter`における`long`出力の厳密な性能分析レポート
 
 #### 1\. 目的

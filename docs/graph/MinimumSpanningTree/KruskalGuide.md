@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`Kruskal`](../../../src/lib/graph/Kruskal.java)は、`UndirectedGraph`の辺を重み順に処理し、最小または最大全域森を求める静的ユーティリティクラスです。入力が連結なら結果は全域木になります。
+[`Kruskal`](../../../src/lib/graph/Kruskal.java)は、`UndirectedGraph`の辺を重み順に処理し、最小または最大全域森を求める静的ユーティリティクラスです。
+入力が連結なら結果は全域木になります。
 
 ## 特徴
 

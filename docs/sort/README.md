@@ -2,7 +2,8 @@
 
 ## 概要
 
-配列の要素を特定の順序（通常は昇順）に並べ替えるための様々なソートアルゴリズムを提供します。 異なる特性と計算量を持つ複数のアルゴリズムが実装されており、用途に応じて最適なものを選択できます。
+配列の要素を特定の順序（通常は昇順）に並べ替えるための様々なソートアルゴリズムを提供します。
+異なる特性と計算量を持つ複数のアルゴリズムが実装されており、用途に応じて最適なものを選択できます。
 
 ## 実装クラス
 
@@ -120,21 +121,29 @@
 
 - **用途**: マージ挿入ソート。比較回数を理論下限近くに抑えるソートアルゴリズム（TODO）
 
+### [CountingSort](../../src/lib/sort/CountingSort.java)（未実装）
+
+- **用途**: 小さい整数値域に対する $\mathcal{O}(n+k)$ の安定ソート（TODO）
+
+### [RadixSort](../../src/lib/sort/RadixSort.java)（未実装）
+
+- **用途**: int / long を固定基数の複数パスで処理する線形時間ソート（TODO）
+
 ## アルゴリズムの選択ガイド
 
-| アルゴリズム     | 安定性 | 最良時間   | 平均時間    | 最悪時間   | 空間     | 適した用途                         |
-|------------------|--------|------------|-------------|------------|----------|------------------------------------|
-| バブルソート     | ○      | $\mathcal{O}(n)$       | $\mathcal{O}(n^2)$       | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | 教育用、小さな配列                 |
-| 選択ソート       | ×      | $\mathcal{O}(n^2)$      | $\mathcal{O}(n^2)$       | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | 交換回数を最小化したい場合         |
-| 挿入ソート       | ○      | $\mathcal{O}(n)$       | $\mathcal{O}(n^2)$       | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | 小さな配列、ほぼソート済みの配列   |
-| マージソート     | ○      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$  | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n)$     | 安定性が必要な場合、大きな配列     |
-| クイックソート   | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$  | $\mathcal{O}(n^2)$      | $\mathcal{O}(\log n)$ | 一般的な用途、平均的に高速         |
-| ヒープソート     | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$  | $\mathcal{O}(n \log n)$ | $\mathcal{O}(1)$     | 最悪の場合の保証が必要な場合       |
-| シェルソート     | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log^2 n)$ | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | 中規模の配列                       |
-| コムソート       | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$  | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | バブルソートの改良版が必要な場合   |
-| シェイカーソート | ○      | $\mathcal{O}(n)$       | $\mathcal{O}(n^2)$       | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | バブルソートの改良版が必要な場合   |
-| ノームソート     | ○      | $\mathcal{O}(n)$       | $\mathcal{O}(n^2)$       | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | 実装が簡単なソートが必要な場合     |
-| 奇偶ソート       | ○      | $\mathcal{O}(n)$       | $\mathcal{O}(n^2)$       | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$     | 並列処理に適したソートが必要な場合 |
+| アルゴリズム     | 安定性 | 最良時間                | 平均時間                  | 最悪時間                | 空間                  | 適した用途                         |
+|------------------|--------|-------------------------|---------------------------|-------------------------|-----------------------|------------------------------------|
+| バブルソート     | ○      | $\mathcal{O}(n)$        | $\mathcal{O}(n^2)$        | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | 教育用、小さな配列                 |
+| 選択ソート       | ×      | $\mathcal{O}(n^2)$      | $\mathcal{O}(n^2)$        | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | 交換回数を最小化したい場合         |
+| 挿入ソート       | ○      | $\mathcal{O}(n)$        | $\mathcal{O}(n^2)$        | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | 小さな配列、ほぼソート済みの配列   |
+| マージソート     | ○      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$   | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n)$      | 安定性が必要な場合、大きな配列     |
+| クイックソート   | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$   | $\mathcal{O}(n^2)$      | $\mathcal{O}(\log n)$ | 一般的な用途、平均的に高速         |
+| ヒープソート     | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$   | $\mathcal{O}(n \log n)$ | $\mathcal{O}(1)$      | 最悪の場合の保証が必要な場合       |
+| シェルソート     | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log^2 n)$ | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | 中規模の配列                       |
+| コムソート       | ×      | $\mathcal{O}(n \log n)$ | $\mathcal{O}(n \log n)$   | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | バブルソートの改良版が必要な場合   |
+| シェイカーソート | ○      | $\mathcal{O}(n)$        | $\mathcal{O}(n^2)$        | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | バブルソートの改良版が必要な場合   |
+| ノームソート     | ○      | $\mathcal{O}(n)$        | $\mathcal{O}(n^2)$        | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | 実装が簡単なソートが必要な場合     |
+| 奇偶ソート       | ○      | $\mathcal{O}(n)$        | $\mathcal{O}(n^2)$        | $\mathcal{O}(n^2)$      | $\mathcal{O}(1)$      | 並列処理に適したソートが必要な場合 |
 
 ## 注意事項
 

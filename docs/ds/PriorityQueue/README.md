@@ -11,20 +11,22 @@
 
 ## 実装クラス
 
-| クラス                                                                                        | 保持する値         | 特徴                                       |
-|-----------------------------------------------------------------------------------------------|--------------------|--------------------------------------------|
-| [`PriorityQueue<T>`](../../../src/lib/ds/priorityqueue/PriorityQueue.java)                    | `T`                | 自然順序またはComparator、動的容量         |
-| [`IntPriorityQueue`](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java)                 | `int`              | 昇順/降順、`IntComparator`、動的容量       |
-| [`LongPriorityQueue`](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java)               | `long`             | 昇順/降順、`LongComparator`、動的容量      |
-| [`IndexedPriorityQueue<T>`](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)      | index付きT cost    | 自然順序またはComparator、固定index範囲    |
-| [`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)   | index付きint cost  | 昇順/降順、`IntComparator`、固定index範囲  |
-| [`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java) | index付きlong cost | 昇順/降順、`LongComparator`、固定index範囲 |
+| クラス                                                                                              | 保持する値         | 特徴                                       |
+|-----------------------------------------------------------------------------------------------------|--------------------|--------------------------------------------|
+| [`PriorityQueue<T>`](../../../src/lib/ds/priorityqueue/PriorityQueue.java)                          | `T`                | 自然順序またはComparator、動的容量         |
+| [`IntPriorityQueue`](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java)                       | `int`              | 昇順/降順、`IntComparator`、動的容量       |
+| [`LongPriorityQueue`](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java)                     | `long`             | 昇順/降順、`LongComparator`、動的容量      |
+| [`IntDoubleEndedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntDoubleEndedPriorityQueue.java) | `int`              | 最小値・最大値の両端取得、動的容量         |
+| [`IndexedPriorityQueue<T>`](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)            | index付きT cost    | 自然順序またはComparator、固定index範囲    |
+| [`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)         | index付きint cost  | 昇順/降順、`IntComparator`、固定index範囲  |
+| [`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)       | index付きlong cost | 昇順/降順、`LongComparator`、固定index範囲 |
 
 ## 選択の目安
 
 - Comparableオブジェクトの通常キューには`new PriorityQueue<>()` / `new PriorityQueue<>(true)`
 - 比較不能なオブジェクトにはComparatorを渡した`PriorityQueue<T>`
 - int / long値にはboxingしない`IntPriorityQueue` / `LongPriorityQueue`
+- 同じint集合から最小値と最大値の両方を取り出す場合は`IntDoubleEndedPriorityQueue`
 - indexごとのcost更新・削除・履歴取得にはIndexed版
 - Comparable costをindex管理する場合は`new IndexedPriorityQueue<>(n)`、ComparableでないcostはComparatorを指定
 - Dijkstraなどで削除後の確定costも取得する場合は`getLast` / `getLastOrDefault`

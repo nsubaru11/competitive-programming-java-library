@@ -2,9 +2,10 @@
 
 ## 概要
 
-無向重み付きグラフの最小・最大全域森を求めるAPIです。入力が連結なら結果は全域木、非連結なら各連結成分の全域木を合わせた全域森になります。
-
-入力グラフは [`UndirectedGraph`](../Core/UndirectedGraphGuide.md) で共通化され、Kruskal法とPrim法のどちらにも同じグラフを渡せます。採用辺を含む計算結果には [`SpanningForestResult`](./SpanningForestResultGuide.md) を使用します。
+無向重み付きグラフの最小・最大全域森を求めるAPIです。
+入力が連結なら結果は全域木、非連結なら各連結成分の全域木を合わせた全域森になります。
+入力グラフは [`UndirectedGraph`](../Core/UndirectedGraphGuide.md) で共通化され、Kruskal法とPrim法のどちらにも同じグラフを渡せます。
+採用辺を含む計算結果には [`SpanningForestResult`](./SpanningForestResultGuide.md) を使用します。
 
 ## 実装クラス
 

@@ -145,6 +145,86 @@ public final class FactorUtils {
 	}
 
 	/**
+	 * 素因数分解を行い、素因数と指数の対応を 2xN の2次元配列で返します。
+	 * result[0] には昇順にソートされた素因数が、
+	 * result[1] には対応する指数が格納されます。
+	 *
+	 * @param n 分解する正の整数
+	 * @return {素因数の配列, 指数の配列} の2次元配列。 n <= 1 の場合は要素数0の配列を返す。
+	 */
+	public static int[][] primeFactors2D(int n) {
+		if (n <= 1) return new int[2][0];
+		int count = uniquePrimeFactorCount(n);
+		int[][] res = new int[2][count];
+		int idx = 0, e = 0;
+		while (n % 2 == 0) {
+			e++;
+			n /= 2;
+		}
+		if (e > 0) {
+			res[0][idx] = 2;
+			res[1][idx++] = e;
+		}
+		for (int i = 3; i * i <= n; i += 2) {
+			e = 0;
+			while (n % i == 0) {
+				e++;
+				n /= i;
+			}
+			if (e > 0) {
+				res[0][idx] = i;
+				res[1][idx] = e;
+				idx++;
+			}
+		}
+		if (n > 1) {
+			res[0][idx] = n;
+			res[1][idx] = 1;
+		}
+		return res;
+	}
+
+	/**
+	 * 素因数分解を行い、素因数と指数の対応を 2xN の2次元配列で返します。
+	 * result[0] には昇順にソートされた素因数が、
+	 * result[1] には対応する指数が格納されます。
+	 *
+	 * @param n 分解する正の整数
+	 * @return {素因数の配列, 指数の配列} の2次元配列。 n <= 1 の場合は要素数0の配列を返す。
+	 */
+	public static long[][] primeFactors2D(long n) {
+		if (n <= 1) return new long[2][0];
+		int count = uniquePrimeFactorCount(n);
+		long[][] res = new long[2][count];
+		int idx = 0, e = 0;
+		while (n % 2 == 0) {
+			e++;
+			n /= 2;
+		}
+		if (e > 0) {
+			res[0][idx] = 2;
+			res[1][idx++] = e;
+		}
+		for (long i = 3; i * i <= n; i += 2) {
+			e = 0;
+			while (n % i == 0) {
+				e++;
+				n /= i;
+			}
+			if (e > 0) {
+				res[0][idx] = i;
+				res[1][idx] = e;
+				idx++;
+			}
+		}
+		if (n > 1) {
+			res[0][idx] = n;
+			res[1][idx] = 1;
+		}
+		return res;
+	}
+
+	/**
 	 * 素因数と指数の対応を指定された Map に格納します。
 	 * 素因数は昇順に処理されますが、反復順序は指定された Map に従います。
 	 *

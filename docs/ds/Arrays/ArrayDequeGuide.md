@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`IntArrayDeque`](../../../src/lib/ds/arrays/IntArrayDeque.java) と [`LongArrayDeque`](../../../src/lib/ds/arrays/LongArrayDeque.java) は、先頭と末尾の追加・削除に対応するプリミティブ特化 deque です。内部容量を2のべき乗に正規化し、循環位置の計算に剰余ではなくビット演算を使用します。
+[`IntArrayDeque`](../../../src/lib/ds/arrays/IntArrayDeque.java) と [`LongArrayDeque`](../../../src/lib/ds/arrays/LongArrayDeque.java) は、先頭と末尾の追加・削除に対応するプリミティブ特化 deque です。
+内部容量を2のべき乗に正規化し、循環位置の計算に剰余ではなくビット演算を使用します。
 
 ## 特徴
 

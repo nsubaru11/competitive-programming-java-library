@@ -3,7 +3,8 @@
 ## 概要
 
 `IntPrefixSum` / `LongPrefixSum` とその2D・3D版は、構築後に更新しない配列の累積和を保持します。
-`IntPrefixModSum` / `LongPrefixModSum` とその2D・3D版は、同じ累積和を法 `mod` で保持します。 1Dの閉区間、2Dの閉矩形、3Dの閉直方体の和をいずれも $\mathcal{O}(1)$ で取得できます。
+`IntPrefixModSum` / `LongPrefixModSum` とその2D・3D版は、同じ累積和を法 `mod` で保持します。
+1Dの閉区間、2Dの閉矩形、3Dの閉直方体の和をいずれも $\mathcal{O}(1)$ で取得できます。
 
 ## 特徴
 

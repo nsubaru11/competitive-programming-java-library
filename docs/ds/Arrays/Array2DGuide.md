@@ -2,7 +2,8 @@
 
 ## 概要
 
-[`IntArray2D`](../../../src/lib/ds/arrays/IntArray2D.java) と [`LongArray2D`](../../../src/lib/ds/arrays/LongArray2D.java) は、`h * w` 要素を一次元配列へ圧縮して保持する2次元配列です。90度単位の論理回転ではデータを移動せず、座標変換によって $\mathcal{O}(1)$ でアクセスします。
+[`IntArray2D`](../../../src/lib/ds/arrays/IntArray2D.java) と [`LongArray2D`](../../../src/lib/ds/arrays/LongArray2D.java) は、`h * w` 要素を一次元配列へ圧縮して保持する2次元配列です。
+90度単位の論理回転ではデータを移動せず、座標変換によって $\mathcal{O}(1)$ でアクセスします。
 
 ## 特徴
 

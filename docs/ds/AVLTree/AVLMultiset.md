@@ -2,7 +2,8 @@
 
 ## 概要
 
-`AVLMultiset<T extends Comparable<T>>`は、ジェネリック型の重複を許可する順序付き集合（SortedMultiset）を実装したクラスです。 各要素が何個存在するかをカウントで管理します。
+`AVLMultiset<T extends Comparable<T>>`は、ジェネリック型の重複を許可する順序付き集合（SortedMultiset）を実装したクラスです。
+各要素が何個存在するかをカウントで管理します。
 
 ## 特徴
 

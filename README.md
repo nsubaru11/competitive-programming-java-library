@@ -10,7 +10,7 @@ AtCoder などの競技プログラミングで使用することを想定した
 - **提出時の自動バンドル**: AtCoder側のランナーが `import lib.*` と推移的依存を単一の `Main.java` へ展開します
 - **プリミティブ特化版を併設**: 主要なデータ構造はジェネリクス版に加えて int / long 特化版を提供し、オートボクシングのオーバーヘッドを回避します
 - **低レベル最適化**: ビット演算・手動バッファリング・SWAR・`VarHandle` などを活用した高速化を行っています（特に FastIO）
-- **ドキュメント完備**: 各モジュールに README を、主要クラスには `docs/` 配下の詳細ガイドを用意しています
+- **段階的なドキュメント整備**: 各モジュールの README と主要クラスの詳細ガイドを `docs/` 配下で整備しています。実装・検証状況は[現状監査レポート](./docs/STATUS.md)にまとめています
 
 ## 動作環境
 
@@ -56,11 +56,15 @@ public class Main {
 }
 ```
 
-AtCoderへはこのimport版を直接提出できません。`run` / `test` / `localtest` / `tomain` / `submit` は、必ずライブラリをバンドルした提出形へ変換してから実行します。バンドラを使えない場合は、`src/lib/` の依存元ファイルを確認して従来どおり手動展開できます。
+AtCoderへはこのimport版を直接提出できません。
+`run` / `test` / `localtest` / `tomain` / `submit` は、必ずライブラリをバンドルした提出形へ変換してから実行します。
+バンドラを使えない場合は、`src/lib/` の依存元ファイルを確認して従来どおり手動展開できます。
 
 ## ライブラリ一覧
 
 実装状況: 印なし = 実装済み ／ 🚧 = 開発中・一部未実装 ／ 📝 = 未実装（TODO のみ）
+
+2026-08-10 時点のファイル単位の集計、利用不可API、検証状況、追加TODO一覧は[現状監査レポート](./docs/STATUS.md)を参照してください。
 
 ### アルゴリズム（`lib.graph` / `lib.math` / `lib.search` / `lib.sort` / `lib.string` / `lib.util`）
 
@@ -69,7 +73,8 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Conversions](./docs/util/Conversions)                            | 数値・文字配列・数字配列の相互変換                                                  |
 | [Dice](./docs/util/Dice)                                          | 6面体の向きと3方向の回転操作                                                        |
 | [DP](./src/patterns/dp)                                           | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                            |
-| [DivideAndConquer/MoAlgorithm](./docs/util/MoAlgorithm)           | Mo's Algorithm（0-indexed半開区間、4方向callback、ジグザグ走査）                    |
+| [DivideConquer](./docs/util/DivideConquer)                        | 🚧 転倒数計算（現在は未実装で常に0を返す）                                          |
+| [MoAlgorithm](./docs/util/MoAlgorithm)                            | Mo's Algorithm（0-indexed半開区間、4方向callback、ブロック幅指定、ジグザグ走査）    |
 | [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                 |
 | [Graph/Connectivity](./docs/graph/Connectivity)                   | 📝 橋・関節点・二重連結成分分解（TODO）                                             |
 | [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD          |
@@ -81,7 +86,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Math/Convolution](./docs/math/Polynomial)                        | 🚧 NTT / FFT / ビット演算系畳み込み（内部変換ロジックが未実装）                     |
 | [Math/MathUtils](./docs/math/MathUtils)                           | 整数演算・GCD・階乗・組み合わせ・トーシェント関数などの主要な静的入口               |
 | [Math/FactorialTable](./docs/math/FactorialTable)                 | 動的な階乗・逆元テーブル、nCr / nPr / Catalan・Lah・Narayana数                      |
-| [Math/FactorUtils](./docs/math/FactorUtils)                       | 素因数分解、素因数個数、約数個数・昇順列挙                                          |
+| [Math/FactorUtils](./docs/math/FactorUtils)                       | 素因数分解、素因数・指数配列、素因数個数、約数個数・昇順列挙                        |
 | [Math/GeometryUtils](./docs/math/GeometryUtils)                   | 線分・矩形の交差判定、点と図形の位置関係、各種距離計算                              |
 | [Math/LinearAlgebra](./docs/math/LinearAlgebra)                   | int / long行列演算。掃き出し法・行列式・ランクは📝                                  |
 | [Math/Number types](./docs/math/number)                           | Fraction / Int128 / ModInt / ModLong                                                |
@@ -96,10 +101,11 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 $\mathcal{O}(n)$ で取得）                           |
 | [Search/BinarySearch](./docs/search/BinarySearch)                 | 条件関数・ソート済み配列に対する二分探索（lower/upper bound、`-(挿入位置+1)` 形式） |
 | [Search/UnimodalUtils](./docs/search/UnimodalUtils)               | 📝 三分探索・黄金分割探索・ニュートン法（TODO）                                     |
-| [Sort](./docs/sort)                                               | 学習用ソートアルゴリズム11種 ※FordJohnson 📝                                        |
+| [Sort](./docs/sort)                                               | 学習用ソートアルゴリズム11種 ※FordJohnson / CountingSort / RadixSort 📝             |
 | [String/Levenshtein](./docs/string/Levenshtein)                   | 編集距離（標準 DP・距離制限付き banded DP）※Myers / Wu 📝                           |
 | [String/Palindrome](./docs/string/Palindrome)                     | Manacher（全回文検出 $\mathcal{O}(n)$）・素朴な回文判定/生成 ※Eertree 📝            |
 | [String/StringSearch](./docs/string/StringSearch)                 | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝                                |
+| [未実装バックログ](./docs/STATUS.md#todoのみのクラス)             | 頻出の未作成データ構造・アルゴリズムをコメントのみのTODOクラスとして管理            |
 
 ### データ構造（`lib.ds`）
 
@@ -117,7 +123,7 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 | [LiChaoTree](./docs/ds/LiChaoTree)                       | 📝 Li Chao Tree（直線群へのCHT、TODO）                                                                               |
 | [PersistentSegmentTree](./docs/ds/PersistentSegmentTree) | 📝 永続セグメント木（TODO）                                                                                          |
 | [PersistentUnionFind](./docs/ds/PersistentUnionFind)     | 📝 永続Union-Find（TODO）                                                                                            |
-| [PriorityQueue](./docs/ds/PriorityQueue)                 | 遅延ヒープ構築、generic / primitive Comparator、generic / int / longのindex付き更新に対応する優先度キュー            |
+| [PriorityQueue](./docs/ds/PriorityQueue)                 | 遅延ヒープ構築、両端int版、generic / int / longのindex付き更新に対応する優先度キュー                                 |
 | [SegmentTree](./docs/ds/SegmentTree)                     | セグメント木・遅延評価セグメント木・区間アフィン変換+二乗和（各 int / long 特化版あり）                              |
 | [SegmentTree2D](./docs/ds/SegmentTree2D)                 | 📝 2次元セグメント木（TODO）                                                                                         |
 | [SkipList](./docs/ds/SkipList)                           | 📝 スキップリスト（TODO）                                                                                            |
@@ -128,8 +134,9 @@ AtCoderへはこのimport版を直接提出できません。`run` / `test` / `l
 
 ## ベンチマーク
 
-FastIO の性能計測・比較用の環境を [docs/io/Java24/Benchmark/](./docs/io/Java24/Benchmark)
-に用意しています。 AtCoder 想定の JVM オプションでの繰り返し計測、CSV 出力、JIT / GC / JFR プロファイルの取得に対応しています。 使い方は同フォルダの [README](./docs/io/Java24/Benchmark/README.md) を参照してください。
+FastIO の性能計測・比較用の環境を [docs/io/Java24/Benchmark/](./docs/io/Java24/Benchmark)に用意しています。
+AtCoder 想定の JVM オプションでの繰り返し計測、CSV 出力、JIT / GC / JFR プロファイルの取得に対応しています。
+使い方は同フォルダの [README](./docs/io/Java24/Benchmark/README.md) を参照してください。
 
 ## リポジトリ構成
 
@@ -159,7 +166,7 @@ FastIO の性能計測・比較用の環境を [docs/io/Java24/Benchmark/](./doc
 ## 開発ポリシー
 
 - **競技用途を優先**: 実行速度を最優先とし、バリデーションは最低限に留めています
-- **コーディング規約**: インデントはタブ、定数は UPPER_SNAKE_CASE、非圧縮クラスには JavaDoc を記述（詳細は [.github/copilot-instructions.md](./.github/copilot-instructions.md)）
+- **コーディング規約**: インデントはタブ、定数は UPPER_SNAKE_CASE、JavaDoc は随時更新します。
 - **静的解析**: [Qodana](https://www.jetbrains.com/qodana/)（qodana-jvm 2025.2 / JDK 24）を使用
 - **Issue / PR**: [テンプレート](./.github)を用意しています
 

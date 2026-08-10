@@ -2,9 +2,8 @@
 
 ## 概要
 
-[`IndexedPriorityQueue<T>`](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)、
-[`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)、
-[`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)は、固定範囲`0 <= i < n`のindexへcostを対応付ける優先度キューです。同じindexを高々1個だけactiveにし、costの更新、改善、削除、削除後の最終cost取得を行えます。
+[`IndexedPriorityQueue<T>`](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)、[`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)、[`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)は、固定範囲`0 <= i < n`のindexへcostを対応付ける優先度キューです。
+同じindexを高々1個だけactiveにし、costの更新、改善、削除、削除後の最終cost取得を行えます。
 
 ## 特徴
 
@@ -131,17 +130,17 @@
 
 ### 7. 状態・反復
 
-| メソッド                              |                 戻り値の型 | 説明                                   |
-|---------------------------------------|---------------------------:|----------------------------------------|
-| `containsIndex(int i)`                |                  `boolean` | indexがactiveか判定                    |
-| `hasCost(int i)`                      |                  `boolean` | 現在世代のcost記録があるか判定         |
-| `size()`                              |                      `int` | activeなindex数                        |
-| `indexCount()`                        |                      `int` | 使用可能なindex数                      |
-| `isEmpty()`                           |                  `boolean` | active要素がないか判定                 |
+| メソッド                              |                 戻り値の型 | 説明                                               |
+|---------------------------------------|---------------------------:|----------------------------------------------------|
+| `containsIndex(int i)`                |                  `boolean` | indexがactiveか判定                                |
+| `hasCost(int i)`                      |                  `boolean` | 現在世代のcost記録があるか判定                     |
+| `size()`                              |                      `int` | activeなindex数                                    |
+| `indexCount()`                        |                      `int` | 使用可能なindex数                                  |
+| `isEmpty()`                           |                  `boolean` | active要素がないか判定                             |
 | `clear()`                             |                     `void` | active要素と現在世代の記録を$\mathcal{O}(1)$で消去 |
-| `IndexedPriorityQueue.iterator()`     |              `Iterator<T>` | generic costを内部順で走査             |
-| `IntIndexedPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int costを内部順で走査                 |
-| `LongIndexedPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long costを内部順で走査                |
+| `IndexedPriorityQueue.iterator()`     |              `Iterator<T>` | generic costを内部順で走査                         |
+| `IntIndexedPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int costを内部順で走査                             |
+| `LongIndexedPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long costを内部順で走査                            |
 
 primitive版では`contains(cost)`、`toArray()`、`intStream()` / `longStream()`などのCollection由来メソッドも利用できます。`contains`はindexではなくcostを検索します。
 
@@ -153,7 +152,8 @@ primitive版では`contains(cost)`、`toArray()`、`intStream()` / `longStream()
 | active   | false          | 無条件更新 | 改善時だけtrue | 削除してtrue | cost         |
 | 削除済み | 再登録してtrue | 再登録     | false          | false        | 最後のcost   |
 
-active判定は`position[i]`が指すヒープ位置と`heap[position[i]] == i`の一致で行います。削除時は`position[i]`へ現在のstampを保存し、`clear()`ではstampを1つ減らすだけで全indexを次世代の未追加状態として扱います。
+active判定は`position[i]`が指すヒープ位置と`heap[position[i]] == i`の一致で行います。
+削除時は`position[i]`へ現在のstampを保存し、`clear()`ではstampを1つ減らすだけで全indexを次世代の未追加状態として扱います。
 
 ## 利用例
 
@@ -214,7 +214,7 @@ int first = q.pollIndex(); // 7
 |:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 4.0** | 2026-07-20 | generic版の自然順序/Comparator構築、Primitive Comparator、`add` / `remove`のboolean化、default系、配列構築、`generate`、`indexCount`を追加し、bulk操作とiteratorのheapifyを遅延 |
 | **バージョン 3.0** | 2026-07-18 | `setAll`を追加し、`set` / `relax`が未整列領域を展開しないよう改善                                                                                                               |
-| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによる$\mathcal{O}(1)$ clear、`set`、active限定getter、`getLast`を追加                                                                                             |
+| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによる$\mathcal{O}(1)$ clear、`set`、active限定getter、`getLast`を追加                                                                                 |
 | **バージョン 1.0** | 2025-10-07 | long costのIndexedPriorityQueueとして初回実装                                                                                                                                   |
 
 ### バージョン管理について

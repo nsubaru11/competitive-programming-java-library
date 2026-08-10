@@ -70,6 +70,7 @@
 | `nextLongMatInv0(int h, int w)`    | `long[][]`   | 全要素を 1 減らして、転置した `w × h` 長整数行列を返します。        |
 | `nextDoubleMat(int h, int w)`      | `double[][]` | `h × w` の浮動小数点行列を読み込みます。                            |
 | `nextCharMat(int h, int w)`        | `char[][]`   | `h × w` の文字行列を読み込みます。                                  |
+| `nextStringMat(int h, int w)`      | `String[][]` | `h × w` の文字列行列を読み込みます。                                |
 | `nextInt3D(int x, int y, int z)`   | `int[][][]`  | `x × y × z` の 3 次元整数配列を読み込みます。                       |
 | `nextInt3D0(int x, int y, int z)`  | `int[][][]`  | 全要素を 1 減らした `x × y × z` の 3 次元整数配列を読み込みます。   |
 | `nextLong3D(int x, int y, int z)`  | `long[][][]` | `x × y × z` の 3 次元長整数配列を読み込みます。                     |
@@ -101,22 +102,47 @@
 
 ### ソート済み・累積和・逆写像
 
-| メソッド                         | 戻り値の型 | 説明                                       |
-|----------------------------------|------------|--------------------------------------------|
-| `nextSortedInt(int n)`           | `int[]`    | 整数配列を読み込み、ソートして返します。   |
-| `nextIntPrefixSum(int n)`        | `int[]`    | 整数の累積和配列を返します。               |
-| `nextIntPrefixSum(int h, int w)` | `int[][]`  | 整数の 2 次元累積和配列を返します。        |
-| `nextIntInverseMapping(int n)`   | `int[]`    | 1-indexed の値に対する逆写像を生成します。 |
+| メソッド                         | 戻り値の型                           | 説明                                              |
+|----------------------------------|--------------------------------------|---------------------------------------------------|
+| `nextSortedInt(int n)`           | `int[]`                              | 整数配列を読み込み、ソートして返します。          |
+| `nextSortedLong(int n)`          | `long[]`                             | long配列を読み込み、ソートして返します。          |
+| `nextSortedDouble(int n)`        | `double[]`                           | double配列を読み込み、ソートして返します。        |
+| `nextSortedChars(...)`           | `char[]`                             | 文字列またはn文字を読み込み、ソートして返します。 |
+| `nextSortedStrings(int n)`       | `String[]`                           | 文字列配列を読み込み、ソートして返します。        |
+| `nextIntPrefixSum(int n)`        | `int[]`                              | 整数の累積和配列を返します。                      |
+| `nextIntPrefixSum(int h, int w)` | `int[][]`                            | 整数の 2 次元累積和配列を返します。               |
+| `nextLongPrefixSum(...)`         | `long[]` / `long[][]` / `long[][][]` | longの1〜3次元累積和を返します。                  |
+| `nextIntInverseMapping(int n)`   | `int[]`                              | 1-indexed の値に対する逆写像を生成します。        |
 
 ### コレクション・マルチセット入力
 
-| メソッド                         | 戻り値の型                  | 説明                                                             |
-|----------------------------------|-----------------------------|------------------------------------------------------------------|
-| `nextIntAL(int n)`               | `ArrayList<Integer>`        | 整数 `ArrayList` を読み込みます。                                |
-| `nextIntHS(int n)`               | `HashSet<Integer>`          | 整数 `HashSet` を読み込みます。                                  |
-| `nextIntMultisetHM(int n)`       | `HashMap<Integer, Integer>` | 整数マルチセットを `HashMap` で読み込みます。                    |
-| `nextIntMultiset(int n, int m)`  | `int[]`                     | 値域 `[0,m)` の整数マルチセットを `int[]` で読み込みます。       |
-| `nextIntMultiset0(int n, int m)` | `int[]`                     | 値域 `[1,m]` を 0-indexed 化して整数マルチセットを読み込みます。 |
+| メソッド                         | 戻り値の型                    | 説明                                                             |
+|----------------------------------|-------------------------------|------------------------------------------------------------------|
+| `nextIntAL(int n)`               | `ArrayList<Integer>`          | 整数 `ArrayList` を読み込みます。                                |
+| `nextIntHS(int n)`               | `HashSet<Integer>`            | 整数 `HashSet` を読み込みます。                                  |
+| `nextIntTS(int n)`               | `TreeSet<Integer>`            | 整数 `TreeSet` を読み込みます。                                  |
+| `nextLongAL(int n)`              | `ArrayList<Long>`             | long `ArrayList` を読み込みます。                                |
+| `nextLongHS(int n)`              | `HashSet<Long>`               | long `HashSet` を読み込みます。                                  |
+| `nextLongTS(int n)`              | `TreeSet<Long>`               | long `TreeSet` を読み込みます。                                  |
+| `nextCharacterAL(int n)`         | `ArrayList<Character>`        | 文字 `ArrayList` を読み込みます。                                |
+| `nextCharacterHS(int n)`         | `HashSet<Character>`          | 文字 `HashSet` を読み込みます。                                  |
+| `nextCharacterTS(int n)`         | `TreeSet<Character>`          | 文字 `TreeSet` を読み込みます。                                  |
+| `nextStringAL(int n)`            | `ArrayList<String>`           | 文字列 `ArrayList` を読み込みます。                              |
+| `nextStringHS(int n)`            | `HashSet<String>`             | 文字列 `HashSet` を読み込みます。                                |
+| `nextStringTS(int n)`            | `TreeSet<String>`             | 文字列 `TreeSet` を読み込みます。                                |
+| `nextIntMultisetHM(int n)`       | `HashMap<Integer, Integer>`   | 整数マルチセットを `HashMap` で読み込みます。                    |
+| `nextIntMultisetTM(int n)`       | `TreeMap<Integer, Integer>`   | 整数マルチセットを `TreeMap` で読み込みます。                    |
+| `nextLongMultisetHM(int n)`      | `HashMap<Long, Integer>`      | longマルチセットを `HashMap` で読み込みます。                    |
+| `nextLongMultisetTM(int n)`      | `TreeMap<Long, Integer>`      | longマルチセットを `TreeMap` で読み込みます。                    |
+| `nextCharMultisetHM(int n)`      | `HashMap<Character, Integer>` | 文字マルチセットを `HashMap` で読み込みます。                    |
+| `nextCharMultisetTM(int n)`      | `TreeMap<Character, Integer>` | 文字マルチセットを `TreeMap` で読み込みます。                    |
+| `nextStringMultisetHM(int n)`    | `HashMap<String, Integer>`    | 文字列マルチセットを `HashMap` で読み込みます。                  |
+| `nextStringMultisetTM(int n)`    | `TreeMap<String, Integer>`    | 文字列マルチセットを `TreeMap` で読み込みます。                  |
+| `nextIntMultiset(int n, int m)`  | `int[]`                       | 値域 `[0,m)` の整数マルチセットを `int[]` で読み込みます。       |
+| `nextIntMultiset0(int n, int m)` | `int[]`                       | 値域 `[1,m]` を 0-indexed 化して整数マルチセットを読み込みます。 |
+| `nextUpperCharMultiset(int n)`   | `int[]`                       | `A`〜`Z`の出現回数を読み込みます。                               |
+| `nextLowerCharMultiset(int n)`   | `int[]`                       | `a`〜`z`の出現回数を読み込みます。                               |
+| `nextCharMultiset(n, l, r)`      | `int[]`                       | 閉区間`[l,r]`の文字出現回数を読み込みます。                      |
 
 ### ユーティリティ/状態確認メソッド
 
@@ -157,6 +183,13 @@ try (FastScanner sc = new FastScanner()) {
 - `nextChars(int n)` は「次のトークンを長さ `n` に切る」メソッドではなく、非空白文字を `n` 回読みます。
 - `nextLine()` を入力終端で呼び出した場合は `NoSuchElementException` になります。
 - 統合に伴い、以前の `ContestScanner` は削除されました。
+- コンストラクタは`InputStream.available() + 64`バイトを一度だけ`read`します。`available()`が全入力長を返さないストリームやshort readが起こるストリームでは入力が欠落するため、現状は提出環境の標準入力・ファイル入力向けです。
+
+## パフォーマンス特性
+
+- 全入力を内部byte配列へ保持し、各トークンを入力長に対して線形に走査します。
+- 数値・文字列1個の読み取りはトークン長に比例し、配列入力は全要素の文字数に比例します。
+- Java 17版は`Unsafe`へ依存するため、JDK更新時に互換性確認が必要です。
 
 ## バージョン情報
 
