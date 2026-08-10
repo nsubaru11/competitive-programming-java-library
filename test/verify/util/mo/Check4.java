@@ -9,8 +9,8 @@ import lib.ds.arrays.*;
 import lib.io.compat17.*;
 import lib.util.*;
 
-// https://judge.yosupo.jp/problem/static_range_count_distinct
-public final class Check1 {
+// https://judge.yosupo.jp/problem/static_range_frequency
+public final class Check4 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -26,15 +26,10 @@ public final class Check1 {
 	private static void solve() {
 		int n = sc.nextInt(), q = sc.nextInt();
 		IntCompressedArray a = new IntCompressedArray(sc.nextInt(n));
-		int[] freq = new int[a.uniqueSize()];
-		int[][] lr = sc.nextIntMatInv(q, 2);
-		int[] ans = {0};
+		int[] freq = new int[a.uniqueSize];
+		int[][] query = sc.nextIntMatInv(q, 3);
 		int[] res = new int[q];
-		MoAlgorithm.run(n, lr, i -> {
-			if (++freq[a.get(i)] == 1) ans[0]++;
-		}, i -> {
-			if (--freq[a.get(i)] == 0) ans[0]--;
-		}, i -> res[i] = ans[0]);
+		MoAlgorithm.run(n, query, i -> freq[a.get(i)]++, i -> freq[a.get(i)]--, i -> res[i] = a.containsValue(query[2][i]) ? freq[a.rankOfValue(query[2][i])] : 0);
 		out.println(res);
 	}
 
@@ -52,7 +47,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check4::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -61,7 +56,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check4::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

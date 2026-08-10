@@ -14,6 +14,7 @@ import lib.ds.*;
 public final class IntRangeBIT implements IntCollection {
 	public final int n;
 	private final int[] bit1, bit2;
+	private int total;
 
 	/**
 	 * サイズ n の BIT を構築する。初期値はすべて 0。
@@ -38,6 +39,7 @@ public final class IntRangeBIT implements IntCollection {
 	}
 
 	public void fill(final int val) {
+		total = n * val;
 		bit1[0] = bit2[0] = 0;
 		for (int i = 0, prev = 0; i < n; i++) {
 			int diff = val - prev;
@@ -60,9 +62,11 @@ public final class IntRangeBIT implements IntCollection {
 	 * @param init 初期値関数
 	 */
 	public void setAll(final IntUnaryOperator init) {
+		total = 0;
 		bit1[0] = bit2[0] = 0;
 		for (int i = 0, prev = 0; i < n; i++) {
 			int cur = init.applyAsInt(i);
+			total += cur;
 			int diff = cur - prev;
 			bit1[i + 1] = diff;
 			bit2[i + 1] = diff * i;
@@ -95,6 +99,7 @@ public final class IntRangeBIT implements IntCollection {
 	 */
 	public void set(final int i, final int v) {
 		final int delta = v - get(i);
+		total += delta;
 		add(bit1, i, delta);
 		add(bit1, i + 1, -delta);
 		add(bit2, i, delta * i);
@@ -110,6 +115,7 @@ public final class IntRangeBIT implements IntCollection {
 	 */
 	public void add(final int l, final int r, final int v) {
 		if (l > r) return;
+		total += (r - l + 1) * v;
 		add(bit1, l, v);
 		add(bit1, r + 1, -v);
 		add(bit2, l, v * l);
@@ -162,8 +168,13 @@ public final class IntRangeBIT implements IntCollection {
 		return sum(r) - sum(l - 1);
 	}
 
+	/**
+	 * 全要素の和を O(1) で返す。
+	 *
+	 * @return 全要素の和
+	 */
 	public int sumAll() {
-		return sum(n - 1);
+		return total;
 	}
 
 	/**

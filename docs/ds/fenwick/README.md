@@ -18,7 +18,7 @@
 	- `get(int i)`: インデックス `i` の値を取得 $\mathcal{O}(1)$
 	- `sum(int r)`: 閉区間 `[0, r]` の和を計算 $\mathcal{O}(\log N)$
 	- `sum(int l, int r)`: 閉区間 `[l, r]` の和を計算 $\mathcal{O}(\log N)$
-	- `sumAll()`: 全要素の和 $\mathcal{O}(\log N)$
+	- `sumAll()`: 全要素の和 $\mathcal{O}(1)$
 	- `lowerBound(w)`: 累積和が `w` 以上となる最小のインデックスを検索 $\mathcal{O}(\log N)$（全要素が非負であることが前提）
 	- `upperBound(w)`: 累積和が `w` より大きくなる最小のインデックスを検索 $\mathcal{O}(\log N)$（全要素が非負であることが前提）
 - **一括操作**: `fill(v)` / `setAll(init)` で全要素を $\mathcal{O}(N)$ で再構築
@@ -47,6 +47,7 @@
 	- `get(i, j)`: $(i, j)$ の値を取得 $\mathcal{O}(1)$
 	- `sum(i, j)`: 矩形 `[0, i] x [0, j]` の和 $\mathcal{O}(\log H \log W)$
 	- `sum(i1, j1, i2, j2)`: 矩形 `[i1, i2] x [j1, j2]` の和 $\mathcal{O}(\log H \log W)$
+	- `sumAll()`: 全要素の和 $\mathcal{O}(1)$
 - **一括操作**: `fill(v)` / `setAll(init)` で全要素を $\mathcal{O}(HW)$ で再構築
 - **構築**: `IntBIT2D` は初期値関数に `IntBinaryOperator`、`LongBIT2D` は `(int, int) -> long` を返す
   `LongBIT2D.Initializer` を使用（JDK 標準に `(int, int) -> long` が無いための専用インターフェース）
@@ -58,7 +59,8 @@
 	- `add(l, r, v)`: 区間 `[l, r]` に `v` を一括加算 $\mathcal{O}(\log N)$
 	- `add(i, v)` / `set(i, v)` / `multiply(i, a)` / `apply(i, ...)`: 点更新・点演算 $\mathcal{O}(\log N)$
 	- `get(i)`: インデックス `i` の値を取得 $\mathcal{O}(\log N)$（※点BITと異なり $\mathcal{O}(1)$ ではない）
-	- `sum(r)` / `sum(l, r)` / `sumAll()`: 区間和の取得 $\mathcal{O}(\log N)$
+	- `sum(r)` / `sum(l, r)`: 区間和の取得 $\mathcal{O}(\log N)$
+	- `sumAll()`: 全要素の和 $\mathcal{O}(1)$
 
 ## 基本的な考え方
 

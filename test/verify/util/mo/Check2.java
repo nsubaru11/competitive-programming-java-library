@@ -6,11 +6,12 @@ import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.arrays.*;
+import lib.ds.fenwick.*;
 import lib.io.compat17.*;
 import lib.util.*;
 
-// https://judge.yosupo.jp/problem/static_range_count_distinct
-public final class Check1 {
+// https://judge.yosupo.jp/problem/static_range_inversions_query
+public final class Check2 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -26,14 +27,27 @@ public final class Check1 {
 	private static void solve() {
 		int n = sc.nextInt(), q = sc.nextInt();
 		IntCompressedArray a = new IntCompressedArray(sc.nextInt(n));
-		int[] freq = new int[a.uniqueSize()];
+		int m = a.uniqueSize();
+		IntBIT bit = new IntBIT(m);
 		int[][] lr = sc.nextIntMatInv(q, 2);
-		int[] ans = {0};
-		int[] res = new int[q];
+		long[] ans = {0};
+		long[] res = new long[q];
 		MoAlgorithm.run(n, lr, i -> {
-			if (++freq[a.get(i)] == 1) ans[0]++;
+			int ai = a.get(i);
+			ans[0] += bit.sum(ai - 1);
+			bit.add(ai, 1);
 		}, i -> {
-			if (--freq[a.get(i)] == 0) ans[0]--;
+			int ai = a.get(i);
+			ans[0] += bit.sumAll() - bit.sum(ai);
+			bit.add(ai, 1);
+		}, i -> {
+			int ai = a.get(i);
+			ans[0] -= bit.sum(ai - 1);
+			bit.add(ai, -1);
+		}, i -> {
+			int ai = a.get(i);
+			ans[0] -= bit.sumAll() - bit.sum(ai);
+			bit.add(ai, -1);
 		}, i -> res[i] = ans[0]);
 		out.println(res);
 	}
@@ -52,7 +66,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -61,7 +75,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

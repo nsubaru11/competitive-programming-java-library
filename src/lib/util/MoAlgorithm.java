@@ -15,7 +15,6 @@ import java.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class MoAlgorithm {
-
 	private static final int IDX_BITS = 20;
 	private static final long IDX_MASK = (1L << IDX_BITS) - 1;
 

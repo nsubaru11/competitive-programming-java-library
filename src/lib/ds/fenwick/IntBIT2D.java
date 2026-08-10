@@ -15,6 +15,7 @@ public final class IntBIT2D implements IntCollection {
 	public final int h, w;
 	private final int hw;
 	private final int[] tree, raw;
+	private int total;
 
 	/**
 	 * サイズ h x w の 2次元 BIT を構築する。初期値はすべて 0。
@@ -43,6 +44,7 @@ public final class IntBIT2D implements IntCollection {
 	}
 
 	public void fill(final int val) {
+		total = hw * val;
 		int w1 = w + 1;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
@@ -73,10 +75,11 @@ public final class IntBIT2D implements IntCollection {
 	 * @param init 初期値関数
 	 */
 	public void setAll(final IntBinaryOperator init) {
+		total = 0;
 		int w1 = w + 1;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				raw[i * w + j] = tree[(i + 1) * w1 + (j + 1)] = init.applyAsInt(i, j);
+				total += raw[i * w + j] = tree[(i + 1) * w1 + (j + 1)] = init.applyAsInt(i, j);
 			}
 		}
 		for (int i = 1; i <= h; i++) {
@@ -129,6 +132,7 @@ public final class IntBIT2D implements IntCollection {
 	public int add(final int i, final int j, final int v) {
 		int ij = i * w + j;
 		raw[ij] += v;
+		total += v;
 		int w1 = w + 1;
 		for (int i2 = i + 1; i2 <= h; i2 += i2 & -i2) {
 			int idx = i2 * w1;
@@ -209,8 +213,13 @@ public final class IntBIT2D implements IntCollection {
 		return sum(i2, j2) - sum(i1 - 1, j2) - sum(i2, j1 - 1) + sum(i1 - 1, j1 - 1);
 	}
 
+	/**
+	 * 全要素の和を O(1) で返す。
+	 *
+	 * @return 全要素の和
+	 */
 	public int sumAll() {
-		return sum(h - 1, w - 1);
+		return total;
 	}
 
 	public int size() {

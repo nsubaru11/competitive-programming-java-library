@@ -43,6 +43,10 @@ public final class IntCompressedArray implements IntArray {
 		sorted = copyOf(a, length);
 		sort(sorted);
 		ranks = new int[length];
+		if (length == 0) {
+			uniqueSize = 0;
+			return;
+		}
 		int r = oneBased ? 1 : 0, u = 1;
 		switch (rankType) {
 			case DENSE:

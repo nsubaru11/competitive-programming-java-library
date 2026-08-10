@@ -16,6 +16,7 @@ public final class IntBIT implements IntCollection {
 	public final int n;
 	private final int headBit;
 	private final int[] tree, raw;
+	private int total;
 
 	/**
 	 * サイズ n の BIT を構築する。初期値はすべて 0。
@@ -41,6 +42,7 @@ public final class IntBIT implements IntCollection {
 	}
 
 	public void fill(final int val) {
+		total = n * val;
 		tree[0] = 0;
 		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = val;
 		for (int i = 1; i <= n; i++) {
@@ -55,8 +57,9 @@ public final class IntBIT implements IntCollection {
 	 * @param init 初期値関数
 	 */
 	public void setAll(final IntUnaryOperator init) {
+		total = 0;
 		tree[0] = 0;
-		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = init.applyAsInt(i);
+		for (int i = 0; i < n; i++) total += raw[i] = tree[i + 1] = init.applyAsInt(i);
 		for (int i = 1; i <= n; i++) {
 			int j = i + (i & -i);
 			if (j <= n) tree[j] += tree[i];
@@ -91,6 +94,7 @@ public final class IntBIT implements IntCollection {
 	 */
 	public int add(final int i, final int v) {
 		raw[i] += v;
+		total += v;
 		for (int cur = i + 1; cur <= n; cur += cur & -cur) tree[cur] += v;
 		return raw[i];
 	}
@@ -131,8 +135,13 @@ public final class IntBIT implements IntCollection {
 		return sum(r) - sum(l - 1);
 	}
 
+	/**
+	 * 全要素の和を O(1) で返す。
+	 *
+	 * @return 全要素の和
+	 */
 	public int sumAll() {
-		return sum(n - 1);
+		return total;
 	}
 
 	/**

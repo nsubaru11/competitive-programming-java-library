@@ -14,6 +14,7 @@ import lib.ds.*;
 public final class LongRangeBIT implements LongCollection {
 	public final int n;
 	private final long[] bit1, bit2;
+	private long total;
 
 	/**
 	 * サイズ n の BIT を構築する。初期値はすべて 0。
@@ -38,6 +39,7 @@ public final class LongRangeBIT implements LongCollection {
 	}
 
 	public void fill(final long val) {
+		total = n * val;
 		bit1[0] = bit2[0] = 0;
 		long prev = 0;
 		for (int i = 0; i < n; i++) {
@@ -61,10 +63,12 @@ public final class LongRangeBIT implements LongCollection {
 	 * @param init 初期値関数
 	 */
 	public void setAll(final IntToLongFunction init) {
+		total = 0;
 		bit1[0] = bit2[0] = 0;
 		long prev = 0;
 		for (int i = 0; i < n; i++) {
 			long cur = init.applyAsLong(i);
+			total += cur;
 			long diff = cur - prev;
 			bit1[i + 1] = diff;
 			bit2[i + 1] = diff * i;
@@ -97,6 +101,7 @@ public final class LongRangeBIT implements LongCollection {
 	 */
 	public void set(final int i, final long v) {
 		final long delta = v - get(i);
+		total += delta;
 		add(bit1, i, delta);
 		add(bit1, i + 1, -delta);
 		add(bit2, i, delta * i);
@@ -112,6 +117,7 @@ public final class LongRangeBIT implements LongCollection {
 	 */
 	public void add(final int l, final int r, final long v) {
 		if (l > r) return;
+		total += (long) (r - l + 1) * v;
 		add(bit1, l, v);
 		add(bit1, r + 1, -v);
 		add(bit2, l, v * l);
@@ -164,8 +170,13 @@ public final class LongRangeBIT implements LongCollection {
 		return sum(r) - sum(l - 1);
 	}
 
+	/**
+	 * 全要素の和を O(1) で返す。
+	 *
+	 * @return 全要素の和
+	 */
 	public long sumAll() {
-		return sum(n - 1);
+		return total;
 	}
 
 	/**

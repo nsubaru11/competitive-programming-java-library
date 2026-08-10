@@ -6,11 +6,12 @@ import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.arrays.*;
+import lib.ds.priorityqueue.*;
 import lib.io.compat17.*;
 import lib.util.*;
 
-// https://judge.yosupo.jp/problem/static_range_count_distinct
-public final class Check1 {
+// https://judge.yosupo.jp/problem/static_range_mode_query
+public final class Check3 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -24,17 +25,21 @@ public final class Check1 {
 	// endregion
 
 	private static void solve() {
-		int n = sc.nextInt(), q = sc.nextInt();
-		IntCompressedArray a = new IntCompressedArray(sc.nextInt(n));
-		int[] freq = new int[a.uniqueSize()];
+		int n = sc.nextInt();
+		int q = sc.nextInt();
+		int[] a = sc.nextInt(n);
+		IntCompressedArray c = new IntCompressedArray(a);
+		IntIndexedPriorityQueue freq = new IntIndexedPriorityQueue(c.uniqueSize, true);
 		int[][] lr = sc.nextIntMatInv(q, 2);
-		int[] ans = {0};
-		int[] res = new int[q];
+		int[][] res = new int[q][2];
 		MoAlgorithm.run(n, lr, i -> {
-			if (++freq[a.get(i)] == 1) ans[0]++;
+			freq.set(c.get(i), freq.getOrDefault(c.get(i), 0) + 1);
 		}, i -> {
-			if (--freq[a.get(i)] == 0) ans[0]--;
-		}, i -> res[i] = ans[0]);
+			freq.set(c.get(i), freq.get(c.get(i)) - 1);
+		}, i -> {
+			res[i][0] = c.valueOfRank(freq.peekIndex());
+			res[i][1] = freq.peek();
+		});
 		out.println(res);
 	}
 
@@ -52,7 +57,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check3::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -61,7 +66,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check3::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

@@ -49,6 +49,7 @@
 | `sum(l, r)`           | `int/long` | 閉区間 `[l, r]` の和（`IntBIT`/`LongBIT`） |
 | `sum(i, j)`           | `int/long` | 矩形 `[0, i] x [0, j]` の和                |
 | `sum(i1, j1, i2, j2)` | `int/long` | 矩形 `[i1, i2] x [j1, j2]` の和            |
+| `sumAll()`            | `int/long` | 全要素の和（数値型BITでは $\mathcal{O}(1)$） |
 | `query(r)`            | `T`        | 閉区間 `[0, r]` の演算結果（`BIT<T>`）     |
 | `query(l, r)`         | `T`        | 閉区間 `[l, r]` の演算結果（`BIT<T>`）     |
 
@@ -68,6 +69,7 @@ int sum = bit.sum(1, 3); // [1,3] の和
 ## パフォーマンス特性
 
 - 点更新 / 区間和: $\mathcal{O}(\log N)$
+- `sumAll()`（数値型BIT）: $\mathcal{O}(1)$
 - 2次元の点更新 / 矩形和: $\mathcal{O}(\log H \log W)$
 - 区間加算 / 区間和（RangeBIT）: $\mathcal{O}(\log N)$
 
@@ -75,6 +77,7 @@ int sum = bit.sum(1, 3); // [1,3] の和
 
 | バージョン番号     | 年月日     | 詳細     |
 |:-------------------|:-----------|:---------|
+| **バージョン 1.1** | 2026-08-10 | 数値型BITの `sumAll()` を $\mathcal{O}(1)$ 化 |
 | **バージョン 1.0** | 2026-02-17 | 初版作成 |
 
 ### バージョン管理について

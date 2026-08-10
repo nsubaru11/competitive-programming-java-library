@@ -16,6 +16,7 @@ public final class LongBIT implements LongCollection {
 	public final int n;
 	private final int headBit;
 	private final long[] tree, raw;
+	private long total;
 
 	/**
 	 * サイズ n の BIT を構築する。初期値はすべて 0。
@@ -41,6 +42,7 @@ public final class LongBIT implements LongCollection {
 	}
 
 	public void fill(final long val) {
+		total = n * val;
 		tree[0] = 0;
 		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = val;
 		for (int i = 1; i <= n; i++) {
@@ -55,8 +57,9 @@ public final class LongBIT implements LongCollection {
 	 * @param init 初期値関数
 	 */
 	public void setAll(final IntToLongFunction init) {
+		total = 0;
 		tree[0] = 0;
-		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = init.applyAsLong(i);
+		for (int i = 0; i < n; i++) total += raw[i] = tree[i + 1] = init.applyAsLong(i);
 		for (int i = 1; i <= n; i++) {
 			int j = i + (i & -i);
 			if (j <= n) tree[j] += tree[i];
@@ -91,6 +94,7 @@ public final class LongBIT implements LongCollection {
 	 */
 	public long add(final int i, final long v) {
 		raw[i] += v;
+		total += v;
 		for (int cur = i + 1; cur <= n; cur += cur & -cur) tree[cur] += v;
 		return raw[i];
 	}
@@ -131,8 +135,13 @@ public final class LongBIT implements LongCollection {
 		return sum(r) - sum(l - 1);
 	}
 
+	/**
+	 * 全要素の和を O(1) で返す。
+	 *
+	 * @return 全要素の和
+	 */
 	public long sumAll() {
-		return sum(n - 1);
+		return total;
 	}
 
 	/**
