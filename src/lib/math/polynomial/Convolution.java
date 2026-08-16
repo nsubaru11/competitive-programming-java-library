@@ -143,13 +143,55 @@ public final class Convolution {
 
 	private static void transformFwht(long[] a, boolean isInverse, int mod) { /* TODO: FWHT（高速ウォルシュ・アダマール変換）の実装 */ }
 
-	private static void transformSubsetZeta(long[] a, int mod) { /* TODO: 下位集合ゼータ変換の実装 */ }
+	public static void transformSubsetZeta(final long[] a, final int mod) {
+		final int n = a.length;
+		for (int i = 1; i < n; i <<= 1) {
+			final int j = i << 1;
+			for (int l = 0; l < n; l += j) {
+				for (int t = l + i; t < l + j; t++) {
+					a[t] = (a[t] + a[t - i]) % mod;
+				}
+			}
+		}
+	}
 
-	private static void transformSubsetMobius(long[] a, int mod) { /* TODO: 下位集合メビウス変換の実装 */ }
+	public static void transformSubsetMobius(final long[] a, final int mod) {
+		final int n = a.length;
+		for (int i = 1; i < n; i <<= 1) {
+			final int j = i << 1;
+			for (int l = 0; l < n; l += j) {
+				for (int t = l + i; t < l + j; t++) {
+					a[t] = (a[t] - a[t - i]) % mod;
+				}
+			}
+		}
+		for (int i = 0; i < n; i++) if (a[i] < 0) a[i] += mod;
+	}
 
-	private static void transformSupersetZeta(long[] a, int mod) { /* TODO: 上位集合ゼータ変換の実装 */ }
+	public static void transformSupersetZeta(final long[] a, final int mod) {
+		final int n = a.length;
+		for (int i = 1; i < n; i <<= 1) {
+			final int j = i << 1;
+			for (int l = 0; l < n; l += j) {
+				for (int t = l; t < l + i; t++) {
+					a[t] = (a[t] + a[t + i]) % mod;
+				}
+			}
+		}
+	}
 
-	private static void transformSupersetMobius(long[] a, int mod) { /* TODO: 上位集合メビウス変換の実装 */ }
+	public static void transformSupersetMobius(final long[] a, final int mod) {
+		final int n = a.length;
+		for (int i = 1; i < n; i <<= 1) {
+			final int j = i << 1;
+			for (int l = 0; l < n; l += j) {
+				for (int t = l; t < l + i; t++) {
+					a[t] = (a[t] - a[t + i] + mod) % mod;
+				}
+			}
+		}
+		for (int i = 0; i < n; i++) if (a[i] < 0) a[i] += mod;
+	}
 
 	private static void transformMultipleZeta(long[] a, int mod) { /* TODO: 倍数ゼータ変換の実装 */ }
 
