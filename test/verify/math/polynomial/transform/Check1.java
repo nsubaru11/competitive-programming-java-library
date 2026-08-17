@@ -27,11 +27,10 @@ public final class Check1 {
 			if (x[i] > mx) mx = x[i];
 		}
 		int k = Integer.highestOneBit(mx) << 1;
-		int[] a = new int[k];
-		for (int i = 0; i < n; i++) a[x[i]]++;
-		int[] b = a.clone();
-		Transform.subsetZeta(a);
-		Transform.supersetZeta(b);
+		int[] multiset = new int[k];
+		for (int i = 0; i < n; i++) multiset[x[i]]++;
+		long[] a = Transform.subsetZeta(multiset);
+		long[] b = Transform.supersetZeta(multiset);
 		StringBuilder sb = new StringBuilder(1 << 22);
 		for (int i = 0; i < n; i++) {
 			sb.append(a[x[i]]).append(' ').append(b[x[i]]).append(' ').append(n - (a[x[i] ^ (k - 1)])).append('\n');

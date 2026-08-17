@@ -26,7 +26,7 @@ public final class Check1 {
 		int n = sc.nextInt();
 		int[] a = sc.nextInt(1 << n);
 		int[] b = sc.nextInt(1 << n);
-		out.print(Convolution.convoluteAnd(a, b, MOD)).println();
+		out.print(Convolution.convolveAnd(a, b, MOD)).println();
 	}
 
 	// region < main & debug >
