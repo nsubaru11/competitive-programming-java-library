@@ -1,6 +1,6 @@
 # ライブラリ現状監査レポート
 
-監査基準日: 2026-08-10
+監査基準日: 2026-08-23
 
 `src/lib/`、`src/patterns/`、`docs/`、`test/verify/`をファイル単位で突き合わせた結果です。
 ここでいう「実装済み」は、TODO雛形ではなく処理本体を持つという静的な分類であり、すべての入力に対する正当性を保証するものではありません。
@@ -10,16 +10,16 @@
 | モジュール   | Javaファイル | 実装本体あり | 一部未実装 | TODOのみ |
 |--------------|-------------:|-------------:|-----------:|---------:|
 | `lib.ds`     |           97 |           74 |          1 |       22 |
-| `lib.graph`  |           28 |           12 |          0 |       16 |
+| `lib.graph`  |           30 |           15 |          0 |       15 |
 | `lib.io`     |            6 |            6 |          0 |        0 |
 | `lib.math`   |           26 |           15 |          1 |       10 |
 | `lib.search` |            6 |            3 |          0 |        3 |
 | `lib.sort`   |           14 |           11 |          0 |        3 |
 | `lib.string` |           16 |            5 |          0 |       11 |
 | `lib.util`   |           21 |           20 |          1 |        0 |
-| **合計**     |      **214** |      **146** |      **3** |   **65** |
+| **合計**     |      **216** |      **149** |      **3** |   **64** |
 
-その他に、コピー・改変用の`src/patterns/`が2分野5ファイル、`docs/`のMarkdownが本レポートを含め132ファイル、`test/verify/`のJava検証ソースが88ファイルあります。
+その他に、コピー・改変用の`src/patterns/`が2分野5ファイル、`docs/`のMarkdownが本レポートを含め135ファイル、`test/verify/`のJava検証ソースが88ファイルあります。
 ビルドツールと自動テストランナーはなく、`javac`と各mainクラスの個別実行が前提です。
 
 ## すぐに利用してはいけない公開API
@@ -54,7 +54,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 - `SegmentTreeBeats`、`ImplicitTreap`、`BinaryTrie`、`LinkCutTree`
 - `RollbackUnionFind`、`WeightedUnionFind`
 
-### グラフ（16）
+### グラフ（15）
 
 既存のTODO:
 
@@ -63,7 +63,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 
 今回追加したTODO:
 
-- `ZeroOneBFS`、`Johnson`、`EulerianTrail`、`RerootingDP`
+- `Johnson`、`EulerianTrail`、`RerootingDP`
 - `BipartiteMatching`、`GeneralMatching`、`StoerWagner`、`DominatorTree`
 - `OfflineDynamicConnectivity`
 
@@ -106,7 +106,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 ## 実装済み領域の概況
 
 - データ構造は配列ラッパー・累積和、Fenwick Tree、AVL Tree、基本/Treap、プリミティブHashMap、優先度キュー、1次元Segment Tree、Trie群、Union-Findが中心です。実装ファイル数は最も多い一方、検証はクラス間で偏りがあります。
-- グラフは固定長グラフ表現、BFS・SCC・二部判定、Dijkstra、Bellman-Ford、Warshall-Floyd、Kruskal、Prim、木・根付き木を利用できます。フロー、2-SAT、low-link系は未実装です。
+- グラフは固定長グラフ表現、BFS・0-1 BFS・SCC・二部判定、Dijkstra、Bellman-Ford、Warshall-Floyd、Kruskal、Prim、木・根付き木を利用できます。フロー、2-SAT、low-link系は未実装です。
 - 入出力はJava 24版とJava 17互換版があり、いずれも`FastScanner`、`FastPrinter`、`InteractiveScanner`を持ちます。`Unsafe`を利用するため、JDK更新時の警告と互換性確認が必要です。
 - 数学は基本整数演算、組合せ、素数・素因数、幾何ユーティリティ、行列の基本演算、数値型、多項式の基本演算があります。高速畳み込みと掃き出し法は未実装です。
 - 探索は二分探索とQuickSelectのみが利用可能です。単峰探索・Newton法はTODOです。
@@ -129,7 +129,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 
 `test/verify/`には88ファイルあります。
 内訳はds 30、graph 11、io 19、math 11、search 2、string 5、util 10で、sortは0です。
-単純名が検証ソース中に現れるかという静的な目安では、実装本体を持つ146クラス中71クラスが何らかの検証コードから参照され、75クラスは直接参照を確認できませんでした。
+単純名が検証ソース中に現れるかという静的な目安では、実装本体を持つ149クラス中71クラスが何らかの検証コードから参照され、78クラスは直接参照を確認できませんでした。
 この数字には共通インターフェースや補助型を間接利用するケースがあるため、厳密なカバレッジではありません。
 
 特に次の領域は優先して検証を増やす必要があります。

@@ -2,18 +2,13 @@ package lib.graph;
 
 import static java.util.Arrays.*;
 
-import lib.ds.priorityqueue.*;
-
 /**
- * Dijkstra法により、非負重み付きグラフの単一始点・複数始点最短経路を求めるユーティリティクラス。
- * <p>
- * 計算量は {@code O((n + m) log n)}、追加メモリは {@code O(n)} です。
- * 辺の重みはすべて非負であることを前提とします。
+ * BFS。辺重みが1のグラフの単一始点・複数始点最短路を O(V + E) で求める。
  */
-public final class Dijkstra {
+public final class BFS {
 	private static final long INF = Long.MAX_VALUE;
 
-	private Dijkstra() {
+	private BFS() {
 	}
 
 	/**
@@ -26,25 +21,27 @@ public final class Dijkstra {
 	public static ShortestPathResult solve(final Graph graph, final int s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final long[] cost = graph.cost;
 		final int[] parent = new int[n];
 		fill(parent, -1);
 		parent[s] = s;
-		final LongIndexedPriorityQueue dist = new LongIndexedPriorityQueue(n);
-		dist.add(s, 0);
+		final long[] dist = new long[n];
+		fill(dist, INF);
+		dist[s] = 0;
+		final int[] dq = new int[n];
+		dq[0] = s;
 
-		while (!dist.isEmpty()) {
-			final int u = dist.peekIndex();
-			final long du = dist.poll();
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = dq[head];
+			final long du = dist[u];
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
-				final long c = cost[e];
-				if (dist.relax(v, du + c)) parent[v] = u;
+				if (dist[v] != INF) continue;
+				dist[v] = du + 1;
+				parent[v] = u;
+				dq[tail++] = v;
 			}
 		}
-		final long[] res = new long[graph.n];
-		setAll(res, i -> dist.getLastOrDefault(i, INF));
-		return new ShortestPathResult(s, res, parent);
+		return new ShortestPathResult(s, dist, parent);
 	}
 
 	/**
@@ -57,27 +54,30 @@ public final class Dijkstra {
 	public static ShortestPathResult solve(final Graph graph, final int... s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final long[] cost = graph.cost;
 		final int[] parent = new int[n];
 		fill(parent, -1);
-		final LongIndexedPriorityQueue dist = new LongIndexedPriorityQueue(n);
+		final long[] dist = new long[n];
+		fill(dist, INF);
+		final int[] dq = new int[n];
+		int tail = 0;
 		for (final int si : s) {
 			parent[si] = si;
-			dist.add(si, 0);
+			dist[si] = 0;
+			dq[tail++] = si;
 		}
 
-		while (!dist.isEmpty()) {
-			final int u = dist.peekIndex();
-			final long du = dist.poll();
+		for (int head = 0; head < tail; head++) {
+			final int u = dq[head];
+			final long du = dist[u];
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
-				final long c = cost[e];
-				if (dist.relax(v, du + c)) parent[v] = u;
+				if (dist[v] != INF) continue;
+				dist[v] = du + 1;
+				parent[v] = u;
+				dq[tail++] = v;
 			}
 		}
-		final long[] res = new long[graph.n];
-		setAll(res, i -> dist.getLastOrDefault(i, INF));
-		return new ShortestPathResult(s, res, parent);
+		return new ShortestPathResult(s, dist, parent);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class Dijkstra {
 	}
 
 	/**
-	 * 始点 s から終点 g への最短経路のコストをダイクストラ法を用いて計算します。
+	 * 始点 s から終点 g への最短経路のコストをBFSを用いて計算します。
 	 *
 	 * @param graph 探索対象のグラフ
 	 * @param s     始点（0-indexed）
@@ -115,27 +115,31 @@ public final class Dijkstra {
 	 * @return 始点から終点への最短距離。到達不能な場合は {@link Long#MAX_VALUE}
 	 */
 	public static long dist(final Graph graph, final int s, final int g) {
+		if (s == g) return 0;
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final long[] cost = graph.cost;
-		final LongIndexedPriorityQueue dist = new LongIndexedPriorityQueue(n);
-		dist.add(s, 0);
+		final long[] dist = new long[n];
+		fill(dist, INF);
+		dist[s] = 0;
+		final int[] dq = new int[n];
+		dq[0] = s;
 
-		while (!dist.isEmpty()) {
-			final int u = dist.peekIndex();
-			if (u == g) break;
-			final long du = dist.poll();
+		for (int head = 0, tail = 1; head < tail; head++) {
+			final int u = dq[head];
+			final long du = dist[u];
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
-				final long c = cost[e];
-				dist.relax(v, du + c);
+				if (dist[v] != INF) continue;
+				dist[v] = du + 1;
+				if (v == g) return dist[v];
+				dq[tail++] = v;
 			}
 		}
-		return dist.getLastOrDefault(g, INF);
+		return dist[g];
 	}
 
 	/**
-	 * 始点 s から終点 g への最短経路をダイクストラ法を用いて計算します。
+	 * 始点 s から終点 g への最短経路をBFSを用いて計算します。
 	 *
 	 * @param graph 探索対象のグラフ
 	 * @param s     始点（0-indexed）

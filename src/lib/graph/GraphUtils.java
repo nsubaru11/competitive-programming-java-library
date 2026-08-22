@@ -102,72 +102,14 @@ public final class GraphUtils {
 	}
 
 	/**
-	 * 重みを無視し、始点 {@code s} から各頂点までに通る最小辺数を返します。
-	 *
-	 * @param graph 探索対象のグラフ
-	 * @param s     始点
-	 * @return 最小辺数の配列。到達不能な頂点は {@code -1}
-	 */
-	public static int[] dist(final Graph graph, final int s) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
-		final int[] dist = new int[n];
-		fill(dist, -1);
-		dist[s] = 0;
-		final int[] q = new int[n];
-		q[0] = s;
-		for (int head = 0, tail = 1; head < tail; head++) {
-			final int u = q[head];
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				if (dist[v] != -1) continue;
-				dist[v] = dist[u] + 1;
-				q[tail++] = v;
-			}
-		}
-		return dist;
-	}
-
-	/**
-	 * 重みを無視し、複数の始点のいずれかから各頂点までに通る最小辺数を返します。
-	 * 始点は互いに異なることを前提とします。
-	 *
-	 * @param graph 探索対象のグラフ
-	 * @param s     始点列
-	 * @return 最小辺数の配列。到達不能な頂点は {@code -1}
-	 */
-	public static int[] dist(final Graph graph, final int... s) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
-		final int[] dist = new int[n];
-		fill(dist, -1);
-		final int[] q = new int[n];
-		int tail = 0;
-		for (final int s1 : s) {
-			dist[s1] = 0;
-			q[tail++] = s1;
-		}
-		for (int head = 0; head < tail; head++) {
-			final int u = q[head];
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				if (dist[v] != -1) continue;
-				dist[v] = dist[u] + 1;
-				q[tail++] = v;
-			}
-		}
-		return dist;
-	}
-
-	/**
 	 * 有向グラフをトポロジカルソートします。
 	 *
 	 * @param graph 対象の有向グラフ
 	 * @return トポロジカル順。閉路が存在する場合は {@code null}
 	 */
 	public static int[] topologicalSort(final DirectedGraph graph) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest, inDegree = graph.inDegree;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first, inDegree = graph.inDegree;
 		final int[] degree = new int[n];
 		System.arraycopy(inDegree, 0, degree, 0, n);
 		final int[] q = new int[n];
@@ -190,21 +132,7 @@ public final class GraphUtils {
 	 * @return 閉路が存在する場合は {@code true}
 	 */
 	public static boolean hasCycle(final DirectedGraph graph) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest, inDegree = graph.inDegree;
-		final int[] degree = new int[n];
-		System.arraycopy(inDegree, 0, degree, 0, n);
-		final int[] q = new int[n];
-		int tail = 0;
-		for (int i = 0; i < n; i++) if (degree[i] == 0) q[tail++] = i;
-		for (int head = 0; head < tail; head++) {
-			final int u = q[head];
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				if (--degree[v] == 0) q[tail++] = v;
-			}
-		}
-		return tail < n;
+		return topologicalSort(graph) == null;
 	}
 
 	/**

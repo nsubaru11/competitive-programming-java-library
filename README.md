@@ -64,7 +64,7 @@ AtCoderへはこのimport版を直接提出できません。
 
 実装状況: 印なし = 実装済み ／ 🚧 = 開発中・一部未実装 ／ 📝 = 未実装（TODO のみ）
 
-2026-08-10 時点のファイル単位の集計、利用不可API、検証状況、追加TODO一覧は[現状監査レポート](./docs/STATUS.md)を参照してください。
+2026-08-23 時点のファイル単位の集計、利用不可API、検証状況、追加TODO一覧は[現状監査レポート](./docs/STATUS.md)を参照してください。
 
 ### アルゴリズム（`lib.graph` / `lib.math` / `lib.search` / `lib.sort` / `lib.string` / `lib.util`）
 
@@ -81,7 +81,7 @@ AtCoderへはこのimport版を直接提出できません。
 | [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                      |
 | [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                               |
 | [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝              |
-| [Graph/ShortestPath](./docs/graph/ShortestPath)                   | Dijkstra・Bellman-Ford・Warshall-Floyd（負閉路の影響範囲判定）                      |
+| [Graph/ShortestPath](./docs/graph/ShortestPath)                   | BFS・0-1 BFS・Dijkstra・Bellman-Ford・Warshall-Floyd（負閉路の影響範囲判定）        |
 | [Graph/TwoSat](./docs/graph/TwoSat)                               | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                                 |
 | [Math/Convolution](./docs/math/Polynomial)                        | 🚧 NTT / FFT / ビット演算系畳み込み（内部変換ロジックが未実装）                     |
 | [Math/MathUtils](./docs/math/MathUtils)                           | 整数演算・GCD・階乗・組み合わせ・トーシェント関数などの主要な静的入口               |

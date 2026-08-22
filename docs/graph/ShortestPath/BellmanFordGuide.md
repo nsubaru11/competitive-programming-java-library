@@ -2,7 +2,7 @@
 
 ## 概要
 
-`BellmanFord`は、負辺を含む`Graph`に対して単一始点最短経路を計算する静的ユーティリティクラスです。
+`BellmanFord`は、負辺を含む`Graph`に対して単一始点または複数始点の最短経路を計算する静的ユーティリティクラスです。
 
 ## 特徴
 
@@ -11,6 +11,7 @@
 - 負閉路から到達可能な頂点まで影響範囲を伝播
 - 有限距離、到達不能、負閉路の影響を1つの距離配列で表現
 - 負閉路の影響を受けない頂点では経路復元が可能
+- `BFS`、`Dijkstra`、`ZeroOneBFS`と共通の`ShortestPathResult`を返す
 
 ## 依存関係
 
@@ -20,11 +21,16 @@
 
 ### 1. 計算
 
-| メソッド                    | 戻り値の型           | 説明                                              |
-|-----------------------------|----------------------|---------------------------------------------------|
-| `solve(Graph graph, int s)` | `BellmanFord.Result` | 始点`s`から全頂点への距離、親、負閉路の影響を計算 |
+| メソッド                          | 戻り値の型           | 説明                                                         |
+|-----------------------------------|----------------------|--------------------------------------------------------------|
+| `solve(Graph graph, int s)`       | `ShortestPathResult` | 始点`s`から全頂点への距離、親、負閉路の影響を計算            |
+| `solve(Graph graph, int... s)`    | `ShortestPathResult` | 複数始点のいずれかから全頂点への距離、親、負閉路の影響を計算 |
+| `dist(Graph graph, int s)`        | `long[]`             | 始点`s`から全頂点への距離を返す                              |
+| `dist(Graph graph, int... s)`     | `long[]`             | 複数始点のいずれかから全頂点への距離を返す                   |
+| `dist(Graph graph, int s, int g)` | `long`               | 始点`s`から終点`g`への距離を返す                             |
+| `path(Graph graph, int s, int g)` | `int[]`              | 始点`s`から終点`g`への経路を返す                             |
 
-### 2. Result
+### 2. `ShortestPathResult`
 
 | メソッド           | 戻り値の型 | 説明                                    |
 |--------------------|------------|-----------------------------------------|
@@ -33,14 +39,14 @@
 | `parent(int v)`    | `int`      | 最短経路上の親                          |
 | `pathTo(int v)`    | `int[]`    | 始点から`v`への経路。復元不能なら`null` |
 
-`Result`からは`hasNegCycle`、始点`s`、距離配列`dist`、親配列`parent`も直接参照できます。
-`hasNegCycle`は、始点から到達可能な負閉路がある場合に`true`です。
+`ShortestPathResult`からは`hasNegCycle`、始点配列`s`、距離配列`dist`、親配列`parent`も直接参照できます。`hasNegCycle`は、いずれかの始点から到達可能な負閉路がある場合に`true`です。詳細は[ShortestPathResultGuide.md](./ShortestPathResultGuide.md)を参照してください。
 
 ## 利用例
 
 ```java
-import lib.graph.BellmanFord;
 import lib.graph.DirectedGraph;
+import lib.graph.BellmanFord;
+import lib.graph.ShortestPathResult;
 
 DirectedGraph graph = new DirectedGraph(6, 6);
 graph.add(0, 1, 2);
@@ -50,7 +56,7 @@ graph.add(2, 3, 4); // 負閉路の影響を受ける
 graph.add(0, 4, 5);
 graph.add(4, 5, 1);
 
-BellmanFord.Result result = BellmanFord.solve(graph, 0);
+ShortestPathResult result = BellmanFord.solve(graph, 0);
 long affected = result.distTo(3); // Long.MIN_VALUE
 long finite = result.distTo(5);   // 6
 ```
@@ -62,6 +68,7 @@ long finite = result.distTo(5);   // 6
 - `reachable(v)`は距離が`Long.MIN_VALUE`でも`true`を返します。
 - 到達不能または負閉路の影響下では、`parent(v)`は`-1`、`pathTo(v)`は`null`です。
 - 始点から到達できない負閉路は、その始点の`hasNegCycle`と距離配列に影響しません。
+- 複数始点版では、各始点を距離0として負閉路の影響範囲を判定します。
 
 ## パフォーマンス特性
 
@@ -71,10 +78,11 @@ long finite = result.distTo(5);   // 6
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                                                  |
-|:-------------------|:-----------|:--------------------------------------------------------------------------------------|
-| **バージョン 2.0** | 2026-07-17 | `Graph`を受け取る静的ユーティリティへ変更し、頂点ごとの負閉路影響判定と経路復元を追加 |
-| **バージョン 1.0** | 2025-03-22 | グラフと始点キャッシュを保持するクラスとして初回実装                                  |
+| バージョン番号     | 年月日     | 詳細                                                                                                          |
+|:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------|
+| **バージョン 3.0** | 2026-08-23 | `ShortestPathResult`を共通結果型として導入し、複数始点と距離・経路の簡易APIを追加。`BellmanFord.Result`を廃止 |
+| **バージョン 2.0** | 2026-07-17 | `Graph`を受け取る静的ユーティリティへ変更し、頂点ごとの負閉路影響判定と経路復元を追加                         |
+| **バージョン 1.0** | 2025-03-22 | グラフと始点キャッシュを保持するクラスとして初回実装                                                          |
 
 ### バージョン管理について
 

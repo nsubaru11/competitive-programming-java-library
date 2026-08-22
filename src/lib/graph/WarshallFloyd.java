@@ -23,14 +23,15 @@ public final class WarshallFloyd {
 	 * @return 計算結果
 	 */
 	public static Result solve(final Graph graph) {
-		int n = graph.n;
-		long[][] dist = new long[n][n];
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
+		final long[] cost = graph.cost;
+		final long[][] dist = new long[n][n];
 		for (int u = 0; u < n; u++) {
 			fill(dist[u], INF);
 			dist[u][u] = 0;
 		}
-		final int[] first = graph.first, next = graph.next, dest = graph.dest;
-		final long[] cost = graph.cost;
+
 		for (int u = 0; u < n; u++) {
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
@@ -52,7 +53,7 @@ public final class WarshallFloyd {
 				}
 			}
 		}
-		boolean[] negative = new boolean[n];
+		final boolean[] negative = new boolean[n];
 		boolean hasNegCycle = false;
 		for (int v = 0; v < n; v++) {
 			if (dist[v][v] < 0) {
@@ -62,9 +63,9 @@ public final class WarshallFloyd {
 		}
 		for (int via = 0; via < n; via++) {
 			if (!negative[via]) continue;
-			long[] viaRow = dist[via];
+			final long[] viaRow = dist[via];
 			for (int from = 0; from < n; from++) {
-				long[] fromRow = dist[from];
+				final long[] fromRow = dist[from];
 				if (fromRow[via] == INF) continue;
 				for (int to = 0; to < n; to++) {
 					if (viaRow[to] != INF) fromRow[to] = NINF;
