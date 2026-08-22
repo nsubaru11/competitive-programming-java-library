@@ -95,7 +95,7 @@ public final class Convolution {
 		final int n = pa.length;
 		final long[] c = new long[n];
 		for (int i = 0; i < n; i++) c[i] = (pa[i] * pb[i]) % mod;
-		return copyOf(Transform.fwht(c, len, true, mod), len);
+		return Transform.fwht(c, len, true, mod);
 	}
 
 	public static long[] convolveXor(final long[] a, final long[] b) {
@@ -105,7 +105,7 @@ public final class Convolution {
 		final int n = pa.length;
 		final long[] c = new long[n];
 		for (int i = 0; i < n; i++) c[i] = pa[i] * pb[i];
-		return copyOf(Transform.fwht(c, len, true), len);
+		return Transform.fwht(c, len, true);
 	}
 
 	public static int[] convolveXor(final int[] a, final int[] b, final int mod) {
@@ -115,7 +115,7 @@ public final class Convolution {
 		final int n = pa.length;
 		final int[] c = new int[n];
 		for (int i = 0; i < n; i++) c[i] = (int) (((long) pa[i] * pb[i]) % mod);
-		return copyOf(Transform.fwht(c, len, true, mod), len);
+		return Transform.fwht(c, len, true, mod);
 	}
 
 	public static long[] convolveXor(final int[] a, final int[] b) {
@@ -125,7 +125,7 @@ public final class Convolution {
 		final int n = pa.length;
 		final long[] c = new long[n];
 		for (int i = 0; i < n; i++) c[i] = pa[i] * pb[i];
-		return copyOf(Transform.fwht(c, len, true), len);
+		return Transform.fwht(c, len, true);
 	}
 
 	public static long[] convolveAnd(final long[] a, final long[] b, final long mod) {
