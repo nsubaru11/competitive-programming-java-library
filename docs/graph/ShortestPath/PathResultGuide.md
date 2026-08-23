@@ -1,12 +1,15 @@
-# ShortestPathResult 利用ガイド
+# PathResult 利用ガイド
 
 ## 概要
 
-`ShortestPathResult`は、`BFS`、`Dijkstra`、`BellmanFord`、`ZeroOneBFS`が返す最短経路計算結果の共通型です。始点、距離、親、負閉路の有無を保持し、距離の参照と経路復元を提供します。
+`PathResult`は、`BFS`、`Dijkstra`、`BellmanFord`、`ZeroOneBFS`、`TopologicalShortestPath`が返す経路計算結果の共通型です。
+始点、距離、親、負閉路の有無を保持し、距離の参照と経路復元を提供します。
+`TopologicalShortestPath.solveLongest`の結果では、距離と親が最長経路を表します。
 
 ## 特徴
 
 - 単一始点と複数始点の結果を同じ型で扱える
+- DAGの最短経路・最長経路の結果も同じ型で扱える
 - 距離配列と親配列を直接参照できる
 - `pathTo`で始点から指定頂点までの経路を復元できる
 - 到達不能と負閉路の影響を距離の特別値で表現
@@ -14,15 +17,15 @@
 ## 依存関係
 
 - Java標準ライブラリのみ
-- 結果を生成するアルゴリズム: [`BFS`](./BFSGuide.md)、[`Dijkstra`](./DijkstraGuide.md)、[`BellmanFord`](./BellmanFordGuide.md)、[`ZeroOneBFS`](./ZeroOneBFSGuide.md)
+- 結果を生成するアルゴリズム: [`BFS`](./BFSGuide.md)、[`Dijkstra`](./DijkstraGuide.md)、[`BellmanFord`](./BellmanFordGuide.md)、[`ZeroOneBFS`](./ZeroOneBFSGuide.md)、[`TopologicalShortestPath`](./TopologicalShortestPathGuide.md)
 
 ## 公開フィールド
 
 | フィールド    | 型        | 説明                                                                         |
 |---------------|-----------|------------------------------------------------------------------------------|
 | `s`           | `int[]`   | 距離0として探索を開始した始点の配列                                          |
-| `hasNegCycle` | `boolean` | 到達可能な負閉路がある場合は`true`。BFS・Dijkstra・0-1 BFSでは常に`false`    |
-| `dist`        | `long[]`  | 各頂点への距離。到達不能は`Long.MAX_VALUE`、負閉路の影響下は`Long.MIN_VALUE` |
+| `hasNegCycle` | `boolean` | 到達可能な負閉路がある場合は`true`。BFS・Dijkstra・0-1 BFS・トポロジカル法では常に`false` |
+| `dist`        | `long[]`  | 各頂点への計算距離。到達不能は`Long.MAX_VALUE`、負閉路の影響下は`Long.MIN_VALUE` |
 | `parent`      | `int[]`   | 経路復元用の親頂点。始点自身は自身、復元不能な頂点は`-1`                     |
 
 ## 主な機能（メソッド一覧）
@@ -34,14 +37,14 @@
 | `parent(int v)`    | `int`      | 頂点`v`の親を返す                                 |
 | `pathTo(int v)`    | `int[]`    | 始点から`v`までの頂点列を返す。復元不能なら`null` |
 
-コンストラクタはpackage-privateです。通常は各最短路アルゴリズムの`solve`の戻り値として取得します。
+コンストラクタはpackage-privateです。通常は各経路アルゴリズムの`solve`または`solveLongest`の戻り値として取得します。
 
 ## 利用例
 
 ```java
 import lib.graph.Dijkstra;
 import lib.graph.DirectedGraph;
-import lib.graph.ShortestPathResult;
+import lib.graph.PathResult;
 
 DirectedGraph graph = new DirectedGraph(4, 4);
 graph.add(0, 1, 2);
@@ -49,7 +52,7 @@ graph.add(1, 2, 3);
 graph.add(0, 3, 10);
 graph.add(2, 3, 1);
 
-ShortestPathResult result = Dijkstra.solve(graph, 0);
+PathResult result = Dijkstra.solve(graph, 0);
 System.out.println(result.distTo(3)); // 6
 System.out.println(result.pathTo(3));
 ```
@@ -70,9 +73,10 @@ System.out.println(result.pathTo(3));
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                             |
-|:-------------------|:-----------|:-----------------------------------------------------------------|
-| **バージョン 1.0** | 2026-08-23 | 単一始点・複数始点の最短路アルゴリズムで共有する結果型として追加 |
+| バージョン番号     | 年月日     | 詳細                                                                    |
+|:-------------------|:-----------|:------------------------------------------------------------------------|
+| **バージョン 2.0** | 2026-08-23 | `ShortestPathResult`から`PathResult`へ改名し、DAG最長経路の結果にも対応 |
+| **バージョン 1.0** | 2026-08-23 | 単一始点・複数始点の最短路アルゴリズムで共有する結果型として追加        |
 
 ### バージョン管理について
 

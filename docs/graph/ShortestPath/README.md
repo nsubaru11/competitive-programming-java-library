@@ -4,7 +4,7 @@
 
 `Graph`を引数として、単一始点・複数始点または全頂点対の最短距離を計算する静的ユーティリティを提供します。
 
-最短経路の計算結果は[`ShortestPathResult`](../../../src/lib/graph/ShortestPathResult.java)で共通化されています。
+最短経路の計算結果は[`PathResult`](../../../src/lib/graph/PathResult.java)で共通化されています。詳細は[PathResultGuide.md](./PathResultGuide.md)を参照してください。
 
 ## 実装クラス
 
@@ -32,6 +32,14 @@
 - **追加領域**: $\mathcal{O}(V)$
 - **詳細**: [BellmanFordGuide.md](./BellmanFordGuide.md)
 
+### [TopologicalShortestPath](../../../src/lib/graph/TopologicalShortestPath.java)
+
+- **用途**: DAGの単一始点・複数始点の最短経路・最長経路
+- **特徴**: 負辺を含むDAGに対応し、トポロジカル順で計算
+- **時間計算量**: $\mathcal{O}(V + E)$
+- **追加領域**: $\mathcal{O}(V)$
+- **詳細**: [TopologicalShortestPathGuide.md](./TopologicalShortestPathGuide.md)
+
 ### [ZeroOneBFS](../../../src/lib/graph/ZeroOneBFS.java)
 
 - **用途**: 辺の重みが0または1のグラフの単一始点・複数始点最短経路
@@ -50,13 +58,14 @@
 
 ## アルゴリズムの選択ガイド
 
-| アルゴリズム   | 辺の重み | 負辺 | 負閉路の影響判定       | 対象           | 時間計算量                    |
-|----------------|----------|-----:|------------------------|----------------|-------------------------------|
-| BFS            | 1        | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
-| 0-1 BFS        | 0または1 | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
-| Dijkstra       | 非負     | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}((V + E) \log V)$ |
-| Bellman-Ford   | 任意     |   可 | 始点から到達可能な範囲 | 単一・複数始点 | $\mathcal{O}(VE)$             |
-| Warshall-Floyd | 任意     |   可 | 影響を受ける全頂点対   | 全頂点対       | $\mathcal{O}(V^3)$            |
+| アルゴリズム   | 辺の重み    | 負辺 | 負閉路の影響判定       | 対象           | 時間計算量                    |
+|----------------|-------------|-----:|------------------------|----------------|-------------------------------|
+| BFS            | 1           | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
+| 0-1 BFS        | 0または1    | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
+| Dijkstra       | 非負        | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}((V + E) \log V)$ |
+| Bellman-Ford   | 任意        |   可 | 始点から到達可能な範囲 | 単一・複数始点 | $\mathcal{O}(VE)$             |
+| トポロジカル   | 任意（DAG） |   可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
+| Warshall-Floyd | 任意        |   可 | 影響を受ける全頂点対   | 全頂点対       | $\mathcal{O}(V^3)$            |
 
 ## 距離値の共通表現
 

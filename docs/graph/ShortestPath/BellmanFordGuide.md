@@ -11,7 +11,7 @@
 - 負閉路から到達可能な頂点まで影響範囲を伝播
 - 有限距離、到達不能、負閉路の影響を1つの距離配列で表現
 - 負閉路の影響を受けない頂点では経路復元が可能
-- `BFS`、`Dijkstra`、`ZeroOneBFS`と共通の`ShortestPathResult`を返す
+- `BFS`、`Dijkstra`、`ZeroOneBFS`と共通の`PathResult`を返す
 
 ## 依存関係
 
@@ -21,16 +21,16 @@
 
 ### 1. 計算
 
-| メソッド                          | 戻り値の型           | 説明                                                         |
-|-----------------------------------|----------------------|--------------------------------------------------------------|
-| `solve(Graph graph, int s)`       | `ShortestPathResult` | 始点`s`から全頂点への距離、親、負閉路の影響を計算            |
-| `solve(Graph graph, int... s)`    | `ShortestPathResult` | 複数始点のいずれかから全頂点への距離、親、負閉路の影響を計算 |
-| `dist(Graph graph, int s)`        | `long[]`             | 始点`s`から全頂点への距離を返す                              |
-| `dist(Graph graph, int... s)`     | `long[]`             | 複数始点のいずれかから全頂点への距離を返す                   |
-| `dist(Graph graph, int s, int g)` | `long`               | 始点`s`から終点`g`への距離を返す                             |
-| `path(Graph graph, int s, int g)` | `int[]`              | 始点`s`から終点`g`への経路を返す                             |
+| メソッド                          | 戻り値の型   | 説明                                                         |
+|-----------------------------------|--------------|--------------------------------------------------------------|
+| `solve(Graph graph, int s)`       | `PathResult` | 始点`s`から全頂点への距離、親、負閉路の影響を計算            |
+| `solve(Graph graph, int... s)`    | `PathResult` | 複数始点のいずれかから全頂点への距離、親、負閉路の影響を計算 |
+| `dist(Graph graph, int s)`        | `long[]`     | 始点`s`から全頂点への距離を返す                              |
+| `dist(Graph graph, int... s)`     | `long[]`     | 複数始点のいずれかから全頂点への距離を返す                   |
+| `dist(Graph graph, int s, int g)` | `long`       | 始点`s`から終点`g`への距離を返す                             |
+| `path(Graph graph, int s, int g)` | `int[]`      | 始点`s`から終点`g`への経路を返す                             |
 
-### 2. `ShortestPathResult`
+### 2. `PathResult`
 
 | メソッド           | 戻り値の型 | 説明                                    |
 |--------------------|------------|-----------------------------------------|
@@ -39,14 +39,14 @@
 | `parent(int v)`    | `int`      | 最短経路上の親                          |
 | `pathTo(int v)`    | `int[]`    | 始点から`v`への経路。復元不能なら`null` |
 
-`ShortestPathResult`からは`hasNegCycle`、始点配列`s`、距離配列`dist`、親配列`parent`も直接参照できます。`hasNegCycle`は、いずれかの始点から到達可能な負閉路がある場合に`true`です。詳細は[ShortestPathResultGuide.md](./ShortestPathResultGuide.md)を参照してください。
+`PathResult`からは`hasNegCycle`、始点配列`s`、距離配列`dist`、親配列`parent`も直接参照できます。`hasNegCycle`は、いずれかの始点から到達可能な負閉路がある場合に`true`です。詳細は[PathResultGuide.md](PathResultGuide.md)を参照してください。
 
 ## 利用例
 
 ```java
 import lib.graph.DirectedGraph;
 import lib.graph.BellmanFord;
-import lib.graph.ShortestPathResult;
+import lib.graph.PathResult;
 
 DirectedGraph graph = new DirectedGraph(6, 6);
 graph.add(0, 1, 2);
@@ -56,7 +56,7 @@ graph.add(2, 3, 4); // 負閉路の影響を受ける
 graph.add(0, 4, 5);
 graph.add(4, 5, 1);
 
-ShortestPathResult result = BellmanFord.solve(graph, 0);
+PathResult result = BellmanFord.solve(graph, 0);
 long affected = result.distTo(3); // Long.MIN_VALUE
 long finite = result.distTo(5);   // 6
 ```
@@ -80,6 +80,7 @@ long finite = result.distTo(5);   // 6
 
 | バージョン番号     | 年月日     | 詳細                                                                                                          |
 |:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------|
+| **バージョン 4.0** | 2026-08-23 | 共通結果型を`PathResult`へ改名し、`solve`の戻り値型を更新（旧`ShortestPathResult`からの破壊的変更）           |
 | **バージョン 3.0** | 2026-08-23 | `ShortestPathResult`を共通結果型として導入し、複数始点と距離・経路の簡易APIを追加。`BellmanFord.Result`を廃止 |
 | **バージョン 2.0** | 2026-07-17 | `Graph`を受け取る静的ユーティリティへ変更し、頂点ごとの負閉路影響判定と経路復元を追加                         |
 | **バージョン 1.0** | 2025-03-22 | グラフと始点キャッシュを保持するクラスとして初回実装                                                          |

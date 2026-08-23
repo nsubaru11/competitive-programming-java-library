@@ -18,30 +18,8 @@ public final class BFS {
 	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
-	public static ShortestPathResult solve(final Graph graph, final int s) {
-		final int n = graph.n;
-		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final int[] parent = new int[n];
-		fill(parent, -1);
-		parent[s] = s;
-		final long[] dist = new long[n];
-		fill(dist, INF);
-		dist[s] = 0;
-		final int[] dq = new int[n];
-		dq[0] = s;
-
-		for (int head = 0, tail = 1; head < tail; head++) {
-			final int u = dq[head];
-			final long du = dist[u];
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				if (dist[v] != INF) continue;
-				dist[v] = du + 1;
-				parent[v] = u;
-				dq[tail++] = v;
-			}
-		}
-		return new ShortestPathResult(s, dist, parent);
+	public static PathResult solve(final Graph graph, final int s) {
+		return solveInternal(graph, new int[]{s});
 	}
 
 	/**
@@ -51,7 +29,11 @@ public final class BFS {
 	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
-	public static ShortestPathResult solve(final Graph graph, final int... s) {
+	public static PathResult solve(final Graph graph, final int... s) {
+		return solveInternal(graph, s);
+	}
+
+	private static PathResult solveInternal(final Graph graph, final int[] s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final int[] parent = new int[n];
@@ -77,7 +59,7 @@ public final class BFS {
 				dq[tail++] = v;
 			}
 		}
-		return new ShortestPathResult(s, dist, parent);
+		return new PathResult(s, dist, parent);
 	}
 
 	/**
@@ -89,7 +71,7 @@ public final class BFS {
 	 * @return 最短距離の配列
 	 */
 	public static long[] dist(final Graph graph, final int s) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.dist;
 	}
 
@@ -102,7 +84,7 @@ public final class BFS {
 	 * @return 最短距離の配列
 	 */
 	public static long[] dist(final Graph graph, final int... s) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.dist;
 	}
 
@@ -147,7 +129,7 @@ public final class BFS {
 	 * @return 始点から終点への最短経路（経路が存在しない場合は null）
 	 */
 	public static int[] path(final Graph graph, final int s, final int g) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.pathTo(g);
 	}
 }

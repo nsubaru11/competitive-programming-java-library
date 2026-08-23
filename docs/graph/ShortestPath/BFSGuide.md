@@ -9,22 +9,22 @@
 - `DirectedGraph`と`UndirectedGraph`の両方に対応
 - 全頂点の距離と親を返す`solve`
 - 全頂点または指定した終点の距離を返す`dist`
-- `ShortestPathResult`による経路復元
+- `PathResult`による経路復元
 - プリミティブ配列だけを使う`O(V + E)`の探索
 
 ## 依存関係
 
 - [`Graph`](../Core/GraphGuide.md)
-- [`ShortestPathResult`](./ShortestPathResultGuide.md)
+- [`PathResult`](PathResultGuide.md)
 
 ## 主な機能（メソッド一覧）
 
 ### 1. 計算結果を返すメソッド
 
-| メソッド                       | 戻り値の型           | 説明                                           |
-|--------------------------------|----------------------|------------------------------------------------|
-| `solve(Graph graph, int s)`    | `ShortestPathResult` | 始点`s`から全頂点への距離と親を計算            |
-| `solve(Graph graph, int... s)` | `ShortestPathResult` | 複数始点のいずれかから全頂点への距離と親を計算 |
+| メソッド                       | 戻り値の型   | 説明                                           |
+|--------------------------------|--------------|------------------------------------------------|
+| `solve(Graph graph, int s)`    | `PathResult` | 始点`s`から全頂点への距離と親を計算            |
+| `solve(Graph graph, int... s)` | `PathResult` | 複数始点のいずれかから全頂点への距離と親を計算 |
 
 ### 2. 距離を返すメソッド
 
@@ -45,7 +45,7 @@
 ```java
 import lib.graph.BFS;
 import lib.graph.DirectedGraph;
-import lib.graph.ShortestPathResult;
+import lib.graph.PathResult;
 
 DirectedGraph graph = new DirectedGraph(5, 5);
 graph.add(0, 1);
@@ -54,7 +54,7 @@ graph.add(1, 3);
 graph.add(2, 3);
 graph.add(3, 4);
 
-ShortestPathResult result = BFS.solve(graph, 0);
+PathResult result = BFS.solve(graph, 0);
 long distance = result.distTo(4); // 3
 int[] path = result.pathTo(4);    // {0, 2, 3, 4} など
 ```
@@ -78,9 +78,10 @@ int[] path = result.pathTo(4);    // {0, 2, 3, 4} など
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                                   |
-|:-------------------|:-----------|:-------------------------------------------------------|
-| **バージョン 1.0** | 2026-08-23 | 単一始点・複数始点の距離計算、終点距離、経路復元を実装 |
+| バージョン番号     | 年月日     | 詳細                                                                                                |
+|:-------------------|:-----------|:----------------------------------------------------------------------------------------------------|
+| **バージョン 2.0** | 2026-08-23 | 共通結果型を`PathResult`へ改名し、`solve`の戻り値型を更新（旧`ShortestPathResult`からの破壊的変更） |
+| **バージョン 1.0** | 2026-08-23 | 単一始点・複数始点の距離計算、終点距離、経路復元を実装                                              |
 
 ### バージョン管理について
 

@@ -20,37 +20,8 @@ public final class ZeroOneBFS {
 	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
-	public static ShortestPathResult solve(final Graph graph, final int s) {
-		final int n = graph.n;
-		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final long[] cost = graph.cost;
-		final int[] parent = new int[n];
-		fill(parent, -1);
-		parent[s] = s;
-		final long[] dist = new long[n];
-		fill(dist, INF);
-		dist[s] = 0;
-		final IntArrayDeque dq = new IntArrayDeque(n);
-		dq.addLast(s);
-		final boolean[] visited = new boolean[n];
-
-		while (!dq.isEmpty()) {
-			final int u = dq.pollFirst();
-			if (visited[u]) continue;
-			visited[u] = true;
-			final long du = dist[u];
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				final long c = cost[e];
-				if (dist[v] > du + c) {
-					parent[v] = u;
-					dist[v] = du + c;
-					if (c == 0) dq.addFirst(v);
-					else dq.addLast(v);
-				}
-			}
-		}
-		return new ShortestPathResult(s, dist, parent);
+	public static PathResult solve(final Graph graph, final int s) {
+		return solveInternal(graph, new int[]{s});
 	}
 
 	/**
@@ -60,7 +31,11 @@ public final class ZeroOneBFS {
 	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
-	public static ShortestPathResult solve(final Graph graph, final int... s) {
+	public static PathResult solve(final Graph graph, final int... s) {
+		return solveInternal(graph, s);
+	}
+
+	private static PathResult solveInternal(final Graph graph, final int[] s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final long[] cost = graph.cost;
@@ -92,7 +67,7 @@ public final class ZeroOneBFS {
 				}
 			}
 		}
-		return new ShortestPathResult(s, dist, parent);
+		return new PathResult(s, dist, parent);
 	}
 
 	/**
@@ -104,7 +79,7 @@ public final class ZeroOneBFS {
 	 * @return 最短距離の配列
 	 */
 	public static long[] dist(final Graph graph, final int s) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.dist;
 	}
 
@@ -117,7 +92,7 @@ public final class ZeroOneBFS {
 	 * @return 最短距離の配列
 	 */
 	public static long[] dist(final Graph graph, final int... s) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.dist;
 	}
 
@@ -168,7 +143,7 @@ public final class ZeroOneBFS {
 	 * @return 始点から終点への最短経路（経路が存在しない場合は null）
 	 */
 	public static int[] path(final Graph graph, final int s, final int g) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.pathTo(g);
 	}
 }

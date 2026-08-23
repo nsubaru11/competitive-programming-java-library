@@ -23,28 +23,8 @@ public final class Dijkstra {
 	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
-	public static ShortestPathResult solve(final Graph graph, final int s) {
-		final int n = graph.n;
-		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final long[] cost = graph.cost;
-		final int[] parent = new int[n];
-		fill(parent, -1);
-		parent[s] = s;
-		final LongIndexedPriorityQueue dist = new LongIndexedPriorityQueue(n);
-		dist.add(s, 0);
-
-		while (!dist.isEmpty()) {
-			final int u = dist.peekIndex();
-			final long du = dist.poll();
-			for (int e = first[u]; e != -1; e = next[e]) {
-				final int v = dest[e];
-				final long c = cost[e];
-				if (dist.relax(v, du + c)) parent[v] = u;
-			}
-		}
-		final long[] res = new long[graph.n];
-		setAll(res, i -> dist.getLastOrDefault(i, INF));
-		return new ShortestPathResult(s, res, parent);
+	public static PathResult solve(final Graph graph, final int s) {
+		return solveInternal(graph, new int[]{s});
 	}
 
 	/**
@@ -54,7 +34,11 @@ public final class Dijkstra {
 	 * @param s     始点（0-indexed）
 	 * @return 計算結果
 	 */
-	public static ShortestPathResult solve(final Graph graph, final int... s) {
+	public static PathResult solve(final Graph graph, final int... s) {
+		return solveInternal(graph, s);
+	}
+
+	private static PathResult solveInternal(final Graph graph, final int[] s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final long[] cost = graph.cost;
@@ -77,7 +61,7 @@ public final class Dijkstra {
 		}
 		final long[] res = new long[graph.n];
 		setAll(res, i -> dist.getLastOrDefault(i, INF));
-		return new ShortestPathResult(s, res, parent);
+		return new PathResult(s, res, parent);
 	}
 
 	/**
@@ -89,7 +73,7 @@ public final class Dijkstra {
 	 * @return 最短距離の配列
 	 */
 	public static long[] dist(final Graph graph, final int s) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.dist;
 	}
 
@@ -102,7 +86,7 @@ public final class Dijkstra {
 	 * @return 最短距離の配列
 	 */
 	public static long[] dist(final Graph graph, final int... s) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.dist;
 	}
 
@@ -143,7 +127,7 @@ public final class Dijkstra {
 	 * @return 始点から終点への最短経路（経路が存在しない場合は null）
 	 */
 	public static int[] path(final Graph graph, final int s, final int g) {
-		final ShortestPathResult result = solve(graph, s);
+		final PathResult result = solve(graph, s);
 		return result.pathTo(g);
 	}
 }

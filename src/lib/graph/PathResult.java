@@ -8,7 +8,7 @@ package lib.graph;
  * Bellman-Ford法など負閉路を検出するアルゴリズムでは、到達不能な頂点の距離は
  * {@link Long#MAX_VALUE}、到達可能な負閉路の影響を受ける頂点は {@link Long#MIN_VALUE} です。
  */
-public final class ShortestPathResult {
+public final class PathResult {
 	private static final long INF = Long.MAX_VALUE;
 	private static final long NINF = Long.MIN_VALUE;
 
@@ -17,19 +17,19 @@ public final class ShortestPathResult {
 	public final long[] dist;
 	public final int[] parent;
 
-	ShortestPathResult(final int s, final long[] dist, final int[] parent) {
+	PathResult(final int s, final long[] dist, final int[] parent) {
 		this(new int[]{s}, false, dist, parent);
 	}
 
-	ShortestPathResult(final int[] s, final long[] dist, final int[] parent) {
+	PathResult(final int[] s, final long[] dist, final int[] parent) {
 		this(s, false, dist, parent);
 	}
 
-	ShortestPathResult(final int s, final boolean hasNegCycle, final long[] dist, final int[] parent) {
+	PathResult(final int s, final boolean hasNegCycle, final long[] dist, final int[] parent) {
 		this(new int[]{s}, hasNegCycle, dist, parent);
 	}
 
-	ShortestPathResult(final int[] s, final boolean hasNegCycle, final long[] dist, final int[] parent) {
+	PathResult(final int[] s, final boolean hasNegCycle, final long[] dist, final int[] parent) {
 		this.s = s;
 		this.hasNegCycle = hasNegCycle;
 		this.dist = dist;
