@@ -18,10 +18,9 @@
 
 - [`UndirectedGraph`](../Core/UndirectedGraphGuide.md)
 - [`UnionFind`](../../ds/UnionFind/UnionFindGuide.md)
-- [`ArrayUtils`](../../ds/Arrays/ArrayUtilsGuide.md)
 - [`SpanningForestResult`](./SpanningForestResultGuide.md)
 
-辺のソートにはクラス内のプリミティブ配列向け実装を使用し、要素交換には`ArrayUtils.swap`を使用します。
+辺のソートにはクラス内のプリミティブ配列向け実装を使用します。
 
 ## 主な機能（メソッド一覧）
 
@@ -94,6 +93,7 @@ long maximum = Kruskal.maximumCost(graph); // 12
 
 | バージョン番号     | 年月日     | 詳細                                                                                        |
 |:-------------------|:-----------|:--------------------------------------------------------------------------------------------|
+| **バージョン 3.2** | 2026-08-23 | 辺インデックスの交換処理を元の実装に変更                                                    |
 | **バージョン 3.1** | 2026-08-23 | 辺インデックスの交換処理を共通ユーティリティ`ArrayUtils.swap`へ移行                         |
 | **バージョン 3.0** | 2026-07-24 | `UndirectedGraph`を受け取る静的APIへ変更。最小・最大の全域森、共通Result、cost-only版に対応 |
 | **バージョン 1.0** | 2025-10-07 | 状態を持つソルバーとして最小・最大全域木と採用辺取得を実装                                  |

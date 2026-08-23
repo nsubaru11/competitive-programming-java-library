@@ -4,7 +4,6 @@ import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 import lib.ds.unionfind.*;
-import lib.util.*;
 
 /**
  * Kruskal法により無向グラフの最小または最大全域森を求めるユーティリティクラス。
@@ -43,11 +42,11 @@ public final class Kruskal {
 		final int step = (size >> 3) * 3 + 3;
 		final int e1 = left + step, e5 = right - 1 - step, e3 = (left + right) >>> 1, e2 = (e1 + e3) >>> 1, e4 = (e3 + e5) >>> 1;
 
-		if (cost[edges[e5]] < cost[edges[e2]]) ArrayUtils.swap(edges, e2, e5);
-		if (cost[edges[e4]] < cost[edges[e1]]) ArrayUtils.swap(edges, e1, e4);
-		if (cost[edges[e5]] < cost[edges[e4]]) ArrayUtils.swap(edges, e4, e5);
-		if (cost[edges[e2]] < cost[edges[e1]]) ArrayUtils.swap(edges, e1, e2);
-		if (cost[edges[e4]] < cost[edges[e2]]) ArrayUtils.swap(edges, e2, e4);
+		if (cost[edges[e5]] < cost[edges[e2]]) swap(edges, e2, e5);
+		if (cost[edges[e4]] < cost[edges[e1]]) swap(edges, e1, e4);
+		if (cost[edges[e5]] < cost[edges[e4]]) swap(edges, e4, e5);
+		if (cost[edges[e2]] < cost[edges[e1]]) swap(edges, e1, e2);
+		if (cost[edges[e4]] < cost[edges[e2]]) swap(edges, e2, e4);
 
 		final int p1 = edges[e2], p2 = edges[e4];
 		final long v1 = cost[p1], v2 = cost[p2];
@@ -61,12 +60,12 @@ public final class Kruskal {
 
 		for (int k = left + 1; k <= greater; k++) {
 			if (cost[edges[k]] < v1) {
-				ArrayUtils.swap(edges, k, ++less);
+				swap(edges, k, ++less);
 			} else if (cost[edges[k]] > v2) {
 				while (k < greater && cost[edges[greater]] > v2) greater--;
-				ArrayUtils.swap(edges, k, greater--);
+				swap(edges, k, greater--);
 				if (cost[edges[k]] >= v1) continue;
-				ArrayUtils.swap(edges, k, ++less);
+				swap(edges, k, ++less);
 			}
 		}
 
@@ -78,6 +77,12 @@ public final class Kruskal {
 		sortEdges(edges, cost, left, less);
 		if (v1 < v2) sortEdges(edges, cost, less + 1, greater + 1);
 		sortEdges(edges, cost, greater + 2, right);
+	}
+
+	private static void swap(final int[] a, final int i, final int j) {
+		int t = a[i];
+		a[i] = a[j];
+		a[j] = t;
 	}
 
 	/**
