@@ -1,4 +1,4 @@
-package verify.graph.dijkstra;
+package verify.graph.bellmanford;
 
 import static java.util.Arrays.*;
 
@@ -8,8 +8,8 @@ import java.util.stream.*;
 
 import lib.graph.*;
 
-// https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/1/GRL_1_A
-public final class Check2 {
+// https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/1/GRL_1_B
+public final class Check1 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -27,7 +27,12 @@ public final class Check2 {
 		int r = sc.nextInt();
 		DirectedGraph graph = new DirectedGraph(v, e);
 		graph.setAll(sc::nextInt, sc::nextInt, sc::nextInt);
-		long[] dist = Dijkstra.dist(graph, r);
+		var result = BellmanFord.solve(graph, r);
+		if (result.hasNegCycle) {
+			out.println("NEGATIVE CYCLE");
+			return;
+		}
+		long[] dist = result.dist;
 		for (int i = 0; i < v; i++) {
 			out.println(dist[i] == Long.MAX_VALUE ? "INF" : dist[i]);
 		}
@@ -48,7 +53,7 @@ public final class Check2 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -57,7 +62,7 @@ public final class Check2 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 
