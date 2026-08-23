@@ -30,17 +30,21 @@
 | `solve(DirectedGraph graph, int... s)`    | `PathResult` | 複数始点のいずれかから全頂点への最短距離と親を計算 |
 | `dist(DirectedGraph graph, int s)`        | `long[]`     | 始点`s`から全頂点への最短距離を返す                |
 | `dist(DirectedGraph graph, int... s)`     | `long[]`     | 複数始点のいずれかから全頂点への最短距離を返す     |
+| `dist(DirectedGraph graph, int s, int g)` | `long`       | 始点`s`から終点`g`への最短距離を返す               |
 | `path(DirectedGraph graph, int s, int g)` | `int[]`      | 始点`s`から終点`g`への最短経路を返す               |
 
 ### 2. 最長経路
 
-| メソッド                                      | 戻り値の型   | 説明                                               |
-|-----------------------------------------------|--------------|----------------------------------------------------|
-| `solveLongest(DirectedGraph graph, int s)`    | `PathResult` | 始点`s`から全頂点への最長距離と親を計算            |
-| `solveLongest(DirectedGraph graph, int... s)` | `PathResult` | 複数始点のいずれかから全頂点への最長距離と親を計算 |
+| メソッド                                         | 戻り値の型   | 説明                                               |
+|--------------------------------------------------|--------------|----------------------------------------------------|
+| `solveLongest(DirectedGraph graph, int s)`       | `PathResult` | 始点`s`から全頂点への最長距離と親を計算            |
+| `solveLongest(DirectedGraph graph, int... s)`    | `PathResult` | 複数始点のいずれかから全頂点への最長距離と親を計算 |
+| `distLongest(DirectedGraph graph, int s)`        | `long[]`     | 始点`s`から全頂点への最長距離を返す                |
+| `distLongest(DirectedGraph graph, int... s)`     | `long[]`     | 複数始点のいずれかから全頂点への最長距離を返す     |
+| `distLongest(DirectedGraph graph, int s, int g)` | `long`       | 始点`s`から終点`g`への最長距離を返す               |
+| `pathLongest(DirectedGraph graph, int s, int g)` | `int[]`      | 始点`s`から終点`g`への最長経路を返す               |
 
-最長経路では、`solveLongest`の戻り値に対して`distTo`や`pathTo`を呼び出します。
-最長距離専用の`dist`・`path`メソッドはありません。
+`solveLongest`は距離と親をまとめて取得したい場合に使用します。距離だけなら`distLongest`、経路だけなら`pathLongest`を使用できます。
 
 ## 利用例
 
@@ -61,6 +65,8 @@ PathResult longest = TopologicalShortestPath.solveLongest(graph, 0);
 long min = shortest.distTo(4); // 9
 long max = longest.distTo(4);  // 10
 int[] path = longest.pathTo(4); // {0, 2, 3, 4}
+long minToGoal = TopologicalShortestPath.dist(graph, 0, 4); // 9
+long maxToGoal = TopologicalShortestPath.distLongest(graph, 0, 4); // 10
 ```
 
 ## 注意事項
@@ -83,9 +89,10 @@ int[] path = longest.pathTo(4); // {0, 2, 3, 4}
 
 ## バージョン情報
 
-| バージョン番号     | 年月日     | 詳細                                              |
-|:-------------------|:-----------|:--------------------------------------------------|
-| **バージョン 1.0** | 2026-08-23 | DAGの単一始点・複数始点の最短経路・最長経路を追加 |
+| バージョン番号     | 年月日     | 詳細                                                      |
+|:-------------------|:-----------|:----------------------------------------------------------|
+| **バージョン 1.1** | 2026-08-23 | 終点を指定する最短距離`dist`・最長距離`distLongest`を追加 |
+| **バージョン 1.0** | 2026-08-23 | DAGの単一始点・複数始点の最短経路・最長経路を追加         |
 
 ### バージョン管理について
 

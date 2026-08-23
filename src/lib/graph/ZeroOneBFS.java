@@ -60,8 +60,8 @@ public final class ZeroOneBFS {
 				final int v = dest[e];
 				final long c = cost[e];
 				if (dist[v] > du + c) {
-					parent[v] = u;
 					dist[v] = du + c;
+					parent[v] = u;
 					if (c == 0) dq.addFirst(v);
 					else dq.addLast(v);
 				}

@@ -4,6 +4,7 @@ import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 import lib.ds.unionfind.*;
+import lib.util.*;
 
 /**
  * Kruskal法により無向グラフの最小または最大全域森を求めるユーティリティクラス。
@@ -22,13 +23,13 @@ public final class Kruskal {
 	 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。
 	 * Dual-Pivot Quicksortのエッセンスを採用したプリミティブ実装です。
 	 */
-	private static void sortEdges(int[] edges, long[] cost, int left, int right) {
-		int size = right - left;
+	private static void sortEdges(final int[] edges, final long[] cost, final int left, final int right) {
+		final int size = right - left;
 
 		if (size < 47) {
 			for (int i = left + 1; i < right; i++) {
-				int pivotEdge = edges[i];
-				long pivotCost = cost[pivotEdge];
+				final int pivotEdge = edges[i];
+				final long pivotCost = cost[pivotEdge];
 				int j = i - 1;
 				while (j >= left && cost[edges[j]] > pivotCost) {
 					edges[j + 1] = edges[j];
@@ -39,21 +40,17 @@ public final class Kruskal {
 			return;
 		}
 
-		int step = (size >> 3) * 3 + 3;
-		int e1 = left + step;
-		int e5 = right - 1 - step;
-		int e3 = (left + right) >>> 1;
-		int e2 = (e1 + e3) >>> 1;
-		int e4 = (e3 + e5) >>> 1;
+		final int step = (size >> 3) * 3 + 3;
+		final int e1 = left + step, e5 = right - 1 - step, e3 = (left + right) >>> 1, e2 = (e1 + e3) >>> 1, e4 = (e3 + e5) >>> 1;
 
-		if (cost[edges[e5]] < cost[edges[e2]]) swap(edges, e2, e5);
-		if (cost[edges[e4]] < cost[edges[e1]]) swap(edges, e1, e4);
-		if (cost[edges[e5]] < cost[edges[e4]]) swap(edges, e4, e5);
-		if (cost[edges[e2]] < cost[edges[e1]]) swap(edges, e1, e2);
-		if (cost[edges[e4]] < cost[edges[e2]]) swap(edges, e2, e4);
+		if (cost[edges[e5]] < cost[edges[e2]]) ArrayUtils.swap(edges, e2, e5);
+		if (cost[edges[e4]] < cost[edges[e1]]) ArrayUtils.swap(edges, e1, e4);
+		if (cost[edges[e5]] < cost[edges[e4]]) ArrayUtils.swap(edges, e4, e5);
+		if (cost[edges[e2]] < cost[edges[e1]]) ArrayUtils.swap(edges, e1, e2);
+		if (cost[edges[e4]] < cost[edges[e2]]) ArrayUtils.swap(edges, e2, e4);
 
-		int p1 = edges[e2], p2 = edges[e4];
-		long v1 = cost[p1], v2 = cost[p2];
+		final int p1 = edges[e2], p2 = edges[e4];
+		final long v1 = cost[p1], v2 = cost[p2];
 
 		int less = left, greater = right - 2;
 
@@ -64,12 +61,12 @@ public final class Kruskal {
 
 		for (int k = left + 1; k <= greater; k++) {
 			if (cost[edges[k]] < v1) {
-				swap(edges, k, ++less);
+				ArrayUtils.swap(edges, k, ++less);
 			} else if (cost[edges[k]] > v2) {
 				while (k < greater && cost[edges[greater]] > v2) greater--;
-				swap(edges, k, greater--);
+				ArrayUtils.swap(edges, k, greater--);
 				if (cost[edges[k]] >= v1) continue;
-				swap(edges, k, ++less);
+				ArrayUtils.swap(edges, k, ++less);
 			}
 		}
 
@@ -81,12 +78,6 @@ public final class Kruskal {
 		sortEdges(edges, cost, left, less);
 		if (v1 < v2) sortEdges(edges, cost, less + 1, greater + 1);
 		sortEdges(edges, cost, greater + 2, right);
-	}
-
-	private static void swap(int[] a, int i, int j) {
-		int t = a[i];
-		a[i] = a[j];
-		a[j] = t;
 	}
 
 	/**
@@ -132,21 +123,21 @@ public final class Kruskal {
 	}
 
 	private static SpanningForestResult solve(final UndirectedGraph graph, final boolean isMinimum) {
-		int n = graph.n, edgeCnt = graph.edgeCount();
-		long[] cost = graph.cost;
-		int[] dest = graph.dest;
+		final int n = graph.n, edgeCnt = graph.edgeCount();
+		final long[] cost = graph.cost;
+		final int[] dest = graph.dest;
 
-		int[] edges = new int[edgeCnt];
+		final int[] edges = new int[edgeCnt];
 		setAll(edges, i -> i << 1);
 		sortEdges(edges, cost, 0, edgeCnt);
 
-		UnionFind uf = new UnionFind(n);
-		int[] edgeIds = new int[min(n - 1, edgeCnt)];
+		final UnionFind uf = new UnionFind(n);
+		final int[] edgeIds = new int[min(n - 1, edgeCnt)];
 		int selected = 0;
 		long total = 0;
 		for (int i = 0; selected < n - 1 && i < edgeCnt; i++) {
-			int j = isMinimum ? i : edgeCnt - i - 1;
-			int e = edges[j], u = dest[e], v = dest[e + 1];
+			final int j = isMinimum ? i : edgeCnt - i - 1;
+			final int e = edges[j], u = dest[e], v = dest[e + 1];
 			if (uf.union(u, v)) {
 				edgeIds[selected++] = e >> 1;
 				total += cost[e];
@@ -156,20 +147,20 @@ public final class Kruskal {
 	}
 
 	private static long solveCost(final UndirectedGraph graph, final boolean isMinimum) {
-		int n = graph.n, edgeCnt = graph.edgeCount();
-		long[] cost = graph.cost;
-		int[] dest = graph.dest;
+		final int n = graph.n, edgeCnt = graph.edgeCount();
+		final long[] cost = graph.cost;
+		final int[] dest = graph.dest;
 
-		int[] edges = new int[edgeCnt];
+		final int[] edges = new int[edgeCnt];
 		setAll(edges, i -> i << 1);
 		sortEdges(edges, cost, 0, edgeCnt);
 
-		UnionFind uf = new UnionFind(n);
+		final UnionFind uf = new UnionFind(n);
 		int selected = 0;
 		long total = 0;
 		for (int i = 0; selected < n - 1 && i < edgeCnt; i++) {
-			int j = isMinimum ? i : edgeCnt - i - 1;
-			int e = edges[j], u = dest[e], v = dest[e + 1];
+			final int j = isMinimum ? i : edgeCnt - i - 1;
+			final int e = edges[j], u = dest[e], v = dest[e + 1];
 			if (uf.union(u, v)) {
 				total += cost[e];
 				selected++;

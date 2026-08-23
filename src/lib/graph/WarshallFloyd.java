@@ -30,15 +30,13 @@ public final class WarshallFloyd {
 		for (int u = 0; u < n; u++) {
 			fill(dist[u], INF);
 			dist[u][u] = 0;
-		}
-
-		for (int u = 0; u < n; u++) {
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
 				final long c = cost[e];
 				if (c < dist[u][v]) dist[u][v] = c;
 			}
 		}
+
 		for (int via = 0; via < n; via++) {
 			final long[] viaRow = dist[via];
 			for (int from = 0; from < n; from++) {

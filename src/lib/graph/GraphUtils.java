@@ -18,8 +18,8 @@ public final class GraphUtils {
 	 * @return 二部グラフなら {@code true}
 	 */
 	public static boolean isBipartite(final UndirectedGraph graph) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final int[] color = new int[n];
 		final int[] q = new int[n];
 		int tail = 0;
@@ -50,8 +50,8 @@ public final class GraphUtils {
 	 * @return 長さ {@code graph.n} の訪問順配列
 	 */
 	public static int[] bfs(final Graph graph, final int s) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final boolean[] visited = new boolean[n];
 		visited[s] = true;
 		final int[] bfs = new int[n];
@@ -79,8 +79,8 @@ public final class GraphUtils {
 	 * @return 長さ {@code graph.n} の訪問順配列
 	 */
 	public static int[] bfs(final Graph graph, final int... s) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final boolean[] visited = new boolean[n];
 		final int[] bfs = new int[n];
 		int tail = 0;
@@ -147,8 +147,8 @@ public final class GraphUtils {
 	 * 各成分内の頂点順はDFSの探索順（辺の追加順と頂点番号順）に依存します。
 	 */
 	public static int[][] scc(final DirectedGraph graph) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
 		final int[] ord = new int[n];
 		final int[] low = new int[n];
 		final int[] edgeIter = new int[n];

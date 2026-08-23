@@ -156,6 +156,36 @@ public final class TopologicalShortestPath {
 	}
 
 	/**
+	 * 始点 s から終点 g への最短距離をトポロジカル順序を用いて計算します。
+	 * 到達不能な頂点の値は {@link Long#MAX_VALUE} です。
+	 *
+	 * @param graph 探索対象の有向グラフ
+	 * @param s     始点（0-indexed）
+	 * @param g     終点（0-indexed）
+	 * @return 始点から終点への最短距離
+	 * @throws IllegalArgumentException graphに閉路が存在する場合
+	 */
+	public static long dist(final DirectedGraph graph, final int s, final int g) {
+		final PathResult result = solve(graph, s);
+		return result.dist[g];
+	}
+
+	/**
+	 * 始点 s から終点 g への最長距離をトポロジカル順序を用いて計算します。
+	 * 到達不能な頂点の値は {@link Long#MAX_VALUE} です。
+	 *
+	 * @param graph 探索対象の有向グラフ
+	 * @param s     始点（0-indexed）
+	 * @param g     終点（0-indexed）
+	 * @return 始点から終点への最長距離
+	 * @throws IllegalArgumentException graphに閉路が存在する場合
+	 */
+	public static long distLongest(final DirectedGraph graph, final int s, final int g) {
+		final PathResult result = solveLongest(graph, s);
+		return result.dist[g];
+	}
+
+	/**
 	 * 始点 s から終点 g への最短経路をトポロジカル順序を用いて計算します。
 	 *
 	 * @param graph 探索対象の有向グラフ

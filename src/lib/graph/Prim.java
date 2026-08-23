@@ -62,11 +62,11 @@ public final class Prim {
 	}
 
 	private static SpanningForestResult solve(final UndirectedGraph graph, final boolean isMinimum) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
-		long[] cost = graph.cost;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
+		final long[] cost = graph.cost;
 
-		int[] edgeIds = new int[n - 1], parentEdge = new int[n];
+		final int[] edgeIds = new int[n - 1], parentEdge = new int[n];
 		fill(parentEdge, -1);
 
 		int selected = 0, componentCount = 0;
@@ -92,9 +92,9 @@ public final class Prim {
 	}
 
 	private static long solveCost(final UndirectedGraph graph, final boolean isMinimum) {
-		int n = graph.n;
-		int[] first = graph.first, next = graph.next, dest = graph.dest;
-		long[] cost = graph.cost;
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
+		final long[] cost = graph.cost;
 
 		long total = 0;
 		final LongIndexedPriorityQueue pq = new LongIndexedPriorityQueue(n, !isMinimum);

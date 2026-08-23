@@ -1,7 +1,9 @@
 package lib.graph;
 
+import java.util.*;
+
 /**
- * 単一始点または複数始点最短経路の計算結果。
+ * 単一始点または複数始点の経路計算結果。
  * <p>
  * 負閉路を扱わないアルゴリズム（BFS・Dijkstra・0-1BFS等）では {@link #hasNegCycle} は常に
  * {@code false} で、負閉路の影響を受ける頂点は現れません。
@@ -58,7 +60,7 @@ public final class PathResult {
 	}
 
 	/**
-	 * 最短経路上の親を返します。
+	 * 経路復元用の親を返します。
 	 *
 	 * @param v 頂点
 	 * @return 親。始点自身は始点、到達不能または負閉路の影響下では {@code -1}
@@ -68,7 +70,7 @@ public final class PathResult {
 	}
 
 	/**
-	 * 始点から指定した頂点までの最短経路を頂点列として返します。
+	 * 始点から指定した頂点までの経路を頂点列として返します。
 	 *
 	 * @param v 終点
 	 * @return 始点と終点を含む頂点列。到達不能または負閉路の影響下では {@code null}
@@ -83,5 +85,15 @@ public final class PathResult {
 		final int[] res = new int[len];
 		for (int i = 0; i < len; i++) res[i] = temp[len - i - 1];
 		return res;
+	}
+
+	/**
+	 * 始点、負閉路の有無、距離配列、親配列を複数行の文字列として返します。
+	 *
+	 * @return 計算結果の文字列表現
+	 */
+	@Override
+	public String toString() {
+		return "s: " + Arrays.toString(s) + '\n' + "hasNegCycle: " + hasNegCycle + '\n' + "dist: " + Arrays.toString(dist) + '\n' + "parent: " + Arrays.toString(parent);
 	}
 }
