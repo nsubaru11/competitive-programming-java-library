@@ -76,7 +76,7 @@ AtCoderへはこのimport版を直接提出できません。
 | [DivideConquer](./docs/util/DivideConquer)                        | 🚧 転倒数計算（現在は未実装で常に0を返す）                                                 |
 | [MoAlgorithm](./docs/util/MoAlgorithm)                            | Mo's Algorithm（0-indexed半開区間、4方向callback、ブロック幅指定、ジグザグ走査）           |
 | [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                        |
-| [Graph/Connectivity](./docs/graph/Connectivity)                   | 📝 橋・関節点・二重連結成分分解（TODO）                                                    |
+| [Graph/Connectivity](./docs/graph/Connectivity)                   | 🚧 橋・関節点検出、二重連結成分分解（一部未実装）                                          |
 | [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD                 |
 | [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                             |
 | [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                      |

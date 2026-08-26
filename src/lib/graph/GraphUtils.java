@@ -1,6 +1,5 @@
 package lib.graph;
 
-import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
 /**
@@ -148,60 +147,52 @@ public final class GraphUtils {
 	 */
 	public static int[][] scc(final DirectedGraph graph) {
 		final int n = graph.n;
-		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final int[] ord = new int[n];
-		final int[] low = new int[n];
-		final int[] edgeIter = new int[n];
-		System.arraycopy(first, 0, edgeIter, 0, n);
-		final int[] stack = new int[n];
-		final int[] sccStack = new int[n];
+		final int[] dest = graph.dest, next = graph.next, edgeIter = graph.first.clone();
+		final int[] stack = new int[n], sccStack = new int[n];
+		final int[] sccList = new int[n], sep = new int[n + 1];
 		final boolean[] onSccStack = new boolean[n];
-		final int[] sccList = new int[n];
-		final int[] sep = new int[n + 1];
+		final int[] ord = new int[n], low = new int[n];
 		int sepPtr = 1;
-		for (int i = 0, stackPtr = 0, sccPtr = 0, timer = 1, listPtr = 0; i < n; i++)
-			if (ord[i] == 0) {
-				stack[stackPtr++] = i;
-				outer:
-				while (stackPtr > 0) {
-					final int u = stack[stackPtr - 1];
-					if (ord[u] == 0) {
-						ord[u] = low[u] = timer++;
-						sccStack[sccPtr++] = u;
-						onSccStack[u] = true;
-					}
-					while (edgeIter[u] != -1) {
-						final int e = edgeIter[u];
-						final int v = dest[e];
-						edgeIter[u] = next[e];
-						if (ord[v] == 0) {
-							stack[stackPtr++] = v;
-							continue outer;
-						} else if (onSccStack[v]) {
-							low[u] = min(low[u], ord[v]);
-						}
-					}
-					if (stackPtr > 1) {
-						final int p = stack[stackPtr - 2];
-						low[p] = min(low[p], low[u]);
-					}
-					if (low[u] == ord[u]) {
-						while (true) {
-							final int v = sccStack[--sccPtr];
-							onSccStack[v] = false;
-							sccList[listPtr++] = v;
-							if (u == v) break;
-						}
-						sep[sepPtr++] = listPtr;
-					}
-					stackPtr--;
+		for (int i = 0, stackPtr = 0, sccPtr = 0, order = 1, listPtr = 0; i < n; i++) {
+			if (ord[i] != 0) continue;
+			stack[stackPtr++] = i;
+			outer:
+			while (stackPtr > 0) {
+				final int u = stack[stackPtr - 1];
+				if (ord[u] == 0) {
+					ord[u] = low[u] = order++;
+					sccStack[sccPtr++] = u;
+					onSccStack[u] = true;
 				}
+				while (edgeIter[u] != -1) {
+					final int e = edgeIter[u], v = dest[e];
+					edgeIter[u] = next[e];
+					if (ord[v] == 0) {
+						stack[stackPtr++] = v;
+						continue outer;
+					}
+					if (onSccStack[v] && ord[v] < low[u]) low[u] = ord[v];
+				}
+				if (stackPtr > 1) {
+					final int p = stack[stackPtr - 2];
+					if (low[u] < low[p]) low[p] = low[u];
+				}
+				if (low[u] == ord[u]) {
+					int v;
+					do {
+						v = sccStack[--sccPtr];
+						onSccStack[v] = false;
+						sccList[listPtr++] = v;
+					} while (u != v);
+					sep[sepPtr++] = listPtr;
+				}
+				stackPtr--;
 			}
+		}
 		final int groupCount = sepPtr - 1;
 		final int[][] result = new int[groupCount][];
 		for (int i = 0, end = sep[groupCount]; i < groupCount; i++) {
-			final int start = sep[groupCount - i - 1];
-			final int len = end - start;
+			final int start = sep[groupCount - i - 1], len = end - start;
 			final int[] grp = new int[len];
 			System.arraycopy(sccList, start, grp, 0, len);
 			result[i] = grp;
@@ -209,5 +200,4 @@ public final class GraphUtils {
 		}
 		return result;
 	}
-
 }

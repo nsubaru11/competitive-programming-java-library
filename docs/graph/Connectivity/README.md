@@ -1,26 +1,30 @@
-# Connectivity（📝 未実装）
+# Connectivity（🚧 一部実装）
 
 ## 概要
 
-無向グラフの橋・関節点検出、二重連結成分分解を提供します。
+無向グラフのlow-link値を利用した橋・関節点検出を提供します。二重辺連結成分分解と二重頂点連結成分分解は未実装です。
 
 ## 実装クラス
 
 ### [Connectivity](../../../src/lib/graph/Connectivity.java)
 
 - **用途**：
-	- 橋・関節点・二重連結成分の検出
+	- 橋・関節点の検出
 - **特徴**：
-	- （TODO）
+	- 再帰を使わない反復DFS
+	- `UndirectedGraph`の論理辺IDで橋を参照
 - **時間計算量**：
-	- （TODO）
+	- `lowLink`: $\mathcal{O}(V + E)$
 - **空間計算量**：
-	- （TODO）
+	- `lowLink`: $\mathcal{O}(V + E)$
+- **詳細**: [ConnectivityGuide.md](./ConnectivityGuide.md)
 
 ## アルゴリズム（データ構造）選択ガイド
 
-（TODO）
+橋・関節点の検出には`Connectivity.lowLink`を使用します。二重辺連結成分分解・二重頂点連結成分分解は今後追加予定です。
 
 ## 注意事項
 
-- 本モジュールは雛形のみで、内部ロジックは未実装です（src/内の TODO コメント参照）。
+- `lowLink`の入力は`UndirectedGraph`です。辺IDは辺の追加順に割り当てられる論理辺IDです。
+- `UndirectedGraph`は自己ループを含まない前提のクラスです。
+- 二重辺連結成分分解と二重頂点連結成分分解は未実装です。
