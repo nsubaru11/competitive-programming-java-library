@@ -135,6 +135,34 @@ public final class GraphUtils {
 	}
 
 	/**
+	 * 無向グラフに閉路が存在するかを判定します。
+	 *
+	 * @param graph 対象の無向グラフ
+	 * @return 閉路が存在する場合は {@code true}
+	 */
+	public static boolean hasCycle(final UndirectedGraph graph) {
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, first = graph.first;
+		final int[] parentEdge = new int[n], q = new int[n];
+		fill(parentEdge, -1);
+		for (int i = 0; i < n; i++) {
+			if (parentEdge[i] != -1) continue;
+			q[0] = i;
+			for (int head = 0, tail = 1; head < tail; head++) {
+				final int u = q[head];
+				for (int e = first[u]; e != -1; e = next[e]) {
+					final int v = dest[e];
+					if (parentEdge[v] == e) continue;
+					if (parentEdge[v] != -1) return true;
+					parentEdge[v] = e ^ 1;
+					q[tail++] = v;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 強連結成分分解（SCC）を行います。
 	 *
 	 * @param graph 対象の有向グラフ
