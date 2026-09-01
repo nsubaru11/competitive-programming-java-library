@@ -13,10 +13,19 @@
 ### [Convolution](../../../src/lib/math/polynomial/Convolution.java)
 
 - NTT、FFT、XOR・AND・OR、GCD・LCM畳み込みの公開API
-- 内部変換とGarner復元は未実装であり、現在は正しい結果を返しません。
+- `convolveAnd` / `convolveOr`は、部分集合・上位集合ゼータ変換を用いて利用できます。
+- NTT、FFT、XOR、GCD・LCM畳み込み、およびGarner復元は未実装です。
 - 設計は[Convolution設計書](./ConvolutionArchitecture.md)を参照してください。
+
+### [Transform](../../../src/lib/math/polynomial/Transform.java)
+
+- 畳み込みで使う各種変換の公開API。すべてのメソッドは入力を変更せず、必要なら0埋めした新しい配列を返します。
+- 部分集合・上位集合ゼータ変換とメビウス変換は利用可能です。
+- NTT、FFT、FWHT、約数・倍数ゼータ変換とメビウス変換は未実装です。
+- 正確なオーバーロードと配列長の規約は[Convolution設計書](./ConvolutionArchitecture.md)を参照してください。
 
 ## 注意事項
 
-- `Convolution`は実装完了まで利用できません。
+- `convolveAnd` / `convolveOr`は、配列長の最大値が2の冪であるビット集合を対象に利用できます。係数は非負かつ剰余版では`[0, mod)`に正規化して渡してください。
+- `Convolution`のその他の畳み込みは実装完了まで利用できません。
 - `PolynomialUtils`の係数は次数の昇順に格納します。

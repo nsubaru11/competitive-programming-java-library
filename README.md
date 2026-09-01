@@ -64,48 +64,48 @@ AtCoderへはこのimport版を直接提出できません。
 
 実装状況: 印なし = 実装済み ／ 🚧 = 開発中・一部未実装 ／ 📝 = 未実装（TODO のみ）
 
-2026-08-23 時点のファイル単位の集計、利用不可API、検証状況、追加TODO一覧は[現状監査レポート](./docs/STATUS.md)を参照してください。
+2026-09-02 時点のファイル単位の集計、利用不可API、検証状況、追加TODO一覧は[現状監査レポート](./docs/STATUS.md)を参照してください。
 
 ### アルゴリズム（`lib.graph` / `lib.math` / `lib.search` / `lib.sort` / `lib.string` / `lib.util`）
 
-| モジュール                                                        | 内容                                                                                       |
-|-------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| [Conversions](./docs/util/Conversions)                            | 数値・文字配列・数字配列の相互変換                                                         |
-| [Dice](./docs/util/Dice)                                          | 6面体の向きと3方向の回転操作                                                               |
-| [DP](./src/patterns/dp)                                           | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                                   |
-| [DivideConquer](./docs/util/DivideConquer)                        | 🚧 転倒数計算（現在は未実装で常に0を返す）                                                 |
-| [MoAlgorithm](./docs/util/MoAlgorithm)                            | Mo's Algorithm（0-indexed半開区間、4方向callback、ブロック幅指定、ジグザグ走査）           |
-| [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                        |
-| [Graph/Connectivity](./docs/graph/Connectivity)                   | 🚧 橋・関節点検出、二重連結成分分解（一部未実装）                                          |
-| [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD                 |
-| [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                             |
-| [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                      |
-| [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝                     |
-| [Graph/ShortestPath](./docs/graph/ShortestPath)                   | BFS・0-1 BFS・Dijkstra・Bellman-Ford・DAG最短/最長・Warshall-Floyd（負閉路の影響範囲判定） |
-| [Graph/TwoSat](./docs/graph/TwoSat)                               | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                                        |
-| [Math/Convolution](./docs/math/Polynomial)                        | 🚧 NTT / FFT / ビット演算系畳み込み（内部変換ロジックが未実装）                            |
-| [Math/MathUtils](./docs/math/MathUtils)                           | 整数演算・GCD・階乗・組み合わせ・トーシェント関数などの主要な静的入口                      |
-| [Math/FactorialTable](./docs/math/FactorialTable)                 | 動的な階乗・逆元テーブル、nCr / nPr / Catalan・Lah・Narayana数                             |
-| [Math/FactorUtils](./docs/math/FactorUtils)                       | 素因数分解、素因数・指数配列、素因数個数、約数個数・昇順列挙                               |
-| [Math/GeometryUtils](./docs/math/GeometryUtils)                   | 線分・矩形の交差判定、点と図形の位置関係、各種距離計算                                     |
-| [Math/LinearAlgebra](./docs/math/LinearAlgebra)                   | int / long行列演算。掃き出し法・行列式・ランクは📝                                         |
-| [Math/Number types](./docs/math/number)                           | Fraction / Int128 / ModInt / ModLong                                                       |
-| [Math/NumberPredicates](./docs/math/NumberPredicates)             | 完全数・回文数・フィボナッチ数・アームストロング数・ハッピー数の判定                       |
-| [Util/Permutation](./docs/util/Permutation)                       | 配列の辞書順 index/next/prev（int / long / char / 2次元配列対応）                          |
-| [Util/FormatUtils](./docs/util/FormatUtils)                       | 数値・配列の文字列化、小数の固定桁表示、整数のゼロ埋め                                     |
-| [Util/Function](./docs/util/Function)                             | プリミティブ特化の汎用関数型インターフェース                                               |
-| [Util/DigitUtils](./docs/util/DigitUtils)                         | 桁数取得、十進表現の反転・並べ替え                                                         |
-| [Math/Polynomial](./docs/math/Polynomial)                         | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                                 |
-| [Math/PrimeUtils](./docs/math/PrimeUtils)                         | 一回限りの素数判定・素数個数・エラトステネスの篩                                           |
-| [Math/PrimeTable](./docs/math/PrimeTable)                         | 再利用可能な素数表、近傍検索・素因数分解・k番目の素数                                      |
-| [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 $\mathcal{O}(n)$ で取得）                                  |
-| [Search/BinarySearch](./docs/search/BinarySearch)                 | 条件関数・ソート済み配列に対する二分探索（lower/upper bound、`-(挿入位置+1)` 形式）        |
-| [Search/UnimodalUtils](./docs/search/UnimodalUtils)               | 📝 三分探索・黄金分割探索・ニュートン法（TODO）                                            |
-| [Sort](./docs/sort)                                               | 学習用ソートアルゴリズム11種 ※FordJohnson / CountingSort / RadixSort 📝                    |
-| [String/Levenshtein](./docs/string/Levenshtein)                   | 編集距離（標準 DP・距離制限付き banded DP）※Myers / Wu 📝                                  |
-| [String/Palindrome](./docs/string/Palindrome)                     | Manacher（全回文検出 $\mathcal{O}(n)$）・素朴な回文判定/生成 ※Eertree 📝                   |
-| [String/StringSearch](./docs/string/StringSearch)                 | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝                                       |
-| [未実装バックログ](./docs/STATUS.md#todoのみのクラス)             | 頻出の未作成データ構造・アルゴリズムをコメントのみのTODOクラスとして管理                   |
+| モジュール                                                        | 内容                                                                                                                            |
+|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| [Conversions](./docs/util/Conversions)                            | 数値・文字配列・数字配列の相互変換                                                                                              |
+| [Dice](./docs/util/Dice)                                          | 6面体の向きと3方向の回転操作                                                                                                    |
+| [DP](./src/patterns/dp)                                           | 代表的な動的計画法の実装例（Frog・ナップサック・部分和）                                                                        |
+| [DivideConquer](./docs/util/DivideConquer)                        | 🚧 転倒数計算（現在は未実装で常に0を返す）                                                                                      |
+| [MoAlgorithm](./docs/util/MoAlgorithm)                            | Mo's Algorithm（0-indexed半開区間、4方向callback、ブロック幅指定、ジグザグ走査）                                                |
+| [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                                                             |
+| [Graph/Connectivity](./docs/graph/Connectivity)                   | 🚧 橋・関節点検出、二重連結成分分解（一部未実装）                                                                               |
+| [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD                                                      |
+| [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                                                                  |
+| [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                                                           |
+| [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝                                                          |
+| [Graph/ShortestPath](./docs/graph/ShortestPath)                   | BFS・0-1 BFS・Dijkstra・Bellman-Ford・DAG最短/最長・Warshall-Floyd（負閉路の影響範囲判定）                                      |
+| [Graph/TwoSat](./docs/graph/TwoSat)                               | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                                                                             |
+| [Math/Convolution](./docs/math/Polynomial)                        | 🚧 AND / OR畳み込みと部分集合・上位集合変換は利用可能。NTT / FFT / XOR / GCD / LCM畳み込みは開発中                              |
+| [Math/MathUtils](./docs/math/MathUtils)                           | 整数演算・GCD・階乗・組み合わせ・トーシェント関数などの主要な静的入口                                                           |
+| [Math/FactorialTable](./docs/math/FactorialTable)                 | 動的な階乗・逆元テーブル、nCr / nPr / Catalan・Lah・Narayana数                                                                  |
+| [Math/FactorUtils](./docs/math/FactorUtils)                       | 素因数分解、素因数・指数配列、素因数個数、約数個数・昇順列挙                                                                    |
+| [Math/GeometryUtils](./docs/math/GeometryUtils)                   | 線分・矩形の交差判定、点と図形の位置関係、各種距離計算                                                                          |
+| [Math/LinearAlgebra](./docs/math/LinearAlgebra)                   | int / long行列演算。掃き出し法・行列式・ランクは📝                                                                              |
+| [Math/Number types](./docs/math/number)                           | Fraction / Int128 / ModInt / ModLong                                                                                            |
+| [Math/NumberPredicates](./docs/math/NumberPredicates)             | 完全数・回文数・フィボナッチ数・アームストロング数・ハッピー数の判定                                                            |
+| [Util/Permutation](./docs/util/Permutation)                       | 配列の辞書順 index/next/prev（int / long / char / 2次元配列対応）                                                               |
+| [Util/FormatUtils](./docs/util/FormatUtils)                       | 数値・配列の文字列化、小数の固定桁表示、整数のゼロ埋め                                                                          |
+| [Util/Function](./docs/util/Function)                             | プリミティブ特化の汎用関数型インターフェース                                                                                    |
+| [Util/DigitUtils](./docs/util/DigitUtils)                         | 桁数取得、十進表現の反転・並べ替え                                                                                              |
+| [Math/Polynomial](./docs/math/Polynomial)                         | 多項式の加減乗・微分・積分・評価などの多項式ユーティリティ                                                                      |
+| [Math/PrimeUtils](./docs/math/PrimeUtils)                         | 一回限りの素数判定・素数個数・エラトステネスの篩                                                                                |
+| [Math/PrimeTable](./docs/math/PrimeTable)                         | 再利用可能な素数表、近傍検索・素因数分解・k番目の素数                                                                           |
+| [Randomized](./src/lib/search/QuickSelect.java)                   | QuickSelect（k 番目の要素を期待 $\mathcal{O}(n)$ で取得）                                                                       |
+| [Search/BinarySearch](./docs/search/BinarySearch)                 | 条件関数・ソート済み配列に対する二分探索（lower/upper bound、`-(挿入位置+1)` 形式）                                             |
+| [Search/UnimodalUtils](./docs/search/UnimodalUtils)               | 📝 三分探索・黄金分割探索・ニュートン法（TODO）                                                                                 |
+| [Sort](./docs/sort)                                               | 実装・比較用の基本ソート11種。将来は連動ソートなどの競技向けユーティリティを追加予定 ※FordJohnson / CountingSort / RadixSort 📝 |
+| [String/Levenshtein](./docs/string/Levenshtein)                   | 編集距離（標準 DP・距離制限付き banded DP）※Myers / Wu 📝                                                                       |
+| [String/Palindrome](./docs/string/Palindrome)                     | Manacher（全回文検出 $\mathcal{O}(n)$）・素朴な回文判定/生成 ※Eertree 📝                                                        |
+| [String/StringSearch](./docs/string/StringSearch)                 | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝                                                                            |
+| [未実装バックログ](./docs/STATUS.md#todoのみのクラス)             | 頻出の未作成データ構造・アルゴリズムをコメントのみのTODOクラスとして管理                                                        |
 
 ### データ構造（`lib.ds`）
 
