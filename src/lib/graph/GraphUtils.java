@@ -19,21 +19,20 @@ public final class GraphUtils {
 	public static boolean isBipartite(final UndirectedGraph graph) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
-		final int[] color = new int[n];
-		final int[] q = new int[n];
+		final int[] q = new int[n], color = new int[n];
 		int tail = 0;
-		for (int s = 0; s < n; s++) {
-			if (color[s] != 0) continue;
-			color[s] = 1;
-			q[tail++] = s;
+		for (int i = 0; i < n; i++) {
+			if (color[i] != 0) continue;
+			q[tail++] = i;
+			color[i] = 1;
 			for (int head = tail - 1; head < tail; head++) {
-				final int u = q[head];
+				final int u = q[head], cu = color[u];
 				for (int e = first[u]; e != -1; e = next[e]) {
 					final int v = dest[e];
-					if (color[v] == color[u]) return false;
+					if (color[v] == cu) return false;
 					if (color[v] != 0) continue;
-					color[v] = -color[u];
 					q[tail++] = v;
+					color[v] = -cu;
 				}
 			}
 		}
@@ -42,62 +41,60 @@ public final class GraphUtils {
 
 	/**
 	 * 始点 {@code s} から幅優先探索し、頂点の訪問順を返します。
-	 * 到達不能な頂点に対応する末尾要素は {@code -1} です。
 	 *
 	 * @param graph 探索対象のグラフ
 	 * @param s     始点
-	 * @return 長さ {@code graph.n} の訪問順配列
+	 * @return 訪問した頂点を訪問順に格納した配列
 	 */
 	public static int[] bfs(final Graph graph, final int s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
+		final int[] q = new int[n];
 		final boolean[] visited = new boolean[n];
+		q[0] = s;
 		visited[s] = true;
-		final int[] bfs = new int[n];
-		fill(bfs, 1, n, -1);
-		bfs[0] = s;
-		for (int head = 0, tail = 1; head < tail; head++) {
-			final int u = bfs[head];
+		int tail = 1;
+		for (int head = 0; head < tail; head++) {
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
 				if (visited[v]) continue;
-				bfs[tail++] = v;
+				q[tail++] = v;
 				visited[v] = true;
 			}
 		}
-		return bfs;
+		return copyOfRange(q, 0, tail);
 	}
 
 	/**
 	 * 複数の始点から幅優先探索し、頂点の訪問順を返します。
-	 * 始点は互いに異なることを前提とします。
-	 * 到達不能な頂点に対応する末尾要素は {@code -1} です。
+	 * 重複する始点は最初の1つだけを訪問順に含めます。
 	 *
 	 * @param graph 探索対象のグラフ
 	 * @param s     始点列
-	 * @return 長さ {@code graph.n} の訪問順配列
+	 * @return 訪問した頂点を訪問順に格納した配列
 	 */
 	public static int[] bfs(final Graph graph, final int... s) {
 		final int n = graph.n;
 		final int[] dest = graph.dest, next = graph.next, first = graph.first;
+		final int[] q = new int[n];
 		final boolean[] visited = new boolean[n];
-		final int[] bfs = new int[n];
 		int tail = 0;
 		for (final int si : s) {
-			bfs[tail++] = si;
+			if (visited[si]) continue;
+			q[tail++] = si;
 			visited[si] = true;
 		}
-		fill(bfs, tail, n, -1);
 		for (int head = 0; head < tail; head++) {
-			final int u = bfs[head];
+			final int u = q[head];
 			for (int e = first[u]; e != -1; e = next[e]) {
 				final int v = dest[e];
 				if (visited[v]) continue;
-				bfs[tail++] = v;
+				q[tail++] = v;
 				visited[v] = true;
 			}
 		}
-		return bfs;
+		return copyOfRange(q, 0, tail);
 	}
 
 	/**
@@ -135,6 +132,99 @@ public final class GraphUtils {
 	}
 
 	/**
+	 * 有向グラフに閉路が存在する場合、最初に見つけた閉路を構成する頂点と辺を取得します。
+	 *
+	 * @param graph 対象の有向グラフ
+	 * @return 閉路が存在する場合は {@code Cycle} インスタンス、そうでない場合は {@code null}
+	 */
+	public static Cycle findCycle(final DirectedGraph graph) {
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, edgeIter = graph.first.clone();
+		final int[] stack = new int[n], state = new int[n], parent = new int[n], parentEdge = new int[n];
+		for (int i = 0; i < n; i++) {
+			if (state[i] != 0) continue;
+			stack[0] = i;
+			state[i] = 1;
+			parentEdge[i] = -1;
+			outer:
+			for (int len = 1; len > 0; ) {
+				final int u = stack[len - 1];
+				while (edgeIter[u] != -1) {
+					final int e = edgeIter[u], v = dest[e];
+					edgeIter[u] = next[e];
+					if (state[v] == 1) {
+						final int[] vertices = new int[len], edges = new int[len];
+						int head = len;
+						edges[head - 1] = e;
+						for (int vi = u; vi != v; vi = parent[vi]) {
+							vertices[--head] = vi;
+							edges[head - 1] = parentEdge[vi];
+						}
+						vertices[--head] = v;
+						return new Cycle(copyOfRange(vertices, head, len), copyOfRange(edges, head, len));
+					}
+					if (state[v] == 2) continue;
+					stack[len++] = v;
+					state[v] = 1;
+					parent[v] = u;
+					parentEdge[v] = e;
+					continue outer;
+				}
+				state[u] = 2;
+				len--;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 無向グラフに閉路が存在する場合、最初に見つけた閉路を構成する頂点と辺を取得します。
+	 *
+	 * @param graph 対象の無向グラフ
+	 * @return 閉路が存在する場合は {@code Cycle} インスタンス、そうでない場合は {@code null}
+	 */
+	public static Cycle findCycle(final UndirectedGraph graph) {
+		final int n = graph.n;
+		final int[] dest = graph.dest, next = graph.next, edgeIter = graph.first.clone();
+		final int[] state = new int[n], stack = new int[n], parentEdge = new int[n];
+		for (int i = 0; i < n; i++) {
+			if (state[i] != 0) continue;
+			stack[0] = i;
+			state[i] = 1;
+			parentEdge[i] = -1;
+			outer:
+			for (int len = 1; len > 0; ) {
+				final int u = stack[len - 1], pe = parentEdge[u];
+				while (edgeIter[u] != -1) {
+					final int e = edgeIter[u];
+					edgeIter[u] = next[e];
+					if (pe == e) continue;
+					final int v = dest[e];
+					if (state[v] == 1) {
+						final int[] vertices = new int[len], edges = new int[len];
+						int head = len;
+						edges[head - 1] = e >> 1;
+						for (int vi = u; vi != v; vi = dest[parentEdge[vi]]) {
+							vertices[--head] = vi;
+							edges[head - 1] = parentEdge[vi] >> 1;
+						}
+						vertices[--head] = v;
+						return new Cycle(copyOfRange(vertices, head, len), copyOfRange(edges, head, len));
+					}
+					if (state[v] == 2) continue;
+					stack[len++] = v;
+					state[v] = 1;
+					parentEdge[v] = e ^ 1;
+					continue outer;
+				}
+				state[u] = 2;
+				len--;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * 無向グラフに閉路が存在するかを判定します。
 	 *
 	 * @param graph 対象の無向グラフ
@@ -148,11 +238,12 @@ public final class GraphUtils {
 		for (int i = 0; i < n; i++) {
 			if (parentEdge[i] != -1) continue;
 			q[0] = i;
+			parentEdge[i] = -2;
 			for (int head = 0, tail = 1; head < tail; head++) {
-				final int u = q[head];
+				final int u = q[head], pe = parentEdge[u];
 				for (int e = first[u]; e != -1; e = next[e]) {
+					if (pe == e) continue;
 					final int v = dest[e];
-					if (parentEdge[v] == e) continue;
 					if (parentEdge[v] != -1) return true;
 					parentEdge[v] = e ^ 1;
 					q[tail++] = v;
@@ -227,5 +318,21 @@ public final class GraphUtils {
 			end = start;
 		}
 		return result;
+	}
+
+	/**
+	 * 閉路を構成する頂点列と辺ID列を保持します。
+	 * {@code vertices[i]} から {@code vertices[(i + 1) % size()]} へ、
+	 * {@code edges[i]} 番の辺で進めます。
+	 */
+	public record Cycle(int[] vertices, int[] edges) {
+		/**
+		 * 閉路の長さを返します。
+		 *
+		 * @return 頂点数および辺数
+		 */
+		public int size() {
+			return vertices.length;
+		}
 	}
 }

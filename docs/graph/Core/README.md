@@ -26,7 +26,7 @@
 
 ### [GraphUtils](../../../src/lib/graph/GraphUtils.java)
 
-- **用途**: BFS訪問順、二部判定、トポロジカルソート、閉路判定、SCC
+- **用途**: BFS訪問順、二部判定、トポロジカルソート、閉路判定・復元、SCC
 - **特徴**: グラフの内部配列を直接走査し、オブジェクト生成を抑制
 - **詳細**: [GraphUtilsGuide.md](./GraphUtilsGuide.md)
 
@@ -48,6 +48,7 @@
 | 無向グラフを構築する     | `UndirectedGraph`                                    |
 | 重みを無視した探索       | `GraphUtils.bfs`                                     |
 | DAG判定・トポロジカル順  | `GraphUtils.hasCycle` / `GraphUtils.topologicalSort` |
+| 有向・無向閉路の復元     | `GraphUtils.findCycle`                               |
 | 強連結成分分解           | `GraphUtils.scc`                                     |
 | 無向グラフの二部判定     | `GraphUtils.isBipartite`                             |
 | 木の直径                 | `Tree`                                               |
