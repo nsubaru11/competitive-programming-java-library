@@ -27,6 +27,10 @@ public final class Check2 {
 		DirectedGraph graph = new DirectedGraph(n, m);
 		graph.setAll(sc::nextInt, sc::nextInt);
 		var cycle = GraphUtils.findCycle(graph);
+		if (cycle == null) {
+			out.println(-1);
+			return;
+		}
 		out.println(cycle.size(), cycle.edges());
 	}
 

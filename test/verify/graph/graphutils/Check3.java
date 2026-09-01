@@ -27,6 +27,10 @@ public final class Check3 {
 		UndirectedGraph graph = new UndirectedGraph(n, m);
 		graph.setAll(sc::nextInt, sc::nextInt);
 		var cycle = GraphUtils.findCycle(graph);
+		if (cycle == null) {
+			out.println(-1);
+			return;
+		}
 		out.println(cycle.size()).print(cycle.vertices()).println().print(cycle.edges()).println();
 	}
 
