@@ -1,5 +1,7 @@
 package lib.string.suffix;
 
+import java.util.*;
+
 public final class SuffixArray {
 	private final String text;
 	private final int[] sa;  // Suffix Array
@@ -18,9 +20,9 @@ public final class SuffixArray {
 		for (int i = 0; i < n; i++) suffixes[i] = i;
 
 		// ソート（簡易版、実用は SA-IS アルゴリズム）
-		java.util.Arrays.sort(suffixes, (a, b) -> s.substring(a).compareTo(s.substring(b)));
+		Arrays.sort(suffixes, Comparator.comparing(s::substring));
 
-		return java.util.Arrays.stream(suffixes).mapToInt(Integer::intValue).toArray();
+		return Arrays.stream(suffixes).mapToInt(Integer::intValue).toArray();
 	}
 
 	private int[] buildLCP() {

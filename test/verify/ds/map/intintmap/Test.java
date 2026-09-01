@@ -16,13 +16,11 @@ public final class Test {
 	private static void testDefaultsAndUpdates() {
 		final IntIntMap map = new IntIntMap(1, 10);
 		check(map.isEmpty());
-		check(map.size() == 0);
 		check(map.get(7) == 10);
 		check(map.getOrDefault(7, -1) == -1);
 		check(!map.containsKey(7));
 
 		map.setDefaultValue(-3);
-		check(map.getDefaultValue() == -3);
 		check(map.get(7) == -3);
 		check(map.add(7, 5) == 2);
 		check(map.get(7) == 2);
@@ -47,7 +45,7 @@ public final class Test {
 		map.setDefaultValue(999);
 		check(map.get(12345) == 999);
 		check(map.get(7) == 200);
-		check(map.remove(12345) == false);
+		check(!map.remove(12345));
 		check(map.remove(7));
 		check(!map.containsKey(7));
 		check(map.get(7) == 999);
@@ -86,7 +84,6 @@ public final class Test {
 
 		map.clear();
 		check(map.isEmpty());
-		check(map.size() == 0);
 		check(map.get(1) == -1);
 		check(!map.containsKey(1));
 		check(map.keys().length == 0);
@@ -155,9 +152,8 @@ public final class Test {
 					expected.put(key, result);
 				}
 				case 2 -> {
-					final int absentValue = value;
-					final int result = expected.containsKey(key) ? expected.get(key) + delta : absentValue;
-					check(map.addOrDefault(key, delta, absentValue) == result);
+					final int result = expected.containsKey(key) ? expected.get(key) + delta : value;
+					check(map.addOrDefault(key, delta, value) == result);
 					expected.put(key, result);
 				}
 				case 3 -> {

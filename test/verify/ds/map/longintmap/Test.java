@@ -39,8 +39,8 @@ public final class Test {
 
 		check(map.addOrDefault(8L, 4, 50) == 50);
 		check(map.addOrDefault(8L, 4, 60) == 54);
-		check(map.merge(8L, 6, (a, b) -> a + b) == 60);
-		check(map.merge(9L, 12, (a, b) -> a + b) == 12);
+		check(map.merge(8L, 6, Integer::sum) == 60);
+		check(map.merge(9L, 12, Integer::sum) == 12);
 		check(map.putIfAbsent(10L, 13) == 13);
 		check(map.size() == 4);
 
@@ -155,9 +155,8 @@ public final class Test {
 					expected.put(key, result);
 				}
 				case 2 -> {
-					final int absentValue = value;
-					final int result = expected.containsKey(key) ? expected.get(key) + delta : absentValue;
-					check(map.addOrDefault(key, delta, absentValue) == result);
+					final int result = expected.containsKey(key) ? expected.get(key) + delta : value;
+					check(map.addOrDefault(key, delta, value) == result);
 					expected.put(key, result);
 				}
 				case 3 -> {

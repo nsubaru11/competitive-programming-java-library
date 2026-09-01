@@ -238,23 +238,20 @@ public final class Test {
 		final IntPriorityQueue iq = new IntPriorityQueue();
 		iq.add(4);
 		iq.add(2);
-		final IntCollection ints = iq;
-		check(ints.contains(2));
-		check(ints.toArray().length == 2);
+		check(iq.contains(2));
+		check(iq.toArray().length == 2);
 
 		final LongPriorityQueue lq = new LongPriorityQueue();
 		lq.add(4);
 		lq.add(2);
-		final LongCollection longs = lq;
-		check(longs.contains(2));
-		check(longs.toArray().length == 2);
+		check(lq.contains(2));
+		check(lq.toArray().length == 2);
 
 		final IntIndexedPriorityQueue indexed = new IntIndexedPriorityQueue(4);
 		indexed.add(0, 9);
 		indexed.add(1, 3);
-		final IntCollection costs = indexed;
-		check(costs.contains(3));
-		check(!costs.contains(0));
+		check(indexed.contains(3));
+		check(!indexed.contains(0));
 	}
 
 	private static void checkRandom(final boolean descending) {

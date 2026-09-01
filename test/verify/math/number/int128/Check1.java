@@ -5,7 +5,6 @@ import static java.util.Arrays.*;
 import java.io.*;
 import java.math.*;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.function.*;
 
 import lib.io.*;

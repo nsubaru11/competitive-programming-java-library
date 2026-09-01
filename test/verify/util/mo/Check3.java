@@ -32,11 +32,7 @@ public final class Check3 {
 		IntIndexedPriorityQueue freq = new IntIndexedPriorityQueue(c.uniqueSize, true);
 		int[][] lr = sc.nextIntMatInv(q, 2);
 		int[][] res = new int[q][2];
-		MoAlgorithm.run(n, lr, i -> {
-			freq.set(c.get(i), freq.getOrDefault(c.get(i), 0) + 1);
-		}, i -> {
-			freq.set(c.get(i), freq.get(c.get(i)) - 1);
-		}, i -> {
+		MoAlgorithm.run(n, lr, i -> freq.set(c.get(i), freq.getOrDefault(c.get(i), 0) + 1), i -> freq.set(c.get(i), freq.get(c.get(i)) - 1), i -> {
 			res[i][0] = c.valueOfRank(freq.peekIndex());
 			res[i][1] = freq.peek();
 		});

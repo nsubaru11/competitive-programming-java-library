@@ -41,7 +41,7 @@ public final class PrimeTable implements Iterable<Long> {
 		if (n <= 1) return false;
 		if ((n & 1) == 0) return n == 2;
 		if (n % 3 == 0) return n == 3;
-		return !isCompositeOdd(n);
+		return isNotCompositeOdd(n);
 	}
 
 	/**
@@ -374,7 +374,7 @@ public final class PrimeTable implements Iterable<Long> {
 		if (3 <= n) primes[cnt++] = 3;
 
 		for (long i = 5; i <= n; i += 6) {
-			if (!isCompositeOdd(i)) {
+			if (isNotCompositeOdd(i)) {
 				primes[cnt++] = i;
 				if (i <= sqrtN) {
 					final long stepI = i * 6;
@@ -389,7 +389,7 @@ public final class PrimeTable implements Iterable<Long> {
 			}
 			final long j = i + 2;
 			if (j > n) break;
-			if (!isCompositeOdd(j)) {
+			if (isNotCompositeOdd(j)) {
 				primes[cnt++] = j;
 				if (j <= sqrtN) {
 					final long stepJ = j * 6;
@@ -418,7 +418,7 @@ public final class PrimeTable implements Iterable<Long> {
 		oddBits[bitIndex(n)] |= bitMask(n);
 	}
 
-	private boolean isCompositeOdd(final long n) {
-		return (oddBits[bitIndex(n)] & bitMask(n)) != 0;
+	private boolean isNotCompositeOdd(final long n) {
+		return (oddBits[bitIndex(n)] & bitMask(n)) == 0;
 	}
 }

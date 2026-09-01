@@ -35,7 +35,7 @@ public final class TestHash {
 	private static final long[] LONG_KEYS = createLongKeys();
 	private static final long[] PAIR_KEYS = createPairKeys();
 	private static final long[] TRIPLE_KEYS = createTripleKeys();
-	private static volatile long blackhole;
+	private static long blackhole;
 
 	private TestHash() {
 	}
@@ -288,27 +288,9 @@ public final class TestHash {
 		Result run(int hashType);
 	}
 
-	private static final class Result {
-		private final long averageNanos;
-		private final long bestNanos;
-		private final long checksum;
+	private record Result(long averageNanos, long bestNanos, long checksum) {}
 
-		private Result(final long averageNanos, final long bestNanos, final long checksum) {
-			this.averageNanos = averageNanos;
-			this.bestNanos = bestNanos;
-			this.checksum = checksum;
-		}
-	}
-
-	private static final class Round {
-		private final long nanos;
-		private final long checksum;
-
-		private Round(final long nanos, final long checksum) {
-			this.nanos = nanos;
-			this.checksum = checksum;
-		}
-	}
+	private record Round(long nanos, long checksum) {}
 
 	/**
 	 * ハッシュ方式以外の処理を完全に共通化するため、方式番号をfinalフィールドで保持します。

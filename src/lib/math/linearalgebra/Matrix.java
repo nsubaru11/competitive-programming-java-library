@@ -252,11 +252,8 @@ public final class Matrix {
 		// min(m, n)次の単位行列の作成
 		int k = Math.min(m, n);
 		int[][] A = new int[k][k];
-		for (int i = 0; i < k; i++) {
-			A[i][i] = 1;
-		}
-		Matrix identity = new Matrix(A);
-		return identity;
+		for (int i = 0; i < k; i++) A[i][i] = 1;
+		return new Matrix(A);
 	}
 
 	private Matrix inverse2D() {
@@ -416,9 +413,16 @@ public final class Matrix {
 		}
 	}
 
-	public boolean equals(Object mat) {
-		// 二つの行列が等しいかどうか
-		return toString().equals(mat.toString());
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof Matrix mat)) return false;
+		if (m != mat.m || n != mat.n) return false;
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (!matrix[i][j].equals(mat.matrix[i][j])) return false;
+			}
+		}
+		return true;
 	}
 
 	public String toString() {

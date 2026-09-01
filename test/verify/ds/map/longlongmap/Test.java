@@ -161,9 +161,8 @@ public final class Test {
 					expected.put(key, result);
 				}
 				case 2 -> {
-					final long absentValue = value;
-					final long result = expected.containsKey(key) ? expected.get(key) + delta : absentValue;
-					check(map.addOrDefault(key, delta, absentValue) == result);
+					final long result = expected.containsKey(key) ? expected.get(key) + delta : value;
+					check(map.addOrDefault(key, delta, value) == result);
 					expected.put(key, result);
 				}
 				case 3 -> {
