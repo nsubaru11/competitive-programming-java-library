@@ -123,6 +123,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 - Javaコードだけが入っていた`BTreeGuide` / `RedBlackTreeGuide`、空だった`SparseTableGuide` / `ZAlgorithmGuide`を正しいMarkdownガイドへ置き換えました。
 - `Transform`が公開APIとなったため、Polynomial READMEとConvolution設計書へ公開範囲・配列長・実装状況を追加しました。
 - 旧API名を掲載していたConvolution設計書を、現行の`convolve*` APIとオーバーロード群に同期しました。
+- 多項式畳み込みの論理的な返却長、ビット演算畳み込みの定義域長、`Transform`のコピー版とin-place版の契約をPolynomial READMEとConvolution設計書へ反映しました。
 - 空だったソート説明8件を補い、基本ソートを実装・比較用と位置付けました。単一配列の実戦用途では`Arrays.sort`を優先し、連動ソートなどの競技向けユーティリティを今後追加します。
 - 詳細ガイドのメソッド表は、公開API追加時にシグネチャ単位で継続して突き合わせる必要があります。
 
@@ -135,7 +136,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 特に次の領域は優先して検証を増やす必要があります。
 
 - ソート11クラス。基本ソートは教育・比較用として維持し、連動ソートなどの新規ユーティリティには用途に対応した決定的テストを必須とする
-- `Convolution` / `Transform`。AND / ORを含め、素朴解とのランダム照合と変換・逆変換の性質テストを追加する
+- `Convolution` / `Transform`。AND / ORを含む素朴解とのランダム照合、変換・逆変換の性質、コピー版とin-place版の結果一致を検証する
 - `RootedTree` / `Tree`、線形代数、`Fraction` / `ModInt` / `ModLong`
 - 多くの配列派生クラス、2D/3D累積和、Range/2D BIT
 - Trie派生、`SuffixArray`、`IntDoubleEndedPriorityQueue`

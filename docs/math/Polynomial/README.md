@@ -14,18 +14,20 @@
 
 - NTT、FFT、XOR・AND・OR、GCD・LCM畳み込みの公開API
 - `convolveAnd` / `convolveOr`は、部分集合・上位集合ゼータ変換を用いて利用できます。
+- 通常の多項式畳み込みは、内部の変換長にかかわらず`a.length + b.length - 1`要素を返します。
 - NTT、FFT、XOR、GCD・LCM畳み込み、およびGarner復元は未実装です。
 - 設計は[Convolution設計書](./ConvolutionArchitecture.md)を参照してください。
 
 ### [Transform](../../../src/lib/math/polynomial/Transform.java)
 
-- 畳み込みで使う各種変換の公開API。すべてのメソッドは入力を変更せず、必要なら0埋めした新しい配列を返します。
+- 畳み込みで使う各種変換の公開API。コピー版は入力を変更せず、必要なら0埋めした新しい配列を作成して対応する`*InPlace`版へ処理を委譲します。
+- `*InPlace`版は渡された配列を直接変更します。2冪長が必要な変換では、条件を満たさない配列に対して`false`を返します。
 - 部分集合・上位集合ゼータ変換とメビウス変換は利用可能です。
 - NTT、FFT、FWHT、約数・倍数ゼータ変換とメビウス変換は未実装です。
 - 正確なオーバーロードと配列長の規約は[Convolution設計書](./ConvolutionArchitecture.md)を参照してください。
 
 ## 注意事項
 
-- `convolveAnd` / `convolveOr`は、配列長の最大値が2の冪であるビット集合を対象に利用できます。係数は非負かつ剰余版では`[0, mod)`に正規化して渡してください。
+- `convolveAnd` / `convolveOr`は任意の正の入力長を受け取り、最大入力長以上の最小の2の冪へ0埋めした定義域長の結果を返します。係数は非負かつ剰余版では`[0, mod)`に正規化して渡してください。
 - `Convolution`のその他の畳み込みは実装完了まで利用できません。
 - `PolynomialUtils`の係数は次数の昇順に格納します。
