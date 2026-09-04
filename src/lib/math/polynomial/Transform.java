@@ -4,13 +4,15 @@ import static java.lang.Math.*;
 
 import java.util.*;
 
+import lib.math.*;
+
 public final class Transform {
 	private Transform() {}
 
 	// TODO: 以下の内部変換ロジックはすべて未実装。実装完了まで公開メソッドは正しい結果を返さない
 	// region ntt
 	public static int[] ntt(final int[] a, final int len, final boolean isInverse, final int mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final int[] res = Arrays.copyOf(a, n);
 		nttInPlace(res, isInverse, mod);
 		return res;
@@ -21,7 +23,7 @@ public final class Transform {
 	}
 
 	public static long[] ntt(final long[] a, final int len, final boolean isInverse, final long mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		nttInPlace(res, isInverse, mod);
 		return res;
@@ -48,7 +50,7 @@ public final class Transform {
 
 	// region fft
 	public static double[][] fft(final int[] a, final int len, final boolean isInverse) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final double[][] result = new double[2][n];
 		for (int i = 0; i < m; i++) result[0][i] = a[i];
 		fftInPlace(result[0], result[1], isInverse);
@@ -60,7 +62,7 @@ public final class Transform {
 	}
 
 	public static double[][] fft(final long[] a, final int len, final boolean isInverse) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final double[][] result = new double[2][n];
 		for (int i = 0; i < m; i++) result[0][i] = a[i];
 		fftInPlace(result[0], result[1], isInverse);
@@ -72,7 +74,7 @@ public final class Transform {
 	}
 
 	public static double[][] fft(final double[] real, final double[] imag, final int len, final boolean isInverse) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final double[][] result = new double[2][];
 		result[0] = Arrays.copyOf(real, n);
 		result[1] = Arrays.copyOf(imag, n);
@@ -85,7 +87,7 @@ public final class Transform {
 	}
 
 	public static double[][] fft(final double[] a, final int len, final boolean isInverse) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final double[][] result = new double[2][n];
 		System.arraycopy(a, 0, result[0], 0, min(n, a.length));
 		fftInPlace(result[0], result[1], isInverse);
@@ -106,7 +108,7 @@ public final class Transform {
 
 	// region fwht
 	public static int[] fwht(final int[] a, final int len, final boolean isInverse, final int mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final int[] res = Arrays.copyOf(a, n);
 		fwhtInPlace(res, isInverse, mod);
 		return res;
@@ -117,7 +119,7 @@ public final class Transform {
 	}
 
 	public static long[] fwht(final int[] a, final int len, final boolean isInverse) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final long[] res = new long[n];
 		for (int i = 0; i < m; i++) res[i] = a[i];
 		fwhtInPlace(res, isInverse);
@@ -129,7 +131,7 @@ public final class Transform {
 	}
 
 	public static long[] fwht(final long[] a, final int len, final boolean isInverse, final long mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		fwhtInPlace(res, isInverse, mod);
 		return res;
@@ -140,7 +142,7 @@ public final class Transform {
 	}
 
 	public static long[] fwht(final long[] a, final int len, final boolean isInverse) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		fwhtInPlace(res, isInverse);
 		return res;
@@ -153,42 +155,92 @@ public final class Transform {
 	public static boolean fwhtInPlace(final int[] a, final boolean isInverse, final int mod) {
 		final int n = a.length;
 		if (n == 0 || (n & (n - 1)) != 0) return false;
-		/* TODO: FWHT（高速ウォルシュ・アダマール変換）の実装 */
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			for (int l = 0; l < n; l += block) {
+				for (int i = 0; i < w; i++) {
+					final int x = a[l + i], y = a[l + i + w];
+					a[l + i] = (x + y) % mod;
+					a[l + i + w] = (x - y + mod) % mod;
+				}
+			}
+		}
+		if (isInverse) {
+			final int invN = MathUtils.modInv(n, mod);
+			for (int i = 0; i < n; i++) a[i] = (int) ((long) a[i] * invN % mod);
+		}
 		return true;
 	}
 
 	public static boolean fwhtInPlace(final int[] a, final boolean isInverse) {
 		final int n = a.length;
 		if (n == 0 || (n & (n - 1)) != 0) return false;
-		/* TODO: FWHT（高速ウォルシュ・アダマール変換）の実装 */
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			for (int l = 0; l < n; l += block) {
+				for (int i = 0; i < w; i++) {
+					final int x = a[l + i], y = a[l + i + w];
+					a[l + i] = x + y;
+					a[l + i + w] = x - y;
+				}
+			}
+		}
+		if (isInverse) {
+			for (int i = 0; i < n; i++) a[i] /= n;
+		}
 		return true;
 	}
 
 	public static boolean fwhtInPlace(final long[] a, final boolean isInverse, final long mod) {
 		final int n = a.length;
 		if (n == 0 || (n & (n - 1)) != 0) return false;
-		/* TODO: FWHT（高速ウォルシュ・アダマール変換）の実装 */
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			for (int l = 0; l < n; l += block) {
+				for (int i = 0; i < w; i++) {
+					final long x = a[l + i], y = a[l + i + w];
+					a[l + i] = (x + y) % mod;
+					a[l + i + w] = (x - y + mod) % mod;
+				}
+			}
+		}
+		if (isInverse) {
+			final long invN = MathUtils.modInv(n, mod);
+			for (int i = 0; i < n; i++) a[i] = a[i] * invN % mod;
+		}
 		return true;
 	}
 
 	public static boolean fwhtInPlace(final long[] a, final boolean isInverse) {
 		final int n = a.length;
 		if (n == 0 || (n & (n - 1)) != 0) return false;
-		/* TODO: FWHT（高速ウォルシュ・アダマール変換）の実装 */
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			for (int l = 0; l < n; l += block) {
+				for (int i = 0; i < w; i++) {
+					final long x = a[l + i], y = a[l + i + w];
+					a[l + i] = x + y;
+					a[l + i + w] = x - y;
+				}
+			}
+		}
+		if (isInverse) {
+			for (int i = 0; i < n; i++) a[i] /= n;
+		}
 		return true;
 	}
 	// endregion
 
 	// region subset zeta
 	public static int[] subsetZeta(final int[] a, final int len, final int mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final int[] res = Arrays.copyOf(a, n);
 		subsetZetaInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] subsetZeta(final int[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final long[] res = new long[n];
 		for (int i = 0; i < m; i++) res[i] = a[i];
 		subsetZetaInPlace(res);
@@ -200,14 +252,14 @@ public final class Transform {
 	}
 
 	public static long[] subsetZeta(final long[] a, final int len, final long mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		subsetZetaInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] subsetZeta(final long[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		subsetZetaInPlace(res);
 		return res;
@@ -276,14 +328,14 @@ public final class Transform {
 
 	// region subset mobius
 	public static int[] subsetMobius(final int[] a, final int len, final int mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final int[] res = Arrays.copyOf(a, n);
 		subsetMobiusInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] subsetMobius(final int[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final long[] res = new long[n];
 		for (int i = 0; i < m; i++) res[i] = a[i];
 		subsetMobiusInPlace(res);
@@ -295,14 +347,14 @@ public final class Transform {
 	}
 
 	public static long[] subsetMobius(final long[] a, final int len, final long mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		subsetMobiusInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] subsetMobius(final long[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		subsetMobiusInPlace(res);
 		return res;
@@ -371,14 +423,14 @@ public final class Transform {
 
 	// region superset zeta
 	public static int[] supersetZeta(final int[] a, final int len, final int mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final int[] res = Arrays.copyOf(a, n);
 		supersetZetaInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] supersetZeta(final int[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final long[] res = new long[n];
 		for (int i = 0; i < m; i++) res[i] = a[i];
 		supersetZetaInPlace(res);
@@ -404,14 +456,14 @@ public final class Transform {
 	}
 
 	public static long[] supersetZeta(final long[] a, final int len, final long mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		supersetZetaInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] supersetZeta(final long[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		supersetZetaInPlace(res);
 		return res;
@@ -466,14 +518,14 @@ public final class Transform {
 
 	// region superset mobius
 	public static int[] supersetMobius(final int[] a, final int len, final int mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final int[] res = Arrays.copyOf(a, n);
 		supersetMobiusInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] supersetMobius(final int[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1, m = min(a.length, n);
+		final int n = ceilPowerOfTwo(len), m = min(a.length, n);
 		final long[] res = new long[n];
 		for (int i = 0; i < m; i++) res[i] = a[i];
 		supersetMobiusInPlace(res);
@@ -499,14 +551,14 @@ public final class Transform {
 	}
 
 	public static long[] supersetMobius(final long[] a, final int len, final long mod) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		supersetMobiusInPlace(res, mod);
 		return res;
 	}
 
 	public static long[] supersetMobius(final long[] a, final int len) {
-		final int n = len <= 1 ? 1 : Integer.highestOneBit(len - 1) << 1;
+		final int n = ceilPowerOfTwo(len);
 		final long[] res = Arrays.copyOf(a, n);
 		supersetMobiusInPlace(res);
 		return res;
@@ -830,4 +882,8 @@ public final class Transform {
 		return true;
 	}
 	// endregion
+
+	private static int ceilPowerOfTwo(final int n) {
+		return n <= 1 ? 1 : 1 << -Integer.numberOfLeadingZeros(n - 1);
+	}
 }
