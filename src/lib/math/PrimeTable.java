@@ -127,7 +127,6 @@ public final class PrimeTable implements Iterable<Long> {
 	 * @return {@code i} 番目の素数
 	 */
 	public long get(final int i) {
-		if (i < 0 || primeCount <= i) throw new IllegalArgumentException();
 		return primes[i];
 	}
 
