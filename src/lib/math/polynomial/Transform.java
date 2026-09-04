@@ -9,7 +9,7 @@ import lib.math.*;
 public final class Transform {
 	private Transform() {}
 
-	// TODO: 以下の内部変換ロジックはすべて未実装。実装完了まで公開メソッドは正しい結果を返さない
+	// TODO: NTT、FFT、約数・倍数変換の内部ロジックは未実装。該当する公開メソッドは正しい結果を返さない
 	// region ntt
 	public static int[] ntt(final int[] a, final int len, final boolean isInverse, final int mod) {
 		final int n = ceilPowerOfTwo(len);
