@@ -6,7 +6,6 @@
 - 素数判定$\mathcal{O}(1)$、近傍・個数検索$\mathcal{O}(\log \pi(N))$
 - `PrimitiveIterator.OfLong`と`LongStream`に対応
 - 列挙済み素数を使った反復的な素因数分解に対応
-- FactorUtilsと同等の配列・Collection・Map APIを提供
 - FactorUtils と同等の配列・Collection・Map APIを提供
 
 詳細は[利用ガイド](./PrimeTableGuide.md)を参照してください。

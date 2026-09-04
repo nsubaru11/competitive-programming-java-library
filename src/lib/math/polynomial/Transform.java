@@ -7,6 +7,8 @@ import java.util.*;
 import lib.math.*;
 
 public final class Transform {
+	private static PrimeTable primeTable;
+
 	private Transform() {}
 
 	// TODO: NTT、FFTの内部ロジックは未実装。該当する公開メソッドは正しい結果を返さない
@@ -653,9 +655,12 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[d - 1] = (a[d - 1] + a[m - 1]) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
+				a[d - 1] += a[m - 1];
+				if (a[d - 1] >= mod) a[d - 1] -= mod;
 			}
 		}
 		return true;
@@ -664,8 +669,10 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[d - 1] += a[m - 1];
 			}
 		}
@@ -675,9 +682,12 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[d - 1] = (a[d - 1] + a[m - 1]) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
+				a[d - 1] += a[m - 1];
+				if (a[d - 1] >= mod) a[d - 1] -= mod;
 			}
 		}
 		return true;
@@ -686,8 +696,10 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[d - 1] += a[m - 1];
 			}
 		}
@@ -737,9 +749,12 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[d - 1] = (a[d - 1] - a[m - 1] + mod) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
+				a[d - 1] -= a[m - 1];
+				if (a[d - 1] < 0) a[d - 1] += mod;
 			}
 		}
 		return true;
@@ -748,8 +763,10 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[d - 1] -= a[m - 1];
 			}
 		}
@@ -759,9 +776,12 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[d - 1] = (a[d - 1] - a[m - 1] + mod) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
+				a[d - 1] -= a[m - 1];
+				if (a[d - 1] < 0) a[d - 1] += mod;
 			}
 		}
 		return true;
@@ -770,8 +790,10 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[d - 1] -= a[m - 1];
 			}
 		}
@@ -821,9 +843,12 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[m - 1] = (a[m - 1] + a[d - 1] + mod) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
+				a[m - 1] += a[d - 1];
+				if (a[m - 1] >= mod) a[m - 1] -= mod;
 			}
 		}
 		return true;
@@ -832,8 +857,10 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[m - 1] += a[d - 1];
 			}
 		}
@@ -843,9 +870,12 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[m - 1] = (a[m - 1] + a[d - 1] + mod) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
+				a[m - 1] += a[d - 1];
+				if (a[m - 1] >= mod) a[m - 1] -= mod;
 			}
 		}
 		return true;
@@ -854,8 +884,10 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n; d >= 1; d--) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[m - 1] += a[d - 1];
 			}
 		}
@@ -905,9 +937,12 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[m - 1] = (a[m - 1] - a[d - 1] + mod) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
+				a[m - 1] -= a[d - 1];
+				if (a[m - 1] < 0) a[m - 1] += mod;
 			}
 		}
 		return true;
@@ -916,8 +951,10 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[m - 1] -= a[d - 1];
 			}
 		}
@@ -927,9 +964,12 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
-				a[m - 1] = (a[m - 1] - a[d - 1] + mod) % mod;
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
+				a[m - 1] -= a[d - 1];
+				if (a[m - 1] < 0) a[m - 1] += mod;
 			}
 		}
 		return true;
@@ -938,14 +978,21 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d <= n; d++) {
-			for (int m = d << 1; m <= n; m += d) {
+		ensurePrimeTable(n);
+		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
+			final int p = (int) it.nextLong();
+			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[m - 1] -= a[d - 1];
 			}
 		}
 		return true;
 	}
 	// endregion
+
+	private static void ensurePrimeTable(final int n) {
+		if (primeTable != null && n <= primeTable.getLimitValue()) return;
+		primeTable = new PrimeTable(n);
+	}
 
 	private static int ceilPowerOfTwo(final int n) {
 		return n <= 1 ? 1 : 1 << -Integer.numberOfLeadingZeros(n - 1);

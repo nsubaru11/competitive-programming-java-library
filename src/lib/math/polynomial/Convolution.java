@@ -226,80 +226,72 @@ public final class Convolution {
 		final int len = max(a.length, b.length);
 		final long[] ta = Transform.multipleZeta(a, len, mod);
 		final long[] tb = Transform.multipleZeta(b, len, mod);
-		final long[] res = new long[len];
-		for (int i = 0; i < len; i++) res[i] = (ta[i] * tb[i]) % mod;
-		Transform.multipleMobiusInPlace(res, mod);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] = (ta[i] * tb[i]) % mod;
+		Transform.multipleMobiusInPlace(ta, mod);
+		return ta;
 	}
 
 	public static long[] convolveGcd(final long[] a, final long[] b) {
 		final int len = max(a.length, b.length);
 		final long[] ta = Transform.multipleZeta(a, len);
 		final long[] tb = Transform.multipleZeta(b, len);
-		final long[] res = new long[len];
-		for (int i = 0; i < len; i++) res[i] = ta[i] * tb[i];
-		Transform.multipleMobiusInPlace(res);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] *= tb[i];
+		Transform.multipleMobiusInPlace(ta);
+		return ta;
 	}
 
 	public static int[] convolveGcd(final int[] a, final int[] b, final int mod) {
 		final int len = max(a.length, b.length);
 		final int[] ta = Transform.multipleZeta(a, len, mod);
 		final int[] tb = Transform.multipleZeta(b, len, mod);
-		final int[] res = new int[len];
-		for (int i = 0; i < len; i++) res[i] = (int) (((long) ta[i] * tb[i]) % mod);
-		Transform.multipleMobiusInPlace(res, mod);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] = (int) (((long) ta[i] * tb[i]) % mod);
+		Transform.multipleMobiusInPlace(ta, mod);
+		return ta;
 	}
 
 	public static long[] convolveGcd(final int[] a, final int[] b) {
 		final int len = max(a.length, b.length);
 		final long[] ta = Transform.multipleZeta(a, len);
 		final long[] tb = Transform.multipleZeta(b, len);
-		final long[] res = new long[len];
-		for (int i = 0; i < len; i++) res[i] = ta[i] * tb[i];
-		Transform.multipleMobiusInPlace(res);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] *= tb[i];
+		Transform.multipleMobiusInPlace(ta);
+		return ta;
 	}
 
 	public static long[] convolveLcm(final long[] a, final long[] b, final long mod) {
 		final int len = max(a.length, b.length);
 		final long[] ta = Transform.divisorZeta(a, len, mod);
 		final long[] tb = Transform.divisorZeta(b, len, mod);
-		final long[] res = new long[len];
-		for (int i = 0; i < len; i++) res[i] = (ta[i] * tb[i]) % mod;
-		Transform.divisorMobiusInPlace(res, mod);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] = (ta[i] * tb[i]) % mod;
+		Transform.divisorMobiusInPlace(ta, mod);
+		return ta;
 	}
 
 	public static long[] convolveLcm(final long[] a, final long[] b) {
 		final int len = max(a.length, b.length);
 		final long[] ta = Transform.divisorZeta(a, len);
 		final long[] tb = Transform.divisorZeta(b, len);
-		final long[] res = new long[len];
-		for (int i = 0; i < len; i++) res[i] = ta[i] * tb[i];
-		Transform.divisorMobiusInPlace(res);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] *= tb[i];
+		Transform.divisorMobiusInPlace(ta);
+		return ta;
 	}
 
 	public static int[] convolveLcm(final int[] a, final int[] b, final int mod) {
 		final int len = max(a.length, b.length);
 		final int[] ta = Transform.divisorZeta(a, len, mod);
 		final int[] tb = Transform.divisorZeta(b, len, mod);
-		final int[] res = new int[len];
-		for (int i = 0; i < len; i++) res[i] = (int) (((long) ta[i] * tb[i]) % mod);
-		Transform.divisorMobiusInPlace(res, mod);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] = (int) ((long) ta[i] * tb[i] % mod);
+		Transform.divisorMobiusInPlace(ta, mod);
+		return ta;
 	}
 
 	public static long[] convolveLcm(final int[] a, final int[] b) {
 		final int len = max(a.length, b.length);
 		final long[] ta = Transform.divisorZeta(a, len);
 		final long[] tb = Transform.divisorZeta(b, len);
-		final long[] res = new long[len];
-		for (int i = 0; i < len; i++) res[i] = ta[i] * tb[i];
-		Transform.divisorMobiusInPlace(res);
-		return res;
+		for (int i = 0; i < len; i++) ta[i] *= tb[i];
+		Transform.divisorMobiusInPlace(ta);
+		return ta;
 	}
 
 	private static long[] garnerProcess(long[] a, long[] b, long[] c, long mod) {

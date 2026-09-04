@@ -8,7 +8,7 @@ import lib.math.*;
 public final class FactorizationTest {
 	public static void main(String[] args) {
 		PrimeTable small = new PrimeTable(40);
-		if (small.countPrimesUpTo(40) != 12 || small.kthPrime(11) != 37 || !small.isPrime(37)) {
+		if (small.countPrimesUpTo(40) != 12 || small.get(11) != 37 || !small.isPrime(37)) {
 			throw new AssertionError();
 		}
 		PrimeTable table = new PrimeTable(1_000_000);

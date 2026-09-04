@@ -21,13 +21,15 @@
 | メソッド                                   |                     戻り値 | 説明                             |
 |--------------------------------------------|---------------------------:|----------------------------------|
 | `PrimeTable(long n)`                       |                          - | `n`以下の素数を構築              |
+| `getLimitValue()`                          |                     `long` | 構築時に指定した上限             |
+| `getPrimeCount()`                          |                      `int` | テーブル内の素数個数             |
 | `isPrime(long n)`                          |                  `boolean` | テーブル範囲内の素数判定         |
 | `countPrimesUpTo(long n)`                  |                      `int` | `n`以下の素数個数                |
 | `ceilingPrime(long n)`                     |                     `long` | `n`以上の最小素数                |
 | `higherPrime(long n)`                      |                     `long` | `n`より大きい最小素数            |
 | `floorPrime(long n)`                       |                     `long` | `n`以下の最大素数                |
 | `lowerPrime(long n)`                       |                     `long` | `n`より小さい最大素数            |
-| `kthPrime(int i)`                          |                     `long` | 0始まりのi番目の素数             |
+| `get(int i)`                               |                     `long` | 0始まりのi番目の素数             |
 | `uniquePrimeFactorCount(long n)`           |                      `int` | 異なる素因数の個数               |
 | `primeFactorCount(long n)`                 |                      `int` | 重複込みの素因数の個数           |
 | `primeFactors(int/long n)`                 |         `int[]` / `long[]` | 重複込みの昇順配列               |
@@ -47,6 +49,7 @@ import lib.math.PrimeTable;
 PrimeTable table = new PrimeTable(1_000_000);
 boolean prime = table.isPrime(999_983);
 long next = table.ceilingPrime(100_000);
+long first = table.get(0);
 var factors = table.primeFactorsMap(600_851_475_143L, HashMap::new);
 ```
 
@@ -63,13 +66,14 @@ var factors = table.primeFactorsMap(600_851_475_143L, HashMap::new);
 - 合成数bit配列: およそN/16 byte。別途素数配列が必要
 - `isPrime`: $\mathcal{O}(1)$
 - 個数・近傍検索: $\mathcal{O}(\log \pi(N))$
-- `kthPrime`: $\mathcal{O}(1)$
+- `get`: $\mathcal{O}(1)$
 - 素因数分解: `√n`以下の列挙済み素数の個数に比例
 
 ## バージョン情報
 
 | バージョン番号     | 年月日     | 詳細                                                                                      |
 |:-------------------|:-----------|:------------------------------------------------------------------------------------------|
+| **バージョン 3.2** | 2026-09-05 | 構築上限・素数個数・添字アクセスAPIを追加し、素数添字アクセス名を`get`へ統一              |
 | **バージョン 3.1** | 2026-08-10 | 篩を6k±1候補の独立処理へ整理し、合成数に隣接する素数の取りこぼしを修正                    |
 | **バージョン 3.0** | 2026-08-10 | FactorUtils と同等の素因数個数・配列・Collection・Map APIを追加し、列挙済み素数を直接利用 |
 | **バージョン 2.0** | 2026-08-01 | 近傍検索、素因数分解、iterator、streamを含むAPIを整備                                     |

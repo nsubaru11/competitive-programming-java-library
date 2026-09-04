@@ -12,10 +12,10 @@ import java.util.stream.*;
  */
 @SuppressWarnings("unused")
 public final class PrimeTable implements Iterable<Long> {
-	private final long maxValue;
+	private final long limitValue;
 	private final long[] oddBits;
 	private long[] primes;
-	private int cnt;
+	private int primeCount;
 
 	/**
 	 * {@code 0} 以上 {@code n} 以下の素数テーブルを構築します。
@@ -23,21 +23,39 @@ public final class PrimeTable implements Iterable<Long> {
 	 * @param n テーブルの上限
 	 */
 	public PrimeTable(final long n) {
-		cnt = 0;
-		maxValue = n;
+		primeCount = 0;
+		limitValue = n;
 		oddBits = new long[(int) (((n >>> 1) + 63) >>> 6) + 1];
 		sieve(n);
 	}
 
 	/**
+	 * 構築時に指定した上限を返します。
+	 *
+	 * @return テーブルの上限
+	 */
+	public long getLimitValue() {
+		return limitValue;
+	}
+
+	/**
+	 * テーブルに格納されている素数の個数を返します。
+	 *
+	 * @return 素数の個数
+	 */
+	public int getPrimeCount() {
+		return primeCount;
+	}
+
+	/**
 	 * テーブル範囲内の値が素数か判定します。
-	 * {@code 0 <= n <= MAX_VALUE} を前提とします。
+	 * {@code 0 <= n} かつ構築時の上限以下を前提とします。
 	 *
 	 * @param n 判定する値
 	 * @return 素数なら {@code true}
 	 */
 	public boolean isPrime(final long n) {
-		if (maxValue < n) throw new IllegalArgumentException();
+		if (limitValue < n) throw new IllegalArgumentException();
 		if (n <= 1) return false;
 		if ((n & 1) == 0) return n == 2;
 		if (n % 3 == 0) return n == 3;
@@ -51,7 +69,7 @@ public final class PrimeTable implements Iterable<Long> {
 	 * @return 素数の個数
 	 */
 	public int countPrimesUpTo(final long n) {
-		if (maxValue < n) throw new IllegalArgumentException();
+		if (limitValue < n) throw new IllegalArgumentException();
 		int index = binarySearch(primes, n);
 		return index < 0 ? ~index : index + 1;
 	}
@@ -63,10 +81,10 @@ public final class PrimeTable implements Iterable<Long> {
 	 * @return 該当する素数。存在しない場合は {@code -1}
 	 */
 	public long ceilingPrime(final long n) {
-		if (maxValue < n) throw new IllegalArgumentException();
+		if (limitValue < n) throw new IllegalArgumentException();
 		int index = binarySearch(primes, n);
 		index = index < 0 ? ~index : index;
-		return index >= cnt ? -1 : primes[index];
+		return index >= primeCount ? -1 : primes[index];
 	}
 
 	/**
@@ -86,7 +104,7 @@ public final class PrimeTable implements Iterable<Long> {
 	 * @return 該当する素数。存在しない場合は {@code -1}
 	 */
 	public long floorPrime(final long n) {
-		if (maxValue < n) throw new IllegalArgumentException();
+		if (limitValue < n) throw new IllegalArgumentException();
 		int index = binarySearch(primes, n);
 		index = index < 0 ? ~index - 1 : index;
 		return index < 0 ? -1 : primes[index];
@@ -108,8 +126,8 @@ public final class PrimeTable implements Iterable<Long> {
 	 * @param i 素数の添字
 	 * @return {@code i} 番目の素数
 	 */
-	public long kthPrime(final int i) {
-		if (i < 0 || cnt <= i) throw new IllegalArgumentException();
+	public long get(final int i) {
+		if (i < 0 || primeCount <= i) throw new IllegalArgumentException();
 		return primes[i];
 	}
 
@@ -124,7 +142,7 @@ public final class PrimeTable implements Iterable<Long> {
 	public int uniquePrimeFactorCount(long n) {
 		if (n <= 1) return 0;
 		int count = 0;
-		for (int i = 0; i < this.cnt && n > 1; i++) {
+		for (int i = 0; i < this.primeCount && n > 1; i++) {
 			final long pi = primes[i];
 			if (pi * pi > n) break;
 			int e = 0;
@@ -144,7 +162,7 @@ public final class PrimeTable implements Iterable<Long> {
 	public int primeFactorCount(long n) {
 		if (n <= 1) return 0;
 		int count = 0;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final long pi = primes[i];
 			if (pi * pi > n) break;
 			for (; n % pi == 0; n /= pi, count++) ;
@@ -163,7 +181,7 @@ public final class PrimeTable implements Iterable<Long> {
 		if (n <= 1) return new int[0];
 		final int[] factors = new int[32];
 		int size = 0;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final int pi = (int) primes[i];
 			if (pi * pi > n) break;
 			for (; n % pi == 0; n /= pi) factors[size++] = pi;
@@ -183,7 +201,7 @@ public final class PrimeTable implements Iterable<Long> {
 		if (n <= 1) return new long[0];
 		final long[] factors = new long[64];
 		int size = 0;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final long pi = primes[i];
 			if (pi * pi > n) break;
 			for (; n % pi == 0; n /= pi) factors[size++] = pi;
@@ -204,7 +222,7 @@ public final class PrimeTable implements Iterable<Long> {
 	public <T extends Collection<Integer>> T primeFactors(int n, final Supplier<T> supplier) {
 		final T factors = supplier.get();
 		if (n <= 1) return factors;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final int pi = (int) primes[i];
 			if (pi * pi > n) break;
 			for (; n % pi == 0; n /= pi) factors.add(pi);
@@ -225,7 +243,7 @@ public final class PrimeTable implements Iterable<Long> {
 	public <T extends Collection<Long>> T primeFactors(long n, final Supplier<T> supplier) {
 		final T factors = supplier.get();
 		if (n <= 1) return factors;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final long pi = primes[i];
 			if (pi * pi > n) break;
 			for (; n % pi == 0; n /= pi) factors.add(pi);
@@ -245,7 +263,7 @@ public final class PrimeTable implements Iterable<Long> {
 		if (n <= 1) return new int[2][0];
 		final int[][] res = new int[2][10];
 		int size = 0;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final int pi = (int) primes[i];
 			if (pi * pi > n) break;
 			int e = 0;
@@ -273,7 +291,7 @@ public final class PrimeTable implements Iterable<Long> {
 		if (n <= 1) return new long[2][0];
 		final long[][] res = new long[2][16];
 		int size = 0;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final long pi = primes[i];
 			if (pi * pi > n) break;
 			int e = 0;
@@ -302,7 +320,7 @@ public final class PrimeTable implements Iterable<Long> {
 	public <T extends Map<Integer, Integer>> T primeFactorsMap(int n, final Supplier<T> supplier) {
 		final T factors = supplier.get();
 		if (n <= 1) return factors;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final int pi = (int) primes[i];
 			if (pi * pi > n) break;
 			int e = 0;
@@ -325,7 +343,7 @@ public final class PrimeTable implements Iterable<Long> {
 	public <T extends Map<Long, Integer>> T primeFactorsMap(long n, final Supplier<T> supplier) {
 		final T factors = supplier.get();
 		if (n <= 1) return factors;
-		for (int i = 0; i < cnt && n > 1; i++) {
+		for (int i = 0; i < primeCount && n > 1; i++) {
 			final long pi = primes[i];
 			if (pi * pi > n) break;
 			int e = 0;
@@ -346,7 +364,7 @@ public final class PrimeTable implements Iterable<Long> {
 			private int index = 0;
 
 			public boolean hasNext() {
-				return index < cnt;
+				return index < primeCount;
 			}
 
 			public long nextLong() {
@@ -370,12 +388,12 @@ public final class PrimeTable implements Iterable<Long> {
 		primes = new long[estimatedCapacity];
 		final long sqrtN = (long) Math.sqrt(n);
 
-		if (2 <= n) primes[cnt++] = 2;
-		if (3 <= n) primes[cnt++] = 3;
+		if (2 <= n) primes[primeCount++] = 2;
+		if (3 <= n) primes[primeCount++] = 3;
 
 		for (long i = 5; i <= n; i += 6) {
 			if (isNotCompositeOdd(i)) {
-				primes[cnt++] = i;
+				primes[primeCount++] = i;
 				if (i <= sqrtN) {
 					final long stepI = i * 6;
 					final long deltaI = i * 2;
@@ -390,7 +408,7 @@ public final class PrimeTable implements Iterable<Long> {
 			final long j = i + 2;
 			if (j > n) break;
 			if (isNotCompositeOdd(j)) {
-				primes[cnt++] = j;
+				primes[primeCount++] = j;
 				if (j <= sqrtN) {
 					final long stepJ = j * 6;
 					final long deltaJ = j * 2;
@@ -403,7 +421,7 @@ public final class PrimeTable implements Iterable<Long> {
 				}
 			}
 		}
-		primes = copyOf(primes, cnt);
+		primes = copyOf(primes, primeCount);
 	}
 
 	private int bitIndex(final long n) {
