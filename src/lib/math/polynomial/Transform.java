@@ -653,9 +653,9 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] = (a[d] + a[m]) % mod;
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] = (a[d - 1] + a[m - 1]) % mod;
 			}
 		}
 		return true;
@@ -664,9 +664,9 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] += a[m];
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] += a[m - 1];
 			}
 		}
 		return true;
@@ -675,9 +675,9 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] = (a[d] + a[m]) % mod;
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] = (a[d - 1] + a[m - 1]) % mod;
 			}
 		}
 		return true;
@@ -686,9 +686,9 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] += a[m];
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] += a[m - 1];
 			}
 		}
 		return true;
@@ -737,9 +737,9 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] = (a[d] - a[m] + mod) % mod;
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] = (a[d - 1] - a[m - 1] + mod) % mod;
 			}
 		}
 		return true;
@@ -748,9 +748,9 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] -= a[m];
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] -= a[m - 1];
 			}
 		}
 		return true;
@@ -759,9 +759,9 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] = (a[d] - a[m] + mod) % mod;
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] = (a[d - 1] - a[m - 1] + mod) % mod;
 			}
 		}
 		return true;
@@ -770,9 +770,9 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[d] -= a[m];
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[d - 1] -= a[m - 1];
 			}
 		}
 		return true;
@@ -821,9 +821,9 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] = (a[m] + a[d] + mod) % mod;
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] = (a[m - 1] + a[d - 1] + mod) % mod;
 			}
 		}
 		return true;
@@ -832,9 +832,9 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] += a[d];
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] += a[d - 1];
 			}
 		}
 		return true;
@@ -843,9 +843,9 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] = (a[m] + a[d] + mod) % mod;
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] = (a[m - 1] + a[d - 1] + mod) % mod;
 			}
 		}
 		return true;
@@ -854,9 +854,9 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = n - 1; d >= 1; d--) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] += a[d];
+		for (int d = n; d >= 1; d--) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] += a[d - 1];
 			}
 		}
 		return true;
@@ -905,9 +905,9 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] = (a[m] - a[d] + mod) % mod;
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] = (a[m - 1] - a[d - 1] + mod) % mod;
 			}
 		}
 		return true;
@@ -916,9 +916,9 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] -= a[d];
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] -= a[d - 1];
 			}
 		}
 		return true;
@@ -927,9 +927,9 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] = (a[m] - a[d] + mod) % mod;
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] = (a[m - 1] - a[d - 1] + mod) % mod;
 			}
 		}
 		return true;
@@ -938,9 +938,9 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		for (int d = 1; d < n; d++) {
-			for (int m = d << 1; m < n; m += d) {
-				a[m] -= a[d];
+		for (int d = 1; d <= n; d++) {
+			for (int m = d << 1; m <= n; m += d) {
+				a[m - 1] -= a[d - 1];
 			}
 		}
 		return true;
