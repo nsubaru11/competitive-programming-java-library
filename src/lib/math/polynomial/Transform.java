@@ -656,8 +656,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[d - 1] += a[m - 1];
 				if (a[d - 1] >= mod) a[d - 1] -= mod;
@@ -670,8 +671,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[d - 1] += a[m - 1];
 			}
@@ -683,8 +685,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[d - 1] += a[m - 1];
 				if (a[d - 1] >= mod) a[d - 1] -= mod;
@@ -697,8 +700,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[d - 1] += a[m - 1];
 			}
@@ -750,8 +754,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[d - 1] -= a[m - 1];
 				if (a[d - 1] < 0) a[d - 1] += mod;
@@ -764,8 +769,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[d - 1] -= a[m - 1];
 			}
@@ -777,8 +783,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[d - 1] -= a[m - 1];
 				if (a[d - 1] < 0) a[d - 1] += mod;
@@ -791,8 +798,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[d - 1] -= a[m - 1];
 			}
@@ -844,8 +852,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[m - 1] += a[d - 1];
 				if (a[m - 1] >= mod) a[m - 1] -= mod;
@@ -858,8 +867,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[m - 1] += a[d - 1];
 			}
@@ -871,8 +881,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[m - 1] += a[d - 1];
 				if (a[m - 1] >= mod) a[m - 1] -= mod;
@@ -885,8 +896,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = 1, m = p; m <= n; d++, m += p) {
 				a[m - 1] += a[d - 1];
 			}
@@ -938,8 +950,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[m - 1] -= a[d - 1];
 				if (a[m - 1] < 0) a[m - 1] += mod;
@@ -952,8 +965,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[m - 1] -= a[d - 1];
 			}
@@ -965,8 +979,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[m - 1] -= a[d - 1];
 				if (a[m - 1] < 0) a[m - 1] += mod;
@@ -979,8 +994,9 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0) return false;
 		ensurePrimeTable(n);
-		for (final PrimitiveIterator.OfLong it = primeTable.iterator(); it.hasNext(); ) {
-			final int p = (int) it.nextLong();
+		final PrimeTable table = primeTable;
+		for (int i = 0, count = table.getPrimeCount(); i < count; i++) {
+			final int p = (int) table.get(i);
 			for (int d = n / p, m = d * p; d >= 1; d--, m -= p) {
 				a[m - 1] -= a[d - 1];
 			}
