@@ -9,7 +9,7 @@ import lib.math.*;
 public final class Transform {
 	private Transform() {}
 
-	// TODO: NTT、FFT、約数・倍数変換の内部ロジックは未実装。該当する公開メソッドは正しい結果を返さない
+	// TODO: NTT、FFTの内部ロジックは未実装。該当する公開メソッドは正しい結果を返さない
 	// region ntt
 	public static int[] ntt(final int[] a, final int len, final boolean isInverse, final int mod) {
 		final int n = ceilPowerOfTwo(len);
@@ -653,28 +653,44 @@ public final class Transform {
 	public static boolean multipleZetaInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数ゼータ変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] = (a[d] + a[m]) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean multipleZetaInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数ゼータ変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] += a[m];
+			}
+		}
 		return true;
 	}
 
 	public static boolean multipleZetaInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数ゼータ変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] = (a[d] + a[m]) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean multipleZetaInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数ゼータ変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] += a[m];
+			}
+		}
 		return true;
 	}
 	// endregion
@@ -721,28 +737,44 @@ public final class Transform {
 	public static boolean multipleMobiusInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数メビウス変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] = (a[d] - a[m] + mod) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean multipleMobiusInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数メビウス変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] -= a[m];
+			}
+		}
 		return true;
 	}
 
 	public static boolean multipleMobiusInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数メビウス変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] = (a[d] - a[m] + mod) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean multipleMobiusInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 倍数メビウス変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[d] -= a[m];
+			}
+		}
 		return true;
 	}
 	// endregion
@@ -789,28 +821,44 @@ public final class Transform {
 	public static boolean divisorZetaInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数ゼータ変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] = (a[m] + a[d] + mod) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean divisorZetaInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数ゼータ変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] += a[d];
+			}
+		}
 		return true;
 	}
 
 	public static boolean divisorZetaInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数ゼータ変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] = (a[m] + a[d] + mod) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean divisorZetaInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数ゼータ変換の実装 */
+		for (int d = n - 1; d >= 1; d--) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] += a[d];
+			}
+		}
 		return true;
 	}
 	// endregion
@@ -857,28 +905,44 @@ public final class Transform {
 	public static boolean divisorMobiusInPlace(final int[] a, final int mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数メビウス変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] = (a[m] - a[d] + mod) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean divisorMobiusInPlace(final int[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数メビウス変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] -= a[d];
+			}
+		}
 		return true;
 	}
 
 	public static boolean divisorMobiusInPlace(final long[] a, final long mod) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数メビウス変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] = (a[m] - a[d] + mod) % mod;
+			}
+		}
 		return true;
 	}
 
 	public static boolean divisorMobiusInPlace(final long[] a) {
 		final int n = a.length;
 		if (n == 0) return false;
-		/* TODO: 約数メビウス変換の実装 */
+		for (int d = 1; d < n; d++) {
+			for (int m = d << 1; m < n; m += d) {
+				a[m] -= a[d];
+			}
+		}
 		return true;
 	}
 	// endregion
