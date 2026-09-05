@@ -1023,8 +1023,10 @@ public final class Transform {
 					final int offset = s << (h - ph + 1);
 					for (int i = 0; i < p; i++) {
 						final long x = a[offset + i], y = (long) a[offset + i + p] * rootPow % mod;
-						a[offset + i] = (int) ((x + y) % mod);
-						a[offset + i + p] = (int) ((x - y + mod) % mod);
+						long value = x + y - mod;
+						a[offset + i] = (int) (value + ((value >> 63) & mod));
+						value = x - y;
+						a[offset + i + p] = (int) (value + ((value >> 63) & mod));
 					}
 					rootPow = (int) ((long) rootPow * plan.rate[Integer.numberOfTrailingZeros(~s)] % mod);
 				}
@@ -1037,8 +1039,11 @@ public final class Transform {
 					final int offset = s << (h - ph + 1);
 					for (int i = 0; i < p; i++) {
 						final long x = a[offset + i], y = a[offset + i + p];
-						a[offset + i] = (int) ((x + y) % mod);
-						a[offset + i + p] = (int) ((x - y + mod) * rootPow % mod);
+						long value = x + y - mod;
+						a[offset + i] = (int) (value + ((value >> 63) & mod));
+						value = x - y;
+						value += (value >> 63) & mod;
+						a[offset + i + p] = (int) (value * rootPow % mod);
 					}
 					rootPow = (int) ((long) rootPow * plan.inverseRate[Integer.numberOfTrailingZeros(~s)] % mod);
 				}
@@ -1063,8 +1068,10 @@ public final class Transform {
 					final int offset = s << (h - ph + 1);
 					for (int i = 0; i < p; i++) {
 						final long x = a[offset + i], y = a[offset + i + p] * rootPow % mod;
-						a[offset + i] = (x + y) % mod;
-						a[offset + i + p] = (x - y + mod) % mod;
+						long value = x + y - mod;
+						a[offset + i] = value + ((value >> 63) & mod);
+						value = x - y;
+						a[offset + i + p] = value + ((value >> 63) & mod);
 					}
 					rootPow = rootPow * plan.rate[Integer.numberOfTrailingZeros(~s)] % mod;
 				}
@@ -1077,8 +1084,11 @@ public final class Transform {
 					final int offset = s << (h - ph + 1);
 					for (int i = 0; i < p; i++) {
 						final long x = a[offset + i], y = a[offset + i + p];
-						a[offset + i] = (x + y) % mod;
-						a[offset + i + p] = (x - y + mod) * rootPow % mod;
+						long value = x + y - mod;
+						a[offset + i] = value + ((value >> 63) & mod);
+						value = x - y;
+						value += (value >> 63) & mod;
+						a[offset + i + p] = value * rootPow % mod;
 					}
 					rootPow = rootPow * plan.inverseRate[Integer.numberOfTrailingZeros(~s)] % mod;
 				}
