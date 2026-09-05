@@ -39,10 +39,35 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
 		if (n == 1) return true;
-		final IntNttPlan plan = new IntNttPlan(mod);
-		if (isInverse) bitReverseInPlace(a);
-		nttButterflyInPlace(a, isInverse, plan);
-		if (!isInverse) bitReverseInPlace(a);
+		for (int i = 1, j = 0; i < n; i++) {
+			j ^= n - (n >> (Integer.numberOfTrailingZeros(i) + 1));
+			if (i < j) {
+				final int tmp = a[i];
+				a[i] = a[j];
+				a[j] = tmp;
+			}
+		}
+		int root = primitiveRoot(mod);
+		if (isInverse) root = MathUtils.modInv(root, mod);
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			final int rootStep = MathUtils.modPow(root, (mod - 1) / block, mod);
+			for (int l = 0; l < n; l += block) {
+				int rootPow = 1;
+				for (int i = 0; i < w; i++) {
+					final long x = a[l + i], y = (long) a[l + i + w] * rootPow % mod;
+					long value = x + y - mod;
+					a[l + i] = (int) (value + ((value >> 63) & mod));
+					value = x - y;
+					a[l + i + w] = (int) (value + ((value >> 63) & mod));
+					rootPow = (int) ((long) rootPow * rootStep % mod);
+				}
+			}
+		}
+		if (isInverse) {
+			final int invN = MathUtils.modInv(n, mod);
+			for (int i = 0; i < n; i++) a[i] = (int) ((long) a[i] * invN % mod);
+		}
 		return true;
 	}
 
@@ -50,10 +75,35 @@ public final class Transform {
 		final int n = a.length;
 		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
 		if (n == 1) return true;
-		final LongNttPlan plan = new LongNttPlan(mod);
-		if (isInverse) bitReverseInPlace(a);
-		nttButterflyInPlace(a, isInverse, plan);
-		if (!isInverse) bitReverseInPlace(a);
+		for (int i = 1, j = 0; i < n; i++) {
+			j ^= n - (n >> (Integer.numberOfTrailingZeros(i) + 1));
+			if (i < j) {
+				final long tmp = a[i];
+				a[i] = a[j];
+				a[j] = tmp;
+			}
+		}
+		long root = primitiveRoot(mod);
+		if (isInverse) root = MathUtils.modInv(root, mod);
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			final long rootStep = MathUtils.modPow(root, (mod - 1) / block, mod);
+			for (int l = 0; l < n; l += block) {
+				long rootPow = 1;
+				for (int i = 0; i < w; i++) {
+					final long x = a[l + i], y = a[l + i + w] * rootPow % mod;
+					long value = x + y - mod;
+					a[l + i] = value + ((value >> 63) & mod);
+					value = x - y;
+					a[l + i + w] = value + ((value >> 63) & mod);
+					rootPow = rootPow * rootStep % mod;
+				}
+			}
+		}
+		if (isInverse) {
+			final long invN = MathUtils.modInv(n, mod);
+			for (int i = 0; i < n; i++) a[i] = a[i] * invN % mod;
+		}
 		return true;
 	}
 	// endregion
@@ -1010,119 +1060,6 @@ public final class Transform {
 		primeTable = new PrimeTable(n);
 	}
 
-	static boolean nttButterflyInPlace(final int[] a, final boolean isInverse, final IntNttPlan plan) {
-		final int n = a.length, mod = plan.mod;
-		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
-		if (n == 1) return true;
-		final int h = Integer.numberOfTrailingZeros(n);
-		if (!isInverse) {
-			for (int ph = 1; ph <= h; ph++) {
-				final int w = 1 << (ph - 1), p = 1 << (h - ph);
-				int rootPow = 1;
-				for (int s = 0; s < w; s++) {
-					final int offset = s << (h - ph + 1);
-					for (int i = 0; i < p; i++) {
-						final long x = a[offset + i], y = (long) a[offset + i + p] * rootPow % mod;
-						long value = x + y - mod;
-						a[offset + i] = (int) (value + ((value >> 63) & mod));
-						value = x - y;
-						a[offset + i + p] = (int) (value + ((value >> 63) & mod));
-					}
-					rootPow = (int) ((long) rootPow * plan.rate[Integer.numberOfTrailingZeros(~s)] % mod);
-				}
-			}
-		} else {
-			for (int ph = h; ph >= 1; ph--) {
-				final int w = 1 << (ph - 1), p = 1 << (h - ph);
-				int rootPow = 1;
-				for (int s = 0; s < w; s++) {
-					final int offset = s << (h - ph + 1);
-					for (int i = 0; i < p; i++) {
-						final long x = a[offset + i], y = a[offset + i + p];
-						long value = x + y - mod;
-						a[offset + i] = (int) (value + ((value >> 63) & mod));
-						value = x - y;
-						value += (value >> 63) & mod;
-						a[offset + i + p] = (int) (value * rootPow % mod);
-					}
-					rootPow = (int) ((long) rootPow * plan.inverseRate[Integer.numberOfTrailingZeros(~s)] % mod);
-				}
-			}
-			final int invN = MathUtils.modInv(n, mod);
-			for (int i = 0; i < n; i++) a[i] = (int) ((long) a[i] * invN % mod);
-		}
-		return true;
-	}
-
-	static boolean nttButterflyInPlace(final long[] a, final boolean isInverse, final LongNttPlan plan) {
-		final int n = a.length;
-		final long mod = plan.mod;
-		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
-		if (n == 1) return true;
-		final int h = Integer.numberOfTrailingZeros(n);
-		if (!isInverse) {
-			for (int ph = 1; ph <= h; ph++) {
-				final int w = 1 << (ph - 1), p = 1 << (h - ph);
-				long rootPow = 1;
-				for (int s = 0; s < w; s++) {
-					final int offset = s << (h - ph + 1);
-					for (int i = 0; i < p; i++) {
-						final long x = a[offset + i], y = a[offset + i + p] * rootPow % mod;
-						long value = x + y - mod;
-						a[offset + i] = value + ((value >> 63) & mod);
-						value = x - y;
-						a[offset + i + p] = value + ((value >> 63) & mod);
-					}
-					rootPow = rootPow * plan.rate[Integer.numberOfTrailingZeros(~s)] % mod;
-				}
-			}
-		} else {
-			for (int ph = h; ph >= 1; ph--) {
-				final int w = 1 << (ph - 1), p = 1 << (h - ph);
-				long rootPow = 1;
-				for (int s = 0; s < w; s++) {
-					final int offset = s << (h - ph + 1);
-					for (int i = 0; i < p; i++) {
-						final long x = a[offset + i], y = a[offset + i + p];
-						long value = x + y - mod;
-						a[offset + i] = value + ((value >> 63) & mod);
-						value = x - y;
-						value += (value >> 63) & mod;
-						a[offset + i + p] = value * rootPow % mod;
-					}
-					rootPow = rootPow * plan.inverseRate[Integer.numberOfTrailingZeros(~s)] % mod;
-				}
-			}
-			final long invN = MathUtils.modInv(n, mod);
-			for (int i = 0; i < n; i++) a[i] = a[i] * invN % mod;
-		}
-		return true;
-	}
-
-	private static void bitReverseInPlace(final int[] a) {
-		final int n = a.length;
-		for (int i = 1, j = 0; i < n; i++) {
-			j ^= n - (n >> (Integer.numberOfTrailingZeros(i) + 1));
-			if (i < j) {
-				final int tmp = a[i];
-				a[i] = a[j];
-				a[j] = tmp;
-			}
-		}
-	}
-
-	private static void bitReverseInPlace(final long[] a) {
-		final int n = a.length;
-		for (int i = 1, j = 0; i < n; i++) {
-			j ^= n - (n >> (Integer.numberOfTrailingZeros(i) + 1));
-			if (i < j) {
-				final long tmp = a[i];
-				a[i] = a[j];
-				a[j] = tmp;
-			}
-		}
-	}
-
 	private static int primitiveRoot(final int mod) {
 		if (mod == 167772161 || mod == 469762049 || mod == 998244353 || mod == 1224736769) return 3;
 		final int phi = mod - 1;
@@ -1174,67 +1111,7 @@ public final class Transform {
 		throw new IllegalArgumentException();
 	}
 
-	static int ceilPowerOfTwo(final int n) {
+	private static int ceilPowerOfTwo(final int n) {
 		return n <= 1 ? 1 : 1 << -Integer.numberOfLeadingZeros(n - 1);
-	}
-
-	static final class IntNttPlan {
-		final int mod;
-		final int[] rate, inverseRate;
-
-		IntNttPlan(final int mod) {
-			this.mod = mod;
-			final int rank = Integer.numberOfTrailingZeros(mod - 1);
-			rate = new int[rank];
-			inverseRate = new int[rank];
-			if (rank <= 1) return;
-			int root = MathUtils.modPow(primitiveRoot(mod), (mod - 1) >> rank, mod);
-			int inverseRoot = MathUtils.modInv(root, mod);
-			for (int i = rank - 2; i >= 0; i--) {
-				rate[i] = root;
-				inverseRate[i] = inverseRoot;
-				root = (int) ((long) root * root % mod);
-				inverseRoot = (int) ((long) inverseRoot * inverseRoot % mod);
-			}
-			int rootPow = 1, inverseRootPow = 1;
-			for (int i = 0; i <= rank - 2; i++) {
-				root = rate[i];
-				inverseRoot = inverseRate[i];
-				rate[i] = (int) ((long) root * rootPow % mod);
-				rootPow = (int) ((long) rootPow * inverseRoot % mod);
-				inverseRate[i] = (int) ((long) inverseRoot * inverseRootPow % mod);
-				inverseRootPow = (int) ((long) inverseRootPow * root % mod);
-			}
-		}
-	}
-
-	static final class LongNttPlan {
-		final long mod;
-		final long[] rate, inverseRate;
-
-		LongNttPlan(final long mod) {
-			this.mod = mod;
-			final int rank = Long.numberOfTrailingZeros(mod - 1);
-			rate = new long[rank];
-			inverseRate = new long[rank];
-			if (rank <= 1) return;
-			long root = MathUtils.modPow(primitiveRoot(mod), (mod - 1) >> rank, mod);
-			long inverseRoot = MathUtils.modInv(root, mod);
-			for (int i = rank - 2; i >= 0; i--) {
-				rate[i] = root;
-				inverseRate[i] = inverseRoot;
-				root = root * root % mod;
-				inverseRoot = inverseRoot * inverseRoot % mod;
-			}
-			long rootPow = 1, inverseRootPow = 1;
-			for (int i = 0; i <= rank - 2; i++) {
-				root = rate[i];
-				inverseRoot = inverseRate[i];
-				rate[i] = root * rootPow % mod;
-				rootPow = rootPow * inverseRoot % mod;
-				inverseRate[i] = inverseRoot * inverseRootPow % mod;
-				inverseRootPow = inverseRootPow * root % mod;
-			}
-		}
 	}
 }
