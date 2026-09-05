@@ -122,6 +122,7 @@ public final class PrimeTable implements Iterable<Long> {
 
 	/**
 	 * 0 始まりで {@code i} 番目の素数を返します。
+	 * {@code 0 <= i < getPrimeCount()} を前提とします。
 	 *
 	 * @param i 素数の添字
 	 * @return {@code i} 番目の素数
