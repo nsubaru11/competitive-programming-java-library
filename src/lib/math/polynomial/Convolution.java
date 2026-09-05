@@ -13,10 +13,9 @@ public final class Convolution {
 		final int[] pa = Transform.ntt(a, len, false, mod);
 		final int[] pb = Transform.ntt(b, len, false, mod);
 		final int n = pa.length;
-		final int[] res = new int[n];
-		for (int i = 0; i < n; i++) res[i] = (int) (((long) pa[i] * pb[i]) % mod);
-		Transform.nttInPlace(res, true, mod);
-		return copyOf(res, len);
+		for (int i = 0; i < n; i++) pa[i] = (int) (((long) pa[i] * pb[i]) % mod);
+		Transform.nttInPlace(pa, true, mod);
+		return len == n ? pa : copyOf(pa, len);
 	}
 
 	public static long[] convolveNtt(final long[] a, final long[] b, final long mod) {
@@ -24,10 +23,9 @@ public final class Convolution {
 		final long[] pa = Transform.ntt(a, len, false, mod);
 		final long[] pb = Transform.ntt(b, len, false, mod);
 		final int n = pa.length;
-		final long[] res = new long[n];
-		for (int i = 0; i < n; i++) res[i] = (pa[i] * pb[i]) % mod;
-		Transform.nttInPlace(res, true, mod);
-		return copyOf(res, len);
+		for (int i = 0; i < n; i++) pa[i] = (pa[i] * pb[i]) % mod;
+		Transform.nttInPlace(pa, true, mod);
+		return len == n ? pa : copyOf(pa, len);
 	}
 
 	public static int[] convolveArbitraryMod(final int[] a, final int[] b, final int mod) {

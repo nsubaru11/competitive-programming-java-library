@@ -11,7 +11,7 @@ public final class Transform {
 
 	private Transform() {}
 
-	// TODO: NTT、FFTの内部ロジックは未実装。該当する公開メソッドは正しい結果を返さない
+	// TODO: FFTの内部ロジックは未実装。該当する公開メソッドは正しい結果を返さない
 	// region ntt
 	public static int[] ntt(final int[] a, final int len, final boolean isInverse, final int mod) {
 		final int n = ceilPowerOfTwo(len);
@@ -37,15 +37,69 @@ public final class Transform {
 
 	public static boolean nttInPlace(final int[] a, final boolean isInverse, final int mod) {
 		final int n = a.length;
-		if (n == 0 || (n & (n - 1)) != 0) return false;
-		/* TODO: NTT（数論変換）の実装 */
+		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
+		if (n == 1) return true;
+		for (int i = 1, j = 0; i < n; i++) {
+			j ^= n - (n >> (Integer.numberOfTrailingZeros(i) + 1));
+			if (i < j) {
+				final int tmp = a[i];
+				a[i] = a[j];
+				a[j] = tmp;
+			}
+		}
+		int root = primitiveRoot(mod);
+		if (isInverse) root = MathUtils.modInv(root, mod);
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			final int rootStep = MathUtils.modPow(root, (mod - 1) / block, mod);
+			for (int l = 0; l < n; l += block) {
+				int rootPow = 1;
+				for (int i = 0; i < w; i++) {
+					final long x = a[l + i], y = (long) a[l + i + w] * rootPow % mod;
+					a[l + i] = (int) ((x + y) % mod);
+					a[l + i + w] = (int) ((x - y + mod) % mod);
+					rootPow = (int) ((long) rootPow * rootStep % mod);
+				}
+			}
+		}
+		if (isInverse) {
+			final int invN = MathUtils.modInv(n, mod);
+			for (int i = 0; i < n; i++) a[i] = (int) ((long) a[i] * invN % mod);
+		}
 		return true;
 	}
 
 	public static boolean nttInPlace(final long[] a, final boolean isInverse, final long mod) {
 		final int n = a.length;
-		if (n == 0 || (n & (n - 1)) != 0) return false;
-		/* TODO: NTT（数論変換）の実装 */
+		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
+		if (n == 1) return true;
+		for (int i = 1, j = 0; i < n; i++) {
+			j ^= n - (n >> (Integer.numberOfTrailingZeros(i) + 1));
+			if (i < j) {
+				final long tmp = a[i];
+				a[i] = a[j];
+				a[j] = tmp;
+			}
+		}
+		long root = primitiveRoot(mod);
+		if (isInverse) root = MathUtils.modInv(root, mod);
+		for (int w = 1; w < n; w <<= 1) {
+			final int block = w << 1;
+			final long rootStep = MathUtils.modPow(root, (mod - 1) / block, mod);
+			for (int l = 0; l < n; l += block) {
+				long rootPow = 1;
+				for (int i = 0; i < w; i++) {
+					final long x = a[l + i], y = a[l + i + w] * rootPow % mod;
+					a[l + i] = (x + y) % mod;
+					a[l + i + w] = (x - y + mod) % mod;
+					rootPow = rootPow * rootStep % mod;
+				}
+			}
+		}
+		if (isInverse) {
+			final long invN = MathUtils.modInv(n, mod);
+			for (int i = 0; i < n; i++) a[i] = a[i] * invN % mod;
+		}
 		return true;
 	}
 	// endregion
@@ -1000,6 +1054,57 @@ public final class Transform {
 	private static void ensurePrimeTable(final int n) {
 		if (primeTable != null && n <= primeTable.getLimitValue()) return;
 		primeTable = new PrimeTable(n);
+	}
+
+	private static int primitiveRoot(final int mod) {
+		if (mod == 167772161 || mod == 469762049 || mod == 998244353 || mod == 1224736769) return 3;
+		final int phi = mod - 1;
+		int n = phi, count = 0;
+		final int[] factors = new int[32];
+		if ((n & 1) == 0) {
+			factors[count++] = 2;
+			n >>= Integer.numberOfTrailingZeros(n);
+		}
+		for (int p = 3; (long) p * p <= n; p += 2) {
+			if (n % p != 0) continue;
+			factors[count++] = p;
+			while (n % p == 0) n /= p;
+		}
+		if (n > 1) factors[count++] = n;
+		for (int root = 2; root < mod; root++) {
+			int i = 0;
+			for (; i < count; i++) {
+				if (MathUtils.modPow(root, phi / factors[i], mod) == 1) break;
+			}
+			if (i == count) return root;
+		}
+		throw new IllegalArgumentException();
+	}
+
+	private static long primitiveRoot(final long mod) {
+		if (mod == 167772161 || mod == 469762049 || mod == 998244353 || mod == 1224736769) return 3;
+		final long phi = mod - 1;
+		long n = phi;
+		int count = 0;
+		final long[] factors = new long[64];
+		if ((n & 1) == 0) {
+			factors[count++] = 2;
+			n >>= Long.numberOfTrailingZeros(n);
+		}
+		for (long p = 3; p <= n / p; p += 2) {
+			if (n % p != 0) continue;
+			factors[count++] = p;
+			while (n % p == 0) n /= p;
+		}
+		if (n > 1) factors[count++] = n;
+		for (long root = 2; root < mod; root++) {
+			int i = 0;
+			for (; i < count; i++) {
+				if (MathUtils.modPow(root, phi / factors[i], mod) == 1) break;
+			}
+			if (i == count) return root;
+		}
+		throw new IllegalArgumentException();
 	}
 
 	private static int ceilPowerOfTwo(final int n) {

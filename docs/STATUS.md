@@ -24,11 +24,11 @@
 
 ## 未完成または制約を確認すべき公開API
 
-| クラス                                                       | 状態                                                                                  | 影響                                                                               |
-|--------------------------------------------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| [`Convolution`](../src/lib/math/polynomial/Convolution.java) | NTT / FFTとGarner復元が未実装。AND / OR / XOR / GCD / LCM畳み込みと各種変換は利用可能 | `convolveNtt`、`convolveArbitraryMod`、`convolveFft`は正しい畳み込み結果を返さない |
-| [`DivideConquer`](../src/lib/util/DivideConquer.java)        | `inversionCount`のループ本体が空                                                      | 入力にかかわらず`0`を返す                                                          |
-| [`IntTreap`](../src/lib/ds/set/IntTreap.java)                | `split*`は例外、`merge`はキー範囲が交差するとBST性を壊す                              | 一般のsplit/merge用途には利用不可                                                  |
+| クラス                                                       | 状態                                                                                 | 影響                                                                |
+|--------------------------------------------------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| [`Convolution`](../src/lib/math/polynomial/Convolution.java) | FFTとGarner復元が未実装。NTT、AND / OR / XOR / GCD / LCM畳み込みと各種変換は利用可能 | `convolveArbitraryMod`、`convolveFft`は正しい畳み込み結果を返さない |
+| [`DivideConquer`](../src/lib/util/DivideConquer.java)        | `inversionCount`のループ本体が空                                                     | 入力にかかわらず`0`を返す                                           |
+| [`IntTreap`](../src/lib/ds/set/IntTreap.java)                | `split*`は例外、`merge`はキー範囲が交差するとBST性を壊す                             | 一般のsplit/merge用途には利用不可                                   |
 
 TODOのみのクラスは公開メソッドを持たない雛形であり、APIとしては利用できません。
 雛形がコンパイルに成功することとアルゴリズムが利用可能であることを区別してください。
@@ -108,7 +108,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 - データ構造は配列ラッパー・累積和、Fenwick Tree、AVL Tree、基本/Treap、プリミティブHashMap、優先度キュー、1次元Segment Tree、Trie群、Union-Findが中心です。実装ファイル数は最も多い一方、検証はクラス間で偏りがあります。
 - グラフは固定長グラフ表現、BFS・0-1 BFS・SCC・二部判定、Dijkstra、Bellman-Ford、Warshall-Floyd、Kruskal、Prim、木・根付き木を利用できます。`Connectivity.lowLink`は橋・関節点を検出できます。フロー、2-SAT、二重連結成分分解は未実装です。
 - 入出力はJava 24版とJava 17互換版があり、いずれも`FastScanner`、`FastPrinter`、`InteractiveScanner`を持ちます。`Unsafe`を利用するため、JDK更新時の警告と互換性確認が必要です。
-- 数学は基本整数演算、組合せ、素数・素因数、幾何ユーティリティ、行列の基本演算、数値型、多項式の基本演算があります。部分集合・上位集合・約数・倍数変換、FWHT、AND / OR / XOR / GCD / LCM畳み込みは利用できますが、NTT・FFT、掃き出し法は未実装です。
+- 数学は基本整数演算、組合せ、素数・素因数、幾何ユーティリティ、行列の基本演算、数値型、多項式の基本演算があります。NTT、部分集合・上位集合・約数・倍数変換、FWHT、AND / OR / XOR / GCD / LCM畳み込みは利用できますが、FFT、掃き出し法は未実装です。
 - 探索は二分探索とQuickSelectのみが利用可能です。単峰探索・Newton法はTODOです。
 - ソートは実装・比較用の基本アルゴリズム11種があり、専用の検証ソースはありません。実用上の単一配列ソートではまず`Arrays.sort`を選択し、将来は連動ソートなど標準ライブラリだけでは表現しにくい競技向けユーティリティを追加します。
 - 文字列はLevenshtein DP、Z-Algorithm、Manacher、素朴な回文処理、SuffixArrayが実装済みです。標準的なKMPさえTODOであり、完成度の偏りが大きい領域です。
@@ -156,7 +156,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 
 ## 推奨優先順位
 
-1. `Convolution`は利用可能なビット演算・GCD / LCM畳み込みの契約を維持しつつ、NTT、Garner復元、FFTの順に実装する。
+1. `Convolution`は利用可能なNTT・ビット演算・GCD / LCM畳み込みの契約を維持しつつ、Garner復元、FFTの順に実装する。
 2. `DivideConquer`を実装するか公開APIから隔離する。
 3. `FastScanner`の一括読み込みをEOF/short read対応にし、現行高速パスとベンチマーク比較する。
 4. 頻出度が高い`KMP`、`Dinic`、`TwoSat`、`SparseTable`、`WeightedUnionFind`を実装する。
