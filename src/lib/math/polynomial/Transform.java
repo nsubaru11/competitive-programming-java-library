@@ -1010,68 +1010,6 @@ public final class Transform {
 		primeTable = new PrimeTable(n);
 	}
 
-	static final class IntNttPlan {
-		final int mod;
-		final int[] rate;
-		final int[] inverseRate;
-
-		IntNttPlan(final int mod) {
-			this.mod = mod;
-			final int rank = Integer.numberOfTrailingZeros(mod - 1);
-			rate = new int[rank];
-			inverseRate = new int[rank];
-			if (rank <= 1) return;
-			int root = MathUtils.modPow(primitiveRoot(mod), (mod - 1) >> rank, mod);
-			int inverseRoot = MathUtils.modInv(root, mod);
-			for (int i = rank - 2; i >= 0; i--) {
-				rate[i] = root;
-				inverseRate[i] = inverseRoot;
-				root = (int) ((long) root * root % mod);
-				inverseRoot = (int) ((long) inverseRoot * inverseRoot % mod);
-			}
-			int rootPow = 1, inverseRootPow = 1;
-			for (int i = 0; i <= rank - 2; i++) {
-				root = rate[i];
-				inverseRoot = inverseRate[i];
-				rate[i] = (int) ((long) root * rootPow % mod);
-				rootPow = (int) ((long) rootPow * inverseRoot % mod);
-				inverseRate[i] = (int) ((long) inverseRoot * inverseRootPow % mod);
-				inverseRootPow = (int) ((long) inverseRootPow * root % mod);
-			}
-		}
-	}
-
-	static final class LongNttPlan {
-		final long mod;
-		final long[] rate;
-		final long[] inverseRate;
-
-		LongNttPlan(final long mod) {
-			this.mod = mod;
-			final int rank = Long.numberOfTrailingZeros(mod - 1);
-			rate = new long[rank];
-			inverseRate = new long[rank];
-			if (rank <= 1) return;
-			long root = MathUtils.modPow(primitiveRoot(mod), (mod - 1) >> rank, mod);
-			long inverseRoot = MathUtils.modInv(root, mod);
-			for (int i = rank - 2; i >= 0; i--) {
-				rate[i] = root;
-				inverseRate[i] = inverseRoot;
-				root = root * root % mod;
-				inverseRoot = inverseRoot * inverseRoot % mod;
-			}
-			long rootPow = 1, inverseRootPow = 1;
-			for (int i = 0; i <= rank - 2; i++) {
-				root = rate[i];
-				inverseRoot = inverseRate[i];
-				rate[i] = root * rootPow % mod;
-				rootPow = rootPow * inverseRoot % mod;
-				inverseRate[i] = inverseRoot * inverseRootPow % mod;
-				inverseRootPow = inverseRootPow * root % mod;
-			}
-		}
-	}
-
 	static boolean nttButterflyInPlace(final int[] a, final boolean isInverse, final IntNttPlan plan) {
 		final int n = a.length, mod = plan.mod;
 		if (n == 0 || (n & (n - 1)) != 0 || mod <= 1 || ((mod - 1) & (n - 1)) != 0) return false;
@@ -1084,8 +1022,7 @@ public final class Transform {
 				for (int s = 0; s < w; s++) {
 					final int offset = s << (h - ph + 1);
 					for (int i = 0; i < p; i++) {
-						final long x = a[offset + i];
-						final long y = (long) a[offset + i + p] * rootPow % mod;
+						final long x = a[offset + i], y = (long) a[offset + i + p] * rootPow % mod;
 						a[offset + i] = (int) ((x + y) % mod);
 						a[offset + i + p] = (int) ((x - y + mod) % mod);
 					}
@@ -1125,8 +1062,7 @@ public final class Transform {
 				for (int s = 0; s < w; s++) {
 					final int offset = s << (h - ph + 1);
 					for (int i = 0; i < p; i++) {
-						final long x = a[offset + i];
-						final long y = a[offset + i + p] * rootPow % mod;
+						final long x = a[offset + i], y = a[offset + i + p] * rootPow % mod;
 						a[offset + i] = (x + y) % mod;
 						a[offset + i + p] = (x - y + mod) % mod;
 					}
@@ -1230,5 +1166,65 @@ public final class Transform {
 
 	static int ceilPowerOfTwo(final int n) {
 		return n <= 1 ? 1 : 1 << -Integer.numberOfLeadingZeros(n - 1);
+	}
+
+	static final class IntNttPlan {
+		final int mod;
+		final int[] rate, inverseRate;
+
+		IntNttPlan(final int mod) {
+			this.mod = mod;
+			final int rank = Integer.numberOfTrailingZeros(mod - 1);
+			rate = new int[rank];
+			inverseRate = new int[rank];
+			if (rank <= 1) return;
+			int root = MathUtils.modPow(primitiveRoot(mod), (mod - 1) >> rank, mod);
+			int inverseRoot = MathUtils.modInv(root, mod);
+			for (int i = rank - 2; i >= 0; i--) {
+				rate[i] = root;
+				inverseRate[i] = inverseRoot;
+				root = (int) ((long) root * root % mod);
+				inverseRoot = (int) ((long) inverseRoot * inverseRoot % mod);
+			}
+			int rootPow = 1, inverseRootPow = 1;
+			for (int i = 0; i <= rank - 2; i++) {
+				root = rate[i];
+				inverseRoot = inverseRate[i];
+				rate[i] = (int) ((long) root * rootPow % mod);
+				rootPow = (int) ((long) rootPow * inverseRoot % mod);
+				inverseRate[i] = (int) ((long) inverseRoot * inverseRootPow % mod);
+				inverseRootPow = (int) ((long) inverseRootPow * root % mod);
+			}
+		}
+	}
+
+	static final class LongNttPlan {
+		final long mod;
+		final long[] rate, inverseRate;
+
+		LongNttPlan(final long mod) {
+			this.mod = mod;
+			final int rank = Long.numberOfTrailingZeros(mod - 1);
+			rate = new long[rank];
+			inverseRate = new long[rank];
+			if (rank <= 1) return;
+			long root = MathUtils.modPow(primitiveRoot(mod), (mod - 1) >> rank, mod);
+			long inverseRoot = MathUtils.modInv(root, mod);
+			for (int i = rank - 2; i >= 0; i--) {
+				rate[i] = root;
+				inverseRate[i] = inverseRoot;
+				root = root * root % mod;
+				inverseRoot = inverseRoot * inverseRoot % mod;
+			}
+			long rootPow = 1, inverseRootPow = 1;
+			for (int i = 0; i <= rank - 2; i++) {
+				root = rate[i];
+				inverseRoot = inverseRate[i];
+				rate[i] = root * rootPow % mod;
+				rootPow = rootPow * inverseRoot % mod;
+				inverseRate[i] = inverseRoot * inverseRootPow % mod;
+				inverseRootPow = inverseRootPow * root % mod;
+			}
+		}
 	}
 }
