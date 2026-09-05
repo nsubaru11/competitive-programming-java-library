@@ -10,7 +10,7 @@
 | メソッド群             | 現在のオーバーロード                              | 用途と返却長                                                      | 状態     |
 |------------------------|---------------------------------------------------|-------------------------------------------------------------------|----------|
 | `convolveNtt`          | `long[]` / `int[]`、各`mod`付き                   | 多項式畳み込み。長さ`a.length + b.length - 1`                     | 利用可能 |
-| `convolveArbitraryMod` | `long[]` / `int[]`、各`mod`付き                   | 3素数NTTとGarner復元。長さ`a.length + b.length - 1`               | 未実装   |
+| `convolveArbitraryMod` | `long[]` / `int[]`、各`mod`付き                   | 3素数NTTとGarner復元。長さ`a.length + b.length - 1`               | 利用可能 |
 | `convolveFft`          | `double[]`、`long[]`、`int[]`                     | 実数または整数係数の多項式畳み込み。長さ`a.length + b.length - 1` | 未実装   |
 | `convolveXor`          | `long[]`（modあり/なし）、`int[]`（modあり/なし） | XOR畳み込み。2冪へ拡張した定義域長を返す                          | 利用可能 |
 | `convolveAnd`          | `long[]`（modあり/なし）、`int[]`（modあり/なし） | AND畳み込み。2冪へ拡張した定義域長を返す                          | 利用可能 |
@@ -33,12 +33,13 @@ NTT・任意mod・FFTによる通常の多項式畳み込みは、内部の変�
 | 上位集合変換 | `supersetZeta` / `supersetMobius`    | `supersetZetaInPlace` / `supersetMobiusInPlace` | 利用可能 |
 | 倍数変換     | `multipleZeta` / `multipleMobius`    | `multipleZetaInPlace` / `multipleMobiusInPlace` | 利用可能 |
 | 約数変換     | `divisorZeta` / `divisorMobius`      | `divisorZetaInPlace` / `divisorMobiusInPlace`   | 利用可能 |
-| CRT復元      | `garnerProcess`（`Convolution`内部） | -                                               | 未実装   |
+| CRT復元      | `garnerProcess`（`Convolution`内部） | -                                               | 利用可能 |
 
 NTT、FFT、FWHT、部分集合・上位集合変換のコピー版にある`len`付きオーバーロードは、`len`以上の最小の2の冪へ0埋めした配列を返します。元の配列は変更しません。`len`は保持したい入力要素数以上を指定します。
 対応する`*InPlace`版は配列を拡張できないため、NTT、FFT、FWHT、部分集合・上位集合変換では長さが正の2の冪である配列を渡します。FFTでは実部と虚部の配列長も一致させます。
 NTTのin-place版は、配列長が正の2の冪でない場合、または配列長が`mod - 1`を割り切らない場合に`false`を返します。`mod`が素数であることは呼び出し側の事前条件です。
 原始根は代表的な4法（`167772161`、`469762049`、`998244353`、`1224736769`）では定数時間で選択し、それ以外の素数では`mod - 1`の素因数分解により自動探索します。
+`convolveArbitraryMod`は入力を3つのNTT素数でそれぞれ正規化して畳み込み、Garner法で指定した`mod`へ復元します。非負整数として計算した各出力係数が3素数の積`96525171769480128904560641`未満であることを前提とします。`long`版では復元時の積も`long`に収まる必要があります。
 `multiple*` / `divisor*`のコピー版は指定した`len`をそのまま返却長とし、in-place版は渡された配列長を定義域として扱います。
 
 ## FWHTとXOR畳み込み

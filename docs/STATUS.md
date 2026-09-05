@@ -26,7 +26,7 @@
 
 | クラス                                                       | 状態                                                                                 | 影響                                                                |
 |--------------------------------------------------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| [`Convolution`](../src/lib/math/polynomial/Convolution.java) | FFTとGarner復元が未実装。NTT、AND / OR / XOR / GCD / LCM畳み込みと各種変換は利用可能 | `convolveArbitraryMod`、`convolveFft`は正しい畳み込み結果を返さない |
+| [`Convolution`](../src/lib/math/polynomial/Convolution.java) | FFTが未実装。NTT、任意mod、AND / OR / XOR / GCD / LCM畳み込みと各種変換は利用可能 | `convolveFft`は正しい畳み込み結果を返さない |
 | [`DivideConquer`](../src/lib/util/DivideConquer.java)        | `inversionCount`のループ本体が空                                                     | 入力にかかわらず`0`を返す                                           |
 | [`IntTreap`](../src/lib/ds/set/IntTreap.java)                | `split*`は例外、`merge`はキー範囲が交差するとBST性を壊す                             | 一般のsplit/merge用途には利用不可                                   |
 
@@ -156,7 +156,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 
 ## 推奨優先順位
 
-1. `Convolution`は利用可能なNTT・ビット演算・GCD / LCM畳み込みの契約を維持しつつ、Garner復元、FFTの順に実装する。
+1. `Convolution`は利用可能なNTT・任意mod・ビット演算・GCD / LCM畳み込みの契約を維持しつつ、FFTを実装する。
 2. `DivideConquer`を実装するか公開APIから隔離する。
 3. `FastScanner`の一括読み込みをEOF/short read対応にし、現行高速パスとベンチマーク比較する。
 4. 頻出度が高い`KMP`、`Dinic`、`TwoSat`、`SparseTable`、`WeightedUnionFind`を実装する。

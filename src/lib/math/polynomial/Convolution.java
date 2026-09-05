@@ -5,6 +5,9 @@ import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class Convolution {
+	private static final int NTT_MOD1 = 167772161, NTT_MOD2 = 469762049, NTT_MOD3 = 1224736769;
+	private static final long NTT_MOD1_MOD2 = 78812994116517889L, NTT_MOD1_INVERSE_MOD2 = 104391568, NTT_MOD1_MOD2_INVERSE_MOD3 = 721017874;
+
 	private Convolution() {
 	}
 
@@ -29,16 +32,16 @@ public final class Convolution {
 	}
 
 	public static int[] convolveArbitraryMod(final int[] a, final int[] b, final int mod) {
-		final int[] res1 = convolveNtt(a, b, 167772161);
-		final int[] res2 = convolveNtt(a, b, 469762049);
-		final int[] res3 = convolveNtt(a, b, 1224736769);
+		final int[] res1 = convolveNtt(remainder(a, NTT_MOD1), remainder(b, NTT_MOD1), NTT_MOD1);
+		final int[] res2 = convolveNtt(remainder(a, NTT_MOD2), remainder(b, NTT_MOD2), NTT_MOD2);
+		final int[] res3 = convolveNtt(remainder(a, NTT_MOD3), remainder(b, NTT_MOD3), NTT_MOD3);
 		return garnerProcess(res1, res2, res3, mod);
 	}
 
 	public static long[] convolveArbitraryMod(final long[] a, final long[] b, final long mod) {
-		final long[] res1 = convolveNtt(a, b, 167772161);
-		final long[] res2 = convolveNtt(a, b, 469762049);
-		final long[] res3 = convolveNtt(a, b, 1224736769);
+		final long[] res1 = convolveNtt(remainder(a, NTT_MOD1), remainder(b, NTT_MOD1), NTT_MOD1);
+		final long[] res2 = convolveNtt(remainder(a, NTT_MOD2), remainder(b, NTT_MOD2), NTT_MOD2);
+		final long[] res3 = convolveNtt(remainder(a, NTT_MOD3), remainder(b, NTT_MOD3), NTT_MOD3);
 		return garnerProcess(res1, res2, res3, mod);
 	}
 
@@ -292,15 +295,39 @@ public final class Convolution {
 		return ta;
 	}
 
-	private static long[] garnerProcess(long[] a, long[] b, long[] c, long mod) {
-		// TODO: Garnerのアルゴリズムによる3素数CRT復元の実装
-		long[] d = new long[a.length];
+	private static long[] garnerProcess(final long[] a, final long[] b, final long[] c, final long mod) {
+		final int n = a.length;
+		final long[] d = new long[n];
+		final long mod1 = NTT_MOD1 % mod, mod12 = NTT_MOD1_MOD2 % mod;
+		for (int i = 0; i < n; i++) {
+			final long x = (b[i] - a[i] + NTT_MOD2) * NTT_MOD1_INVERSE_MOD2 % NTT_MOD2;
+			final long y = (c[i] - (a[i] + NTT_MOD1 * x) % NTT_MOD3 + NTT_MOD3) * NTT_MOD1_MOD2_INVERSE_MOD3 % NTT_MOD3;
+			d[i] = (a[i] % mod + mod1 * x % mod + mod12 * y % mod) % mod;
+		}
 		return d;
 	}
 
-	private static int[] garnerProcess(int[] a, int[] b, int[] c, int mod) {
-		// TODO: Garnerのアルゴリズムによる3素数CRT復元の実装
-		int[] d = new int[a.length];
+	private static int[] garnerProcess(final int[] a, final int[] b, final int[] c, final int mod) {
+		final int n = a.length;
+		final int[] d = new int[n];
+		final long mod1 = NTT_MOD1 % mod, mod12 = NTT_MOD1_MOD2 % mod;
+		for (int i = 0; i < n; i++) {
+			final long x = (long) (b[i] - a[i] + NTT_MOD2) * NTT_MOD1_INVERSE_MOD2 % NTT_MOD2;
+			final long y = (c[i] - (a[i] + NTT_MOD1 * x) % NTT_MOD3 + NTT_MOD3) * NTT_MOD1_MOD2_INVERSE_MOD3 % NTT_MOD3;
+			d[i] = (int) ((a[i] + mod1 * x % mod + mod12 * y % mod) % mod);
+		}
 		return d;
+	}
+
+	private static int[] remainder(final int[] a, final int mod) {
+		final int[] res = copyOf(a, a.length);
+		for (int i = 0; i < res.length; i++) res[i] %= mod;
+		return res;
+	}
+
+	private static long[] remainder(final long[] a, final long mod) {
+		final long[] res = copyOf(a, a.length);
+		for (int i = 0; i < res.length; i++) res[i] %= mod;
+		return res;
 	}
 }

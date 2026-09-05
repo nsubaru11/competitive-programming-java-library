@@ -15,7 +15,7 @@
 - NTT、FFT、XOR・AND・OR、GCD・LCM畳み込みの公開API
 - `convolveAnd` / `convolveOr`は、部分集合・上位集合ゼータ変換を用いて利用できます。`convolveXor`はFWHTを、`convolveGcd` / `convolveLcm`は倍数・約数ゼータ変換を用いて利用できます。
 - 通常の多項式畳み込みは、内部の変換長にかかわらず`a.length + b.length - 1`要素を返します。
-- NTTによる畳み込みを利用できます。FFTおよびGarner復元は未実装です。
+- NTTおよび3素数NTTとGarner復元による任意mod畳み込みを利用できます。FFTは未実装です。
 - 設計は[Convolution設計書](./ConvolutionArchitecture.md)を参照してください。
 
 ### [Transform](../../../src/lib/math/polynomial/Transform.java)
@@ -32,5 +32,5 @@
 - `fwht`の剰余版で逆変換を行うには、変換長と`mod`が互いに素である必要があります。通常の奇素数modでは満たされます。
 - `ntt`では`mod`が素数であり、変換長が`mod - 1`を割り切ることを前提とします。係数は`[0, mod)`に正規化して渡してください。
 - `convolveGcd` / `convolveLcm`では配列添字`t`が数学上の整数`t + 1`を表します。返却長は最大入力長であり、LCM畳み込みではその定義域外となる添字の結果を返しません。
-- `Convolution`の通常多項式畳み込みは、NTT向けの法では`convolveNtt`を利用できます。FFTと任意mod畳み込みは未実装です。
+- `Convolution`の通常多項式畳み込みは、NTT向けの法では`convolveNtt`、それ以外の法では`convolveArbitraryMod`を利用できます。FFTは未実装です。
 - `PolynomialUtils`の係数は次数の昇順に格納します。
