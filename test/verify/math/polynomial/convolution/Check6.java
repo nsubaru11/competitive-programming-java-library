@@ -8,7 +8,7 @@ import java.util.stream.*;
 import lib.io.compat17.*;
 import lib.math.polynomial.*;
 
-// https://judge.yosupo.jp/problem/convolution_mod
+// https://judge.yosupo.jp/problem/convolution_mod_1000000007
 public final class Check6 {
 
 	// region < Constants & Globals >
