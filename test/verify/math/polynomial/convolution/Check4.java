@@ -1,4 +1,4 @@
-package verify.math.polynomial.covolution;
+package verify.math.polynomial.convolution;
 
 import static java.util.Arrays.*;
 

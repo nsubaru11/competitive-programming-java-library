@@ -1,4 +1,4 @@
-package verify.math.polynomial.covolution;
+package verify.math.polynomial.convolution;
 
 import static java.util.Arrays.*;
 
@@ -8,8 +8,8 @@ import java.util.stream.*;
 import lib.io.compat17.*;
 import lib.math.polynomial.*;
 
-// https://judge.yosupo.jp/problem/bitwise_xor_convolution
-public final class Check2 {
+// https://judge.yosupo.jp/problem/bitwise_and_convolution
+public final class Check1 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -26,7 +26,7 @@ public final class Check2 {
 		int n = sc.nextInt();
 		int[] a = sc.nextInt(1 << n);
 		int[] b = sc.nextInt(1 << n);
-		out.print(Convolution.convolveXor(a, b, MOD)).println();
+		out.print(Convolution.convolveAnd(a, b, MOD)).println();
 	}
 
 	// region < main & debug >
@@ -43,7 +43,7 @@ public final class Check2 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -52,7 +52,7 @@ public final class Check2 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check2::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 

@@ -1,4 +1,4 @@
-package verify.math.polynomial.covolution;
+package verify.math.polynomial.convolution;
 
 import static java.util.Arrays.*;
 
@@ -8,8 +8,8 @@ import java.util.stream.*;
 import lib.io.compat17.*;
 import lib.math.polynomial.*;
 
-// https://judge.yosupo.jp/problem/bitwise_and_convolution
-public final class Check1 {
+// https://judge.yosupo.jp/problem/gcd_convolution
+public final class Check3 {
 
 	// region < Constants & Globals >
 	private static final boolean DEBUG = true;
@@ -24,9 +24,9 @@ public final class Check1 {
 
 	private static void solve() {
 		int n = sc.nextInt();
-		int[] a = sc.nextInt(1 << n);
-		int[] b = sc.nextInt(1 << n);
-		out.print(Convolution.convolveAnd(a, b, MOD)).println();
+		int[] a = sc.nextInt(n);
+		int[] b = sc.nextInt(n);
+		out.print(Convolution.convolveGcd(a, b, MOD)).println();
 	}
 
 	// region < main & debug >
@@ -43,7 +43,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining("\n", "\n", "")));
+			else System.err.println(stream(args).map(Check3::stringify).collect(Collectors.joining("\n", "\n", "")));
 		}
 	}
 
@@ -52,7 +52,7 @@ public final class Check1 {
 			out.flush();
 			if (args == null) System.err.println("null");
 			else if (args.getClass().getComponentType().isArray()) System.err.println(stringify(args));
-			else System.err.println(stream(args).map(Check1::stringify).collect(Collectors.joining(", ", "", "")));
+			else System.err.println(stream(args).map(Check3::stringify).collect(Collectors.joining(", ", "", "")));
 		}
 	}
 
