@@ -1,4 +1,4 @@
-package lib.graph;
+package lib.graph.tree;
 
 /**
  * 重心分解（Centroid Decomposition）。木を重心で再帰的に分割し、

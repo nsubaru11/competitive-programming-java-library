@@ -77,13 +77,14 @@ AtCoderへはこのimport版を直接提出できません。
 | [MoAlgorithm](./docs/util/MoAlgorithm)                            | Mo's Algorithm（0-indexed半開区間、4方向callback、ブロック幅指定、ジグザグ走査）                                                |
 | [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                                                             |
 | [Graph/Connectivity](./docs/graph/Connectivity)                   | 🚧 橋・関節点検出、二重連結成分分解（一部未実装）                                                                               |
-| [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定、木の直径、根付き木のLCA・HLD                                                      |
+| [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定                                                                                    |
+| [Graph/Tree](./docs/graph/Tree)                                   | 木の直径、根付き木・LCA・HLD。Euler Tour、全方位木DP、重心分解、仮想木、木上MoはTODO                                            |
 | [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                                                                  |
 | [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                                                           |
 | [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝                                                          |
 | [Graph/ShortestPath](./docs/graph/ShortestPath)                   | BFS・0-1 BFS・Dijkstra・Bellman-Ford・DAG最短/最長・Warshall-Floyd（負閉路の影響範囲判定）                                      |
 | [Graph/TwoSat](./docs/graph/TwoSat)                               | 📝 2-SAT（含意グラフのSCC分解による充足判定、TODO）                                                                             |
-| [Math/Convolution](./docs/math/Polynomial)                        | 🚧 NTT、任意mod、AND / OR / XOR / GCD / LCM畳み込み、各種ゼータ変換、FWHTは利用可能。FFTは開発中                             |
+| [Math/Convolution](./docs/math/Polynomial)                        | 🚧 NTT、任意mod、AND / OR / XOR / GCD / LCM畳み込み、各種ゼータ変換、FWHTは利用可能。FFTは開発中                                |
 | [Math/MathUtils](./docs/math/MathUtils)                           | 整数演算・GCD・階乗・組み合わせ・トーシェント関数などの主要な静的入口                                                           |
 | [Math/FactorialTable](./docs/math/FactorialTable)                 | 動的な階乗・逆元テーブル、nCr / nPr / Catalan・Lah・Narayana数                                                                  |
 | [Math/FactorUtils](./docs/math/FactorUtils)                       | 素因数分解、素因数・指数配列、素因数個数、約数個数・昇順列挙                                                                    |

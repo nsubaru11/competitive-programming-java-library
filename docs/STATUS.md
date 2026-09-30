@@ -10,14 +10,16 @@
 | モジュール   | Javaファイル | 実装本体あり | 一部未実装 | TODOのみ |
 |--------------|-------------:|-------------:|-----------:|---------:|
 | `lib.ds`     |           97 |           74 |          1 |       22 |
-| `lib.graph`  |           31 |           16 |          1 |       14 |
+| `lib.graph`  |           33 |           16 |          1 |       16 |
 | `lib.io`     |            6 |            6 |          0 |        0 |
 | `lib.math`   |           27 |           15 |          2 |       10 |
 | `lib.search` |            6 |            3 |          0 |        3 |
 | `lib.sort`   |           14 |           11 |          0 |        3 |
 | `lib.string` |           16 |            5 |          0 |       11 |
 | `lib.util`   |           21 |           20 |          1 |        0 |
-| **合計**     |      **218** |      **150** |      **5** |   **63** |
+| **合計**     |      **220** |      **150** |      **5** |   **65** |
+
+`lib.graph`と合計の件数には、2026-10-01時点で追加された `VirtualTree` / `TreePathMo` を反映しています。他モジュールの件数と以下の監査内容は、監査基準日の2026-09-05時点です。
 
 その他に、コピー・改変用の`src/patterns/`が2分野5ファイル、`docs/`のMarkdownが本レポートを含め137ファイル、`test/verify/`のJava検証ソースが94ファイルあります。
 ビルドツールと自動テストランナーはなく、`javac`と各mainクラスの個別実行が前提です。
@@ -66,6 +68,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 - `Johnson`、`EulerianTrail`、`RerootingDP`
 - `BipartiteMatching`、`GeneralMatching`、`StoerWagner`、`DominatorTree`
 - `OfflineDynamicConnectivity`
+- `VirtualTree`、`TreePathMo`
 
 ### 数学（10）
 
