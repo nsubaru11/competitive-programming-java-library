@@ -1,273 +1,134 @@
 package lib.graph.tree;
 
-import static java.util.Arrays.*;
-
 import java.util.function.*;
 
+import lib.util.function.*;
+
+/**
+ * 根を固定した木のDFS情報を保持する。
+ * <p>
+ * 最初の情報参照時に {@code O(N)} で前処理する。{@code in/out} は通常のDFS preorder上の部分木区間
+ * {@code [in(u), out(u))} を表す。全辺を追加してから使用し、前処理後は木を変更しないこと。
+ */
 @SuppressWarnings("unused")
-public final class RootedTree {
-	private final int[] dest, next, first, degree, depth, parent, size, in, out, top, rev;
-	private final long[] cost, dist;
-	private final int n, root;
-	private int edgeCount = 0;
+public final class RootedTree extends Tree {
+	public final int root;
+	int[] depth, parent, subtreeSize, preorder, in, out;
+	long[] rootDistance;
 	private boolean init = false;
 
+	/**
+	 * {@code n} 頂点の木を根 {@code r} で根付き木として扱う。
+	 */
 	public RootedTree(final int n, final int r) {
-		this.n = n;
+		super(n);
 		this.root = r;
-		int m = (n - 1) << 1;
-		dest = new int[m];
-		next = new int[m];
-		first = new int[n];
-		fill(first, -1);
-		degree = new int[n];
-		depth = new int[n];
-		parent = new int[n];
-		size = new int[n];
-		in = new int[n];
-		out = new int[n];
-		top = new int[n];
-		rev = new int[n];
-		cost = new long[m];
-		dist = new long[n];
 	}
 
-	public int n() {
-		return n;
+	/**
+	 * 頂点 {@code u} の親を返す。根の親は根自身。
+	 */
+	public int parent(final int u) {
+		ensureBuild();
+		return parent[u];
 	}
 
-	public int root() {
-		return root;
+	/**
+	 * 頂点 {@code u} の深さを返す。根の深さは {@code 0}。
+	 */
+	public int depth(final int u) {
+		ensureBuild();
+		return depth[u];
 	}
 
-	public void add(final int i, final int j) {
-		add(i, j, 1);
+	/**
+	 * 頂点 {@code u} の部分木サイズを返す。
+	 */
+	public int subtreeSize(final int u) {
+		ensureBuild();
+		return subtreeSize[u];
 	}
 
-	public void add(final int i, final int j, final long c) {
-		dest[edgeCount] = j;
-		next[edgeCount] = first[i];
-		cost[edgeCount] = c;
-		first[i] = edgeCount++;
-		degree[i]++;
-
-		dest[edgeCount] = i;
-		next[edgeCount] = first[j];
-		cost[edgeCount] = c;
-		first[j] = edgeCount++;
-		degree[j]++;
+	/**
+	 * preorderの位置 {@code i} にある頂点を返す。
+	 */
+	public int preorderAt(final int i) {
+		ensureBuild();
+		return preorder[i];
 	}
 
-	public void addAll(int m, final IntSupplier u, final IntSupplier v) {
-		while (m-- > 0) add(u.getAsInt(), v.getAsInt());
+	/**
+	 * preorder上の頂点 {@code u} の位置を返す。
+	 */
+	public int in(final int u) {
+		ensureBuild();
+		return in[u];
 	}
 
-	public void addAll(int m, final IntSupplier u, final IntSupplier v, final LongSupplier cost) {
-		while (m-- > 0) add(u.getAsInt(), v.getAsInt(), cost.getAsLong());
+	/**
+	 * preorder上で頂点 {@code u} の部分木区間が終わる位置（含まない）を返す。
+	 */
+	public int out(final int u) {
+		ensureBuild();
+		return out[u];
 	}
 
-	public int degree(final int i) {
-		return degree[i];
+	/**
+	 * 根から頂点 {@code u} までの重み付き距離を返す。
+	 */
+	public long rootDistance(final int u) {
+		ensureBuild();
+		return rootDistance[u];
 	}
 
-	public int parent(final int i) {
-		if (!init) init();
-		return parent[i];
+	/**
+	 * {@code u} が {@code v} の真の祖先であるかを判定する。{@code u == v} の場合は {@code true}。
+	 */
+	public boolean isAncestor(final int u, final int v) {
+		ensureBuild();
+		return in[u] <= in[v] && in[v] < out[u];
 	}
 
-	public int depth(final int i) {
-		if (!init) init();
-		return depth[i];
-	}
-
-	public int size(final int i) {
-		if (!init) init();
-		return size[i];
-	}
-
-	public int lca(int u, int v) {
-		if (!init) init();
-		while (top[u] != top[v]) {
-			if (depth[top[u]] < depth[top[v]]) {
-				int tmp = u;
-				u = v;
-				v = tmp;
-			}
-			u = parent[top[u]];
-		}
-		return depth[u] < depth[v] ? u : v;
-	}
-
-	public long distance(final int u, final int v) {
-		if (!init) init();
-		final int lca = lca(u, v);
-		return dist[u] + dist[v] - (dist[lca] << 1);
-	}
-
-	public int[] adj(final int u) {
-		final int[] adj = new int[degree[u]];
-		for (int e = first[u], i = 0; e != -1; e = next[e], i++) adj[i] = dest[e];
-		return adj;
-	}
-
-	public int kthAncestor(int u, int k) {
-		if (!init) init();
-		if (depth[u] < k) return -1;
-		while (true) {
-			int len = depth[u] - depth[top[u]];
-			if (k <= len) return rev[in[u] - k];
-			k -= len + 1;
-			u = parent[top[u]];
-		}
-	}
-
-	public int jump(int u, int v, int k) {
-		if (!init) init();
-		int lca = lca(u, v);
-		int du = depth[u] - depth[lca], dv = depth[v] - depth[lca];
-		if (k <= du) return kthAncestor(u, k);
-		else if (k <= du + dv) return kthAncestor(v, du + dv - k);
-		else return -1;
-	}
-
-	public void updateSubtree(int u, final PathAction action) {
-		if (!init) init();
+	/**
+	 * 部分木をpreorder区間 {@code [in(u), out(u))} として処理に渡す。
+	 */
+	public void updateSubtree(final int u, final IntBinaryConsumer action) {
+		ensureBuild();
 		action.accept(in[u], out[u]);
 	}
 
-	public void updateEdge(int e, final IntConsumer action) {
-		if (!init) init();
-		final int u = dest[e << 1], v = dest[e << 1 | 1];
-		action.accept(in[depth[u] > depth[v] ? u : v]);
-	}
-
-	public void updateEdge(int u, int v, final PathAction action) {
-		if (!init) init();
-		while (top[u] != top[v]) {
-			if (depth[top[u]] < depth[top[v]]) {
-				action.accept(in[top[v]], in[v] + 1);
-				v = parent[top[v]];
-			} else {
-				action.accept(in[top[u]], in[u] + 1);
-				u = parent[top[u]];
-			}
-		}
-		if (in[u] > in[v]) {
-			int tmp = u;
-			u = v;
-			v = tmp;
-		}
-		if (in[u] < in[v]) action.accept(in[u] + 1, in[v] + 1);
-	}
-
-	public void updateNode(int u, final IntConsumer action) {
-		if (!init) init();
-		action.accept(in[u]);
-	}
-
-	public void updateNode(int u, int v, final PathAction action) {
-		if (!init) init();
-		while (top[u] != top[v]) {
-			if (depth[top[u]] < depth[top[v]]) {
-				action.accept(in[top[v]], in[v] + 1);
-				v = parent[top[v]];
-			} else {
-				action.accept(in[top[u]], in[u] + 1);
-				u = parent[top[u]];
-			}
-		}
-		if (in[u] < in[v]) action.accept(in[u], in[v] + 1);
-		else action.accept(in[v], in[u] + 1);
-	}
-
-	public long querySubTree(int u, final LongBinaryOperator query) {
-		if (!init) init();
+	/**
+	 * 部分木のpreorder区間 {@code [in(u), out(u))} に問い合わせを行う。
+	 */
+	public long querySubtree(final int u, final LongBinaryOperator query) {
+		ensureBuild();
 		return query.applyAsLong(in[u], out[u]);
 	}
 
-	public long queryEdge(int u, int v, final long identity, final LongBinaryOperator query, final LongBinaryOperator op) {
-		if (!init) init();
-		long res = identity;
-		while (top[u] != top[v]) {
-			if (depth[top[u]] < depth[top[v]]) {
-				res = op.applyAsLong(res, query.applyAsLong(in[top[v]], in[v] + 1));
-				v = parent[top[v]];
-			} else {
-				res = op.applyAsLong(res, query.applyAsLong(in[top[u]], in[u] + 1));
-				u = parent[top[u]];
-			}
-		}
-		if (in[u] > in[v]) {
-			int tmp = u;
-			u = v;
-			v = tmp;
-		}
-		return in[u] < in[v] ? op.applyAsLong(res, query.applyAsLong(in[u] + 1, in[v] + 1)) : res;
-	}
-
-	public long queryNode(int u, int v, final long identity, final LongBinaryOperator query, final LongBinaryOperator op) {
-		if (!init) init();
-		long res = identity;
-		while (top[u] != top[v]) {
-			if (depth[top[u]] < depth[top[v]]) {
-				res = op.applyAsLong(res, query.applyAsLong(in[top[v]], in[v] + 1));
-				v = parent[top[v]];
-			} else {
-				res = op.applyAsLong(res, query.applyAsLong(in[top[u]], in[u] + 1));
-				u = parent[top[u]];
-			}
-		}
-		if (in[u] > in[v]) {
-			int tmp = u;
-			u = v;
-			v = tmp;
-		}
-		return op.applyAsLong(res, query.applyAsLong(in[u], in[v] + 1));
-	}
-
-	private void init() {
-		init = true;
+	void ensureBuild() {
+		if (init) return;
+		depth = new int[n];
+		parent = new int[n];
+		subtreeSize = new int[n];
+		in = new int[n];
+		out = new int[n];
+		preorder = new int[n];
+		rootDistance = new long[n];
 		parent[root] = root;
-		dfs(root, root, 0, 0);
-		hld(root, root, root, 0);
+		dfs(root, root, 0, 0, new int[]{0});
+		init = true;
 	}
 
-	private int dfs(final int u, final int p, final int di, final long dc) {
+	private int dfs(final int u, final int p, final int di, final long dc, final int[] counter) {
 		int s = 0;
+		preorder[counter[0]] = u;
+		in[u] = counter[0]++;
 		for (int e = first[u]; e != -1; e = next[e]) {
 			final int v = dest[e];
 			if (v == p) continue;
-			s += dfs(v, parent[v] = u, depth[v] = di + 1, dist[v] = dc + cost[e]);
+			s += dfs(v, parent[v] = u, depth[v] = di + 1, rootDistance[v] = dc + cost[e], counter);
 		}
-		return size[u] = s + 1;
+		out[u] = counter[0];
+		return subtreeSize[u] = s + 1;
 	}
-
-	private void hld(final int u, final int p, final int t, final int i) {
-		top[u] = t;
-		in[u] = i;
-		rev[i] = u;
-		int mx = -1;
-		for (int e = first[u]; e != -1; e = next[e]) {
-			final int v = dest[e];
-			if (v == p) continue;
-			if (mx == -1 || size[mx] < size[v]) mx = v;
-		}
-		if (mx == -1) {
-			out[u] = i + 1;
-			return;
-		}
-		hld(mx, u, t, i + 1);
-		for (int e = first[u], k = i + size[mx] + 1; e != -1; e = next[e]) {
-			final int v = dest[e];
-			if (v == p || v == mx) continue;
-			hld(v, u, v, k);
-			k += size[v];
-		}
-		out[u] = i + size[u];
-	}
-
-	public interface PathAction {
-		void accept(final int l, final int r);
-	}
-
 }

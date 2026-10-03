@@ -78,7 +78,7 @@ AtCoderへはこのimport版を直接提出できません。
 | [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                                                             |
 | [Graph/Connectivity](./docs/graph/Connectivity)                   | 🚧 橋・関節点検出、二重連結成分分解（一部未実装）                                                                               |
 | [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定                                                                                    |
-| [Graph/Tree](./docs/graph/Tree)                                   | 木の直径、根付き木・LCA・HLD。Euler Tour、全方位木DP、重心分解、仮想木、木上MoはTODO                                            |
+| [Graph/Tree](./docs/graph/Tree)                                   | 木の直径、根付き木・HLD・入退場Euler Tour。全方位木DP、重心分解、仮想木、木上MoはTODO                                           |
 | [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                                                                  |
 | [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                                                           |
 | [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝                                                          |
@@ -117,7 +117,7 @@ AtCoderへはこのimport版を直接提出できません。
 | [BinaryIndexedTree](docs/ds/fenwick)                     | BIT（点更新区間和・2D・区間加算区間和、BIT 上の二分探索 `lowerBound` / `upperBound` 付き）                           |
 | [BinarySearchTree](./docs/ds/BinarySearchTree)           | 基本 BST・Treap（順序統計付き乱択平衡 BST）※赤黒木・B木・vEB木 📝                                                    |
 | [CartesianTree](./src/lib/ds/CartesianTree.java)         | 📝 デカルト木（TODO）                                                                                                |
-| [EulerTour](./docs/ds/EulerTour)                         | 📝 オイラーツアー（TODO）                                                                                            |
+| [EulerTour](./docs/ds/EulerTour)                         | 根付き木の入退場イベント列（長さ `2N`）                                                                              |
 | [FastIO/Java17](./docs/io/Java17)                        | 高速入出力（**Java 17 互換**）・対話問題用 InteractiveScanner                                                        |
 | [FastIO/Java24](./docs/io/Java24)                        | 高速入出力（Java 24 最適化、SWAR・`VarHandle` 使用）+ [ベンチマーク環境](./docs/io/Java24/Benchmark)                 |
 | [HashMap](./docs/ds/HashMap)                             | オープンアドレス法のプリミティブ特化ハッシュマップ（$\mathcal{O}(1)$ clear、ペア/トリプルキー対応）                  |

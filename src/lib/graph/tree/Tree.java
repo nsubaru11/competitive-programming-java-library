@@ -1,85 +1,25 @@
 package lib.graph.tree;
 
-import static java.util.Arrays.*;
+import lib.graph.*;
 
-import java.util.function.*;
-
+/**
+ * 連結な木を保持し、木固有の基本処理を提供する。
+ * <p>
+ * 直径計算は {@code O(N)}。{@link #diameterCost()} は辺重みが非負であることを前提とする。
+ */
 @SuppressWarnings("unused")
-public final class Tree {
-	private final int[] dest, next, first, degree;
-	private final long[] cost;
-	private final int n;
-	private int edgeCount = 0;
+public class Tree extends UndirectedGraph {
 
+	/**
+	 * {@code n} 頂点、{@code n - 1} 辺の木を保持する領域を確保する。
+	 */
 	public Tree(final int n) {
-		this.n = n;
-		int m = (n - 1) << 1;
-		dest = new int[m];
-		next = new int[m];
-		first = new int[n];
-		fill(first, -1);
-		degree = new int[n];
-		cost = new long[m];
+		super(n, n - 1);
 	}
 
-	public int n() {
-		return n;
-	}
-
-	public void add(final int i, final int j) {
-		add(i, j, 1);
-	}
-
-	public void add(final int i, final int j, final long c) {
-		dest[edgeCount] = j;
-		next[edgeCount] = first[i];
-		cost[edgeCount] = c;
-		first[i] = edgeCount++;
-		degree[i]++;
-
-		dest[edgeCount] = i;
-		next[edgeCount] = first[j];
-		cost[edgeCount] = c;
-		first[j] = edgeCount++;
-		degree[j]++;
-	}
-
-	public void addAll(int m, final IntSupplier u, final IntSupplier v) {
-		while (m-- > 0) add(u.getAsInt(), v.getAsInt());
-	}
-
-	public void addAll(int m, final IntSupplier u, final IntSupplier v, final LongSupplier cost) {
-		while (m-- > 0) add(u.getAsInt(), v.getAsInt(), cost.getAsLong());
-	}
-
-	public int degree(final int i) {
-		return degree[i];
-	}
-
-	public int to(final int u, final int e) {
-		final int v1 = dest[e << 1];
-		final int v2 = dest[e << 1 | 1];
-		return u != v1 ? v1 : v2;
-	}
-
-	public long cost(final int e) {
-		return cost[e << 1];
-	}
-
-	public int[] adj(final int u) {
-		final int[] adj = new int[degree[u]];
-		for (int e = first[u], i = 0; e != -1; e = next[e], i++) adj[i] = dest[e];
-		return adj;
-	}
-
-	public int[] adjEdgeIds(final int u) {
-		final int[] ids = new int[degree[u]];
-		for (int e = first[u], i = 0; e != -1; e = next[e], i++) {
-			ids[i] = e >> 1;
-		}
-		return ids;
-	}
-
+	/**
+	 * 辺数を距離とする木の直径を返す。
+	 */
 	public int diameter() {
 		final int[] qV = new int[n], qL = new int[n], qF = new int[n];
 		for (int head = 0, tail = 1; tail < n; head++) {
@@ -108,6 +48,9 @@ public final class Tree {
 		return qL[n - 1];
 	}
 
+	/**
+	 * 非負の辺重みを持つ木の重み付き直径を返す。
+	 */
 	public long diameterCost() {
 		final int[] qV = new int[n], qF = new int[n];
 		final long[] qL = new long[n];
@@ -143,4 +86,19 @@ public final class Tree {
 		return qL[mx];
 	}
 
+	int[] dest() {
+		return dest;
+	}
+
+	int[] next() {
+		return next;
+	}
+
+	int[] first() {
+		return first;
+	}
+
+	long[] cost() {
+		return cost;
+	}
 }

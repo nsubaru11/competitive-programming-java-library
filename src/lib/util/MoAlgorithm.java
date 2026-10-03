@@ -18,8 +18,7 @@ public final class MoAlgorithm {
 	private static final int IDX_BITS = 20;
 	private static final long IDX_MASK = (1L << IDX_BITS) - 1;
 
-	private MoAlgorithm() {
-	}
+	private MoAlgorithm() {}
 
 	/**
 	 * 4 方向の区間伸縮処理を使って Mo's Algorithm を実行します。

@@ -6,34 +6,37 @@
 
 ## 実装クラス
 
-| クラス                                                                            | 状態     | 用途                                                           |
-|-----------------------------------------------------------------------------------|----------|----------------------------------------------------------------|
-| [`Tree`](../../../src/lib/graph/tree/Tree.java)                                   | 実装済み | 重み付き・重みなし木の保持、直径・直径長の計算                 |
-| [`RootedTree`](../../../src/lib/graph/tree/RootedTree.java)                       | 実装済み | 根付き木の親・深さ・部分木サイズ、LCA、距離、HLDによるパス分解 |
-| [`EulerTour`](../../../src/lib/graph/tree/EulerTour.java)                         | TODO     | DFS順序・入退場列の構築。列形式と区間 API は設計中             |
-| [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | TODO     | 全頂点を根とした木 DP の一括計算                               |
-| [`CentroidDecomposition`](../../../src/lib/graph/tree/CentroidDecomposition.java) | TODO     | 重心分解木の構築                                               |
-| [`VirtualTree`](../../../src/lib/graph/tree/VirtualTree.java)                     | TODO     | 指定頂点と LCA による木の圧縮                                  |
-| [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | TODO     | 木上パスクエリのオフライン Mo 処理                             |
+| クラス                                                                            | 状態     | 用途                                                   |
+|-----------------------------------------------------------------------------------|----------|--------------------------------------------------------|
+| [`Tree`](../../../src/lib/graph/tree/Tree.java)                                   | 実装済み | 重み付き・重みなし木の保持、直径・直径長の計算         |
+| [`RootedTree`](../../../src/lib/graph/tree/RootedTree.java)                       | 実装済み | 親・深さ・部分木サイズ・根からの距離とpreorder区間     |
+| [`HLD`](../../../src/lib/graph/tree/HLD.java)                                     | 実装済み | Heavy-Light Decomposition、LCA、パス・部分木の区間分解 |
+| [`EulerTour`](../../../src/lib/graph/tree/EulerTour.java)                         | 実装済み | 長さ `2N` の入退場イベント列                           |
+| [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | TODO     | 全頂点を根とした木 DP の一括計算                       |
+| [`CentroidDecomposition`](../../../src/lib/graph/tree/CentroidDecomposition.java) | TODO     | 重心分解木の構築                                       |
+| [`VirtualTree`](../../../src/lib/graph/tree/VirtualTree.java)                     | TODO     | 指定頂点と LCA による木の圧縮                          |
+| [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | TODO     | 木上パスクエリのオフライン Mo 処理                     |
 
-TODO クラスには公開メソッドがなく、まだ利用できません。ここでは作成予定の API と対象アルゴリズムを一覧化しています。
+TODO クラスは未実装であり、まだ利用できません。ここでは作成予定の API と対象アルゴリズムを一覧化しています。
 
 ## API の選択
 
-| 目的                                               | クラス                  |
-|----------------------------------------------------|-------------------------|
-| 木を入力して直径を求める                           | `Tree`                  |
-| LCA、距離、k-th ancestor、HLD でパスを区間分解する | `RootedTree`            |
-| 部分木や木上 Mo 用の DFS 列を得る                  | `EulerTour`（未実装）   |
-| 全頂点を根とした DP を行う                         | `RerootingDP`（未実装） |
-| 少数の指定頂点だけを残した圧縮木を作る             | `VirtualTree`（未実装） |
-| オフラインの木上パスクエリを処理する               | `TreePathMo`（未実装）  |
+| 目的                                                 | クラス                  |
+|------------------------------------------------------|-------------------------|
+| 木を入力して直径を求める                             | `Tree`                  |
+| preorder順の部分木区間、祖先判定、根からの情報を得る | `RootedTree`            |
+| LCA、距離、k-th ancestor、パスを区間分解する         | `HLD`                   |
+| 入退場列を使った処理・木上 Mo のイベント順を得る     | `EulerTour`             |
+| 全頂点を根とした DP を行う                           | `RerootingDP`（未実装） |
+| 少数の指定頂点だけを残した圧縮木を作る               | `VirtualTree`（未実装） |
+| オフラインの木上パスクエリを処理する                 | `TreePathMo`（未実装）  |
 
 ## 設計上の注意
 
-- `Tree` と `RootedTree` は固定長の隣接配列を持ち、構築後の辺追加を想定しています。
-- `RootedTree` の `in` / `out` は HLD の頂点順に関する値です。一般的な DFS 入退場時刻と同じ意味だと仮定せず、`EulerTour` の走査列とは区別してください。
-- Euler Tour は用途により、各頂点を一度記録する DFS 順序、入場・退場を記録する列、隣接頂点列など複数の形式を指します。`EulerTour` の API では各配列の意味を明記します。
+- `RootedTree` のDFS情報は最初の情報参照時に構築されます。全辺を追加した後に利用し、構築後は木を変更しないでください。
+- `RootedTree.in/out` は通常のDFS preorder上の部分木区間です。`HLD.enter/exit` はheavy-first順の部分木区間で、互いに異なる番号付けです。
+- `EulerTour` は各頂点の入場・退場を記録する長さ `2N` の列です。LCA用のDFS往復列とは異なります。
+- 部分木の区間クエリには `RootedTree` または `HLD` の頂点1回の列を使います。`EulerTour` は入退場イベントを必要とする処理に使います。
 - `TreePathMo` はクエリに対する集計状態を内包せず、頂点の有効状態を反転する処理を利用側から受け取る方針です。
 
 ## 関連ドキュメント

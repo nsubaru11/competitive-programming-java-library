@@ -13,7 +13,7 @@ import static java.util.Arrays.*;
  * {@link #cost(int)} にそのまま渡せます。
  * {@link #to(int, int)} は「頂点 {@code u} から見た接続先頂点」を返します。
  */
-public final class UndirectedGraph extends Graph {
+public class UndirectedGraph extends Graph {
 	private final int[] degree;
 
 	/**

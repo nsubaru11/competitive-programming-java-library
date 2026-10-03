@@ -11,8 +11,7 @@ import java.util.*;
  * {@link Long#MAX_VALUE}、到達可能な負閉路の影響を受ける頂点は {@link Long#MIN_VALUE} です。
  */
 public final class PathResult {
-	private static final long INF = Long.MAX_VALUE;
-	private static final long NINF = Long.MIN_VALUE;
+	private static final long INF = Long.MAX_VALUE, NINF = Long.MIN_VALUE;
 
 	public final int[] s;
 	public final boolean hasNegCycle;

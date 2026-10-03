@@ -26,11 +26,11 @@
 
 ## 未完成または制約を確認すべき公開API
 
-| クラス                                                       | 状態                                                                                 | 影響                                                                |
-|--------------------------------------------------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| クラス                                                       | 状態                                                                              | 影響                                        |
+|--------------------------------------------------------------|-----------------------------------------------------------------------------------|---------------------------------------------|
 | [`Convolution`](../src/lib/math/polynomial/Convolution.java) | FFTが未実装。NTT、任意mod、AND / OR / XOR / GCD / LCM畳み込みと各種変換は利用可能 | `convolveFft`は正しい畳み込み結果を返さない |
-| [`DivideConquer`](../src/lib/util/DivideConquer.java)        | `inversionCount`のループ本体が空                                                     | 入力にかかわらず`0`を返す                                           |
-| [`IntTreap`](../src/lib/ds/set/IntTreap.java)                | `split*`は例外、`merge`はキー範囲が交差するとBST性を壊す                             | 一般のsplit/merge用途には利用不可                                   |
+| [`DivideConquer`](../src/lib/util/DivideConquer.java)        | `inversionCount`のループ本体が空                                                  | 入力にかかわらず`0`を返す                   |
+| [`IntTreap`](../src/lib/ds/set/IntTreap.java)                | `split*`は例外、`merge`はキー範囲が交差するとBST性を壊す                          | 一般のsplit/merge用途には利用不可           |
 
 TODOのみのクラスは公開メソッドを持たない雛形であり、APIとしては利用できません。
 雛形がコンパイルに成功することとアルゴリズムが利用可能であることを区別してください。
@@ -56,12 +56,12 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 - `SegmentTreeBeats`、`ImplicitTreap`、`BinaryTrie`、`LinkCutTree`
 - `RollbackUnionFind`、`WeightedUnionFind`
 
-### グラフ（14）
+### グラフ（13）
 
 既存のTODO:
 
 - `CentroidDecomposition`、`Dinic`、`Edmonds`
-- `MinCostFlow`、`TwoSat`、`EulerTour`
+- `MinCostFlow`、`TwoSat`
 
 今回追加したTODO:
 
