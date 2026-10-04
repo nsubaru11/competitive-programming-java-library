@@ -128,7 +128,7 @@ AtCoderへはこのimport版を直接提出できません。
 | [SegmentTree](./docs/ds/SegmentTree)                     | セグメント木・遅延評価セグメント木・区間アフィン変換+二乗和（各 int / long 特化版あり）                              |
 | [SegmentTree2D](./docs/ds/SegmentTree2D)                 | 📝 2次元セグメント木（TODO）                                                                                         |
 | [SkipList](./docs/ds/SkipList)                           | 📝 スキップリスト（TODO）                                                                                            |
-| [SparseTable](./docs/ds/SparseTable)                     | 📝 Sparse Table（TODO）                                                                                              |
+| [SparseTable](./docs/ds/SparseTable)                     | 冪等演算の静的区間クエリ（ジェネリクス / int / long、構築 `O(N log N)`・クエリ `O(1)`）                              |
 | [Trie](./docs/ds/Trie)                                   | Trie / SuffixTrie / RadixTrie / PatriciaTrie / 三分探索木 / DoubleArrayTrie / SuffixArray ※SuffixAutomaton 📝        |
 | [UnionFind](./docs/ds/UnionFind)                         | 経路圧縮 + rank 併用の素集合データ構造（グループ数・サイズ・辺数の管理付き）                                         |
 | [WaveletTree](./docs/ds/WaveletTree)                     | 📝 Wavelet Tree（TODO）                                                                                              |

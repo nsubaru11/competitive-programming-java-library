@@ -41,11 +41,11 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 
 ## TODOのみのクラス
 
-### データ構造（22）
+### データ構造（21）
 
 既存のTODO:
 
-- `CartesianTree`、`LiChaoTree`、`SparseTable`、`WaveletTree`
+- `CartesianTree`、`LiChaoTree`、`WaveletTree`
 - `PersistentSegmentTree`、`SegmentTree2D`
 - `BTree`、`RedBlackTree`、`SkipList`、`VanEmdeBoasTree`
 - `CompactTrie`、`PersistentUnionFind`
