@@ -1,5 +1,7 @@
 package lib.graph.tree;
 
+import static java.util.Arrays.*;
+
 import java.util.function.*;
 
 import lib.util.function.*;
@@ -82,7 +84,7 @@ public final class RootedTree extends Tree {
 	}
 
 	/**
-	 * {@code u} が {@code v} の真の祖先であるかを判定する。{@code u == v} の場合は {@code true}。
+	 * {@code u} が {@code v} の祖先であるかを判定する。{@code u == v} の場合は {@code true}。
 	 */
 	public boolean isAncestor(final int u, final int v) {
 		ensureBuild();
@@ -114,21 +116,37 @@ public final class RootedTree extends Tree {
 		out = new int[n];
 		preorder = new int[n];
 		rootDistance = new long[n];
-		parent[root] = root;
-		dfs(root, root, 0, 0, new int[]{0});
+		dfs();
 		init = true;
 	}
 
-	private int dfs(final int u, final int p, final int di, final long dc, final int[] counter) {
-		int s = 0;
-		preorder[counter[0]] = u;
-		in[u] = counter[0]++;
-		for (int e = first[u]; e != -1; e = next[e]) {
-			final int v = dest[e];
-			if (v == p) continue;
-			s += dfs(v, parent[v] = u, depth[v] = di + 1, rootDistance[v] = dc + cost[e], counter);
+	private void dfs() {
+		int[] stack = new int[n], edgeIter = first.clone();
+		stack[0] = root;
+		fill(in, -1);
+		fill(parent, -1);
+		fill(subtreeSize, 1);
+		parent[root] = root;
+		outer:
+		for (int len = 1, counter = 0; len > 0; ) {
+			final int u = stack[len - 1];
+			if (in[u] == -1) preorder[in[u] = counter++] = u;
+			while (edgeIter[u] != -1) {
+				final int e = edgeIter[u], v = dest[e];
+				edgeIter[u] = next[e];
+				if (v == parent[u]) continue;
+				parent[v] = u;
+				depth[v] = depth[u] + 1;
+				rootDistance[v] = rootDistance[u] + cost[e];
+				stack[len++] = v;
+				continue outer;
+			}
+			out[u] = counter;
+			len--;
 		}
-		out[u] = counter[0];
-		return subtreeSize[u] = s + 1;
+		for (int i = n - 1; i > 0; i--) {
+			final int u = preorder[i];
+			subtreeSize[parent[u]] += subtreeSize[u];
+		}
 	}
 }

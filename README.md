@@ -78,7 +78,7 @@ AtCoderへはこのimport版を直接提出できません。
 | [Graph/CentroidDecomposition](./docs/graph/CentroidDecomposition) | 📝 重心分解（TODO）                                                                                                             |
 | [Graph/Connectivity](./docs/graph/Connectivity)                   | 🚧 橋・関節点検出、二重連結成分分解（一部未実装）                                                                               |
 | [Graph/Core](./docs/graph/Core)                                   | 固定長の有向/無向グラフ、探索・SCC・二部判定                                                                                    |
-| [Graph/Tree](./docs/graph/Tree)                                   | 木の直径、根付き木・HLD・入退場Euler Tour。全方位木DP、重心分解、仮想木、木上MoはTODO                                           |
+| [Graph/Tree](./docs/graph/Tree)                                   | 木の直径、根付き木・HLD・LCA・入退場Euler Tour。全方位木DP、重心分解、仮想木、木上MoはTODO                                      |
 | [Graph/Flow/MaxFlow](./docs/graph/MaxFlow)                        | 📝 Dinic法による最大流（TODO）                                                                                                  |
 | [Graph/Flow/MinCostFlow](./docs/graph/MinCostFlow)                | 📝 最小費用流（TODO）                                                                                                           |
 | [Graph/MinimumSpanningTree](./docs/graph/MinimumSpanningTree)     | Kruskal・Prim（最小/最大全域森、採用辺Result・cost-only版）※Edmonds 📝                                                          |
