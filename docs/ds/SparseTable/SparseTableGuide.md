@@ -14,6 +14,7 @@ Sparse Table は、値を変更しない配列に対して、冪等な区間演�
 
 ## 依存関係
 
+- `lib.math.MathUtils`（前処理で `floorLog2` を使用）
 - ジェネリクス版: `java.util.function.BinaryOperator`
 - int 版: `java.util.function.IntBinaryOperator`
 - long 版: `java.util.function.LongBinaryOperator`
@@ -73,3 +74,4 @@ int min = st.query(1, 5); // 1
 | バージョン番号     | 年月日     | 詳細                                                  |
 |:-------------------|:-----------|:------------------------------------------------------|
 | **バージョン 1.0** | 2026-10-05 | ジェネリクス版、int 版、long 版と半開区間クエリを追加 |
+| **バージョン 1.1** | 2026-10-06 | `logTable` を前計算し、クエリ時の段数取得に利用       |
