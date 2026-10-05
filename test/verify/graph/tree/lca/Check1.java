@@ -25,7 +25,7 @@ public final class Check1 {
 	private static void solve() {
 		int n = sc.nextInt(), q = sc.nextInt();
 		RootedTree tree = new RootedTree(n, 0);
-		for (int i = 0; i < n - 1; i++) {
+		for (int i = 1; i < n; i++) {
 			tree.add(i, sc.nextInt());
 		}
 		LCA lca = new LCA(tree);
