@@ -16,7 +16,7 @@
 | [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | TODO     | 全頂点を根とした木 DP の一括計算                       |
 | [`CentroidDecomposition`](../../../src/lib/graph/tree/CentroidDecomposition.java) | TODO     | 重心分解木の構築                                       |
 | [`VirtualTree`](../../../src/lib/graph/tree/VirtualTree.java)                     | TODO     | 指定頂点と LCA による木の圧縮                          |
-| [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | TODO     | 木上パスクエリのオフライン Mo 処理                     |
+| [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | 実装済み | 木上パスクエリのオフライン Mo 処理                     |
 
 TODO クラスは未実装であり、まだ利用できません。ここでは作成予定の API と対象アルゴリズムを一覧化しています。
 
@@ -31,7 +31,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 | 入退場列を使った処理・木上 Mo のイベント順を得る     | `EulerTour`             |
 | 全頂点を根とした DP を行う                           | `RerootingDP`（未実装） |
 | 少数の指定頂点だけを残した圧縮木を作る               | `VirtualTree`（未実装） |
-| オフラインの木上パスクエリを処理する                 | `TreePathMo`（未実装）  |
+| オフラインの木上パスクエリを処理する                 | `TreePathMo`            |
 
 ## 設計上の注意
 
@@ -41,7 +41,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 - `EulerTour` は各頂点の入場・退場を記録する長さ `2N` の列です。LCA用のDFS往復列とは異なります。
 - `LCA` はオイラーツアーによる ±1 RMQ を用いて前処理 $O(N)$、各クエリ $O(1)$ で最小共通祖先を求めます。
 - 部分木の区間クエリには `RootedTree` または `HLD` の頂点1回の列を使います。`EulerTour` は入退場イベントを必要とする処理に使います。
-- `TreePathMo` はクエリに対する集計状態を内包せず、頂点の有効状態を反転する処理を利用側から受け取る方針です。
+- `TreePathMo` は各パスを Euler Tour 上の区間へ変換し、LCA を一時的に加えることで頂点の追加・削除コールバックを呼び分けます。集計状態とクエリ結果の保存は利用側が行います。クエリはオフラインで並べ替えて処理されます。
 
 ## 関連ドキュメント
 
