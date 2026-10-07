@@ -36,6 +36,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 ## 設計上の注意
 
 - `RootedTree` のDFS情報は最初の情報参照時に構築されます。全辺を追加した後に利用し、構築後は木を変更しないでください。
+- `RootedTree.querySubtree` と `HLD.querySubtree` の範囲コールバックは、半開区間端点 `int l, int r` を受け取り `long` を返す `IntBinaryToLongFunction` です。
 - `RootedTree` は明示スタックで preorder を作り、逆 preorder で子の部分木サイズを親へ加算します。再帰 DFS は使いません。
 - `RootedTree.in/out` は通常のDFS preorder上の部分木区間です。`HLD.enter/exit` はheavy-first順の部分木区間で、互いに異なる番号付けです。
 - `EulerTour` は各頂点の入場・退場を記録する長さ `2N` の列です。LCA用のDFS往復列とは異なります。
@@ -45,6 +46,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 
 ## 関連ドキュメント
 
+- [HLD 利用ガイド](./HLDGuide.md)
 - [LCA 利用ガイド](./LCAGuide.md)
 - [EulerTour](../../ds/EulerTour/README.md)
 - [CentroidDecomposition](../CentroidDecomposition/README.md)

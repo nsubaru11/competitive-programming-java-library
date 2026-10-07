@@ -48,7 +48,7 @@
 | `apply(int i, int/long a, int/long b)`            | `void`     | 単一点へ `x -> a*x + b` を適用します。       |
 | `apply(int l, int r, int/long a, int/long b)`     | `void`     | 区間へ `x -> a*x + b` を適用します。         |
 | `fill(int/long val)`                              | `void`     | 全要素を同一値で埋めます。                   |
-| `setAll(IntUnaryOperator/LongUnaryOperator func)` | `void`     | インデックスごとの関数で全要素を設定します。 |
+| `setAll(IntUnaryOperator/IntToLongFunction func)` | `void`     | インデックスごとの関数で全要素を設定します。 |
 
 ### 3. 取得系メソッド
 
@@ -104,6 +104,7 @@ System.out.println(seg.queryAll());
 | バージョン番号     | 年月日     | 詳細                                                                                                       |
 |:-------------------|:-----------|:-----------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-04-30 | `IntSquareSumSegmentTree` / `LongSquareSumSegmentTree` を初期実装（`query`/`query2` + 区間アフィン更新）。 |
+| **バージョン 1.1** | 2026-10-07 | `LongSquareSumSegmentTree.setAll` の初期化関数を `IntToLongFunction` に変更。                              |
 
 ### バージョン管理について
 

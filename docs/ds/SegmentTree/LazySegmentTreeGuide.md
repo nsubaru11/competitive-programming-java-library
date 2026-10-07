@@ -48,7 +48,7 @@
 | `apply(int i, T/int/long v)`                                  | `void`     | 単一点 `[i, i+1)` に遅延更新を適用します。 |
 | `apply(int l, int r, T/int/long v)`                           | `void`     | 区間 `[l, r)` に遅延更新を適用します。     |
 | `fill(T/int/long val)`                                        | `void`     | 全要素を同じ値で再初期化します。           |
-| `setAll(IntFunction/IntUnaryOperator/LongUnaryOperator func)` | `void`     | 全要素を関数で再設定します。               |
+| `setAll(IntFunction/IntUnaryOperator/IntToLongFunction func)` | `void`     | 全要素を関数で再設定します。               |
 
 ### 3. 取得・探索系メソッド
 
@@ -117,6 +117,7 @@ System.out.println(seg.query(0, 4));
 | バージョン番号     | 年月日     | 詳細                                                                                                                        |
 |:-------------------|:-----------|:----------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-04-30 | `LazySegmentTree<T>` / `IntLazySegmentTree` / `LongLazySegmentTree` を初期実装（`apply(l,r,v)` による区間更新 + `query`）。 |
+| **バージョン 1.1** | 2026-10-07 | `LongLazySegmentTree.setAll` の初期化関数を `IntToLongFunction` に変更。                                                    |
 
 ### バージョン管理について
 

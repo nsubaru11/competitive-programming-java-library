@@ -76,7 +76,7 @@ public final class LongLazySegmentTree implements Iterable<Long> {
 		buildAll();
 	}
 
-	public void setAll(final LongUnaryOperator func) {
+	public void setAll(final IntToLongFunction func) {
 		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.applyAsLong(i);
 		buildAll();
 	}

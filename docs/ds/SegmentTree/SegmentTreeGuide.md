@@ -51,7 +51,7 @@
 | `apply(int i, long a, long b)`                                | `long`     | `LongSegmentTree` の位置 `i` に `x -> a*x + b` を適用します。               |
 | `apply(int i, long v, LongBinaryOperator op)`                 | `long`     | `LongSegmentTree` の位置 `i` に二項演算で更新を適用します。                 |
 | `fill(T/int/long val)`                                        | `void`     | すべての要素を同一値で埋めます。                                            |
-| `setAll(IntFunction/IntUnaryOperator/LongUnaryOperator func)` | `void`     | インデックスベースで全要素を再設定します。                                  |
+| `setAll(IntFunction/IntUnaryOperator/IntToLongFunction func)` | `void`     | インデックスベースで全要素を再設定します。                                  |
 
 ### 3. 取得・探索系メソッド
 
@@ -110,6 +110,7 @@ System.out.println(ist.maxRight(0, s -> s <= 20));
 | **バージョン 1.0** | 2025-11-25 | `SegmentTree<T>` / `IntSegmentTree` / `LongSegmentTree` を初期実装（`set`/`query`/`queryAll`/`fill`）。 |
 | **バージョン 2.0** | 2025-11-27 | 境界探索 API `maxRight` / `minLeft` を追加。                                                            |
 | **バージョン 2.1** | 2026-04-30 | `IntSegmentTree` / `LongSegmentTree` に `add` / `multiply` / `apply(i,a,b)` / `apply(i,v,op)` を追加。  |
+| **バージョン 2.2** | 2026-10-07 | `LongSegmentTree.setAll` の初期化関数を `IntToLongFunction` に変更。                                    |
 
 ### バージョン管理について
 

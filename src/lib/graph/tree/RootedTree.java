@@ -101,8 +101,9 @@ public final class RootedTree extends Tree {
 
 	/**
 	 * 部分木のpreorder区間 {@code [in(u), out(u))} に問い合わせを行う。
+	 * 問い合わせ関数は区間端点 {@code (l, r)} を {@code int} で受け取り、集約値を返す。
 	 */
-	public long querySubtree(final int u, final LongBinaryOperator query) {
+	public long querySubtree(final int u, final IntBinaryToLongFunction query) {
 		ensureBuild();
 		return query.applyAsLong(in[u], out[u]);
 	}

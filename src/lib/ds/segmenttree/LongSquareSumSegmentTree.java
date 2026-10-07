@@ -96,7 +96,7 @@ public final class LongSquareSumSegmentTree implements Iterable<Long> {
 		buildAll();
 	}
 
-	public void setAll(final LongUnaryOperator func) {
+	public void setAll(final IntToLongFunction func) {
 		for (int i = 0, idx = size; i < n; i++, idx++) {
 			final long v = func.applyAsLong(i) % mod;
 			tree[idx] = v;

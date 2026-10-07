@@ -172,16 +172,17 @@ public final class HLD {
 
 	/**
 	 * 部分木のHLD区間 {@code [enter(u), exit(u))} に問い合わせる。
+	 * 問い合わせ関数は区間端点 {@code (l, r)} を {@code int} で受け取り、集約値を返す。
 	 */
-	public long querySubtree(final int u, final LongBinaryOperator query) {
+	public long querySubtree(final int u, final IntBinaryToLongFunction query) {
 		return query.applyAsLong(enter[u], exit[u]);
 	}
 
 	/**
 	 * パス上の辺集約を返す。{@code op} は結合的かつ可換、{@code identity} はその単位元とする。
-	 * 区間問い合わせ {@code query} は半開区間の集約値を返す。
+	 * 区間問い合わせ {@code query} は半開区間端点 {@code (l, r)} を {@code int} で受け取り、その集約値を返す。
 	 */
-	public long queryEdge(int u, int v, final long identity, final LongBinaryOperator query, final LongBinaryOperator op) {
+	public long queryEdge(int u, int v, final long identity, final IntBinaryToLongFunction query, final LongBinaryOperator op) {
 		final int[] depth = tree.depth, parent = tree.parent;
 		long res = identity;
 		while (top[u] != top[v]) {
@@ -203,9 +204,9 @@ public final class HLD {
 
 	/**
 	 * パス上の頂点集約を返す。{@code op} は結合的かつ可換、{@code identity} はその単位元とする。
-	 * 区間問い合わせ {@code query} は半開区間の集約値を返す。
+	 * 区間問い合わせ {@code query} は半開区間端点 {@code (l, r)} を {@code int} で受け取り、その集約値を返す。
 	 */
-	public long queryNode(int u, int v, final long identity, final LongBinaryOperator query, final LongBinaryOperator op) {
+	public long queryNode(int u, int v, final long identity, final IntBinaryToLongFunction query, final LongBinaryOperator op) {
 		final int[] depth = tree.depth, parent = tree.parent;
 		long res = identity;
 		while (top[u] != top[v]) {
