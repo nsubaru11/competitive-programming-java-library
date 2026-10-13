@@ -13,7 +13,7 @@
 | [`HLD`](../../../src/lib/graph/tree/HLD.java)                                     | 実装済み | Heavy-Light Decomposition、LCA、パス・部分木の区間分解     |
 | [`EulerTour`](../../../src/lib/graph/tree/EulerTour.java)                         | 実装済み | 長さ `2N` の入退場イベント列                               |
 | [`LCA`](../../../src/lib/graph/tree/LCA.java)                                     | 実装済み | ±1 RMQ による O(1) LCA クエリ                              |
-| [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | TODO     | 全頂点を根とした木 DP の一括計算                           |
+| [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | 実装済み | 全方位木DP用の子から親・親から子への走査                   |
 | [`CentroidDecomposition`](../../../src/lib/graph/tree/CentroidDecomposition.java) | TODO     | 重心分解木の構築                                           |
 | [`VirtualTree`](../../../src/lib/graph/tree/VirtualTree.java)                     | TODO     | 指定頂点と LCA による木の圧縮                              |
 | [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | 実装済み | 木上パスクエリのオフライン Mo 処理                         |
@@ -30,7 +30,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 | LCA、距離、k-th ancestor、パスを区間分解する         | `HLD`                   |
 | 静的な木上で O(1) の LCA クエリを行う                | `LCA`                   |
 | 入退場列を使った処理・木上 Mo のイベント順を得る     | `EulerTour`             |
-| 全頂点を根とした DP を行う                           | `RerootingDP`（未実装） |
+| 全頂点を根とした DP を行う                           | `RerootingDP`           |
 | 少数の指定頂点だけを残した圧縮木を作る               | `VirtualTree`（未実装） |
 | オフラインの木上パスクエリを処理する                 | `TreePathMo`            |
 
@@ -51,6 +51,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 
 - [HLD 利用ガイド](./HLDGuide.md)
 - [LCA 利用ガイド](./LCAGuide.md)
+- [RerootingDP 利用ガイド](./RerootingDPGuide.md)
 - [EulerTour](../../ds/EulerTour/README.md)
 - [CentroidDecomposition](../CentroidDecomposition/README.md)
 - [RootedTree と一般グラフのコア](../Core/README.md)

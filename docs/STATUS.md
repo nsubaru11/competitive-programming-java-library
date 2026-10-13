@@ -65,7 +65,7 @@ Javaの`available()`は全入力長を保証せず、`read`もshort readを許�
 
 今回追加したTODO:
 
-- `Johnson`、`EulerianTrail`、`RerootingDP`
+- `Johnson`、`EulerianTrail`
 - `BipartiteMatching`、`GeneralMatching`、`StoerWagner`、`DominatorTree`
 - `OfflineDynamicConnectivity`
 - `VirtualTree`、`TreePathMo`
