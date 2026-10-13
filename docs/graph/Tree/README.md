@@ -6,17 +6,17 @@
 
 ## 実装クラス
 
-| クラス                                                                            | 状態     | 用途                                                   |
-|-----------------------------------------------------------------------------------|----------|--------------------------------------------------------|
-| [`Tree`](../../../src/lib/graph/tree/Tree.java)                                   | 実装済み | 重み付き・重みなし木の保持、直径・直径長の計算         |
-| [`RootedTree`](../../../src/lib/graph/tree/RootedTree.java)                       | 実装済み | 親・深さ・部分木サイズ・根からの距離とpreorder区間     |
-| [`HLD`](../../../src/lib/graph/tree/HLD.java)                                     | 実装済み | Heavy-Light Decomposition、LCA、パス・部分木の区間分解 |
-| [`EulerTour`](../../../src/lib/graph/tree/EulerTour.java)                         | 実装済み | 長さ `2N` の入退場イベント列                           |
-| [`LCA`](../../../src/lib/graph/tree/LCA.java)                                     | 実装済み | ±1 RMQ による O(1) LCA クエリ                          |
-| [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | TODO     | 全頂点を根とした木 DP の一括計算                       |
-| [`CentroidDecomposition`](../../../src/lib/graph/tree/CentroidDecomposition.java) | TODO     | 重心分解木の構築                                       |
-| [`VirtualTree`](../../../src/lib/graph/tree/VirtualTree.java)                     | TODO     | 指定頂点と LCA による木の圧縮                          |
-| [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | 実装済み | 木上パスクエリのオフライン Mo 処理                     |
+| クラス                                                                            | 状態     | 用途                                                       |
+|-----------------------------------------------------------------------------------|----------|------------------------------------------------------------|
+| [`Tree`](../../../src/lib/graph/tree/Tree.java)                                   | 実装済み | 重み付き・重みなし木の保持、直径・直径長の計算             |
+| [`RootedTree`](../../../src/lib/graph/tree/RootedTree.java)                       | 実装済み | 親・親辺ID・深さ・部分木サイズ・根からの距離とpreorder区間 |
+| [`HLD`](../../../src/lib/graph/tree/HLD.java)                                     | 実装済み | Heavy-Light Decomposition、LCA、パス・部分木の区間分解     |
+| [`EulerTour`](../../../src/lib/graph/tree/EulerTour.java)                         | 実装済み | 長さ `2N` の入退場イベント列                               |
+| [`LCA`](../../../src/lib/graph/tree/LCA.java)                                     | 実装済み | ±1 RMQ による O(1) LCA クエリ                              |
+| [`RerootingDP`](../../../src/lib/graph/tree/RerootingDP.java)                     | TODO     | 全頂点を根とした木 DP の一括計算                           |
+| [`CentroidDecomposition`](../../../src/lib/graph/tree/CentroidDecomposition.java) | TODO     | 重心分解木の構築                                           |
+| [`VirtualTree`](../../../src/lib/graph/tree/VirtualTree.java)                     | TODO     | 指定頂点と LCA による木の圧縮                              |
+| [`TreePathMo`](../../../src/lib/graph/tree/TreePathMo.java)                       | 実装済み | 木上パスクエリのオフライン Mo 処理                         |
 
 TODO クラスは未実装であり、まだ利用できません。ここでは作成予定の API と対象アルゴリズムを一覧化しています。
 
@@ -26,6 +26,7 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 |------------------------------------------------------|-------------------------|
 | 木を入力して直径を求める                             | `Tree`                  |
 | preorder順の部分木区間、祖先判定、根からの情報を得る | `RootedTree`            |
+| 親頂点と親子間の論理辺IDを得る                       | `RootedTree`            |
 | LCA、距離、k-th ancestor、パスを区間分解する         | `HLD`                   |
 | 静的な木上で O(1) の LCA クエリを行う                | `LCA`                   |
 | 入退場列を使った処理・木上 Mo のイベント順を得る     | `EulerTour`             |
@@ -36,6 +37,8 @@ TODO クラスは未実装であり、まだ利用できません。ここでは
 ## 設計上の注意
 
 - `RootedTree` のDFS情報は最初の情報参照時に構築されます。全辺を追加した後に利用し、構築後は木を変更しないでください。
+- `RootedTree.parent(u)` は親頂点、`RootedTree.parentEdge(u)` は親との無向辺IDを返します。根の `parentEdge` は `-1` です。辺IDは追加順の0始まりの論理辺IDで、辺ごとの値を使う全方位木DPなどで利用できます。
+- 子 `v` の親辺に付いた値を参照するときは、`parentEdge(v)` を添字に使えます。
 - `RootedTree.querySubtree` と `HLD.querySubtree` の範囲コールバックは、半開区間端点 `int l, int r` を受け取り `long` を返す `IntBinaryToLongFunction` です。
 - `RootedTree` は明示スタックで preorder を作り、逆 preorder で子の部分木サイズを親へ加算します。再帰 DFS は使いません。
 - `RootedTree.in/out` は通常のDFS preorder上の部分木区間です。`HLD.enter/exit` はheavy-first順の部分木区間で、互いに異なる番号付けです。

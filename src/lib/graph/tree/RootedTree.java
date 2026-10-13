@@ -7,7 +7,7 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * 根を固定した木のDFS情報を保持する。
+ * 根を固定した木のDFS情報（親頂点・親辺ID・深さ・部分木情報など）を保持する。
  * <p>
  * 最初の情報参照時に {@code O(N)} で前処理する。{@code in/out} は通常のDFS preorder上の部分木区間
  * {@code [in(u), out(u))} を表す。全辺を追加してから使用し、前処理後は木を変更しないこと。
@@ -15,7 +15,7 @@ import lib.util.function.*;
 @SuppressWarnings("unused")
 public final class RootedTree extends Tree {
 	public final int root;
-	int[] depth, parent, subtreeSize, preorder, in, out;
+	int[] depth, parent, parentEdge, subtreeSize, preorder, in, out;
 	long[] rootDistance;
 	private boolean init = false;
 
@@ -33,6 +33,14 @@ public final class RootedTree extends Tree {
 	public int parent(final int u) {
 		ensureBuild();
 		return parent[u];
+	}
+
+	/**
+	 * 頂点 {@code u} とその親を結ぶ無向辺IDを返す。根では {@code -1}。
+	 */
+	public int parentEdge(final int u) {
+		ensureBuild();
+		return parentEdge[u];
 	}
 
 	/**
@@ -112,6 +120,7 @@ public final class RootedTree extends Tree {
 		if (init) return;
 		depth = new int[n];
 		parent = new int[n];
+		parentEdge = new int[n];
 		subtreeSize = new int[n];
 		in = new int[n];
 		out = new int[n];
@@ -128,6 +137,7 @@ public final class RootedTree extends Tree {
 		fill(parent, -1);
 		fill(subtreeSize, 1);
 		parent[root] = root;
+		parentEdge[root] = -1;
 		outer:
 		for (int len = 1, counter = 0; len > 0; ) {
 			final int u = stack[len - 1];
@@ -137,6 +147,7 @@ public final class RootedTree extends Tree {
 				edgeIter[u] = next[e];
 				if (v == parent[u]) continue;
 				parent[v] = u;
+				parentEdge[v] = e >> 1;
 				depth[v] = depth[u] + 1;
 				rootDistance[v] = rootDistance[u] + cost[e];
 				stack[len++] = v;
