@@ -15,18 +15,15 @@ jobs:
   qodana:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
       checks: write
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2026.2
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
           # When pr-mode is set to true, Qodana analyzes only the files that have been changed
           pr-mode: false
@@ -35,5 +32,5 @@ jobs:
           use-annotations: true
           # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
           upload-result: false
-          # quick-fixes available in Ultimate and Ultimate Plus plans
+          # Quick fixes are disabled; the community linter does not need a cloud token.
           push-fixes: 'none'

@@ -1,28 +1,29 @@
+![Java 24](https://img.shields.io/badge/Java-24-ED8B00?style=flat-square)
+![Java 17 compatible](https://img.shields.io/badge/Java-17%20compatible-5382A1?style=flat-square)
+![Dependencies: none](https://img.shields.io/badge/dependencies-none-4C9A2A?style=flat-square)
+[![License: 0BSD](https://img.shields.io/badge/license-0BSD-blue?style=flat-square)](./LICENSE)
+
 # Competitive Programming Java Library
 
-AtCoder などの競技プログラミングで使用することを想定した、Java 製のアルゴリズム・データ構造ライブラリ集です。
+AtCoder向けのJavaアルゴリズム・データ構造ライブラリです。
 
-- 作者: [nsubaru (AtCoder)](https://atcoder.jp/users/nsubaru)
+- [Author: nsubaru (AtCoder)](https://atcoder.jp/users/nsubaru)
+- [実装状況](./docs/STATUS.md)
+- [ベンチマーク](./docs/io/Java24/Benchmark/README.md)
 
 ## 特徴
 
-- **パッケージ化されたAPI**: `lib.*` を単一ソースツリーとして管理し、IDEの補完・定義ジャンプ・安全なリファクタリングをライブラリ全域で利用できます
-- **提出時の自動バンドル**: AtCoder側のランナーが `import lib.*` と推移的依存を単一の `Main.java` へ展開します
-- **プリミティブ特化版を併設**: 主要なデータ構造はジェネリクス版に加えて int / long 特化版を提供し、オートボクシングのオーバーヘッドを回避します
-- **低レベル最適化**: ビット演算・手動バッファリング・SWAR・`VarHandle` などを活用した高速化を行っています（特に FastIO）
-- **段階的なドキュメント整備**: 各モジュールの README と主要クラスの詳細ガイドを `docs/` 配下で整備しています。実装・検証状況は[現状監査レポート](./docs/STATUS.md)にまとめています
+- `lib.*` パッケージで開発し、AtCoder提出時は依存クラスを `Main.java` にバンドル
+- int / long 特化版を含むデータ構造と、FastIOなどの高速化実装
+- ビルドツール・外部ライブラリ不要
 
 ## 動作環境
 
-| 項目         | 内容                                                            |
-|--------------|-----------------------------------------------------------------|
-| JDK          | **Java 24（24.0.2 想定）** ※`lib.io.compat17` のみ Java 17 互換 |
-| ビルドツール | 不要（`javac` / `java` のみで動作）                             |
-| 外部依存     | なし（標準ライブラリのみ）                                      |
+Java 24を対象とします。`lib.io.compat17` はJava 17に対応しています。
 
 ## クイックスタート
 
-ビルドツールは使わず、`src/` をソースルートとして必要なクラスをコンパイルします。
+必要なクラスをコンパイルして実行します。
 
 ```powershell
 # 例: FastIOを使う場合（PowerShell）
@@ -56,17 +57,17 @@ public class Main {
 }
 ```
 
-AtCoderへはこのimport版を直接提出できません。
-`run` / `test` / `localtest` / `tomain` / `submit` は、必ずライブラリをバンドルした提出形へ変換してから実行します。
-バンドラを使えない場合は、`src/lib/` の依存元ファイルを確認して従来どおり手動展開できます。
+> [!IMPORTANT]
+> AtCoderにはimport版を提出できません。`run` / `test` / `localtest` / `tomain` / `submit` の前に、ライブラリを単一の `Main.java` へバンドルしてください。
 
 ## ライブラリ一覧
 
-実装状況: 印なし = 実装済み ／ 🚧 = 開発中・一部未実装 ／ 📝 = 未実装（TODO のみ）
-
-2026-09-02 時点のファイル単位の集計、利用不可API、検証状況、追加TODO一覧は[現状監査レポート](./docs/STATUS.md)を参照してください。
+全体の実装状況・検証状況は[現状監査レポート](./docs/STATUS.md)を参照してください。
 
 ### アルゴリズム（`lib.graph` / `lib.math` / `lib.search` / `lib.sort` / `lib.string` / `lib.util`）
+
+<details>
+<summary>アルゴリズム一覧</summary>
 
 | モジュール                                                        | 内容                                                                                                                            |
 |-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
@@ -108,7 +109,12 @@ AtCoderへはこのimport版を直接提出できません。
 | [String/StringSearch](./docs/string/StringSearch)                 | Z-Algorithm ※KMP / BM / RollingHash / AhoCorasick 📝                                                                            |
 | [未実装バックログ](./docs/STATUS.md#todoのみのクラス)             | 頻出の未作成データ構造・アルゴリズムをコメントのみのTODOクラスとして管理                                                        |
 
+</details>
+
 ### データ構造（`lib.ds`）
+
+<details>
+<summary>データ構造一覧</summary>
 
 | モジュール                                               | 内容                                                                                                                 |
 |----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -133,13 +139,16 @@ AtCoderへはこのimport版を直接提出できません。
 | [UnionFind](./docs/ds/UnionFind)                         | 経路圧縮 + rank 併用の素集合データ構造（グループ数・サイズ・辺数の管理付き）                                         |
 | [WaveletTree](./docs/ds/WaveletTree)                     | 📝 Wavelet Tree（TODO）                                                                                              |
 
+</details>
+
 ## ベンチマーク
 
 FastIO の性能計測・比較用の環境を [docs/io/Java24/Benchmark/](./docs/io/Java24/Benchmark)に用意しています。
 AtCoder 想定の JVM オプションでの繰り返し計測、CSV 出力、JIT / GC / JFR プロファイルの取得に対応しています。
 使い方は同フォルダの [README](./docs/io/Java24/Benchmark/README.md) を参照してください。
 
-## リポジトリ構成
+<details>
+<summary>リポジトリ構成</summary>
 
 ```
 .
@@ -161,15 +170,16 @@ AtCoder 想定の JVM オプションでの繰り返し計測、CSV 出力、JIT
 └── qodana.yaml          # 静的解析（Qodana）の設定
 ```
 
-- `src/lib` と `src/patterns` は通常のSources Root、`test` はTest Sources Rootとして扱います
-- `test/verify` の `Example.java` は使用例、`Check*.java` はオンラインジャッジ（[Library Checker](https://judge.yosupo.jp/) 等）への提出による検証用です
+- `src/lib` と `src/patterns` はソース、`test` は検証コードです。
+- `Example.java` は使用例、`Check*.java` は[Library Checker](https://judge.yosupo.jp/)などでの検証用です。
+
+</details>
 
 ## 開発ポリシー
 
-- **競技用途を優先**: 実行速度を最優先とし、バリデーションは最低限に留めています
-- **コーディング規約**: インデントはタブ、定数は UPPER_SNAKE_CASE、JavaDoc は随時更新します。
-- **静的解析**: [Qodana](https://www.jetbrains.com/qodana/)（qodana-jvm 2025.2 / JDK 24）を使用
-- **Issue / PR**: [テンプレート](./.github)を用意しています
+- 実行速度を重視し、入力検証は必要な範囲に絞っています。
+- 静的解析には [Qodana Community for JVM](https://www.jetbrains.com/qodana/jvm/) を使用します。
+- Issue / PR テンプレートは[こちら](./.github)です。
 
 ## ライセンス
 
