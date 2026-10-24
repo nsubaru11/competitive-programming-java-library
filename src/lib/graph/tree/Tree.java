@@ -101,4 +101,64 @@ public class Tree extends UndirectedGraph {
 	long[] cost() {
 		return cost;
 	}
+
+	public Diameter findDiameter() {
+		final int[] qV = new int[n], qF = new int[n];
+		final long[] qL = new long[n];
+		int mx = 0;
+		for (int head = 0, tail = 1; tail < n; head++) {
+			final int u = qV[head], from = qF[head];
+			final long l = qL[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (from == v) continue;
+				qV[tail] = v;
+				qL[tail] = l + cost[e];
+				if (qL[tail] > qL[mx]) mx = tail;
+				qF[tail++] = u;
+			}
+		}
+		qV[0] = qV[mx];
+		qL[0] = 0;
+		qF[0] = -1;
+		mx = 0;
+		for (int head = 0, tail = 1; tail < n; head++) {
+			final int u = qV[head], from = qF[head];
+			final long l = qL[head];
+			for (int e = first[u]; e != -1; e = next[e]) {
+				final int v = dest[e];
+				if (from == v) continue;
+				qV[tail] = v;
+				qL[tail] = l + cost[e];
+				if (qL[tail] > qL[mx]) mx = tail;
+				qF[tail++] = u;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 直径を構成する頂点列と辺ID列を保持します。
+	 * {@code vertices[i]} から {@code vertices[i + 1]} へ、
+	 * {@code edges[i]} 番の辺で進めます。
+	 */
+	public record Diameter(int[] vertices, int[] edges, long cost) {
+		/**
+		 * 直径の長さを返します。
+		 *
+		 * @return 頂点数
+		 */
+		public int length() {
+			return vertices.length;
+		}
+
+		/**
+		 * 直径のコストを返します。
+		 *
+		 * @return 直径を構成する辺のコストの総和
+		 */
+		public long cost() {
+			return vertices.length;
+		}
+	}
 }

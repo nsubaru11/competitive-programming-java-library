@@ -1,33 +1,32 @@
 package lib.ds.arrays;
 
+import static java.lang.Math.*;
+
 import java.util.*;
-import java.util.function.*;
+
+import lib.ds.*;
 
 /**
- * long型に特化した可変容量の配列deque。
- * <p>
- * 可変容量の配列dequeを実装します。競技プログラミングでの利用を想定し、
- * 内部容量を自動的に2のべき乗に正規化することで、剰余演算の代わりに高速なビット演算を利用します。
+ * long 型に特化した可変容量の循環 deque。
+ * 添字は先頭を0とし、有効範囲は {@code 0 <= i < size()} とする。空の poll・peek は例外、OrDefault 系は指定値を返す。
+ * equals・hashCode は Object の実装を継承し、内容による比較は行わない。
  */
 @SuppressWarnings("unused")
-public final class LongArrayDeque implements LongMutableArray, Cloneable {
+public final class LongArrayDeque implements LongMutableArray {
 	private int capacity;
 	private long[] buf;
 	private int head, size;
 
 	/**
-	 * 指定された初期容量でLongArrayDequeを構築します。
-	 *
-	 * @param capacity 初期容量。内部で2のべき乗に正規化されます。
+	 * 空の deque を構築する。初期容量は非負とし、最低1の2のべき乗へ切り上げる。確保可能な容量を指定する。
 	 */
 	public LongArrayDeque(final int capacity) {
 		this.capacity = 1 << (32 - Integer.numberOfLeadingZeros(capacity - 1));
-		this.buf = new long[this.capacity];
-		this.head = size = 0;
+		buf = new long[this.capacity];
 	}
 
 	/**
-	 * 指定された配列の要素を同じ順序で保持するLongArrayDequeを構築します。
+	 * 配列の全要素を同じ順序でコピーして構築する。
 	 */
 	public LongArrayDeque(final long[] a) {
 		this(a.length);
@@ -36,248 +35,189 @@ public final class LongArrayDeque implements LongMutableArray, Cloneable {
 	}
 
 	/**
-	 * 指定された配列の論理順を保持するLongArrayDequeを構築します。
+	 * コレクションの iterator 順に全要素をコピーして構築する。
 	 */
-	public LongArrayDeque(final LongArray a) {
+	public LongArrayDeque(final LongCollection a) {
 		this(a.size());
 		size = a.size();
-		for (int i = 0; i < size; i++) buf[i] = a.get(i);
+		final PrimitiveIterator.OfLong it = a.iterator();
+		for (int i = 0; i < size; i++) buf[i] = it.nextLong();
 	}
 
-	/**
-	 * supplierが生成するn要素を保持するLongArrayDequeを返します。
-	 */
-	public static LongArrayDeque generate(final int n, final LongSupplier init) {
-		final LongArrayDeque res = new LongArrayDeque(n);
-		for (int i = 0; i < n; i++) res.buf[i] = init.getAsLong();
-		res.size = n;
-		return res;
-	}
-
-	/**
-	 * バッファの末尾に要素を追加します。
-	 *
-	 * @param e 追加する要素
-	 * @return 常に {@code true}
-	 */
-	public boolean addLast(final long e) {
-		if (isFull()) grow();
-		buf[physicalIndex(size++)] = e;
-		return true;
-	}
-
-	/**
-	 * バッファの先頭に要素を追加します。
-	 *
-	 * @param e 追加する要素
-	 * @return 常に {@code true}
-	 */
-	public boolean addFirst(final long e) {
-		if (isFull()) grow();
-		head = physicalIndex(capacity - 1);
-		buf[head] = e;
-		size++;
-		return true;
-	}
-
-	/**
-	 * 指定したインデックスの要素を取得します。負のインデックスは、末尾からの相対位置として解釈されます (例: -1は最後の要素)。
-	 *
-	 * @param index 取得する要素のインデックス。{@code -size() <= index < size()} を満たす必要があります。
-	 * @return 指定されたインデックスの要素
-	 * @throws IndexOutOfBoundsException インデックスが範囲外の場合
-	 */
-	public long get(int index) {
-		if (index >= size || index < -size) throw new IndexOutOfBoundsException("index: " + index + ", size: " + size);
-		if (index < 0) index += size;
-		return buf[physicalIndex(index)];
-	}
-
-	/**
-	 * 末尾の要素を取得して削除します。
-	 *
-	 * @return 末尾の要素
-	 * @throws NoSuchElementException dequeが空の場合
-	 */
-	public long pollLast() {
-		if (isEmpty()) throw new NoSuchElementException("Deque is empty.");
-		return buf[physicalIndex(--size)];
-	}
-
-	/**
-	 * 先頭の要素を取得して削除します。
-	 *
-	 * @return 先頭の要素
-	 * @throws NoSuchElementException dequeが空の場合
-	 */
-	public long pollFirst() {
-		if (isEmpty()) throw new NoSuchElementException("Deque is empty.");
-		long first = buf[head];
-		size--;
-		head = physicalIndex(1);
-		return first;
-	}
-
-	/**
-	 * 末尾の要素を取得します。要素は削除されません。
-	 *
-	 * @return 末尾の要素
-	 * @throws NoSuchElementException dequeが空の場合
-	 */
-	public long peekLast() {
-		if (isEmpty()) throw new NoSuchElementException("Deque is empty.");
-		return buf[physicalIndex(size - 1)];
-	}
-
-	/**
-	 * 先頭の要素を取得します。要素は削除されません。
-	 *
-	 * @return 先頭の要素
-	 * @throws NoSuchElementException dequeが空の場合
-	 */
-	public long peekFirst() {
-		if (isEmpty()) throw new NoSuchElementException("Deque is empty.");
-		return buf[head];
-	}
-
-	/**
-	 * 指定されたインデックスの要素を上書きします。負のインデックスは、末尾からの相対位置として解釈されます (例: -1は最後の要素)。
-	 *
-	 * @param index 上書きする要素のインデックス。{@code -size() <= index < size()} を満たす必要があります。
-	 * @param e     新しい要素
-	 * @return 設定前の値
-	 * @throws IndexOutOfBoundsException インデックスが範囲外の場合
-	 */
-	public long set(int index, final long e) {
-		if (index < -size || size <= index) throw new IndexOutOfBoundsException("index: " + index + ", size: " + size);
-		if (index < 0) index += size;
-		int i = physicalIndex(index);
-		long old = buf[i];
-		buf[i] = e;
-		return old;
-	}
-
-	/**
-	 * 全要素を指定値で更新します。
-	 *
-	 * @param v 設定する値
-	 */
-	public void fill(final long v) {
-		head = 0;
-		Arrays.fill(buf, 0, size, v);
-	}
-
-	/**
-	 * 各論理添字に対して生成した値で全要素を更新します。
-	 *
-	 * @param init 論理添字から値を生成する関数
-	 */
-	public void setAll(final IntToLongFunction init) {
-		head = 0;
-		for (int i = 0; i < size; i++) buf[i] = init.applyAsLong(i);
-	}
-
-	/**
-	 * 指定した要素がバッファに含まれているかを調べます。
-	 *
-	 * @param e 検索対象の要素
-	 * @return 指定した要素が含まれている場合はtrue、含まれていない場合はfalse
-	 */
-	public boolean contains(final long e) {
-		for (int i = 0; i < size; i++) if (buf[physicalIndex(i)] == e) return true;
-		return false;
-	}
-
-	/**
-	 * バッファが空かどうかを返します。
-	 *
-	 * @return 現在の要素数が0の場合はtrue、それ以外の場合はfalse
-	 */
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	/**
-	 * バッファが満杯かどうかを返します。
-	 *
-	 * @return 現在の要素数が内部配列の容量に達している場合はtrue、それ以外の場合はfalse
-	 */
-	public boolean isFull() {
-		return size == capacity;
-	}
-
-	/**
-	 * 現在のバッファ内の要素数を返します。
-	 *
-	 * @return 現在の要素数
-	 */
 	public int size() {
 		return size;
 	}
 
 	/**
-	 * バッファの最大容量を返します。
-	 *
-	 * @return 現在の内部配列の容量
+	 * 現在の内部配列の容量を返す。要素の追加により拡張される。
 	 */
 	public int capacity() {
 		return capacity;
 	}
 
 	/**
-	 * バッファにこれ以上追加できる残りの容量を返します。
+	 * 指定した論理位置の値を返す。
 	 *
-	 * @return {@code capacity() - size()}
+	 * @throws IndexOutOfBoundsException 論理添字が範囲外の場合
 	 */
-	public int remainingCapacity() {
-		return capacity - size;
+	public long get(final int i) {
+		return buf[physicalIndex(Objects.checkIndex(i, size))];
 	}
 
 	/**
-	 * バッファ内の全ての要素を削除し、空の状態にします。
+	 * 先頭の要素を削除せず返す。
 	 *
-	 * @return このインスタンス
+	 * @throws NoSuchElementException deque が空の場合
 	 */
-	public LongArrayDeque clear() {
+	public long peekFirst() {
+		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
+		return buf[head];
+	}
+
+	/**
+	 * 先頭の要素を削除せず返す。空の場合は状態を変更せず defaultValue を返す。
+	 */
+	public long peekFirstOrDefault(final long defaultValue) {
+		if (isEmpty()) return defaultValue;
+		return buf[head];
+	}
+
+	/**
+	 * 末尾の要素を削除せず返す。
+	 *
+	 * @throws NoSuchElementException deque が空の場合
+	 */
+	public long peekLast() {
+		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
+		return buf[physicalIndex(size - 1)];
+	}
+
+	/**
+	 * 末尾の要素を削除せず返す。空の場合は状態を変更せず defaultValue を返す。
+	 */
+	public long peekLastOrDefault(final long defaultValue) {
+		if (isEmpty()) return defaultValue;
+		return buf[physicalIndex(size - 1)];
+	}
+
+	/**
+	 * 指定した論理位置を v に更新し、更新前の値を返す。
+	 *
+	 * @throws IndexOutOfBoundsException 論理添字が範囲外の場合
+	 */
+	public long set(final int i, final long v) {
+		final int p = physicalIndex(Objects.checkIndex(i, size));
+		final long old = buf[p];
+		buf[p] = v;
+		return old;
+	}
+
+	/**
+	 * 先頭に v を追加する。満杯の場合は内部容量を2倍に拡張する。
+	 */
+	public void addFirst(final long v) {
+		if (size == capacity) grow();
+		head = physicalIndex(capacity - 1);
+		buf[head] = v;
+		size++;
+	}
+
+	/**
+	 * 末尾に v を追加する。満杯の場合は内部容量を2倍に拡張する。
+	 */
+	public void addLast(final long v) {
+		if (size == capacity) grow();
+		buf[physicalIndex(size++)] = v;
+	}
+
+	/**
+	 * 先頭の要素を削除して返す。
+	 *
+	 * @throws NoSuchElementException deque が空の場合
+	 */
+	public long pollFirst() {
+		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
+		final long first = buf[head];
+		size--;
+		head = physicalIndex(1);
+		return first;
+	}
+
+	/**
+	 * 先頭の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。
+	 */
+	public long pollFirstOrDefault(final long defaultValue) {
+		if (isEmpty()) return defaultValue;
+		final long first = buf[head];
+		size--;
+		head = physicalIndex(1);
+		return first;
+	}
+
+	/**
+	 * 末尾の要素を削除して返す。
+	 *
+	 * @throws NoSuchElementException deque が空の場合
+	 */
+	public long pollLast() {
+		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
+		return buf[physicalIndex(--size)];
+	}
+
+	/**
+	 * 末尾の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。
+	 */
+	public long pollLastOrDefault(final long defaultValue) {
+		if (isEmpty()) return defaultValue;
+		return buf[physicalIndex(--size)];
+	}
+
+	/**
+	 * 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。
+	 */
+	public void fill(final long v) {
+		Arrays.fill(buf, 0, size, v);
+		head = 0;
+	}
+
+	/**
+	 * 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。
+	 */
+	public void clear() {
 		head = size = 0;
-		return this;
 	}
 
 	/**
-	 * このdequeの独立したコピーを返します。
-	 *
-	 * @return 複製したdeque
+	 * 先頭から末尾の論理順で独立した配列へコピーする。
 	 */
-	public LongArrayDeque clone() {
-		try {
-			LongArrayDeque rb = (LongArrayDeque) super.clone();
-			rb.buf = Arrays.copyOf(this.buf, this.capacity);
-			return rb;
-		} catch (CloneNotSupportedException e) {
-			throw new AssertionError();
-		}
+	public long[] toArray() {
+		final long[] res = new long[size];
+		final int n = min(size, capacity - head);
+		System.arraycopy(buf, head, res, 0, n);
+		System.arraycopy(buf, 0, res, n, size - n);
+		return res;
 	}
 
 	/**
-	 * 要素と順序が一致するLongArrayDequeかを判定します。
-	 *
-	 * @param o 比較対象のオブジェクト
-	 * @return 要素と順序が一致する場合はtrue
+	 * 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。
 	 */
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof LongArrayDeque other)) return false;
-		if (size != other.size) return false;
-		for (int i = 0; i < size; i++) {
-			if (buf[physicalIndex(i)] != other.buf[other.physicalIndex(i)]) return false;
-		}
-		return true;
+	public PrimitiveIterator.OfLong iterator() {
+		return new PrimitiveIterator.OfLong() {
+			private int i = 0;
+
+			public boolean hasNext() {
+				return i < size;
+			}
+
+			public long nextLong() {
+				if (!hasNext()) throw new NoSuchElementException();
+				return buf[physicalIndex(i++)];
+			}
+		};
 	}
 
 	/**
-	 * バッファ内の要素をスペースで区切った文字列として返します。
-	 *
-	 * @return バッファ内の要素を表す文字列。バッファが空の場合は空文字列
+	 * 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。
 	 */
 	public String toString() {
 		if (isEmpty()) return "";
@@ -287,76 +227,17 @@ public final class LongArrayDeque implements LongMutableArray, Cloneable {
 		return sb.toString();
 	}
 
-	/**
-	 * 要素と順序に基づくハッシュコードを返します。
-	 *
-	 * @return 論理状態に基づいたハッシュコード
-	 */
-	public int hashCode() {
-		if (isEmpty()) return 0;
-		int result = 1;
-		for (long element : this) result = 31 * result + Long.hashCode(element);
-		return result;
-	}
-
-	/**
-	 * バッファの論理状態（headからsize個の要素）を含む新しいlong配列を返します。
-	 *
-	 * @return 現在のバッファ内容を含む配列
-	 */
-	public long[] toArray() {
-		long[] res = new long[size];
-		for (int i = 0; i < size; i++) res[i] = buf[physicalIndex(i)];
-		return res;
-	}
-
-	/**
-	 * 指定された配列にバッファの論理状態をコピーして返します。 渡された配列のサイズが足りない場合は、新しい配列が生成されます。
-	 *
-	 * @param data コピー先の配列
-	 * @return バッファ内容がコピーされた配列
-	 */
-	public long[] toArray(final long[] data) {
-		if (data.length < size) return toArray();
-		for (int i = 0; i < size; i++) data[i] = buf[physicalIndex(i)];
-		return data;
-	}
-
-	/**
-	 * 先頭から順に走査するiteratorを返します。
-	 *
-	 * @return バッファ内の要素を順に返すIterator
-	 */
-	public PrimitiveIterator.OfLong iterator() {
-		return new PrimitiveIterator.OfLong() {
-			private int index = 0;
-
-			public boolean hasNext() {
-				return index < size;
-			}
-
-			public long nextLong() {
-				return buf[physicalIndex(index++)];
-			}
-		};
-	}
-
-	/**
-	 * 論理インデックスから実インデックスを取得します。
-	 *
-	 * @param logicalIndex 論理インデックス
-	 * @return 実インデックス
-	 */
-	private int physicalIndex(int logicalIndex) {
-		return (head + logicalIndex) & (capacity - 1);
+	private int physicalIndex(final int i) {
+		return (head + i) & (capacity - 1);
 	}
 
 	private void grow() {
-		long[] newBuf = new long[capacity << 1];
-		for (int i = 0; i < size; i++) newBuf[i] = buf[physicalIndex(i)];
-		buf = newBuf;
+		final long[] nb = new long[capacity << 1];
+		final int n = capacity - head;
+		System.arraycopy(buf, head, nb, 0, n);
+		System.arraycopy(buf, 0, nb, n, head);
+		buf = nb;
 		head = 0;
 		capacity <<= 1;
 	}
-
 }

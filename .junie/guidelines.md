@@ -58,4 +58,4 @@ javac --release 24 -encoding UTF-8 -cp out -d out/test $verify
 4. `lib.*`依存を追加した場合は、推移的バンドル結果もコンパイルする。
 5. 関連する`docs/`、ルートREADME、テンプレートを更新する。
 
-Java 24 FastIOのベンチマークは`docs/io/Java24/Benchmark/run_tests_24.sh`または`.bat`を利用し、生成物は同ディレクトリの`work/`以下に置きます。
+Java 24 FastIOのベンチマークは`docs/io/java24/Benchmark/run_tests_24.sh`または`.bat`を利用し、生成物は同ディレクトリの`work/`以下に置きます。

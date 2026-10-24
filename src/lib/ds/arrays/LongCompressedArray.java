@@ -1,13 +1,12 @@
 package lib.ds.arrays;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 
 import lib.search.*;
 
 /**
- * long配列の座標圧縮結果をint値で保持します。
+ * long配列の座標圧縮結果をint値で保持する。
+ * 論理添字は {@code 0 <= i < length} とする。空配列にも対応する。
  */
 public final class LongCompressedArray implements IntArray {
 	public final int length, uniqueSize;
@@ -16,33 +15,30 @@ public final class LongCompressedArray implements IntArray {
 	private final int[] compressed, ranks;
 	private final long[] sorted;
 
+	/**
+	 * 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。
+	 */
 	public LongCompressedArray(final long[] a) {
 		this(a, RankType.DENSE, false);
 	}
 
+	/**
+	 * 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。
+	 */
 	public LongCompressedArray(final long[] a, final RankType rankType) {
 		this(a, rankType, false);
 	}
 
-	public LongCompressedArray(final LongArray a) {
-		this(a.toArray(), RankType.DENSE, false);
-	}
-
-	public LongCompressedArray(final LongArray a, final RankType rankType) {
-		this(a.toArray(), rankType, false);
-	}
-
-	public LongCompressedArray(final LongArray a, final RankType rankType, final boolean oneBased) {
-		this(a.toArray(), rankType, oneBased);
-	}
-
+	/**
+	 * 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。
+	 */
 	public LongCompressedArray(final long[] a, final RankType rankType, final boolean oneBased) {
 		this.rankType = rankType;
 		this.oneBased = oneBased;
 		length = a.length;
 		compressed = new int[length];
-		sorted = copyOf(a, length);
-		sort(sorted);
+		sorted = a.clone();
+		Arrays.sort(sorted);
 		ranks = new int[length];
 		if (length == 0) {
 			uniqueSize = 0;
@@ -83,22 +79,37 @@ public final class LongCompressedArray implements IntArray {
 				}
 				break;
 		}
-		this.uniqueSize = u;
-		for (int i = 0; i < length; i++) {
-			compressed[i] = ranks[binarySearch(sorted, a[i])];
-		}
+		uniqueSize = u;
+		for (int i = 0; i < length; i++) compressed[i] = ranks[Arrays.binarySearch(sorted, a[i])];
 	}
 
-	public int get(final int i) {
-		return compressed[i];
+	/**
+	 * 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。
+	 */
+	public LongCompressedArray(final LongArray a) {
+		this(a.toArray(), RankType.DENSE, false);
 	}
 
-	public int rankOfValue(final long v) {
-		return ranks[binarySearch(sorted, v)];
+	/**
+	 * 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。
+	 */
+	public LongCompressedArray(final LongArray a, final RankType rankType) {
+		this(a.toArray(), rankType, false);
 	}
 
-	public long valueOfRank(final int rank) {
-		return sorted[binarySearch(ranks, rank)];
+	/**
+	 * 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。
+	 */
+	public LongCompressedArray(final LongArray a, final RankType rankType, final boolean oneBased) {
+		this(a.toArray(), rankType, oneBased);
+	}
+
+	public int size() {
+		return length;
+	}
+
+	public int uniqueSize() {
+		return uniqueSize;
 	}
 
 	public RankType rankType() {
@@ -109,67 +120,110 @@ public final class LongCompressedArray implements IntArray {
 		return oneBased;
 	}
 
-	public int uniqueSize() {
-		return uniqueSize;
+	/**
+	 * 指定した有効な論理添字の圧縮後の順位を返す。
+	 *
+	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
+	 */
+	public int get(final int i) {
+		return compressed[Objects.checkIndex(i, length)];
 	}
 
-	public int size() {
-		return length;
+	/**
+	 * 入力に存在する値 v の順位を返す。
+	 */
+	public int rankOfValue(final long v) {
+		return ranks[Arrays.binarySearch(sorted, v)];
 	}
 
-	public long[] restore() {
-		final long[] res = new long[length];
-		for (int i = 0; i < length; i++) {
-			res[i] = sorted[binarySearch(ranks, compressed[i])];
-		}
-		return res;
+	/**
+	 * 実在する順位 rank に対応する元の値を返す。
+	 */
+	public long valueOfRank(final int rank) {
+		return sorted[Arrays.binarySearch(ranks, rank)];
 	}
 
+	/**
+	 * 圧縮前の値 v が入力に存在するかを返す。
+	 */
 	public boolean containsValue(final long v) {
-		return binarySearch(sorted, v) >= 0;
+		return Arrays.binarySearch(sorted, v) >= 0;
 	}
 
+	/**
+	 * 圧縮前の値 v の出現回数を返す。
+	 */
 	public int count(final long v) {
 		return ArrayBinarySearch.count(sorted, v);
 	}
 
 	/**
-	 * 圧縮後の順位を元配列順でコピーして返します。
+	 * 元の値と配列順を復元した独立した配列を返す。
 	 */
-	public int[] toArray() {
-		return copyOf(compressed, length);
+	public long[] restore() {
+		final long[] res = new long[length];
+		for (int i = 0; i < length; i++) res[i] = sorted[Arrays.binarySearch(ranks, compressed[i])];
+		return res;
 	}
 
 	/**
-	 * 圧縮後の順位を元配列順でコピーして返します。
+	 * 圧縮後の順位を元配列順でコピーして返す。
+	 */
+	public int[] toArray() {
+		return compressed.clone();
+	}
+
+	/**
+	 * 圧縮後の順位を元配列順でコピーして返す。
 	 */
 	public int[] compressed() {
 		return toArray();
 	}
 
+	/**
+	 * 重複を含むソート済み値のコピーを返す。
+	 */
 	public long[] sorted() {
-		return copyOf(sorted, length);
+		return sorted.clone();
 	}
 
+	/**
+	 * ソート済み値に対応する順位配列のコピーを返す。
+	 */
 	public int[] ranks() {
-		return copyOf(ranks, length);
+		return ranks.clone();
 	}
 
+	/**
+	 * 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。
+	 */
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
-			int i = 0;
-
-			public int nextInt() {
-				return compressed[i++];
-			}
+			private int i = 0;
 
 			public boolean hasNext() {
 				return i < length;
 			}
+
+			public int nextInt() {
+				if (!hasNext()) throw new NoSuchElementException();
+				return compressed[i++];
+			}
 		};
 	}
 
+	/**
+	 * 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。
+	 */
+	public Spliterator.OfInt spliterator() {
+		return Arrays.spliterator(compressed);
+	}
+
+	/**
+	 * 論理順の要素を半角スペースで区切った文字列として返す。
+	 */
 	public String toString() {
+		if (length == 0) return "";
 		final StringBuilder sb = new StringBuilder(11 * length - 1);
 		sb.append(compressed[0]);
 		for (int i = 1; i < length; i++) sb.append(' ').append(compressed[i]);

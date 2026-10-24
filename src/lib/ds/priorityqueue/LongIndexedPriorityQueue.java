@@ -70,33 +70,6 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 	}
 
 	/**
-	 * init(i)をindex iのコストとして持つ昇順キューを返します。
-	 */
-	public static LongIndexedPriorityQueue generate(final int n, final IntToLongFunction init) {
-		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(n);
-		q.setAll(init);
-		return q;
-	}
-
-	/**
-	 * init(i)をindex iの昇順または降順コストとして持つキューを返します。
-	 */
-	public static LongIndexedPriorityQueue generate(final int n, final IntToLongFunction init, final boolean isDescendingOrder) {
-		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(n, isDescendingOrder);
-		q.setAll(init);
-		return q;
-	}
-
-	/**
-	 * init(i)をindex iのComparator順コストとして持つキューを返します。
-	 */
-	public static LongIndexedPriorityQueue generate(final int n, final IntToLongFunction init, final LongComparator comparator) {
-		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(n, comparator);
-		q.setAll(init);
-		return q;
-	}
-
-	/**
 	 * activeなら更新し、そうでなければ登録します。
 	 */
 	public void set(final int i, final long c) {

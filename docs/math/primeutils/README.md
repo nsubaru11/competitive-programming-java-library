@@ -1,0 +1,9 @@
+# PrimeUtils
+
+[`PrimeUtils`](../../../src/lib/math/PrimeUtils.java) は、一回限りの素数判定、素数個数、範囲内の素数列挙を提供する。
+
+## クラス一覧
+
+| クラス | 用途 | Guide | ソース | Example / 検証 |
+|--------|------|-------|--------|----------------|
+| `PrimeUtils` | `PrimeUtils`は、テーブルを保持せず、一回限りの素数判定・個数計算・列挙を行う静的ユーティリティである。 | [PrimeUtilsGuide](./PrimeUtilsGuide.md) | [Java](../../../src/lib/math/PrimeUtils.java) | — |

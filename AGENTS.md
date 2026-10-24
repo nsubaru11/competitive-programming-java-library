@@ -41,6 +41,7 @@
 
 ## Developer Workflows
 
+- After completing work, remove temporary build outputs and editing scripts created for the task. Do not leave them in `out/` or include them in deliverables. Prefer an OS temporary directory for one-off editing scripts, and remove those scripts after use. Preserve pre-existing files unless cleanup is requested.
 - There is no Maven or Gradle build. Compile the source roots directly with `javac`.
 - Before creating a commit, read `.github/COMMIT_MESSAGE_TEMPLATE.md` and follow it. Commit messages must be written in Japanese using one of the documented prefixes (`feat`, `refactor`, `docs`, `style`, `test`, `perf`, `fix`) in the form `prefix: 概要`; add the `詳細:` section with bullet points when useful.
 - Full Java 24 smoke compile in PowerShell:
@@ -53,7 +54,7 @@
 
 - Check Java 17 compatibility separately for `src/lib/io/compat17/*.java` using `--release 17`.
 - Run executable checks by fully qualified name, for example `java -cp "out;out/test" verify.graph.mst.Example` on Windows.
-- The Java 24 benchmark entrypoints are `docs/io/Java24/Benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
+- The Java 24 benchmark entrypoints are `docs/io/java24/Benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
 
 ## Submission Integration
 
@@ -62,10 +63,23 @@
 - Keep a manual fallback available: every bundled FQCN maps back to its source under `src/`, and bundler output reports the inlined class list.
 - The AtCoder repository may mount this repository as `library/` or set `ATCODER_LIB_SRC` to this repository's `src` directory.
 
+## Documentation Conventions
+
+- Write Japanese documentation in concise plain style (`常体`), using forms such as `〜する` and `〜である` instead of `です・ます`. Noun phrases are suitable for headings, labels, and short table cells; keep explicit predicates when a fragment could obscure behavior or conditions.
+- Treat the documentation as a reference for understanding and implementing algorithms. Use descriptive headings, exact class and method names, and concise statements. Avoid conversational filler, repeated explanations, and unexplained pronouns. Do not sacrifice precision merely to reduce token count.
+- A module README gives a short module summary and a class list with each class's purpose and links to its Guide and source. Include supporting and tree-related classes that are useful for understanding the module, not only top-level algorithms. List generic, `int`, and `long` variants separately. Link Examples or verification files when they exist; use `—` for unavailable links. Adjust relative paths to the README's location.
+- A class Guide documents the class's role, features, dependencies, complete public API including every overload, preconditions and cautions, time and space complexity, performance characteristics, and implementation history. In `利用例`, link to `Example.java` when it exists and do not embed code blocks or per-class usage examples; the Example file is the canonical location. When it has not been implemented, write only `準備中` and omit the link and code blocks. Omit inapplicable sections and class variants. For Guides covering multiple classes, identify each class's API and differences. Label the README backlink with the destination README title.
+- A reference-materials document records sources actually consulted, algorithm definitions, external URLs, and how each source relates to the implementation. Distinguish theoretical definitions from reference implementations and verification targets. Remove unused source categories. For external implementations, check and record applicable licenses and modifications. Keep source citations out of module READMEs and class Guides; link to the reference-materials document when needed.
+- Keep each detailed explanation at its canonical location and link to it from other pages instead of duplicating it. Use relative links for files inside the repository.
+- Verify documentation claims against `src/`. Use exact API signatures. State actual preconditions and behavior; do not imply that invalid arguments are checked when the implementation does not check them.
+- Define symbols such as `n` and `m` before using them in complexity statements. State index bases and interval conventions explicitly where they affect an API. Mark amortized complexity as amortized.
+- Record source implementation changes in Guide history; omit documentation-only edits. In history version numbers, use the first digit for feature additions and the second digit for bug fixes or small improvements.
+- Use `docs/README_TEMPLATE.md`, `docs/GuideTemplate.md`, and `docs/ReferenceTemplate.md` as structural templates. Keep general writing rules here rather than duplicating them in template instructions.
+
 ## Integration and Maintenance
 
 - Static analysis is configured in `qodana.yaml` with JDK 24.
-- When creating or updating a detailed class guide, follow the root `GuideTemplate.md`, including features, dependencies, complete overload-aware method tables, examples, cautions, performance characteristics, and implementation version history.
+- When creating or updating a detailed class guide, follow the root `docs/GuideTemplate.md`, including features, dependencies, complete overload-aware method tables, examples, cautions, performance characteristics, and implementation version history.
 - When API behavior or location changes, update the relevant module README under `docs/`, detailed guides, root `README.md`, and verification code.
 - Prefer minimal API breakage; contest solutions and the bundler consume these classes as source.
 - Some documentation may lag implementation. Verify claims against `src/` before editing.

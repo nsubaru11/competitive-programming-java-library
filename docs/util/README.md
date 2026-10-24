@@ -1,0 +1,26 @@
+# `lib.util`
+
+`src/lib/util`にある汎用ユーティリティの実装一覧である。
+
+| 分野                                           | 主な実装                                 |
+|------------------------------------------------|------------------------------------------|
+| [変換](./conversions/README.md)                | 数値・文字・配列の変換                   |
+| [Dice](./dice/README.md)                       | サイコロの向きと回転                     |
+| [数字・桁](./digitutils/README.md)             | 桁数や十進表現の操作                     |
+| [分割統治](./divideconquer/README.md)          | Divide and Conquerに関する処理           |
+| [書式化](./formatutils/README.md)              | 数値・配列の文字列化                     |
+| [関数型インターフェース](./function/README.md) | プリミティブ特化の関数型インターフェース |
+| [Mo's Algorithm](./moalgorithm/README.md)      | 区間クエリのオフライン処理               |
+| [順列](./permutation/README.md)                | 順列の生成・辞書順操作                   |
+
+## ルートパッケージのクラス
+
+| クラス | ソース | 用途 |
+|--------|--------|------|
+| `ArrayUtils` | [Java](../../src/lib/util/ArrayUtils.java) | 配列の集計・探索・変換・部分列処理 |
+
+## 内部パッケージ
+
+| パッケージ          | ソース                             | ドキュメント                                   |
+|---------------------|------------------------------------|------------------------------------------------|
+| `lib.util.function` | [src](../../src/lib/util/function) | [関数型インターフェース](./function/README.md) |

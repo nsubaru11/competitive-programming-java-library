@@ -164,10 +164,6 @@ public final class Test {
 		check(q.getOrDefault(0, -1) == -1);
 		q.clear();
 		check(q.getLastOrDefault(0, -1) == -1);
-
-		final LongIndexedPriorityQueue generated = LongIndexedPriorityQueue.generate(3, i -> (long) i * i, true);
-		check(generated.peek() == 4);
-		check(generated.indexCount() == 3);
 	}
 
 	private static void checkGenericIndexed() {
@@ -192,19 +188,12 @@ public final class Test {
 		check(jobs.peekOrDefault(null) != null);
 		jobs.clear();
 		check(jobs.peekIndexOrDefault(-1) == -1);
-
-		final IndexedPriorityQueue<Integer> generated = IndexedPriorityQueue.generate(4, i -> i * i, true);
-		check(generated.peek() == 9);
 	}
 
 	private static void checkConstructorsAndDefaults() {
 		final IntPriorityQueue iq = new IntPriorityQueue(new int[]{7, 1, 5, 3});
 		check(iq.peek() == 1);
 		check(iq.peekSecond() == 3);
-
-		final IntIndexedPriorityQueue indexed = IntIndexedPriorityQueue.generate(4, i -> i * 10, true);
-		check(indexed.peekIndex() == 3);
-		check(indexed.peek() == 30);
 
 		final IntIndexedPriorityQueue fromArray = new IntIndexedPriorityQueue(new int[]{7, 1, 5, 3});
 		check(fromArray.peek() == 1);

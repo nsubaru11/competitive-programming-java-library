@@ -3,8 +3,10 @@ package lib.ds.segmenttree;
 import java.util.*;
 import java.util.function.*;
 
+import lib.ds.*;
+
 @SuppressWarnings("unused")
-public final class LongSegmentTree implements Iterable<Long> {
+public final class LongSegmentTree implements LongCollection {
 	private final int n, size;
 	private final long identity;
 	private final LongBinaryOperator operator;
@@ -30,41 +32,41 @@ public final class LongSegmentTree implements Iterable<Long> {
 		buildAll();
 	}
 
+	public void fill(final long val) {
+		Arrays.fill(tree, size, size + n, val);
+		buildAll();
+	}
+
+	public void setAll(final IntToLongFunction init) {
+		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.applyAsLong(i);
+		buildAll();
+	}
+
 	public long get(final int i) {
 		return tree[size + i];
 	}
 
-	public long set(final int i, final long e) {
-		return apply(i, 0, e);
+	public long set(final int i, final long v) {
+		return apply(i, 0, v);
 	}
 
 	public long add(final int i, final long d) {
 		return apply(i, 1, d);
 	}
 
-	public long multiply(final int i, final long a) {
-		return apply(i, a, 0);
+	public long multiply(final int i, final long m) {
+		return apply(i, m, 0);
 	}
 
-	public long apply(final int i, final long a, final long b) {
+	public long apply(final int i, final long m, final long d) {
 		final int idx = size + i;
-		tree[idx] = tree[idx] * a + b;
+		tree[idx] = tree[idx] * m + d;
 		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
 		return tree[idx];
 	}
 
-	public long apply(final int i, final long v, final LongBinaryOperator op) {
-		return apply(i, 0, op.applyAsLong(tree[size + i], v));
-	}
-
-	public void fill(final long val) {
-		Arrays.fill(tree, size, size + n, val);
-		buildAll();
-	}
-
-	public void setAll(final IntToLongFunction func) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.applyAsLong(i);
-		buildAll();
+	public long apply(final int i, final long x, final LongBinaryOperator f) {
+		return apply(i, 0, f.applyAsLong(tree[size + i], x));
 	}
 
 	public long query(final int l, final int r) {
@@ -133,10 +135,6 @@ public final class LongSegmentTree implements Iterable<Long> {
 		return n;
 	}
 
-	private void buildAll() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsLong(tree[i << 1], tree[(i << 1) | 1]);
-	}
-
 	public PrimitiveIterator.OfLong iterator() {
 		return new PrimitiveIterator.OfLong() {
 			private int idx = 0;
@@ -152,12 +150,14 @@ public final class LongSegmentTree implements Iterable<Long> {
 		};
 	}
 
-	@Override
 	public String toString() {
 		final StringBuilder s = new StringBuilder();
 		s.append(tree[size]);
-		for (int i = size + 1; i < size + n; i++) s.append(' ').append(tree[i]);
+		for (int i = 1; i < n; i++) s.append(' ').append(tree[i + size]);
 		return s.toString();
 	}
 
+	private void buildAll() {
+		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsLong(tree[i << 1], tree[(i << 1) | 1]);
+	}
 }

@@ -1,6 +1,5 @@
 package lib.ds.sparsetable;
 
-import java.util.*;
 import java.util.function.*;
 
 import lib.math.*;

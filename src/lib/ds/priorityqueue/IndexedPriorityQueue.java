@@ -65,33 +65,6 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 		for (int i = 0; i < size; i++) heap[i] = position[i] = i;
 	}
 
-	/**
-	 * init(i)をindex iの自然順序コストとして持つキューを返します。
-	 */
-	public static <T extends Comparable<? super T>> IndexedPriorityQueue<T> generate(final int n, final IntFunction<? extends T> init) {
-		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, Comparator.naturalOrder());
-		q.setAll(init);
-		return q;
-	}
-
-	/**
-	 * init(i)をindex iの自然順序または逆順コストとして持つキューを返します。
-	 */
-	public static <T extends Comparable<? super T>> IndexedPriorityQueue<T> generate(final int n, final IntFunction<? extends T> init, final boolean isDescendingOrder) {
-		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, naturalComparator(isDescendingOrder));
-		q.setAll(init);
-		return q;
-	}
-
-	/**
-	 * init(i)をindex iのComparator順コストとして持つキューを返します。
-	 */
-	public static <T> IndexedPriorityQueue<T> generate(final int n, final IntFunction<? extends T> init, final Comparator<? super T> comparator) {
-		final IndexedPriorityQueue<T> q = new IndexedPriorityQueue<>(n, comparator);
-		q.setAll(init);
-		return q;
-	}
-
 	private static <T> Comparator<? super T> naturalComparator(final boolean isDescendingOrder) {
 		return isDescendingOrder ? (Comparator<? super T>) Comparator.reverseOrder() : (Comparator<? super T>) Comparator.naturalOrder();
 	}

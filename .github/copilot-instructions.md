@@ -66,9 +66,9 @@ javac --release 24 -encoding UTF-8 -cp out -d out/test $verify
 
 ## ドキュメント保守
 
-クラスの詳細Guideを作成・更新する場合は、ルートの`GuideTemplate.md`に従い、特徴、依存関係、全オーバーロードを含むメソッド表、利用例、注意事項、性能特性、実装のバージョン履歴を記載します。
+クラスの詳細Guideを作成・更新する場合は、ルートの`../docs/GuideTemplate.md`に従い、特徴、依存関係、全オーバーロードを含むメソッド表、利用例、注意事項、性能特性、実装のバージョン履歴を記載します。
 
-APIや配置を変えた場合は、関連する`docs/`のREADME・ガイド、ルート`README.md`、必要に応じて`README_TEMPLATE.md`を同時に更新します。古い`Algorithms/`や`DataStructures/`パス、デフォルトパッケージ前提の説明を追加しないでください。
+APIや配置を変えた場合は、関連する`docs/`のREADME・ガイド、ルート`README.md`、必要に応じて`../docs/README_TEMPLATE.md`を同時に更新します。古い`Algorithms/`や`DataStructures/`パス、デフォルトパッケージ前提の説明を追加しないでください。
 
 ## JDKバージョン
 

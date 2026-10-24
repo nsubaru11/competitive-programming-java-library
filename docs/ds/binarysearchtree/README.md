@@ -1,0 +1,86 @@
+# Binary Search Tree
+
+## 概要
+
+二分探索木は、効率的な検索、挿入、削除操作を提供するデータ構造である。
+このライブラリでは、基本的な二分探索木と乱択平衡二分探索木（Treap）の実装、および将来的に実装予定の自己平衡二分探索木（赤黒木、B木、van Emde Boas木）のクラスを提供している。
+
+## クラス一覧
+
+| クラス | 用途 | Guide | ソース | Example / 検証 |
+|--------|------|-------|--------|----------------|
+| `BinarySearchTree` | 汎用的な二分探索木の実装で、要素の追加、検索、削除などの基本操作を提供 | [BinarySearchTreeGuide](./BinarySearchTreeGuide.md) | [Java](../../../src/lib/ds/set/BinarySearchTree.java) | — |
+| `BTree` | 多分岐の平衡探索木であるB木を実装するためのTODO雛形である。 | [BTreeGuide](./BTreeGuide.md) | [Java](../../../src/lib/ds/set/BTree.java) | — |
+| `RedBlackTree` | 自己平衡二分探索木の一種で、赤黒規則に従って平衡を維持 | [RedBlackTreeGuide](./RedBlackTreeGuide.md) | [Java](../../../src/lib/ds/set/RedBlackTree.java) | — |
+| `Treap` | 乱択優先度による平衡二分探索木。順序統計（インデックスアクセス・rank）付きの順序付き集合 | — | [Java](../../../src/lib/ds/set/Treap.java) | — |
+| `IntTreap` | int特化版のTreap（ボクシング回避による高速化） | — | [Java](../../../src/lib/ds/set/IntTreap.java) | [Check1.java](../../../test/verify/ds/set/inttreap/Check1.java) |
+| `VanEmdeBoasTree` | 整数キー集合に対する挿入・削除・前後検索を $\mathcal{O}(\log \log U)$ で提供 | — | [Java](../../../src/lib/ds/set/VanEmdeBoasTree.java) | — |
+
+## 実装クラス
+
+### [BinarySearchTree](../../../src/lib/ds/set/BinarySearchTree.java)
+
+- **用途**：汎用的な二分探索木の実装で、要素の追加、検索、削除などの基本操作を提供
+- **特徴**：
+	- ジェネリック型をサポート（Comparable<T>を実装する任意の型）
+	- カスタムComparatorによる比較をサポート
+	- 境界検索機能（higher, ceiling, lower, floor）を提供
+	- イテレータによる要素の走査をサポート
+- **主な操作**:
+	- `add(T n)`: 要素を追加
+	- `remove(T n)`: 要素を削除
+	- `indexOf(T n)`: 要素のインデックスを取得
+	- `get(int idx)`: インデックスから要素を取得
+	- `higher(T n)`, `ceiling(T n)`, `lower(T n)`, `floor(T n)`: 境界検索
+- **時間計算量**：
+	- 検索/挿入/削除: 平均 $\mathcal{O}(\log n)$、最悪 $\mathcal{O}(n)$
+	- 走査: $\mathcal{O}(n)$
+- **空間計算量**：$\mathcal{O}(n)$、ここでnは要素数
+
+### [Treap](../../../src/lib/ds/set/Treap.java)
+
+- **用途**：乱択優先度による平衡二分探索木。順序統計（インデックスアクセス・rank）付きの順序付き集合
+- **特徴**：
+	- ジェネリック型とカスタムComparatorをサポート
+	- 順位検索（`getByIndex`, `indexOf`, `rank`）と境界検索（higher, ceiling, lower, floor）を提供
+	- xorshiftによる軽量な乱数で優先度を割り当て
+- **時間計算量**：検索/挿入/削除/順位検索 期待 $\mathcal{O}(\log n)$
+- **空間計算量**：$\mathcal{O}(n)$
+
+### [IntTreap](../../../src/lib/ds/set/IntTreap.java)（一部未実装）
+
+- **用途**：int特化版のTreap（ボクシング回避による高速化）
+- **注意**：`split` 系メソッドは未実装（呼び出すと例外）、`merge` はキー範囲が交差する場合に未対応（TODO）
+
+### [VanEmdeBoasTree](../../../src/lib/ds/set/VanEmdeBoasTree.java) (計画中)
+
+- **用途**：整数キー集合に対する挿入・削除・前後検索を $\mathcal{O}(\log \log U)$ で提供
+- **特徴**：実装予定（TODO）
+
+### [RedBlackTree](../../../src/lib/ds/set/RedBlackTree.java) (計画中)
+
+- **用途**：自己平衡二分探索木の一種で、赤黒規則に従って平衡を維持
+- **特徴**：
+	- 各ノードに色（赤または黒）を付与
+	- 特定の規則に従って平衡を維持
+- **時間計算量**：
+	- 検索/挿入/削除: $\mathcal{O}(\log n)$
+- **空間計算量**：$\mathcal{O}(n)$
+
+### [BTree](../../../src/lib/ds/set/BTree.java)（未実装）
+
+- **用途**：多分岐の自己平衡探索木で、ディスクアクセスを最小化
+- **状態**：クラスとTODOコメントのみで、公開API・内部ロジックはない
+
+## アルゴリズム（データ構造）選択ガイド
+
+- **BinarySearchTree**: メモリ使用量が重要で、データが比較的ランダムに分布している場合に適している。実装がシンプルで理解しやすいという利点がある。
+- **Treap / IntTreap**: 順序統計付きの平衡BSTが必要な場合に適している。最悪ケースでも期待 $\mathcal{O}(\log n)$ を維持する。int キーなら IntTreap が高速である。
+- **赤黒木** (計画中): 挿入/削除操作が頻繁に行われる場合に適している。AVL木よりも回転操作が少なく、実用的なシナリオで効率的である。
+- **B木** (計画中): 大量のデータを扱い、ディスクアクセスを最小化する必要がある場合に適している。
+
+## 注意事項
+
+- 基本的な二分探索木（BinarySearchTree）は、最悪の場合（ソートされたデータを順に挿入する場合など）に線形時間（$\mathcal{O}(n)$）の操作時間になる可能性がある。
+- 自己平衡木の実装（RedBlackTree, BTree）は現在開発中または計画中の段階である。
+- 要素の比較には、デフォルトでComparable<T>インターフェースが使用されるが、コンストラクタでカスタムComparatorを指定することも可能である。

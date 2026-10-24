@@ -4,132 +4,136 @@ import java.util.*;
 import java.util.function.*;
 
 /**
- * 固定長の回転可能なint配列です。
+ * 固定長の回転可能なint配列である。
+ * 長さは正、論理添字は {@code 0 <= i < length} とする。
  */
 @SuppressWarnings("unused")
 public final class IntCircularArray implements IntMutableArray {
 	public final int length;
 	private final int[] arr;
-	private long sum;
-	private long rotation = 0;
-	private int offset = 0;
+	private long rotation;
+	private int offset;
 
-	public IntCircularArray(final int n, final IntUnaryOperator init) {
+	/**
+	 * 長さ n の0初期化配列を構築する。
+	 */
+	public IntCircularArray(final int n) {
 		length = n;
 		arr = new int[n];
-		long s = arr[0] = init.applyAsInt(0);
-		for (int i = 1; i < n; i++) {
-			s += arr[i] = init.applyAsInt(i);
-		}
-		sum = s;
 	}
 
 	/**
-	 * 指定された配列の要素を同じ順序で保持する循環配列を構築します。
+	 * 長さ n の全要素を initialValue で初期化する。
+	 */
+	public IntCircularArray(final int n, final int initialValue) {
+		this(n);
+		fill(initialValue);
+	}
+
+	/**
+	 * init を添字の昇順に1回ずつ呼び出して構築する。
+	 */
+	public IntCircularArray(final int n, final IntUnaryOperator init) {
+		this(n);
+		for (int i = 0; i < n; i++) arr[i] = init.applyAsInt(i);
+	}
+
+	/**
+	 * 指定された配列の要素を同じ順序で保持する循環配列を構築する。
 	 */
 	public IntCircularArray(final int[] a) {
 		length = a.length;
-		arr = Arrays.copyOf(a, length);
-		long s = 0;
-		for (final int v : a) s += v;
-		sum = s;
+		arr = a.clone();
 	}
 
 	/**
-	 * 指定された配列の論理順を保持する循環配列を構築します。
+	 * 指定された配列の論理順を保持する循環配列を構築する。
 	 */
 	public IntCircularArray(final IntArray a) {
 		length = a.size();
 		arr = new int[length];
-		long s = 0;
-		for (int i = 0; i < length; i++) {
-			s += arr[i] = a.get(i);
-		}
-		sum = s;
+		for (int i = 0; i < length; i++) arr[i] = a.get(i);
 	}
 
 	/**
-	 * supplierが生成するn要素を保持する循環配列を返します。
+	 * 全要素・回転状態・総回転数を保持する独立したコピーを構築する。
 	 */
-	public static IntCircularArray generate(final int n, final IntSupplier init) {
-		return new IntCircularArray(n, _ -> init.getAsInt());
-	}
-
-	public int get(final int i) {
-		int j = offset + i;
-		if (j >= length) j -= length;
-		return arr[j];
-	}
-
-	public int set(final int i, final int v) {
-		int j = offset + i;
-		if (j >= length) j -= length;
-		int old = arr[j];
-		arr[j] = v;
-		sum += (long) v - old;
-		return old;
-	}
-
-	public void fill(final int v) {
-		Arrays.fill(arr, v);
-		sum = (long) v * length;
-		rotation = 0;
-		offset = 0;
-	}
-
-	public void setAll(final IntUnaryOperator init) {
-		long s = 0;
-		for (int i = 0; i < length; i++) {
-			s += arr[i] = init.applyAsInt(i);
-		}
-		sum = s;
-		rotation = 0;
-		offset = 0;
+	public IntCircularArray(final IntCircularArray other) {
+		length = other.length;
+		arr = other.arr.clone();
+		rotation = other.rotation;
+		offset = other.offset;
 	}
 
 	public int size() {
 		return length;
 	}
 
-	public boolean contains(final int v) {
-		for (int i = 0; i < length; i++) if (get(i) == v) return true;
-		return false;
-	}
-
-	public int[] toArray() {
-		int[] res = new int[length];
-		for (int i = 0; i < length; i++) res[i] = get(i);
-		return res;
-	}
-
-	public long sum() {
-		return sum;
+	/**
+	 * 左回転を正、右回転を負とする総回転数を返す。
+	 */
+	public long rotation() {
+		return rotation;
 	}
 
 	/**
-	 * 論理配列を左へ1要素回転します。
+	 * 指定した有効な論理添字の値を返す。
+	 *
+	 * @throws IndexOutOfBoundsException i が {@code 0 <= i < length} を満たさない場合
 	 */
-	public void lShift() {
+	public int get(final int i) {
+		int p = offset + Objects.checkIndex(i, length);
+		if (p >= length) p -= length;
+		return arr[p];
+	}
+
+	/**
+	 * 指定した有効な論理添字を更新し、更新前の値を返す。
+	 *
+	 * @throws IndexOutOfBoundsException i が {@code 0 <= i < length} を満たさない場合
+	 */
+	public int set(final int i, final int v) {
+		int p = offset + Objects.checkIndex(i, length);
+		if (p >= length) p -= length;
+		final int old = arr[p];
+		arr[p] = v;
+		return old;
+	}
+
+	/**
+	 * 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。
+	 */
+	public void fill(final int v) {
+		Arrays.fill(arr, v);
+		rotation = 0;
+		offset = 0;
+	}
+
+	/**
+	 * init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。
+	 * init は添字の昇順に呼ぶ。
+	 */
+	public void setAll(final IntUnaryOperator init) {
+		for (int i = 0; i < length; i++) arr[i] = init.applyAsInt(i);
+		rotation = 0;
+		offset = 0;
+	}
+
+	/**
+	 * 論理配列を左へ1要素回転する。
+	 */
+	public void shiftLeft() {
 		offset++;
 		if (offset == length) offset = 0;
 		rotation++;
 	}
 
 	/**
-	 * 論理配列を右へ1要素回転します。
+	 * 論理配列を左へn要素回転する。
 	 */
-	public void rShift() {
-		offset--;
-		if (offset == -1) offset = length - 1;
-		rotation--;
-	}
-
-	/**
-	 * 論理配列を左へn要素回転します。
-	 */
-	public void lShift(final int n) {
+	public void shiftLeft(final int n) {
 		if (n < 0) {
-			rShift(-n);
+			shiftRight(-n);
 			return;
 		}
 		offset += n % length;
@@ -138,11 +142,20 @@ public final class IntCircularArray implements IntMutableArray {
 	}
 
 	/**
-	 * 論理配列を右へn要素回転します。
+	 * 論理配列を右へ1要素回転する。
 	 */
-	public void rShift(final int n) {
+	public void shiftRight() {
+		offset--;
+		if (offset == -1) offset = length - 1;
+		rotation--;
+	}
+
+	/**
+	 * 論理配列を右へn要素回転する。
+	 */
+	public void shiftRight(final int n) {
 		if (n < 0) {
-			lShift(-n);
+			shiftLeft(-n);
 			return;
 		}
 		offset -= n % length;
@@ -151,34 +164,45 @@ public final class IntCircularArray implements IntMutableArray {
 	}
 
 	/**
-	 * 左回転を正、右回転を負とする総回転数を返します。
-	 */
-	public long rotation() {
-		return rotation;
-	}
-
-	/**
-	 * 回転状態を初期位置へ戻します。
+	 * 回転状態を初期位置へ戻す。
 	 */
 	public void resetRotation() {
 		rotation = 0;
 		offset = 0;
 	}
 
+	/**
+	 * 現在の論理順で独立した配列へコピーする。
+	 */
+	public int[] toArray() {
+		final int[] res = new int[length];
+		final int n = length - offset;
+		System.arraycopy(arr, offset, res, 0, n);
+		System.arraycopy(arr, 0, res, n, offset);
+		return res;
+	}
+
+	/**
+	 * 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。
+	 */
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
-			private int idx = 0;
+			private int i = 0;
 
 			public boolean hasNext() {
-				return idx < length;
+				return i < length;
 			}
 
 			public int nextInt() {
-				return get(idx++);
+				if (!hasNext()) throw new NoSuchElementException();
+				return get(i++);
 			}
 		};
 	}
 
+	/**
+	 * 論理順の要素を半角スペースで区切った文字列として返す。
+	 */
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(12 * length - 1);
 		sb.append(arr[offset]);

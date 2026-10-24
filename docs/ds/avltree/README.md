@@ -1,0 +1,95 @@
+# AVLTree
+
+## 概要
+
+AVL木は、平衡二分探索木の一種である。
+このフォルダには、ジェネリック型およびプリミティブ型（`int`, `long`）に対応したAVL木の実装が含まれている。
+Set（重複なし）とMultiset（重複あり）の両方を提供する。
+
+## クラス一覧
+
+| クラス | 用途 | Guide | ソース | Example / 検証 |
+|--------|------|-------|--------|----------------|
+| `AVLSet` | 重複を許さない要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/AVLSet.java) | [Example.java](../../../test/verify/ds/set/Example.java) |
+| `AVLMultiset` | 重複を許す要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/AVLMultiset.java) | [Example.java](../../../test/verify/ds/set/Example.java) |
+| `IntAVLSet` | `int` 型の重複を許さない要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/IntAVLSet.java) | [Check1.java](../../../test/verify/ds/set/intavlset/Check1.java) |
+| `IntAVLMultiset` | `int` 型の重複を許す要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/IntAVLMultiset.java) | — |
+| `LongAVLSet` | `long` 型の重複を許さない要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/LongAVLSet.java) | — |
+| `LongAVLMultiset` | `long` 型の重複を許す要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/LongAVLMultiset.java) | — |
+
+## 実装クラス
+
+### [AVLSet](../../../src/lib/ds/set/AVLSet.java)
+
+- **用途**: 重複を許さない要素の集合を管理する。
+- **特徴**:
+	- ジェネリック型 `T` に対応している。
+	- 木が自動で平衡するため、各操作が安定して高速である。
+- **時間計算量**:
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
+
+### [AVLMultiset](../../../src/lib/ds/set/AVLMultiset.java)
+
+- **用途**: 重複を許す要素の集合を管理する。
+- **特徴**:
+	- ジェネリック型 `T` に対応している。
+	- 同じ値の要素を複数個保持できる。
+- **時間計算量**:
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
+
+### [IntAVLSet](../../../src/lib/ds/set/IntAVLSet.java)
+
+- **用途**: `int` 型の重複を許さない要素の集合を管理する。
+- **特徴**:
+	- `int` プリミティブ型に特化しているため、ジェネリック版より高速でメモリ効率が良い。
+- **時間計算量**:
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
+
+### [IntAVLMultiset](../../../src/lib/ds/set/IntAVLMultiset.java)
+
+- **用途**: `int` 型の重複を許す要素の集合を管理する。
+- **特徴**:
+	- `int` プリミティブ型に特化しており、重複した値を保持できる。
+- **時間計算量**:
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
+
+### [LongAVLSet](../../../src/lib/ds/set/LongAVLSet.java)
+
+- **用途**: `long` 型の重複を許さない要素の集合を管理する。
+- **特徴**:
+	- `long` プリミティブ型に特化しているため、ジェネリック版より高速でメモリ効率が良い。
+- **時間計算量**:
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
+
+### [LongAVLMultiset](../../../src/lib/ds/set/LongAVLMultiset.java)
+
+- **用途**: `long` 型の重複を許す要素の集合を管理する。
+- **特徴**:
+	- `long` プリミティブ型に特化しており、重複した値を保持できる。
+- **時間計算量**:
+	- 追加、削除、検索: $\mathcal{O}(\log n)$
+- **空間計算量**: $\mathcal{O}(n)$
+
+## アルゴリズム（データ構造）選択ガイド
+
+- **ジェネリック型 vs プリミティブ型**:
+	- `Integer` や `Long` などのオブジェクトを扱う場合は `AVLSet` や `AVLMultiset` を使用する。
+	- `int` や `long` などのプリミティブ型を扱う場合は、パフォーマンスとメモリ効率の観点から `IntAVLSet`,
+	  `IntAVLMultiset`,
+	  `LongAVLSet`, `LongAVLMultiset` の使用を推奨する。
+- **Set vs Multiset**:
+	- コレクション内の要素が一意である必要がある場合は `Set` を選択する。
+	- コレクションに同じ要素が複数含まれる可能性がある場合は `Multiset` を選択する。
+
+## 注意事項
+
+- ジェネリック版のクラス (`AVLSet`, `AVLMultiset`) を使用する場合、要素の型 `T` は `Comparable` インターフェースを実装している必要がある。
+
+## Example / 検証
+
+- [Example.java](../../../test/verify/ds/set/Example.java)

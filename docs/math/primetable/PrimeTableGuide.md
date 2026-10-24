@@ -1,0 +1,79 @@
+# PrimeTable 利用ガイド
+
+> `PrimeTable`は、指定上限までの素数を構築し、同じテーブルを判定・近傍検索・列挙・素因数分解へ再利用する。
+
+[← README: PrimeTable](./README.md) · ソース: [PrimeTable.java](../../../src/lib/math/PrimeTable.java)
+
+**目次**　[概要](#概要) · [特徴](#特徴) · [依存関係](#依存関係) · [API](#api) · [利用例](#利用例) · [制約・注意事項](#制約注意事項) · [性能特性](#性能特性) · [実装履歴](#実装履歴)
+
+---
+
+## 概要
+
+`PrimeTable`は、指定上限までの素数を構築し、同じテーブルを判定・近傍検索・列挙・素因数分解へ再利用する。
+
+## 特徴
+
+- 6k±1候補だけを走査し、bit配列はアクセス速度を優先して奇数を1bitずつ保持
+- 素数配列上の二分探索
+- primitive iteratorとLongStream
+- 構築済み素数を使う反復的な素因数分解
+
+## 依存関係
+
+- `java.util.Arrays`、`Map`、`Collection`、`PrimitiveIterator`、`Supplier`
+- `java.util.stream.LongStream`
+
+## API
+
+| メソッド                                   |                     戻り値 | 説明                             |
+|--------------------------------------------|---------------------------:|----------------------------------|
+| `PrimeTable(long n)`                       |                          - | `n`以下の素数を構築              |
+| `getLimitValue()`                          |                     `long` | 構築時に指定した上限             |
+| `getPrimeCount()`                          |                      `int` | テーブル内の素数個数             |
+| `isPrime(long n)`                          |                  `boolean` | テーブル範囲内の素数判定         |
+| `countPrimesUpTo(long n)`                  |                      `int` | `n`以下の素数個数                |
+| `ceilingPrime(long n)`                     |                     `long` | `n`以上の最小素数                |
+| `higherPrime(long n)`                      |                     `long` | `n`より大きい最小素数            |
+| `floorPrime(long n)`                       |                     `long` | `n`以下の最大素数                |
+| `lowerPrime(long n)`                       |                     `long` | `n`より小さい最大素数            |
+| `get(int i)`                               |                     `long` | 0始まりのi番目の素数             |
+| `uniquePrimeFactorCount(long n)`           |                      `int` | 異なる素因数の個数               |
+| `primeFactorCount(long n)`                 |                      `int` | 重複込みの素因数の個数           |
+| `primeFactors(int/long n)`                 |         `int[]` / `long[]` | 重複込みの昇順配列               |
+| `primeFactors(int/long n, Supplier<T>)`    |     `T extends Collection` | 指定Collectionへ昇順に追加       |
+| `primeFactors2D(int/long n)`               |     `int[][]` / `long[][]` | `[0]`に素因数、`[1]`に指数を格納 |
+| `primeFactorsMap(int/long n, Supplier<T>)` |            `T extends Map` | 素因数と指数の対応               |
+| `iterator()`                               | `PrimitiveIterator.OfLong` | 昇順iterator                     |
+| `stream()`                                 |               `LongStream` | 昇順stream                       |
+
+## 利用例
+
+準備中
+
+## 制約・注意事項
+
+- `isPrime`は`0`以上、判定・近傍検索は構築上限以下の値を前提とする。
+- 素因数分解系APIは、残る因数を判定できるよう`√n`までの素数がテーブルに含まれることを前提とする。
+- 素因数Mapの反復順序は`HashMap`に従い、昇順を保証しない。
+- コンストラクタ引数は`long`であるが、内部配列長は`int`なので、実際の上限は利用可能メモリに強く制約される。
+
+## 性能特性
+
+- 構築: $\mathcal{O}(N \log \log N)$時間
+- 合成数bit配列: およそN/16 byte。別途素数配列が必要
+- `isPrime`: $\mathcal{O}(1)$
+- 個数・近傍検索: $\mathcal{O}(\log \pi(N))$
+- `get`: $\mathcal{O}(1)$
+- 素因数分解: `√n`以下の列挙済み素数の個数に比例
+
+## 実装履歴
+
+| バージョン番号     | 年月日     | 詳細                                                                                      |
+|:-------------------|:-----------|:------------------------------------------------------------------------------------------|
+| **バージョン 3.2** | 2026-09-05 | 構築上限・素数個数・添字アクセスAPIを追加し、素数添字アクセス名を`get`へ統一              |
+| **バージョン 3.1** | 2026-08-10 | 篩を6k±1候補の独立処理へ整理し、合成数に隣接する素数の取りこぼしを修正                    |
+| **バージョン 3.0** | 2026-08-10 | FactorUtils と同等の素因数個数・配列・Collection・Map APIを追加し、列挙済み素数を直接利用 |
+| **バージョン 2.0** | 2026-08-01 | 近傍検索、素因数分解、iterator、streamを含むAPIを整備                                     |
+| **バージョン 1.2** | 2026-05-02 | `isPrime(1)`の誤判定を修正                                                                |
+| **バージョン 1.0** | 2025-10-13 | 初回実装                                                                                  |

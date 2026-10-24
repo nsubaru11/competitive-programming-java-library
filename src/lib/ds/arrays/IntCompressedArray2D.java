@@ -1,13 +1,12 @@
 package lib.ds.arrays;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 
 import lib.search.*;
 
 /**
- * int型2次元配列の全要素を共通の順位空間へ座標圧縮します。
+ * int型2次元配列の全要素を共通の順位空間へ座標圧縮する。
+ * 各次元の長さが正の長方形配列を前提とし、座標は0始まりの有効範囲とする。
  */
 public final class IntCompressedArray2D implements Iterable<Integer> {
 	public final int h, w, length, uniqueSize;
@@ -15,14 +14,23 @@ public final class IntCompressedArray2D implements Iterable<Integer> {
 	private final boolean oneBased;
 	private final int[] compressed, sorted, ranks;
 
+	/**
+	 * 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。
+	 */
 	public IntCompressedArray2D(final int[][] a) {
 		this(a, RankType.DENSE, false);
 	}
 
+	/**
+	 * 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。
+	 */
 	public IntCompressedArray2D(final int[][] a, final RankType rankType) {
 		this(a, rankType, false);
 	}
 
+	/**
+	 * 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。
+	 */
 	public IntCompressedArray2D(final int[][] a, final RankType rankType, final boolean oneBased) {
 		h = a.length;
 		w = a[0].length;
@@ -32,7 +40,7 @@ public final class IntCompressedArray2D implements Iterable<Integer> {
 		compressed = new int[length];
 		sorted = new int[length];
 		for (int i = 0; i < h; i++) System.arraycopy(a[i], 0, sorted, i * w, w);
-		sort(sorted);
+		Arrays.sort(sorted);
 		ranks = new int[length];
 		int r = oneBased ? 1 : 0, u = 1;
 		switch (rankType) {
@@ -71,23 +79,18 @@ public final class IntCompressedArray2D implements Iterable<Integer> {
 		}
 		uniqueSize = u;
 		for (int i = 0, p = 0; i < h; i++) {
-			for (int j = 0; j < w; j++, p++) compressed[p] = ranks[binarySearch(sorted, a[i][j])];
+			for (int j = 0; j < w; j++, p++) {
+				compressed[p] = ranks[Arrays.binarySearch(sorted, a[i][j])];
+			}
 		}
 	}
 
-	/**
-	 * 指定位置の圧縮後の順位を返します。
-	 */
-	public int get(final int i, final int j) {
-		return compressed[i * w + j];
+	public int size() {
+		return length;
 	}
 
-	public int rankOfValue(final int v) {
-		return ranks[binarySearch(sorted, v)];
-	}
-
-	public int valueOfRank(final int rank) {
-		return sorted[binarySearch(ranks, rank)];
+	public int uniqueSize() {
+		return uniqueSize;
 	}
 
 	public RankType rankType() {
@@ -98,32 +101,65 @@ public final class IntCompressedArray2D implements Iterable<Integer> {
 		return oneBased;
 	}
 
-	public int uniqueSize() {
-		return uniqueSize;
+	/**
+	 * 指定した有効な論理添字の圧縮後の順位を返す。
+	 *
+	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
+	 */
+	public int get(final int i, final int j) {
+		return compressed[checkedIndex(i, j)];
 	}
 
-	public int size() {
-		return length;
+	/**
+	 * 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。
+	 */
+	public int getOrDefault(final int i, final int j, final int defaultValue) {
+		return 0 <= i && i < h && 0 <= j && j < w ? get(i, j) : defaultValue;
 	}
 
-	public int[][] restore() {
-		final int[][] res = new int[h][w];
-		for (int i = 0, p = 0; i < h; i++) {
-			for (int j = 0; j < w; j++, p++) res[i][j] = sorted[binarySearch(ranks, compressed[p])];
-		}
-		return res;
+	/**
+	 * 入力に存在する値 v の順位を返す。
+	 */
+	public int rankOfValue(final int v) {
+		return ranks[Arrays.binarySearch(sorted, v)];
 	}
 
+	/**
+	 * 実在する順位 rank に対応する元の値を返す。
+	 */
+	public int valueOfRank(final int rank) {
+		return sorted[Arrays.binarySearch(ranks, rank)];
+	}
+
+	/**
+	 * 圧縮前の値 v が入力に存在するかを返す。
+	 */
 	public boolean containsValue(final int v) {
-		return binarySearch(sorted, v) >= 0;
+		return Arrays.binarySearch(sorted, v) >= 0;
 	}
 
+	/**
+	 * 圧縮前の値 v の出現回数を返す。
+	 */
 	public int count(final int v) {
 		return ArrayBinarySearch.count(sorted, v);
 	}
 
 	/**
-	 * 圧縮後の順位を元の2次元形状でコピーして返します。
+	 * 元の値と配列順を復元した独立した配列を返す。
+	 */
+	public int[][] restore() {
+		final int[][] res = new int[h][w];
+		for (int i = 0, p = 0; i < h; i++) {
+			for (int j = 0; j < w; j++, p++) {
+				res[i][j] = sorted[Arrays.binarySearch(ranks, compressed[p])];
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * 圧縮後の順位を元の2次元形状でコピーして返す。
 	 */
 	public int[][] toArray() {
 		final int[][] res = new int[h][w];
@@ -132,36 +168,53 @@ public final class IntCompressedArray2D implements Iterable<Integer> {
 	}
 
 	/**
-	 * 圧縮後の順位を元の2次元形状でコピーして返します。
+	 * 圧縮後の順位を元の2次元形状でコピーして返す。
 	 */
 	public int[][] compressed() {
 		return toArray();
 	}
 
+	/**
+	 * 重複を含むソート済み値のコピーを返す。
+	 */
 	public int[] sorted() {
-		return copyOf(sorted, length);
+		return sorted.clone();
 	}
 
+	/**
+	 * ソート済み値に対応する順位配列のコピーを返す。
+	 */
 	public int[] ranks() {
-		return copyOf(ranks, length);
+		return ranks.clone();
 	}
 
+	/**
+	 * 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。
+	 */
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
 			private int i = 0;
 
-			public int nextInt() {
-				return compressed[i++];
-			}
-
 			public boolean hasNext() {
 				return i < length;
+			}
+
+			public int nextInt() {
+				if (!hasNext()) throw new NoSuchElementException();
+				return compressed[i++];
 			}
 		};
 	}
 
 	/**
-	 * 各行を半角スペース区切り、行間を改行した文字列として返します。
+	 * 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。
+	 */
+	public Spliterator.OfInt spliterator() {
+		return Arrays.spliterator(compressed);
+	}
+
+	/**
+	 * 各行を半角スペース区切り、行間を改行した文字列として返す。
 	 */
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(11 * length - 1);
@@ -169,8 +222,16 @@ public final class IntCompressedArray2D implements Iterable<Integer> {
 		for (int j = 1; j < w; j++) sb.append(' ').append(compressed[j]);
 		for (int i = 1, p = w; i < h; i++) {
 			sb.append('\n').append(compressed[p++]);
-			for (int j = 1; j < w; j++) sb.append(' ').append(compressed[p++]);
+			for (int j = 1; j < w; j++) {
+				sb.append(' ').append(compressed[p++]);
+			}
 		}
 		return sb.toString();
+	}
+
+	private int checkedIndex(final int i, final int j) {
+		Objects.checkIndex(i, h);
+		Objects.checkIndex(j, w);
+		return i * w + j;
 	}
 }

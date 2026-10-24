@@ -69,33 +69,6 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * init(i)をindex iのコストとして持つ昇順キューを返します。
-	 */
-	public static IntIndexedPriorityQueue generate(final int n, final IntUnaryOperator init) {
-		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n);
-		q.setAll(init);
-		return q;
-	}
-
-	/**
-	 * init(i)をindex iの昇順または降順コストとして持つキューを返します。
-	 */
-	public static IntIndexedPriorityQueue generate(final int n, final IntUnaryOperator init, final boolean isDescendingOrder) {
-		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n, isDescendingOrder);
-		q.setAll(init);
-		return q;
-	}
-
-	/**
-	 * init(i)をindex iのComparator順コストとして持つキューを返します。
-	 */
-	public static IntIndexedPriorityQueue generate(final int n, final IntUnaryOperator init, final IntComparator comparator) {
-		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n, comparator);
-		q.setAll(init);
-		return q;
-	}
-
-	/**
 	 * activeなら更新し、そうでなければ登録します。
 	 */
 	public void set(final int i, final int c) {

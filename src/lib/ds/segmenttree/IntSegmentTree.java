@@ -20,13 +20,13 @@ public final class IntSegmentTree implements IntCollection {
 		if (identity != 0) Arrays.fill(tree, identity);
 	}
 
-	public IntSegmentTree(final int[] data, final IntBinaryOperator operator, final int identity) {
-		this.n = data.length;
+	public IntSegmentTree(final int[] a, final IntBinaryOperator operator, final int identity) {
+		this.n = a.length;
 		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
 		this.identity = identity;
 		this.operator = operator;
 		tree = new int[size << 1];
-		System.arraycopy(data, 0, tree, size, n);
+		System.arraycopy(a, 0, tree, size, n);
 		if (identity != 0) Arrays.fill(tree, size + n, size << 1, identity);
 		buildAll();
 	}
@@ -42,30 +42,30 @@ public final class IntSegmentTree implements IntCollection {
 	}
 
 	public int get(final int i) {
-		return tree[size + i];
+		return tree[size + Objects.checkIndex(i, n)];
 	}
 
-	public int set(final int i, final int e) {
-		return apply(i, 0, e);
+	public int set(final int i, final int v) {
+		return apply(i, 0, v);
 	}
 
 	public int add(final int i, final int d) {
 		return apply(i, 1, d);
 	}
 
-	public int multiply(final int i, final int a) {
-		return apply(i, a, 0);
+	public int multiply(final int i, final int m) {
+		return apply(i, m, 0);
 	}
 
-	public int apply(final int i, final int a, final int b) {
-		final int idx = size + i;
-		tree[idx] = tree[idx] * a + b;
+	public int apply(final int i, final int m, final int d) {
+		final int idx = size + Objects.checkIndex(i, n);
+		tree[idx] = tree[idx] * m + d;
 		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsInt(tree[j << 1], tree[(j << 1) | 1]);
 		return tree[idx];
 	}
 
-	public int apply(final int i, final int v, final IntBinaryOperator op) {
-		return apply(i, 0, op.applyAsInt(tree[size + i], v));
+	public int apply(final int i, final int x, final IntBinaryOperator f) {
+		return apply(i, 0, f.applyAsInt(tree[size + i], x));
 	}
 
 	public int query(final int l, final int r) {

@@ -11,10 +11,10 @@ public final class Test {
 	}
 
 	private static void testArray() {
-		// IntCircularArray: 循環シフト + 総和
+		// IntCircularArray: 循環シフト後に ArrayUtils で集計
 		IntCircularArray ia = new IntCircularArray(5, i -> i + 1); // [1,2,3,4,5]
-		ia.lShift(); // 論理的に [2,3,4,5,1]
-		System.out.println("IntCircularArray sum = " + ia.sum()); // 1+2+3+4+5=15
+		ia.shiftLeft(); // 論理的に [2,3,4,5,1]
+		System.out.println("IntCircularArray sum = " + ArrayUtils.sum(ia)); // 1+2+3+4+5=15
 
 		// LongCircularArray: 部分和（任意個）
 		LongCircularArray la = new LongCircularArray(4, i -> (i * 2L + 1)); // [1,3,5,7]
@@ -22,8 +22,8 @@ public final class Test {
 
 		// IntArray2D: 回転してアクセス
 		IntArray2D gI = new IntArray2D(2, 3, (i, j) -> i * 10 + j); // [[0,1,2],[10,11,12]]
-		gI.lRotate(); // 左回転
-		System.out.println("IntArray2D get(0,0) after lRotate = " + gI.get(0, 0));
+		gI.rotateLeft(); // 左回転
+		System.out.println("IntArray2D get(0,0) after rotateLeft = " + gI.get(0, 0));
 
 		// LongArray2D: 値の設定と取得
 		LongArray2D gL = new LongArray2D(2, 2, (_, _) -> 0L);
@@ -68,18 +68,15 @@ public final class Test {
 
 		// dequeをいっぱいにします。
 		System.out.println("\n5. Filling the buffer");
-		System.out.println("Remaining capacity: " + buffer.remainingCapacity());
 		for (int i = 1; i <= 6; i++) {
 			buffer.addLast(i * 100);
 		}
 		System.out.println("Buffer content: " + buffer);
 		System.out.println("Current size: " + buffer.size());
-		System.out.println("Is full? " + buffer.isFull());
 
 		// 満杯の状態で追加すると内部容量が拡張されます。
 		System.out.println("\n6. Growing a full deque");
-		boolean added = buffer.addLast(999);
-		System.out.println("addLast(999) returned: " + added);
+		buffer.addLast(999);
 		System.out.println("Capacity after growing: " + buffer.capacity());
 		System.out.println("Buffer content: " + buffer);
 
@@ -87,8 +84,8 @@ public final class Test {
 		System.out.println("\n7. Accessing elements by index (get)");
 		System.out.println("Element at index 0: " + buffer.get(0));
 		System.out.println("Element at index 3: " + buffer.get(3));
-		// 負のインデックスは末尾からの位置を示します。
-		System.out.println("Element at index -1 (last element): " + buffer.get(-1));
+		// 末尾の添字は size() - 1 である。
+		System.out.println("Element at index size() - 1 (last element): " + buffer.get(buffer.size() - 1));
 
 		// インデックスを指定して要素を更新します。
 		System.out.println("\n8. Updating an element by index (set)");
