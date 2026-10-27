@@ -24,6 +24,16 @@ dense ranking に加え、competition ranking と modified competition ranking �
 - 同型のコピーコンストラクタは再圧縮せず、元の値と順位の対応を保持
 - `LongCompressedArray` も圧縮後の順位は `int` のため `IntArray` を実装
 
+### 型別クラス
+
+| クラス                                                                           | 対象型 | 選ぶ目安                                        |
+|----------------------------------------------------------------------------------|--------|-------------------------------------------------|
+| [`IntCompressedArray`](../../../src/lib/ds/arrays/IntCompressedArray.java)       | `int`  | int配列を座標圧縮する場合                       |
+| [`LongCompressedArray`](../../../src/lib/ds/arrays/LongCompressedArray.java)     | `long` | long配列を座標圧縮する場合。順位は int で返す   |
+| [`IntCompressedArray2D`](../../../src/lib/ds/arrays/IntCompressedArray2D.java)   | `int`  | int値の2次元配列を共通の順位空間へ圧縮する場合  |
+| [`LongCompressedArray2D`](../../../src/lib/ds/arrays/LongCompressedArray2D.java) | `long` | long値の2次元配列を共通の順位空間へ圧縮する場合 |
+| [`RankType`](../../../src/lib/ds/arrays/RankType.java)                           | —      | 同順位の割り当て方式の指定                      |
+
 ## 依存関係
 
 - `java.util.Objects`
@@ -40,101 +50,101 @@ dense ranking に加え、competition ranking と modified competition ranking �
 
 ### `IntCompressedArray`
 
-| シグネチャ                                                            | 戻り値                    | 説明                                                                               |
-|-----------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
-| `IntCompressedArray(int[] a)`                                         | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
-| `IntCompressedArray(int[] a, RankType rankType)`                      | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
-| `IntCompressedArray(int[] a, RankType rankType, boolean oneBased)`    | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
-| `IntCompressedArray(IntArray a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
-| `IntCompressedArray(IntArray a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
-| `IntCompressedArray(IntArray a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
-| `IntCompressedArray(IntCompressedArray other)`                        | —                         | 元の値・順位・配列順を保持する独立したコピーを構築する。                           |
-| `size()`                                                              | `int`                     | 要素数を返す。                                                                     |
-| `get(int i)`                                                          | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
-| `rankOfValue(int v)`                                                  | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
-| `valueOfRank(int rank)`                                               | `int`                     | 実在する順位 rank に対応する元の値を返す。                                         |
-| `containsValue(int v)`                                                | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
-| `count(int v)`                                                        | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
-| `restore()`                                                           | `int[]`                   | 元の値と配列順を復元した独立した配列を返す。                                       |
-| `toArray()`                                                           | `int[]`                   | 圧縮後の順位を元配列順でコピーして返す。                                           |
-| `sorted()`                                                            | `int[]`                   | 重複を含むソート済み値のコピーを返す。                                             |
-| `ranks()`                                                             | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
-| `iterator()`                                                          | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
-| `spliterator()`                                                       | `Spliterator.OfInt`       | 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
-| `toString()`                                                          | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                             |
+| 種別        | シグネチャ                                                            | 戻り値                    | 説明                                                                               |
+|-------------|-----------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
+| Constructor | `IntCompressedArray(int[] a)`                                         | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
+| Constructor | `IntCompressedArray(int[] a, RankType rankType)`                      | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
+| Constructor | `IntCompressedArray(int[] a, RankType rankType, boolean oneBased)`    | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
+| Constructor | `IntCompressedArray(IntArray a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
+| Constructor | `IntCompressedArray(IntArray a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
+| Constructor | `IntCompressedArray(IntArray a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
+| Constructor | `IntCompressedArray(IntCompressedArray other)`                        | —                         | 元の値・順位・配列順を保持する独立したコピーを構築する。                           |
+| Method      | `size()`                                                              | `int`                     | 要素数を返す。                                                                     |
+| Method      | `get(int i)`                                                          | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
+| Method      | `rankOfValue(int v)`                                                  | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
+| Method      | `valueOfRank(int rank)`                                               | `int`                     | 実在する順位 rank に対応する元の値を返す。                                         |
+| Method      | `containsValue(int v)`                                                | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
+| Method      | `count(int v)`                                                        | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
+| Method      | `restore()`                                                           | `int[]`                   | 元の値と配列順を復元した独立した配列を返す。                                       |
+| Method      | `toArray()`                                                           | `int[]`                   | 圧縮後の順位を元配列順でコピーして返す。                                           |
+| Method      | `sorted()`                                                            | `int[]`                   | 重複を含むソート済み値のコピーを返す。                                             |
+| Method      | `ranks()`                                                             | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
+| Method      | `iterator()`                                                          | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
+| Method      | `spliterator()`                                                       | `Spliterator.OfInt`       | 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
+| Method      | `toString()`                                                          | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                             |
 
 ### `LongCompressedArray`
 
-| シグネチャ                                                              | 戻り値                    | 説明                                                                               |
-|-------------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
-| `LongCompressedArray(long[] a)`                                         | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
-| `LongCompressedArray(long[] a, RankType rankType)`                      | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
-| `LongCompressedArray(long[] a, RankType rankType, boolean oneBased)`    | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
-| `LongCompressedArray(LongArray a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
-| `LongCompressedArray(LongArray a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
-| `LongCompressedArray(LongArray a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
-| `LongCompressedArray(LongCompressedArray other)`                        | —                         | 元の値・順位・配列順を保持する独立したコピーを構築する。                           |
-| `size()`                                                                | `int`                     | 要素数を返す。                                                                     |
-| `get(int i)`                                                            | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
-| `rankOfValue(long v)`                                                   | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
-| `valueOfRank(int rank)`                                                 | `long`                    | 実在する順位 rank に対応する元の値を返す。                                         |
-| `containsValue(long v)`                                                 | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
-| `count(long v)`                                                         | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
-| `restore()`                                                             | `long[]`                  | 元の値と配列順を復元した独立した配列を返す。                                       |
-| `toArray()`                                                             | `int[]`                   | 圧縮後の順位を元配列順でコピーして返す。                                           |
-| `sorted()`                                                              | `long[]`                  | 重複を含むソート済み値のコピーを返す。                                             |
-| `ranks()`                                                               | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
-| `iterator()`                                                            | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
-| `spliterator()`                                                         | `Spliterator.OfInt`       | 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
-| `toString()`                                                            | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                             |
+| 種別        | シグネチャ                                                              | 戻り値                    | 説明                                                                               |
+|-------------|-------------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
+| Constructor | `LongCompressedArray(long[] a)`                                         | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
+| Constructor | `LongCompressedArray(long[] a, RankType rankType)`                      | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
+| Constructor | `LongCompressedArray(long[] a, RankType rankType, boolean oneBased)`    | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
+| Constructor | `LongCompressedArray(LongArray a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
+| Constructor | `LongCompressedArray(LongArray a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
+| Constructor | `LongCompressedArray(LongArray a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
+| Constructor | `LongCompressedArray(LongCompressedArray other)`                        | —                         | 元の値・順位・配列順を保持する独立したコピーを構築する。                           |
+| Method      | `size()`                                                                | `int`                     | 要素数を返す。                                                                     |
+| Method      | `get(int i)`                                                            | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
+| Method      | `rankOfValue(long v)`                                                   | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
+| Method      | `valueOfRank(int rank)`                                                 | `long`                    | 実在する順位 rank に対応する元の値を返す。                                         |
+| Method      | `containsValue(long v)`                                                 | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
+| Method      | `count(long v)`                                                         | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
+| Method      | `restore()`                                                             | `long[]`                  | 元の値と配列順を復元した独立した配列を返す。                                       |
+| Method      | `toArray()`                                                             | `int[]`                   | 圧縮後の順位を元配列順でコピーして返す。                                           |
+| Method      | `sorted()`                                                              | `long[]`                  | 重複を含むソート済み値のコピーを返す。                                             |
+| Method      | `ranks()`                                                               | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
+| Method      | `iterator()`                                                            | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
+| Method      | `spliterator()`                                                         | `Spliterator.OfInt`       | 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
+| Method      | `toString()`                                                            | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                             |
 
 ### `IntCompressedArray2D`
 
-| シグネチャ                                                             | 戻り値                    | 説明                                                                               |
-|------------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
-| `IntCompressedArray2D(int[][] a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
-| `IntCompressedArray2D(int[][] a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
-| `IntCompressedArray2D(int[][] a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
-| `IntCompressedArray2D(IntCompressedArray2D other)`                     | —                         | 元の値・順位・配列順・寸法を保持する独立したコピーを構築する。                     |
-| `size()`                                                               | `int`                     | 要素数を返す。                                                                     |
-| `inRange(int i, int j)`                                                | `boolean`                 | 0 <= i < h かつ 0 <= j < w かを返す。                                              |
-| `get(int i, int j)`                                                    | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
-| `getOrDefault(int i, int j, int defaultValue)`                         | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。       |
-| `rankOfValue(int v)`                                                   | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
-| `valueOfRank(int rank)`                                                | `int`                     | 実在する順位 rank に対応する元の値を返す。                                         |
-| `containsValue(int v)`                                                 | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
-| `count(int v)`                                                         | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
-| `restore()`                                                            | `int[][]`                 | 元の値と配列順を復元した独立した配列を返す。                                       |
-| `toArray2D()`                                                          | `int[][]`                 | 圧縮後の順位を元の2次元形状でコピーして返す。                                      |
-| `sorted()`                                                             | `int[]`                   | 重複を含むソート済み値のコピーを返す。                                             |
-| `ranks()`                                                              | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
-| `iterator()`                                                           | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
-| `spliterator()`                                                        | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
-| `toString()`                                                           | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                         |
+| 種別        | シグネチャ                                                             | 戻り値                    | 説明                                                                               |
+|-------------|------------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
+| Constructor | `IntCompressedArray2D(int[][] a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
+| Constructor | `IntCompressedArray2D(int[][] a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
+| Constructor | `IntCompressedArray2D(int[][] a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
+| Constructor | `IntCompressedArray2D(IntCompressedArray2D other)`                     | —                         | 元の値・順位・配列順・寸法を保持する独立したコピーを構築する。                     |
+| Method      | `size()`                                                               | `int`                     | 要素数を返す。                                                                     |
+| Method      | `inRange(int i, int j)`                                                | `boolean`                 | 0 <= i < h かつ 0 <= j < w かを返す。                                              |
+| Method      | `get(int i, int j)`                                                    | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
+| Method      | `getOrDefault(int i, int j, int defaultValue)`                         | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。       |
+| Method      | `rankOfValue(int v)`                                                   | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
+| Method      | `valueOfRank(int rank)`                                                | `int`                     | 実在する順位 rank に対応する元の値を返す。                                         |
+| Method      | `containsValue(int v)`                                                 | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
+| Method      | `count(int v)`                                                         | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
+| Method      | `restore()`                                                            | `int[][]`                 | 元の値と配列順を復元した独立した配列を返す。                                       |
+| Method      | `toArray2D()`                                                          | `int[][]`                 | 圧縮後の順位を元の2次元形状でコピーして返す。                                      |
+| Method      | `sorted()`                                                             | `int[]`                   | 重複を含むソート済み値のコピーを返す。                                             |
+| Method      | `ranks()`                                                              | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
+| Method      | `iterator()`                                                           | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
+| Method      | `spliterator()`                                                        | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
+| Method      | `toString()`                                                           | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                         |
 
 ### `LongCompressedArray2D`
 
-| シグネチャ                                                               | 戻り値                    | 説明                                                                               |
-|--------------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
-| `LongCompressedArray2D(long[][] a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
-| `LongCompressedArray2D(long[][] a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
-| `LongCompressedArray2D(long[][] a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
-| `LongCompressedArray2D(LongCompressedArray2D other)`                     | —                         | 元の値・順位・配列順・寸法を保持する独立したコピーを構築する。                     |
-| `size()`                                                                 | `int`                     | 要素数を返す。                                                                     |
-| `inRange(int i, int j)`                                                  | `boolean`                 | 0 <= i < h かつ 0 <= j < w かを返す。                                              |
-| `get(int i, int j)`                                                      | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
-| `getOrDefault(int i, int j, int defaultValue)`                           | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。       |
-| `rankOfValue(long v)`                                                    | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
-| `valueOfRank(int rank)`                                                  | `long`                    | 実在する順位 rank に対応する元の値を返す。                                         |
-| `containsValue(long v)`                                                  | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
-| `count(long v)`                                                          | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
-| `restore()`                                                              | `long[][]`                | 元の値と配列順を復元した独立した配列を返す。                                       |
-| `toArray2D()`                                                            | `int[][]`                 | 圧縮後の順位を元の2次元形状でコピーして返す。                                      |
-| `sorted()`                                                               | `long[]`                  | 重複を含むソート済み値のコピーを返す。                                             |
-| `ranks()`                                                                | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
-| `iterator()`                                                             | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
-| `spliterator()`                                                          | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
-| `toString()`                                                             | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                         |
+| 種別        | シグネチャ                                                               | 戻り値                    | 説明                                                                               |
+|-------------|--------------------------------------------------------------------------|---------------------------|------------------------------------------------------------------------------------|
+| Constructor | `LongCompressedArray2D(long[][] a)`                                      | —                         | 指定配列をコピーして座標圧縮する。順位方式は DENSE、順位は0始まりとする。          |
+| Constructor | `LongCompressedArray2D(long[][] a, RankType rankType)`                   | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式で0始まりとする。                |
+| Constructor | `LongCompressedArray2D(long[][] a, RankType rankType, boolean oneBased)` | —                         | 指定配列をコピーして座標圧縮する。指定した順位方式と開始位置を使う。               |
+| Constructor | `LongCompressedArray2D(LongCompressedArray2D other)`                     | —                         | 元の値・順位・配列順・寸法を保持する独立したコピーを構築する。                     |
+| Method      | `size()`                                                                 | `int`                     | 要素数を返す。                                                                     |
+| Method      | `inRange(int i, int j)`                                                  | `boolean`                 | 0 <= i < h かつ 0 <= j < w かを返す。                                              |
+| Method      | `get(int i, int j)`                                                      | `int`                     | 指定した有効な論理添字の圧縮後の順位を返す。                                       |
+| Method      | `getOrDefault(int i, int j, int defaultValue)`                           | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。       |
+| Method      | `rankOfValue(long v)`                                                    | `int`                     | 入力に存在する値 v の順位を返す。                                                  |
+| Method      | `valueOfRank(int rank)`                                                  | `long`                    | 実在する順位 rank に対応する元の値を返す。                                         |
+| Method      | `containsValue(long v)`                                                  | `boolean`                 | 圧縮前の値 v が入力に存在するかを返す。                                            |
+| Method      | `count(long v)`                                                          | `int`                     | 圧縮前の値 v の出現回数を返す。                                                    |
+| Method      | `restore()`                                                              | `long[][]`                | 元の値と配列順を復元した独立した配列を返す。                                       |
+| Method      | `toArray2D()`                                                            | `int[][]`                 | 圧縮後の順位を元の2次元形状でコピーして返す。                                      |
+| Method      | `sorted()`                                                               | `long[]`                  | 重複を含むソート済み値のコピーを返す。                                             |
+| Method      | `ranks()`                                                                | `int[]`                   | ソート済み値に対応する順位配列のコピーを返す。                                     |
+| Method      | `iterator()`                                                             | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
+| Method      | `spliterator()`                                                          | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
+| Method      | `toString()`                                                             | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                         |
 
 ### `RankType`
 
@@ -173,22 +183,23 @@ dense ranking に加え、competition ranking と modified competition ranking �
 
 ## 性能特性
 
-`n` は全要素数とする。
+`n` は全要素数とする。2D版の `n` は `h * w` である。
 
-- 配列・配列インターフェースからの構築: $\mathcal{O}(n \log n)$。2D版のnは全要素数
-- 同型のコピーコンストラクタ: 時間 `O(n)`、コピー先の領域 `O(n)`
-- `get`, `getOrDefault`, `size`, `inRange`: $\mathcal{O}(1)$
-- 1D版の `getLast`, `getLastOrDefault`: $\mathcal{O}(1)$
-- `rankOfValue`, `valueOfRank`, `containsValue`, `count`: $\mathcal{O}(\log n)$
-- `restore`: $\mathcal{O}(n \log n)$
-- `toArray`, `toArray2D`, `sorted`, `ranks`, 全要素の走査, `toString`: $\mathcal{O}(n)$
-- iterator / spliterator の生成・iterator の1要素取得: `O(1)`
-- `spliterator` は `Arrays.spliterator(compressed)` で内部配列を直接走査する。分割時に iterator から一時配列へ要素をコピーしない。
-- 使用メモリ: $\mathcal{O}(n)$
+| 操作                                                                           | 時間計算量   | 補足                                                                       |
+|--------------------------------------------------------------------------------|--------------|----------------------------------------------------------------------------|
+| 配列・配列インターフェースからの構築                                           | `O(n log n)` | ソートと二分探索による                                                     |
+| 同型のコピーコンストラクタ                                                     | `O(n)`       | 再圧縮しない                                                               |
+| `get`, `getOrDefault`, `size`, `inRange`, 1D版の `getLast`, `getLastOrDefault` | `O(1)`       | —                                                                          |
+| `rankOfValue`, `valueOfRank`, `containsValue`, `count`                         | `O(log n)`   | —                                                                          |
+| `restore`                                                                      | `O(n log n)` | 各要素の値を二分探索で復元する                                             |
+| `toArray`, `toArray2D`, `sorted`, `ranks`, 全要素の走査, `toString`            | `O(n)`       | —                                                                          |
+| iterator / spliterator の生成・iterator の1要素取得                            | `O(1)`       | `spliterator` は `Arrays.spliterator(compressed)` で内部配列を直接走査する |
+
+- **空間計算量**: `O(n)`
 
 ## 実装履歴
 
-| バージョン番号     | 年月日     | 詳細                                                                                                                                              |
+| バージョン         | 日付       | 対象クラス・変更内容                                                                                                                              |
 |--------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 1.0** | 2026-07-15 | DENSE・COMPETITION・MODIFIED_COMPETITION、0/1-based、値と順位の相互変換を備える座標圧縮として初回実装                                             |
 | **バージョン 1.1** | 2026-07-15 | `toString()` を元配列順の空白区切り形式へ改善                                                                                                     |
@@ -201,4 +212,5 @@ dense ranking に加え、competition ranking と modified competition ranking �
 | **バージョン 7.0** | 2026-10-24 | 1D版で getLast / getLastOrDefault を継承。全4クラスの spliterator を内部配列用の実装へ変更                                                        |
 | **バージョン 8.0** | 2026-10-25 | 公開の長さを size に統一し、uniqueSize()・rankType()・isOneBased()・compressed() を削除。2D版を IntCollection に揃え、inRange と toArray2D を提供 |
 | **バージョン 9.0** | 2026-10-26 | 全4クラスに同型のコピーコンストラクタを追加。再圧縮せず、元の値・順位・要素順と2D版の寸法を保持                                                   |
-| **バージョン 9.1** | 2026-10-27 | 1Dのgetと2Dの行添字で配列アクセスと重複する範囲検査を削除 |
+| **バージョン 9.1** | 2026-10-27 | 1Dのgetと2Dの行添字で配列アクセスと重複する範囲検査を削除                                                                                         |
+| **バージョン 9.2** | 2026-10-27 | IntCompressedArray / LongCompressedArray: toString の空判定を isEmpty に統一                                                                      |
