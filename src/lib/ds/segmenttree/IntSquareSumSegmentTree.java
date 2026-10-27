@@ -63,8 +63,17 @@ public final class IntSquareSumSegmentTree implements Iterable<Integer> {
 		apply(l, r, v, 0);
 	}
 
-	public void set(final int i, final int v) {
-		apply(i, i + 1, 0, v);
+	/**
+	 * 指定位置を更新し、遅延操作を反映した更新前の値を {@code [0, mod)} で返す。
+	 */
+	public int set(final int i, final int v) {
+		final int idx = size + i;
+		pushPath(idx);
+		final int prev = tree[idx], x = v % mod;
+		tree[idx] = x;
+		tree2[idx] = (int) ((long) x * x % mod);
+		for (int j = idx >> 1; j > 0; j >>= 1) update(j);
+		return prev < 0 ? prev + mod : prev;
 	}
 
 	public void set(final int l, final int r, final int v) {

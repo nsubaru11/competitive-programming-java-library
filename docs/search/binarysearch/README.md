@@ -7,10 +7,10 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `ArrayBinarySearch` | ソート済み配列に対する効率的な二分探索を提供 | [ArrayBinarySearchGuide](./ArrayBinarySearchGuide.md) | [Java](../../../src/lib/search/ArrayBinarySearch.java) | [Test.java](../../../test/verify/search/binarysearch/Test.java) |
-| `BinarySearch` | 整数範囲内で特定の条件を満たす値を効率的に検索するための汎用的な二分探索クラス | [BinarySearchGuide](./BinarySearchGuide.md) | [Java](../../../src/lib/search/BinarySearch.java) | [Test.java](../../../test/verify/search/binarysearch/Test.java) |
+| クラス              | 用途                                                                           | Guide                                                 | ソース                                                 | Example / 検証                                                   |
+|---------------------|--------------------------------------------------------------------------------|-------------------------------------------------------|--------------------------------------------------------|------------------------------------------------------------------|
+| `ArrayBinarySearch` | ソート済み配列に対する効率的な二分探索を提供                                   | [ArrayBinarySearchGuide](./ArrayBinarySearchGuide.md) | [Java](../../../src/lib/search/ArrayBinarySearch.java) | [Test.java](../../../test/example/search/binarysearch/Test.java) |
+| `BinarySearch`      | 整数範囲内で特定の条件を満たす値を効率的に検索するための汎用的な二分探索クラス | [BinarySearchGuide](./BinarySearchGuide.md)           | [Java](../../../src/lib/search/BinarySearch.java)      | [Test.java](../../../test/example/search/binarysearch/Test.java) |
 
 ## 実装クラス
 

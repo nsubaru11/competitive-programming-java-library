@@ -8,7 +8,10 @@
 	- `lib.ds`, `lib.graph`, `lib.io`, `lib.math`, `lib.search`, `lib.sort`, `lib.string`, `lib.util`
 	- `lib.io.compat17`のみJava 17互換を維持
 - `src/patterns/`: DPやカレンダーなど、読んで写経・改変する実装パターン
-- `test/verify/`: Example、Check、オンラインジャッジ用コード、ベンチマークドライバ
+- `test/example/`: 利用例・出力デモ
+- `test/unit/`: 期待値を照合するローカル検証
+- `test/judge/`: オンラインジャッジ用の `Judge*.java`
+- `test/benchmark/`: 性能測定ドライバ・比較用実装
 - `docs/`: モジュールREADME、詳細ガイド、ベンチマークランナー
 - `out/`: ローカルコンパイル出力（gitignored）
 
@@ -26,7 +29,7 @@ $verify = @(rg --files test -g '*.java')
 javac --release 24 -encoding UTF-8 -cp out -d out/test $verify
 ```
 
-`src/lib/io/compat17`は別途`javac --release 17`で確認します。実行可能な検証コードは、例として`java -cp "out;out/test" verify.graph.mst.Example`のように完全修飾名で起動します。
+`src/lib/io/compat17`は別途`javac --release 17`で確認します。利用例は `java -cp "out;out/test" example.graph.Example` のように完全修飾名で起動します。既存の `unit.*` は main 形式であり、実行時は `-ea` を付けます。配置・命名は `test/README.md` を参照してください。
 
 ## 3. 設計方針
 
@@ -54,8 +57,8 @@ javac --release 24 -encoding UTF-8 -cp out -d out/test $verify
 
 1. 対象APIと依存元を特定する。
 2. 既存API互換を可能な限り維持して最小変更する。
-3. 本体と`test/verify`をコンパイルし、関連Example/Checkを実行する。
+3. 本体と`test/`をコンパイルし、関連する利用例・ローカル検証・Judgeを実行する。
 4. `lib.*`依存を追加した場合は、推移的バンドル結果もコンパイルする。
 5. 関連する`docs/`、ルートREADME、テンプレートを更新する。
 
-Java 24 FastIOのベンチマークは`docs/io/java24/Benchmark/run_tests_24.sh`または`.bat`を利用し、生成物は同ディレクトリの`work/`以下に置きます。
+Java 24 FastIOのベンチマークは`docs/io/java24/benchmark/run_tests_24.sh`または`.bat`を利用し、生成物は同ディレクトリの`work/`以下に置きます。

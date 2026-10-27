@@ -22,7 +22,7 @@
 
 ## 依存関係
 
-- `java.lang.Math`、`java.util` の配列操作・添字検査・例外・プリミティブ iterator / spliterator。
+- `java.util` の配列操作・添字検査・例外・プリミティブ iterator / spliterator。
 - `IntCollection` / `LongCollection`。
 - `IntBinaryOperator` / `LongBinaryOperator`、Long 版の座標初期化には `lib.util.function.IntBinaryToLongFunction`。
 - 継承 API は `java.util.function` と `java.util.stream` を利用する。
@@ -36,7 +36,7 @@
 | シグネチャ                                         | 戻り値                    | 説明                                                                                                 |
 |----------------------------------------------------|---------------------------|------------------------------------------------------------------------------------------------------|
 | `IntArray2D(int h, int w)`                         | —                         | 高さ h、幅 w の0初期化配列を構築する。                                                               |
-| `IntArray2D(int h, int w, int initialValue)`       | —                         | 全要素を initialValue で初期化する。                                                                 |
+| `IntArray2D(int h, int w, int v)`       | —                         | 全要素を v で初期化する。                                                                 |
 | `IntArray2D(int h, int w, int[] a)`                | —                         | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
 | `IntArray2D(int h, int w, IntBinaryOperator init)` | —                         | 各座標に init(i, j) を行優先順で適用して構築する。                                                   |
 | `IntArray2D(int[][] a)`                            | —                         | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                        |
@@ -83,7 +83,7 @@
 | シグネチャ                                                | 戻り値                     | 説明                                                                                                 |
 |-----------------------------------------------------------|----------------------------|------------------------------------------------------------------------------------------------------|
 | `LongArray2D(int h, int w)`                               | —                          | 高さ h、幅 w の0初期化配列を構築する。                                                               |
-| `LongArray2D(int h, int w, long initialValue)`            | —                          | 全要素を initialValue で初期化する。                                                                 |
+| `LongArray2D(int h, int w, long v)`            | —                          | 全要素を v で初期化する。                                                                 |
 | `LongArray2D(int h, int w, int[] a)`                      | —                          | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
 | `LongArray2D(int h, int w, long[] a)`                     | —                          | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
 | `LongArray2D(int h, int w, IntBinaryToLongFunction init)` | —                          | 各座標に init(i, j) を行優先順で適用して構築する。                                                   |
@@ -132,7 +132,7 @@
 | シグネチャ                                          | 戻り値                    | 説明                                                                                                       |
 |-----------------------------------------------------|---------------------------|------------------------------------------------------------------------------------------------------------|
 | `CharArray2D(int h, int w)`                         | —                         | 高さ h、幅 w の0初期化配列を構築する。                                                                     |
-| `CharArray2D(int h, int w, char initialValue)`      | —                         | 高さ h、幅 w の全要素を initialValue で初期化する。                                                        |
+| `CharArray2D(int h, int w, char v)`      | —                         | 高さ h、幅 w の全要素を v で初期化する。                                                        |
 | `CharArray2D(int h, int w, char[] a)`               | —                         | 配列の先頭 h * w 文字を行優先順でコピーする。配列長は要素数以上とする。                                    |
 | `CharArray2D(int h, int w, IntBinaryOperator init)` | —                         | init(i, j) を行優先順に呼び、結果を char に変換して構築する。                                              |
 | `CharArray2D(char[][] a)`                           | —                         | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                              |
@@ -165,7 +165,7 @@
 
 ### IntArray2D
 
-[Example.java](../../../test/verify/ds/arrays/intarray2d/Example.java)
+[Example.java](../../../test/example/ds/arrays/intarray2d/Example.java)
 
 ### LongArray2D
 
@@ -207,6 +207,8 @@
 
 関数の評価時間は別途加算する。iterator の1要素取得は `O(1)`。本体の使用領域は `O(n)`。変換後の配列化では論理順の添字計算を行う。寸法が正なら `O(h + n)` は `O(n)` である。
 
+`rotateLeft()` / `rotateRight()` はそれぞれ1回の座標変換で90度回転する。回数指定では4で剰余を取り、対応する回転を最大3回行う。
+
 ## 実装履歴
 
 | バージョン         | 日付       | 詳細                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -222,3 +224,5 @@
 | **バージョン 8.0** | 2026-10-23 | 初期値・コピーによる構築と論理座標による setAll を追加。set を旧値返却へ変更。変換操作を自身の返却に対応させ、ORDERED の spliterator を追加                                                                                                                                                                                                                                                                                                                                                                        |
 | **バージョン 9.0** | 2026-10-23 | CharArray2D を追加。文字列化の容量に改行分を含め、論理座標による setAll と数値版に揃えたメソッド順を採用                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **バージョン 9.1** | 2026-10-23 | 物理添字と返却用配列の名前、二重ループの書式を統一                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **バージョン 9.2** | 2026-10-25 | 3クラスの右回転を直接の座標変換へ変更し、左右の回数指定処理を統一                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **バージョン 9.3** | 2026-10-27 | 初期値引数名をvに統一し、Int版の未使用Math importを削除 |

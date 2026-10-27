@@ -4,12 +4,12 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `Fraction` | `long`分子・分母による分数 | — | [Java](../../../src/lib/math/number/Fraction.java) | — |
-| `Int128` | 128bit符号付き整数 | — | [Java](../../../src/lib/math/number/Int128.java) | [Check1.java](../../../test/verify/math/number/int128/Check1.java) |
-| `ModInt` | 法付き`int`値 | — | [Java](../../../src/lib/math/number/ModInt.java) | — |
-| `ModLong` | 法付き`long`値 | — | [Java](../../../src/lib/math/number/ModLong.java) | — |
+| クラス     | 用途                       | Guide | ソース                                             | Example / 検証                                                    |
+|------------|----------------------------|-------|----------------------------------------------------|-------------------------------------------------------------------|
+| `Fraction` | `long`分子・分母による分数 | —     | [Java](../../../src/lib/math/number/Fraction.java) | —                                                                 |
+| `Int128`   | 128bit符号付き整数         | —     | [Java](../../../src/lib/math/number/Int128.java)   | [Judge1.java](../../../test/judge/math/number/int128/Judge1.java) |
+| `ModInt`   | 法付き`int`値              | —     | [Java](../../../src/lib/math/number/ModInt.java)   | —                                                                 |
+| `ModLong`  | 法付き`long`値             | —     | [Java](../../../src/lib/math/number/ModLong.java)  | —                                                                 |
 
 | クラス                                                   | 説明                                             |
 |----------------------------------------------------------|--------------------------------------------------|

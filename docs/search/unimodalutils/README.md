@@ -7,11 +7,11 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `TernarySearch` | 単峰性を持つ関数の極値を効率的に見つけるアルゴリズム | — | [Java](../../../src/lib/search/TernarySearch.java) | — |
-| `GoldenSectionSearch` | 実数区間上の単峰関数を、関数評価回数を抑えながら探索する予定のクラス | — | [Java](../../../src/lib/search/GoldenSectionSearch.java) | — |
-| `Newton` | 導関数を利用して方程式 `f(x) = 0` の近似解を求める予定のクラス | — | [Java](../../../src/lib/search/Newton.java) | — |
+| クラス                | 用途                                                                 | Guide | ソース                                                   | Example / 検証 |
+|-----------------------|----------------------------------------------------------------------|-------|----------------------------------------------------------|----------------|
+| `TernarySearch`       | 単峰性を持つ関数の極値を効率的に見つけるアルゴリズム                 | —     | [Java](../../../src/lib/search/TernarySearch.java)       | —              |
+| `GoldenSectionSearch` | 実数区間上の単峰関数を、関数評価回数を抑えながら探索する予定のクラス | —     | [Java](../../../src/lib/search/GoldenSectionSearch.java) | —              |
+| `Newton`              | 導関数を利用して方程式 `f(x) = 0` の近似解を求める予定のクラス       | —     | [Java](../../../src/lib/search/Newton.java)              | —              |
 
 ## 実装クラス（開発中）
 

@@ -8,16 +8,16 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `IntIntMap` | intキー・int値のオープンアドレス法Map | [MapGuide](./MapGuide.md) | [Java](../../../src/lib/ds/map/IntIntMap.java) | [Test.java](../../../test/verify/ds/map/intintmap/Test.java) |
-| `LongIntMap` | longキー・int値のオープンアドレス法Map | [MapGuide](./MapGuide.md) | [Java](../../../src/lib/ds/map/LongIntMap.java) | [Test.java](../../../test/verify/ds/map/longintmap/Test.java) |
-| `IntLongMap` | intキー・long値のオープンアドレス法Map | [MapGuide](./MapGuide.md) | [Java](../../../src/lib/ds/map/IntLongMap.java) | — |
-| `LongLongMap` | longキー・long値のオープンアドレス法Map | [MapGuide](./MapGuide.md) | [Java](../../../src/lib/ds/map/LongLongMap.java) | [Check1.java](../../../test/verify/ds/map/longlongmap/Check1.java) |
-| `IntPairIntMap` | (int, int)キー・int値のMap | [PairMapGuide](./PairMapGuide.md) | [Java](../../../src/lib/ds/map/IntPairIntMap.java) | — |
-| `IntPairLongMap` | (int, int)キー・long値のMap | [PairMapGuide](./PairMapGuide.md) | [Java](../../../src/lib/ds/map/IntPairLongMap.java) | — |
-| `IntTripleIntMap` | (int, int, int)キー・int値のMap | [TripleMapGuide](./TripleMapGuide.md) | [Java](../../../src/lib/ds/map/IntTripleIntMap.java) | — |
-| `IntTripleLongMap` | (int, int, int)キー・long値のMap | [TripleMapGuide](./TripleMapGuide.md) | [Java](../../../src/lib/ds/map/IntTripleLongMap.java) | — |
+| クラス             | 用途                                    | Guide                                 | ソース                                                | Example / 検証                                                    |
+|--------------------|-----------------------------------------|---------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------|
+| `IntIntMap`        | intキー・int値のオープンアドレス法Map   | [MapGuide](./MapGuide.md)             | [Java](../../../src/lib/ds/map/IntIntMap.java)        | [Test.java](../../../test/unit/ds/map/intintmap/Test.java)        |
+| `LongIntMap`       | longキー・int値のオープンアドレス法Map  | [MapGuide](./MapGuide.md)             | [Java](../../../src/lib/ds/map/LongIntMap.java)       | [Test.java](../../../test/unit/ds/map/longintmap/Test.java)       |
+| `IntLongMap`       | intキー・long値のオープンアドレス法Map  | [MapGuide](./MapGuide.md)             | [Java](../../../src/lib/ds/map/IntLongMap.java)       | —                                                                 |
+| `LongLongMap`      | longキー・long値のオープンアドレス法Map | [MapGuide](./MapGuide.md)             | [Java](../../../src/lib/ds/map/LongLongMap.java)      | [Judge1.java](../../../test/judge/ds/map/longlongmap/Judge1.java) |
+| `IntPairIntMap`    | (int, int)キー・int値のMap              | [PairMapGuide](./PairMapGuide.md)     | [Java](../../../src/lib/ds/map/IntPairIntMap.java)    | —                                                                 |
+| `IntPairLongMap`   | (int, int)キー・long値のMap             | [PairMapGuide](./PairMapGuide.md)     | [Java](../../../src/lib/ds/map/IntPairLongMap.java)   | —                                                                 |
+| `IntTripleIntMap`  | (int, int, int)キー・int値のMap         | [TripleMapGuide](./TripleMapGuide.md) | [Java](../../../src/lib/ds/map/IntTripleIntMap.java)  | —                                                                 |
+| `IntTripleLongMap` | (int, int, int)キー・long値のMap        | [TripleMapGuide](./TripleMapGuide.md) | [Java](../../../src/lib/ds/map/IntTripleLongMap.java) | —                                                                 |
 
 ## 実装クラス
 

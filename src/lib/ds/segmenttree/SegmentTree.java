@@ -34,16 +34,24 @@ public final class SegmentTree<T> implements Iterable<T> {
 		return tree[size + i];
 	}
 
-	public T set(final int i, final T e) {
+	/**
+	 * 指定位置を更新し、更新前の値を返す。
+	 */
+	public T set(final int i, final T v) {
 		final int idx = size + i;
-		if (Objects.equals(tree[idx], e)) return e;
-		tree[idx] = e;
+		final T prev = tree[idx];
+		tree[idx] = v;
 		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.apply(tree[j << 1], tree[(j << 1) | 1]);
-		return tree[idx];
+		return prev;
 	}
 
+	/**
+	 * 指定位置に演算を適用し、更新後の値を返す。
+	 */
 	public T apply(final int i, final T v, final BinaryOperator<T> op) {
-		return set(i, op.apply(tree[size + i], v));
+		final T res = op.apply(tree[size + i], v);
+		set(i, res);
+		return res;
 	}
 
 	public void fill(final T val) {

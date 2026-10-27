@@ -7,120 +7,17 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `BIT` | 二項演算・逆演算・単位元を指定する汎用BIT。 | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/BIT.java) | — |
-| `LongBIT` | `long`値向けの1次元BIT。点更新・区間和・累積和境界探索に対応。 | — | [Java](../../../src/lib/ds/fenwick/LongBIT.java) | [Check1.java](../../../test/verify/ds/fenwick/longbit/Check1.java) |
-| `IntBIT` | `int`値向けの1次元BIT。点更新・区間和・累積和境界探索に対応。 | — | [Java](../../../src/lib/ds/fenwick/IntBIT.java) | [Test.java](../../../test/verify/ds/fenwick/Test.java) |
-| `LongBIT2D` | `long`値向けの2次元BIT。点更新と矩形領域和に対応。 | — | [Java](../../../src/lib/ds/fenwick/LongBIT2D.java) | — |
-| `IntBIT2D` | `int`値向けの2次元BIT。点更新と矩形領域和に対応。 | — | [Java](../../../src/lib/ds/fenwick/IntBIT2D.java) | — |
-| `LongRangeBIT` | `long`値向けの区間加算・区間和BIT。 | — | [Java](../../../src/lib/ds/fenwick/LongRangeBIT.java) | — |
-| `IntRangeBIT` | `int`値向けの区間加算・区間和BIT。 | — | [Java](../../../src/lib/ds/fenwick/IntRangeBIT.java) | — |
+| クラス         | 用途                                                           | Guide                     | ソース                                                | Example / 検証                                                    |
+|----------------|----------------------------------------------------------------|---------------------------|-------------------------------------------------------|-------------------------------------------------------------------|
+| `BIT`          | 二項演算・逆演算・単位元を指定する汎用BIT。                    | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/BIT.java)          | —                                                                 |
+| `LongBIT`      | `long`値向けの1次元BIT。点更新・区間和・累積和境界探索に対応。 | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/LongBIT.java)      | [Judge1.java](../../../test/judge/ds/fenwick/longbit/Judge1.java) |
+| `IntBIT`       | `int`値向けの1次元BIT。点更新・区間和・累積和境界探索に対応。  | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/IntBIT.java)       | [Test.java](../../../test/unit/ds/fenwick/Test.java)              |
+| `LongBIT2D`    | `long`値向けの2次元BIT。点更新と矩形領域和に対応。             | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/LongBIT2D.java)    | —                                                                 |
+| `IntBIT2D`     | `int`値向けの2次元BIT。点更新と矩形領域和に対応。              | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/IntBIT2D.java)     | —                                                                 |
+| `LongRangeBIT` | `long`値向けの区間加算・区間和BIT。                            | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/LongRangeBIT.java) | —                                                                 |
+| `IntRangeBIT`  | `int`値向けの区間加算・区間和BIT。                             | [BITGuide](./BITGuide.md) | [Java](../../../src/lib/ds/fenwick/IntRangeBIT.java)  | —                                                                 |
 
-## 実装クラス
+## API・計算量・利用条件
 
-### 1. [LongBIT](../../../src/lib/ds/fenwick/LongBIT.java) / [IntBIT](../../../src/lib/ds/fenwick/IntBIT.java)
-
-- **用途**: `long`型 / `int`型に特化した高速な1次元BIT（点更新・区間和）
-- **主な操作**:
-	- `add(int i, v)`: インデックス `i` に `v` を加算 $\mathcal{O}(\log N)$
-	- `set(int i, v)`: インデックス `i` を `v` に更新 $\mathcal{O}(\log N)$
-	- `multiply(int i, a)`: インデックス `i` を `a` 倍 $\mathcal{O}(\log N)$
-	- `apply(int i, a, b)`: `x -> a*x + b` を適用 $\mathcal{O}(\log N)$
-	- `apply(int i, v, op)`: 任意の二項演算 `op(x, v)` を適用 $\mathcal{O}(\log N)$
-	- `get(int i)`: インデックス `i` の値を取得 $\mathcal{O}(1)$
-	- `sum(int r)`: 閉区間 `[0, r]` の和を計算 $\mathcal{O}(\log N)$
-	- `sum(int l, int r)`: 閉区間 `[l, r]` の和を計算 $\mathcal{O}(\log N)$
-	- `sumAll()`: 全要素の和 $\mathcal{O}(1)$
-	- `lowerBound(w)`: 累積和が `w` 以上となる最小のインデックスを検索 $\mathcal{O}(\log N)$（全要素が非負であることが前提）
-	- `upperBound(w)`: 累積和が `w` より大きくなる最小のインデックスを検索 $\mathcal{O}(\log N)$（全要素が非負であることが前提）
-- **一括操作**: `fill(v)` / `setAll(init)` で全要素を $\mathcal{O}(N)$ で再構築
-- **構築**: `new LongBIT(n, init)` / `new IntBIT(n, init)` で初期値関数から構築可能
-- **列挙**: `IntCollection` / `LongCollection` を実装し、`iterator()` / `intStream()` / `toArray()` / `toList()` に対応
-
-### 2. [BIT&lt;T&gt;](../../../src/lib/ds/fenwick/BIT.java)
-
-- **用途**: 汎用的な型 `T` と任意の二項演算を扱うBIT
-- **特徴**: 演算 `op`・逆演算 `inv`・単位元 `identity` を与えて構築。逆演算を与えると区間クエリ `query(l, r)` や `set`
-  にも対応可能
-- **主な操作**:
-	- `apply(int i, T v)`: インデックス `i` に `v` を作用 $\mathcal{O}(\log N)$
-	- `set(int i, T v)`: インデックス `i` を `v` に更新（`inv` が必要）$\mathcal{O}(\log N)$
-	- `get(int i)`: インデックス `i` の値を取得 $\mathcal{O}(1)$
-	- `query(int r)`: 閉区間 `[0, r]` の演算結果 $\mathcal{O}(\log N)$
-	- `query(int l, int r)`: 閉区間 `[l, r]` の演算結果（`inv` が必要）$\mathcal{O}(\log N)$
-- **列挙**: `Iterable<T>` を実装
-
-### 3. [LongBIT2D](../../../src/lib/ds/fenwick/LongBIT2D.java) / [IntBIT2D](../../../src/lib/ds/fenwick/IntBIT2D.java)
-
-- **用途**: 2次元平面上の点加算と矩形領域和を管理
-- **主な操作**:
-	- `add(i, j, v)`: $(i, j)$ に `v` を加算 $\mathcal{O}(\log H \log W)$
-	- `set(i, j, v)` / `multiply(i, j, a)` / `apply(i, j, ...)`: 点更新・点演算 $\mathcal{O}(\log H \log W)$
-	- `get(i, j)`: $(i, j)$ の値を取得 $\mathcal{O}(1)$
-	- `sum(i, j)`: 矩形 `[0, i] x [0, j]` の和 $\mathcal{O}(\log H \log W)$
-	- `sum(i1, j1, i2, j2)`: 矩形 `[i1, i2] x [j1, j2]` の和 $\mathcal{O}(\log H \log W)$
-	- `sumAll()`: 全要素の和 $\mathcal{O}(1)$
-- **一括操作**: `fill(v)` / `setAll(init)` で全要素を $\mathcal{O}(HW)$ で再構築
-- **構築**: `IntBIT2D` は初期値関数に `IntBinaryOperator`、`LongBIT2D` は `(int, int) -> long` を返す
-  `LongBIT2D.Initializer` を使用（JDK 標準に `(int, int) -> long` が無いための専用インターフェース）
-
-### 4. [LongRangeBIT](../../../src/lib/ds/fenwick/LongRangeBIT.java) / [IntRangeBIT](../../../src/lib/ds/fenwick/IntRangeBIT.java)
-
-- **用途**: 区間加算と区間和の取得を共に $\mathcal{O}(\log N)$ で行う（2本のBITを内部で管理）
-- **主な操作**:
-	- `add(l, r, v)`: 区間 `[l, r]` に `v` を一括加算 $\mathcal{O}(\log N)$
-	- `add(i, v)` / `set(i, v)` / `multiply(i, a)` / `apply(i, ...)`: 点更新・点演算 $\mathcal{O}(\log N)$
-	- `get(i)`: インデックス `i` の値を取得 $\mathcal{O}(\log N)$（※点BITと異なり $\mathcal{O}(1)$ ではない）
-	- `sum(r)` / `sum(l, r)`: 区間和の取得 $\mathcal{O}(\log N)$
-	- `sumAll()`: 全要素の和 $\mathcal{O}(1)$
-
-## 基本的な考え方
-
-バイナリインデックスツリーは、各ノードが特定の範囲の要素の和を保持する木構造である。
-この構造は、インデックスのビット表現を利用して効率的に実装される。
-
-1. **更新操作（update）**:
-	- インデックスiの要素を更新する場合、iに関連するすべてのノードを更新
-	- 次のノードは `i + (i & -i)` で計算（最下位ビットを加算）
-
-2. **累積和計算（sum）**:
-	- インデックス0からiまでの累積和を計算
-	- iから始めて、`i - (i & -i)` で前のノードに移動（最下位ビットを減算）
-
-3. **区間和計算（rangeSum）**:
-	- `sum(r) - sum(l-1)` で計算
-
-## 応用例
-
-バイナリインデックスツリーは以下のような問題に適用できる：
-
-1. **区間和クエリ**:
-	- 配列の特定の区間の和を効率的に計算
-
-2. **点更新・区間和**:
-	- 配列の特定の要素を更新し、区間の和を計算する操作が混在する問題
-
-3. **転置数（Inversion Count）**:
-	- 配列内の転置数（順序が逆転している要素のペアの数）を効率的に計算
-
-4. **2次元累積和**:
-	- 2次元BITを使用して、2次元グリッド上の矩形領域の和を効率的に計算
-
-## セグメント木との比較
-
-| 特性              | バイナリインデックスツリー | セグメント木          |
-|-------------------|----------------------------|-----------------------|
-| 実装の複雑さ      | シンプル                   | やや複雑              |
-| メモリ使用量      | $\mathcal{O}(n)$           | $\mathcal{O}(n)$      |
-| 更新操作          | $\mathcal{O}(\log n)$      | $\mathcal{O}(\log n)$ |
-| 区間和計算        | $\mathcal{O}(\log n)$      | $\mathcal{O}(\log n)$ |
-| 区間最小値/最大値 | 非対応                     | 対応                  |
-| 区間の遅延更新    | 非対応                     | 対応                  |
-
-## 注意事項
-
-- 本ライブラリの実装は 0-indexed での操作を基本としている。
-- 区間の最小値や最大値を求める操作には対応していない（そのような操作にはセグメント木が適している）。
-- `lowerBound(w)` は「prefixSum(i) >= w」、`upperBound(w)` は「prefixSum(i) > w」を満たす最小の `i` を返し、条件を満たす位置がない場合は
-  `n` を返す。
+全クラスのシグネチャ、添字検査と空区間の扱い、係数指定の `affine` と関数指定の `apply`、更新前の値を返す `set`、int版の要素とlong型の集計値の区別は [BIT 利用ガイド](./BITGuide.md) を参照する。
+LongBIT2D の初期化関数は `IntBinaryToLongFunction` を使う。

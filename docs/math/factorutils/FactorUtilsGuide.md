@@ -29,24 +29,24 @@
 
 ### 素因数
 
-| メソッド                                   |                 戻り値 | 説明                             |
-|--------------------------------------------|-----------------------:|----------------------------------|
-| `uniquePrimeFactorCount(long n)`           |                  `int` | 異なる素因数の個数               |
-| `primeFactorCount(long n)`                 |                  `int` | 重複込みの素因数の個数           |
-| `primeFactors(int n)`                      |                `int[]` | 重複込みの昇順配列               |
-| `primeFactors(long n)`                     |               `long[]` | long版                           |
+| メソッド                                   | 戻り値                 | 説明                             |
+|--------------------------------------------|------------------------|----------------------------------|
+| `uniquePrimeFactorCount(long n)`           | `int`                  | 異なる素因数の個数               |
+| `primeFactorCount(long n)`                 | `int`                  | 重複込みの素因数の個数           |
+| `primeFactors(int n)`                      | `int[]`                | 重複込みの昇順配列               |
+| `primeFactors(long n)`                     | `long[]`               | long版                           |
 | `primeFactors(int/long n, Supplier<T>)`    | `T extends Collection` | 指定Collectionへ昇順に追加       |
-| `primeFactors2D(int n)`                    |              `int[][]` | `[0]`に素因数、`[1]`に指数を格納 |
-| `primeFactors2D(long n)`                   |             `long[][]` | long版。指数は`int`              |
-| `primeFactorsMap(int/long n, Supplier<T>)` |        `T extends Map` | 素因数と指数の対応               |
+| `primeFactors2D(int n)`                    | `int[][]`              | `[0]`に素因数、`[1]`に指数を格納 |
+| `primeFactors2D(long n)`                   | `long[][]`             | long版。指数は`int`              |
+| `primeFactorsMap(int/long n, Supplier<T>)` | `T extends Map`        | 素因数と指数の対応               |
 
 ### 約数
 
-| メソッド                            |                 戻り値 | 説明                       |
-|-------------------------------------|-----------------------:|----------------------------|
-| `divisorCount(long n)`              |                  `int` | 正の約数の個数             |
-| `divisors(int n)`                   |                `int[]` | 正の約数の昇順配列         |
-| `divisors(long n)`                  |               `long[]` | long版                     |
+| メソッド                            | 戻り値                 | 説明                       |
+|-------------------------------------|------------------------|----------------------------|
+| `divisorCount(long n)`              | `int`                  | 正の約数の個数             |
+| `divisors(int n)`                   | `int[]`                | 正の約数の昇順配列         |
+| `divisors(long n)`                  | `long[]`               | long版                     |
 | `divisors(int/long n, Supplier<T>)` | `T extends Collection` | 指定Collectionへ昇順に追加 |
 
 ## 利用例
@@ -69,7 +69,7 @@ ArrayList<Integer> intDivisors =
 ```
 
 
-- [Example.java](../../../test/verify/math/factorutils/Example.java)
+- [Example.java](../../../test/example/math/factorutils/Example.java)
 
 
 
@@ -92,9 +92,9 @@ ArrayList<Integer> intDivisors =
 
 ## 実装履歴
 
-| バージョン番号     | 年月日     | 詳細                                                                                |
-|:-------------------|:-----------|:------------------------------------------------------------------------------------|
+| バージョン番号     | 年月日     | 詳細                                                                            |
+|--------------------|------------|---------------------------------------------------------------------------------|
 | **バージョン 1.3** | 2026-08-10 | 素因数個数計算の残因数処理を修正し、素因数分解系メソッドを`for`形式へ統一した。 |
 | **バージョン 1.2** | 2026-08-10 | 素因数分解の試し割り候補を6k±1へ限定し、定数倍の計算量を削減した。              |
 | **バージョン 1.1** | 2026-08-10 | `primeFactors2D(int/long)`を追加し、素因数と指数を並列配列で取得可能にした。    |
-| **バージョン 1.0** | 2026-08-01 | 素因数分解・個数計算・約数列挙を実装                                                |
+| **バージョン 1.0** | 2026-08-01 | 素因数分解・個数計算・約数列挙を実装                                            |

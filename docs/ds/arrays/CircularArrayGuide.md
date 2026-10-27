@@ -39,7 +39,7 @@
 | シグネチャ                                       | 戻り値                    | 説明                                                                                |
 |--------------------------------------------------|---------------------------|-------------------------------------------------------------------------------------|
 | `IntCircularArray(int n)`                        | —                         | 長さ n の0初期化配列を構築する。                                                    |
-| `IntCircularArray(int n, int initialValue)`      | —                         | 長さ n の全要素を initialValue で初期化する。                                       |
+| `IntCircularArray(int n, int v)`      | —                         | 長さ n の全要素を v で初期化する。                                       |
 | `IntCircularArray(int n, IntUnaryOperator init)` | —                         | init を添字の昇順に1回ずつ呼び出して構築する。                                      |
 | `IntCircularArray(int[] a)`                      | —                         | 指定された配列の要素を同じ順序で保持する循環配列を構築する。                        |
 | `IntCircularArray(IntArray a)`                   | —                         | 指定された配列の論理順を保持する循環配列を構築する。                                |
@@ -52,11 +52,11 @@
 | `set(int i, int v)`                              | `int`                     | 指定した有効な論理添字を更新し、更新前の値を返す。                                  |
 | `fill(int v)`                                    | `void`                    | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
 | `setAll(IntUnaryOperator init)`                  | `void`                    | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
-| `shiftLeft()`                                    | `void`                    | 論理配列を左へ1要素回転する。                                                       |
-| `shiftLeft(int n)`                               | `void`                    | 論理配列を左へn要素回転する。                                                       |
-| `shiftRight()`                                   | `void`                    | 論理配列を右へ1要素回転する。                                                       |
-| `shiftRight(int n)`                              | `void`                    | 論理配列を右へn要素回転する。                                                       |
-| `resetRotation()`                                | `void`                    | 回転状態を初期位置へ戻す。                                                          |
+| `rotateLeft()`                                   | `IntCircularArray`        | 論理配列を左へ1要素回転する。                                                       |
+| `rotateLeft(int n)`                              | `IntCircularArray`        | 論理配列を左へn要素回転する。                                                       |
+| `rotateRight()`                                  | `IntCircularArray`        | 論理配列を右へ1要素回転する。                                                       |
+| `rotateRight(int n)`                             | `IntCircularArray`        | 論理配列を右へn要素回転する。                                                       |
+| `resetRotation()`                                | `IntCircularArray`        | 回転状態を初期位置へ戻す。                                                          |
 | `toArray()`                                      | `int[]`                   | 現在の論理順で独立した配列へコピーする。                                            |
 | `iterator()`                                     | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。  |
 | `toString()`                                     | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                              |
@@ -66,7 +66,7 @@
 | シグネチャ                                         | 戻り値                     | 説明                                                                                |
 |----------------------------------------------------|----------------------------|-------------------------------------------------------------------------------------|
 | `LongCircularArray(int n)`                         | —                          | 長さ n の0初期化配列を構築する。                                                    |
-| `LongCircularArray(int n, long initialValue)`      | —                          | 長さ n の全要素を initialValue で初期化する。                                       |
+| `LongCircularArray(int n, long v)`      | —                          | 長さ n の全要素を v で初期化する。                                       |
 | `LongCircularArray(int n, IntToLongFunction init)` | —                          | init を添字の昇順に1回ずつ呼び出して構築する。                                      |
 | `LongCircularArray(long[] a)`                      | —                          | 指定された配列の要素を同じ順序で保持する循環配列を構築する。                        |
 | `LongCircularArray(LongArray a)`                   | —                          | 指定された配列の論理順を保持する循環配列を構築する。                                |
@@ -79,16 +79,16 @@
 | `set(int i, long v)`                               | `long`                     | 指定した有効な論理添字を更新し、更新前の値を返す。                                  |
 | `fill(long v)`                                     | `void`                     | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
 | `setAll(IntToLongFunction init)`                   | `void`                     | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
-| `shiftLeft()`                                      | `void`                     | 論理配列を左へ1要素回転する。                                                       |
-| `shiftLeft(int n)`                                 | `void`                     | 論理配列を左へn要素回転する。                                                       |
-| `shiftRight()`                                     | `void`                     | 論理配列を右へ1要素回転する。                                                       |
-| `shiftRight(int n)`                                | `void`                     | 論理配列を右へn要素回転する。                                                       |
-| `resetRotation()`                                  | `void`                     | 回転状態を初期位置へ戻す。                                                          |
+| `rotateLeft()`                                     | `LongCircularArray`        | 論理配列を左へ1要素回転する。                                                       |
+| `rotateLeft(int n)`                                | `LongCircularArray`        | 論理配列を左へn要素回転する。                                                       |
+| `rotateRight()`                                    | `LongCircularArray`        | 論理配列を右へ1要素回転する。                                                       |
+| `rotateRight(int n)`                               | `LongCircularArray`        | 論理配列を右へn要素回転する。                                                       |
+| `resetRotation()`                                  | `LongCircularArray`        | 回転状態を初期位置へ戻す。                                                          |
 | `toArray()`                                        | `long[]`                   | 現在の論理順で独立した配列へコピーする。                                            |
 | `iterator()`                                       | `PrimitiveIterator.OfLong` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。  |
 | `toString()`                                       | `String`                   | 論理順の要素を半角スペースで区切った文字列として返す。                              |
 
-両クラスの `public final int length` は固定の要素数を表す。その他の継承 API は [ArrayGuide](./ArrayGuide.md) を参照する。
+両クラスの `public final int size` は固定の要素数を表す。先頭・末尾取得と探索は [ArrayGuide](./ArrayGuide.md)、要素演算・交換・反転は [MutableArrayGuide](./MutableArrayGuide.md) の継承 API を参照する。
 
 ## 利用例
 
@@ -97,16 +97,17 @@
 ## 制約・注意事項
 
 - 更新関数の共通条件は [MutableArrayGuide](./MutableArrayGuide.md#制約注意事項) を参照する。
-- iterator / spliterator / Stream と、それらを使う一括処理の実行中は、`shiftLeft` / `shiftRight` / `resetRotation` / `fill` / `setAll` を呼び出さない。各要素の取得時に現在の `offset` を参照するため、途中で回転状態が変わると走査位置がずれる。変更検出は保証しない。
+- iterator / spliterator / Stream と、それらを使う一括処理の実行中は、`rotateLeft` / `rotateRight` / `resetRotation` / `fill` / `setAll` を呼び出さない。各要素の取得時に現在の `offset` を参照するため、途中で回転状態が変わると走査位置がずれる。変更検出は保証しない。
 - getOrDefault(int i, int defaultValue) / getOrDefault(int i, long defaultValue) は配列インターフェースの既定実装を使う。範囲外では指定値を返す。
 - contains はコレクションの既定実装を使い、論理順に線形探索する。
 - 同型のコピーコンストラクタは内部配列を複製し、offset と rotation も保持する。IntArray / LongArray 型の引数からの構築では論理順をコピーし、回転状態は0から開始する。
 - 現在の実装は `n >= 1` の問題制約を前提とする。
-- `get` / `set` は `0 <= i < length` の論理添字を受け付け、範囲外では `IndexOutOfBoundsException` を投げる。負の添字は使用できない。末尾の取得には `getLast()` を使う。
+- `get` / `set` は `0 <= i < size` の論理添字を受け付け、範囲外では `IndexOutOfBoundsException` を投げる。負の添字は使用できない。末尾の取得には `getLast()` を使う。
 - `fill` と `setAll` は物理配列を先頭から再構築し、`offset` と総回転数を0へ戻す。
 - `setAll(init)` の `init` には正規化後の論理添字が渡される。
 - `rotation()` は配列長で剰余を取らず、左回転を正、右回転を負として累積する。
-- `shiftLeft(n)` / `shiftRight(n)` の負の回転数は逆方向の回転を表す。
+- `rotateLeft(n)` / `rotateRight(n)` の負の回転数は逆方向の回転を表す。
+- 回転・`resetRotation()` は自身を返し、連続呼び出しができる。
 - `resetRotation()` は要素を並べ替えず、`offset` と総回転数を0へ戻す。
 - 合計は保持しない。必要な場合は [ArrayUtils.sum](./ArrayUtilsGuide.md) で集計する。
 
@@ -119,6 +120,7 @@
 - `fill`, `setAll`, `contains`, `toArray`, 全要素の走査, `toString`: $\mathcal{O}(n)$
 - iterator の生成・1要素取得: `O(1)`
 - `toArray` は回転の折り返し位置で分け、2回の `System.arraycopy` でコピーする。
+- `IntArray` / `LongArray` からの構築はコピー元の `toArray` を使い、コピー元が持つ一括コピーの実装を利用する。
 - 使用メモリ: $\mathcal{O}(n)$
 - `toArray` と `toString` は結果用の追加メモリを使用
 
@@ -136,3 +138,6 @@
 | **バージョン 5.0** | 2026-10-23 | 長さ・初期値指定・回転状態を保持するコピーのコンストラクタを追加。contains を既定実装へ移行し、複製方法・命名・メソッド順を統一 |
 | **バージョン 6.0** | 2026-10-24 | get / set に論理添字の範囲検査を追加し、負の添字を禁止。現在の論理順の末尾を取得する getLast() を追加                           |
 | **バージョン 7.0** | 2026-10-24 | getLast を配列インターフェースの既定実装へ移行し、getLastOrDefault を継承                                                       |
+| **バージョン 7.1** | 2026-10-25 | 右回転名を shiftRight に統一。配列インターフェースからの構築でコピー元の toArray を利用                                         |
+| **バージョン 8.0** | 2026-10-25 | 左右の回転名を rotateLeft / rotateRight に統一し、回転・resetRotation が自身を返すよう変更。公開の長さを size に統一            |
+| **バージョン 8.1** | 2026-10-27 | 初期値指定コンストラクタの引数名をvに統一 |

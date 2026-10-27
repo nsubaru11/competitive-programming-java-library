@@ -18,11 +18,11 @@ if "%ENABLE_JFR%"=="" set ENABLE_JFR=0
 if "%JFR_SETTINGS%"=="" set JFR_SETTINGS=profile
 
 :: Directories and files
-:: This script lives in "docs\io\java24\Benchmark\"
+:: This script lives in "docs\io\java24\benchmark\"
 set "BENCH_PATH=%~dp0"
 set "PROJECT_ROOT=%BENCH_PATH%..\..\..\..\"
 set "SRC_PATH=%PROJECT_ROOT%src\lib\io"
-set "TEST_PATH=%PROJECT_ROOT%test\verify\io\bench24"
+set "TEST_PATH=%PROJECT_ROOT%test\benchmark\io\bench24"
 :: All generated artifacts (classes, input, CSV, logs) go under work\ (gitignored)
 set "WORK_PATH=%BENCH_PATH%work"
 set "OUT_PATH=%WORK_PATH%\out"
@@ -74,14 +74,14 @@ if errorlevel 1 (
 
 if not exist "%INPUT_FILE%" (
     echo [2/4] Input file not found. Generating large_input.txt...
-    %JAVA_EXE% -cp "%OUT_PATH%" verify.io.bench24.GenerateTestInput "%INPUT_FILE%"
+    %JAVA_EXE% -cp "%OUT_PATH%" benchmark.io.bench24.GenerateTestInput "%INPUT_FILE%"
 ) else (
     echo [2/4] Using existing input file: %INPUT_FILE%
 )
 echo.
 
 echo [3/4] Profiling JIT and Startup Time (Dry Run)...
-%JAVA_EXE% %CP_FAST_START_OPTS% -Xlog:compilation*=debug,inlining*=debug:file="%JIT_LOG%":time,uptime,level,tags:filecount=0 -Xlog:gc*=debug,safepoint*=info:file="%DRY_RUN_GC_LOG%":time,uptime,level,tags:filecount=0 -cp "%BENCH_CLASSPATH%" verify.io.bench24.Test1 %DRY_RUN_TOKEN_COUNT% %DRY_RUN_TOKEN_COUNT% %DRY_RUN_STRING_PRINT_COUNT% < "%INPUT_FILE%" > nul 2> "%DRY_RUN_STARTUP_LOG%"
+%JAVA_EXE% %CP_FAST_START_OPTS% -Xlog:compilation*=debug,inlining*=debug:file="%JIT_LOG%":time,uptime,level,tags:filecount=0 -Xlog:gc*=debug,safepoint*=info:file="%DRY_RUN_GC_LOG%":time,uptime,level,tags:filecount=0 -cp "%BENCH_CLASSPATH%" benchmark.io.bench24.Test1 %DRY_RUN_TOKEN_COUNT% %DRY_RUN_TOKEN_COUNT% %DRY_RUN_STRING_PRINT_COUNT% < "%INPUT_FILE%" > nul 2> "%DRY_RUN_STARTUP_LOG%"
 if errorlevel 1 (
     echo [ERROR] Dry run profiling failed.
     exit /b 1
@@ -105,7 +105,7 @@ for /l %%i in (1, 1, %RUN_COUNT%) do (
     set "TEST1_STARTUP_LOG=%STARTUP_LOG_DIR%\test1_run_!RUN_ID!.log"
     set "T1_OPTS=%CP_FAST_START_OPTS% -Xlog:gc*=debug,safepoint*=info:file="!TEST1_GC_LOG!":time,uptime,level,tags:filecount=0"
 
-    %JAVA_EXE% !T1_OPTS! -cp "%BENCH_CLASSPATH%" verify.io.bench24.Test1 %TOKEN_COUNT% %TOKEN_COUNT% %STRING_PRINT_COUNT% < "%INPUT_FILE%" > "%TMP1%" 2> "!TEST1_STARTUP_LOG!"
+    %JAVA_EXE% !T1_OPTS! -cp "%BENCH_CLASSPATH%" benchmark.io.bench24.Test1 %TOKEN_COUNT% %TOKEN_COUNT% %STRING_PRINT_COUNT% < "%INPUT_FILE%" > "%TMP1%" 2> "!TEST1_STARTUP_LOG!"
 
     for /f "tokens=* delims=" %%A in ('findstr "^RESULT," "%TMP1%"') do (
         set "line=%%A"
@@ -118,7 +118,7 @@ for /l %%i in (1, 1, %RUN_COUNT%) do (
     set "TEST2_STARTUP_LOG=%STARTUP_LOG_DIR%\test2_run_!RUN_ID!.log"
     set "T2_OPTS=%CP_FAST_START_OPTS% -Xlog:gc*=debug,safepoint*=info:file="!TEST2_GC_LOG!":time,uptime,level,tags:filecount=0"
 
-    %JAVA_EXE% !T2_OPTS! -cp "%BENCH_CLASSPATH%" verify.io.bench24.Test2 %TOKEN_COUNT% %TOKEN_COUNT% %STRING_PRINT_COUNT% < "%INPUT_FILE%" > "%TMP2%" 2> "!TEST2_STARTUP_LOG!"
+    %JAVA_EXE% !T2_OPTS! -cp "%BENCH_CLASSPATH%" benchmark.io.bench24.Test2 %TOKEN_COUNT% %TOKEN_COUNT% %STRING_PRINT_COUNT% < "%INPUT_FILE%" > "%TMP2%" 2> "!TEST2_STARTUP_LOG!"
 
     for /f "tokens=* delims=" %%A in ('findstr "^RESULT," "%TMP2%"') do (
         set "line=%%A"

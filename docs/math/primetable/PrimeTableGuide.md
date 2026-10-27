@@ -26,26 +26,26 @@
 
 ## API
 
-| メソッド                                   |                     戻り値 | 説明                             |
-|--------------------------------------------|---------------------------:|----------------------------------|
-| `PrimeTable(long n)`                       |                          - | `n`以下の素数を構築              |
-| `getLimitValue()`                          |                     `long` | 構築時に指定した上限             |
-| `getPrimeCount()`                          |                      `int` | テーブル内の素数個数             |
-| `isPrime(long n)`                          |                  `boolean` | テーブル範囲内の素数判定         |
-| `countPrimesUpTo(long n)`                  |                      `int` | `n`以下の素数個数                |
-| `ceilingPrime(long n)`                     |                     `long` | `n`以上の最小素数                |
-| `higherPrime(long n)`                      |                     `long` | `n`より大きい最小素数            |
-| `floorPrime(long n)`                       |                     `long` | `n`以下の最大素数                |
-| `lowerPrime(long n)`                       |                     `long` | `n`より小さい最大素数            |
-| `get(int i)`                               |                     `long` | 0始まりのi番目の素数             |
-| `uniquePrimeFactorCount(long n)`           |                      `int` | 異なる素因数の個数               |
-| `primeFactorCount(long n)`                 |                      `int` | 重複込みの素因数の個数           |
-| `primeFactors(int/long n)`                 |         `int[]` / `long[]` | 重複込みの昇順配列               |
-| `primeFactors(int/long n, Supplier<T>)`    |     `T extends Collection` | 指定Collectionへ昇順に追加       |
-| `primeFactors2D(int/long n)`               |     `int[][]` / `long[][]` | `[0]`に素因数、`[1]`に指数を格納 |
-| `primeFactorsMap(int/long n, Supplier<T>)` |            `T extends Map` | 素因数と指数の対応               |
+| メソッド                                   | 戻り値                     | 説明                             |
+|--------------------------------------------|----------------------------|----------------------------------|
+| `PrimeTable(long n)`                       | -                          | `n`以下の素数を構築              |
+| `getLimitValue()`                          | `long`                     | 構築時に指定した上限             |
+| `getPrimeCount()`                          | `int`                      | テーブル内の素数個数             |
+| `isPrime(long n)`                          | `boolean`                  | テーブル範囲内の素数判定         |
+| `countPrimesUpTo(long n)`                  | `int`                      | `n`以下の素数個数                |
+| `ceilingPrime(long n)`                     | `long`                     | `n`以上の最小素数                |
+| `higherPrime(long n)`                      | `long`                     | `n`より大きい最小素数            |
+| `floorPrime(long n)`                       | `long`                     | `n`以下の最大素数                |
+| `lowerPrime(long n)`                       | `long`                     | `n`より小さい最大素数            |
+| `get(int i)`                               | `long`                     | 0始まりのi番目の素数             |
+| `uniquePrimeFactorCount(long n)`           | `int`                      | 異なる素因数の個数               |
+| `primeFactorCount(long n)`                 | `int`                      | 重複込みの素因数の個数           |
+| `primeFactors(int/long n)`                 | `int[]` / `long[]`         | 重複込みの昇順配列               |
+| `primeFactors(int/long n, Supplier<T>)`    | `T extends Collection`     | 指定Collectionへ昇順に追加       |
+| `primeFactors2D(int/long n)`               | `int[][]` / `long[][]`     | `[0]`に素因数、`[1]`に指数を格納 |
+| `primeFactorsMap(int/long n, Supplier<T>)` | `T extends Map`            | 素因数と指数の対応               |
 | `iterator()`                               | `PrimitiveIterator.OfLong` | 昇順iterator                     |
-| `stream()`                                 |               `LongStream` | 昇順stream                       |
+| `stream()`                                 | `LongStream`               | 昇順stream                       |
 
 ## 利用例
 
@@ -70,7 +70,7 @@
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                                                                      |
-|:-------------------|:-----------|:------------------------------------------------------------------------------------------|
+|--------------------|------------|-------------------------------------------------------------------------------------------|
 | **バージョン 3.2** | 2026-09-05 | 構築上限・素数個数・添字アクセスAPIを追加し、素数添字アクセス名を`get`へ統一              |
 | **バージョン 3.1** | 2026-08-10 | 篩を6k±1候補の独立処理へ整理し、合成数に隣接する素数の取りこぼしを修正                    |
 | **バージョン 3.0** | 2026-08-10 | FactorUtils と同等の素因数個数・配列・Collection・Map APIを追加し、列挙済み素数を直接利用 |

@@ -1,12 +1,18 @@
 @echo off
+setlocal
 
-cd "C:\Users\20051\Projects\GitHubRepositories\competitive-programming-java-library\Data Structures\FastIO\Benchmark"
+for %%I in ("%~dp0..\..\..\..\..") do set "PROJECT_ROOT=%%~fI"
+set "WORK_PATH=%~dp0..\work"
+if not exist "%WORK_PATH%\out" mkdir "%WORK_PATH%\out"
+if not exist "%WORK_PATH%\Output" mkdir "%WORK_PATH%\Output"
+if not exist "%WORK_PATH%\TestCases" mkdir "%WORK_PATH%\TestCases"
+cd /d "%WORK_PATH%" || exit /b 1
 
 REM ==========================================
 REM コンパイル
 REM ==========================================
 echo Compiling Java files...
-javac TestInputDoubleNumbers.java
+javac --release 17 -encoding UTF-8 -d "%WORK_PATH%\out" -sourcepath "%PROJECT_ROOT%\src" "%PROJECT_ROOT%\test\benchmark\io\bench17\TestInputDoubleNumbers.java"
 if errorlevel 1 (
     echo Compilation failed.
     pause
@@ -28,7 +34,7 @@ REM 100 回実行
 for %%i in (0 1 2) do (
     echo Running TestInputDoubleNumbers with argument %%i...
     for /L %%j in (1,1,100) do (
-        java %JVM_OPTS% TestInputDoubleNumbers %%i < TestCases\TestCase_DoubleNumbers_123456789.txt >> Output\output5.txt
+        java %JVM_OPTS% -cp "%WORK_PATH%\out" benchmark.io.bench17.TestInputDoubleNumbers %%i < TestCases\TestCase_DoubleNumbers_123456789.txt >> Output\output5.txt
     )
 )
 

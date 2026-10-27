@@ -9,12 +9,12 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `Kruskal` | `Kruskal`は、`UndirectedGraph`の辺を重み順に処理し、最小または最大全域森を求める静的ユーティリティクラスである。 | [KruskalGuide](./KruskalGuide.md) | [Java](../../../src/lib/graph/Kruskal.java) | [Example.java](../../../test/verify/graph/Example.java) · [Check1.java](../../../test/verify/graph/kruskal/Check1.java) |
-| `Prim` | `Prim`は、`UndirectedGraph`の前方スター形式を直接走査し、最小または最大全域森を求める静的ユーティリティクラスである。 | [PrimGuide](./PrimGuide.md) | [Java](../../../src/lib/graph/Prim.java) | [Example.java](../../../test/verify/graph/Example.java) · [Check1.java](../../../test/verify/graph/prim/Check1.java) |
-| `SpanningForestResult` | `SpanningForestResult`は、Kruskal法またはPrim法で求めた最小・最大全域森の共通結果型である。 | [SpanningForestResultGuide](./SpanningForestResultGuide.md) | [Java](../../../src/lib/graph/SpanningForestResult.java) | — |
-| `Edmonds` | 有向グラフの最小全域有向木を求める予定の未実装クラスである。 | — | [Java](../../../src/lib/graph/Edmonds.java) | — |
+| クラス                 | 用途                                                                                                                  | Guide                                                       | ソース                                                   | Example / 検証                                                                                                          |
+|------------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| `Kruskal`              | `Kruskal`は、`UndirectedGraph`の辺を重み順に処理し、最小または最大全域森を求める静的ユーティリティクラスである。      | [KruskalGuide](./KruskalGuide.md)                           | [Java](../../../src/lib/graph/Kruskal.java)              | [Example.java](../../../test/example/graph/Example.java) · [Judge1.java](../../../test/judge/graph/kruskal/Judge1.java) |
+| `Prim`                 | `Prim`は、`UndirectedGraph`の前方スター形式を直接走査し、最小または最大全域森を求める静的ユーティリティクラスである。 | [PrimGuide](./PrimGuide.md)                                 | [Java](../../../src/lib/graph/Prim.java)                 | [Example.java](../../../test/example/graph/Example.java) · [Judge1.java](../../../test/judge/graph/prim/Judge1.java)    |
+| `SpanningForestResult` | `SpanningForestResult`は、Kruskal法またはPrim法で求めた最小・最大全域森の共通結果型である。                           | [SpanningForestResultGuide](./SpanningForestResultGuide.md) | [Java](../../../src/lib/graph/SpanningForestResult.java) | —                                                                                                                       |
+| `Edmonds`              | 有向グラフの最小全域有向木を求める予定の未実装クラスである。                                                          | —                                                           | [Java](../../../src/lib/graph/Edmonds.java)              | —                                                                                                                       |
 
 ## 実装クラス
 
@@ -69,4 +69,4 @@
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/graph/Example.java)
+- [Example.java](../../../test/example/graph/Example.java)

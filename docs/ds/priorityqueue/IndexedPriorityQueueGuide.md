@@ -94,37 +94,37 @@
 ### 4. 追加・更新
 
 | メソッド                                                  | 戻り値の型 | 説明                               |
-|-----------------------------------------------------------|-----------:|------------------------------------|
-| `IndexedPriorityQueue.add(int i, T c)`                    |  `boolean` | inactiveなら登録                   |
-| `IntIndexedPriorityQueue.add(int i, int c)`               |  `boolean` | inactiveなら登録                   |
-| `LongIndexedPriorityQueue.add(int i, long c)`             |  `boolean` | inactiveなら登録                   |
-| `IndexedPriorityQueue.addAll(int[] is, T[] cs)`           |  `boolean` | inactiveなindexを一括登録          |
-| `IntIndexedPriorityQueue.addAll(int[] is, int[] cs)`      |  `boolean` | int costを一括登録                 |
-| `LongIndexedPriorityQueue.addAll(int[] is, long[] cs)`    |  `boolean` | long costを一括登録                |
-| `IndexedPriorityQueue.set(int i, T c)`                    |     `void` | activeなら更新、そうでなければ登録 |
-| `IntIndexedPriorityQueue.set(int i, int c)`               |     `void` | int costを設定                     |
-| `LongIndexedPriorityQueue.set(int i, long c)`             |     `void` | long costを設定                    |
-| `IndexedPriorityQueue.setAll(IntFunction init)`           |     `void` | 全indexをgeneric costで登録        |
-| `IntIndexedPriorityQueue.setAll(IntUnaryOperator init)`   |     `void` | 全indexをint costで登録            |
-| `LongIndexedPriorityQueue.setAll(IntToLongFunction init)` |     `void` | 全indexをlong costで登録           |
-| `IndexedPriorityQueue.relax(int i, T c)`                  |  `boolean` | より優先される場合だけ登録・更新   |
-| `IntIndexedPriorityQueue.relax(int i, int c)`             |  `boolean` | int版relax                         |
-| `LongIndexedPriorityQueue.relax(int i, long c)`           |  `boolean` | long版relax                        |
+|-----------------------------------------------------------|------------|------------------------------------|
+| `IndexedPriorityQueue.add(int i, T c)`                    | `boolean`  | inactiveなら登録                   |
+| `IntIndexedPriorityQueue.add(int i, int c)`               | `boolean`  | inactiveなら登録                   |
+| `LongIndexedPriorityQueue.add(int i, long c)`             | `boolean`  | inactiveなら登録                   |
+| `IndexedPriorityQueue.addAll(int[] is, T[] cs)`           | `boolean`  | inactiveなindexを一括登録          |
+| `IntIndexedPriorityQueue.addAll(int[] is, int[] cs)`      | `boolean`  | int costを一括登録                 |
+| `LongIndexedPriorityQueue.addAll(int[] is, long[] cs)`    | `boolean`  | long costを一括登録                |
+| `IndexedPriorityQueue.set(int i, T c)`                    | `void`     | activeなら更新、そうでなければ登録 |
+| `IntIndexedPriorityQueue.set(int i, int c)`               | `void`     | int costを設定                     |
+| `LongIndexedPriorityQueue.set(int i, long c)`             | `void`     | long costを設定                    |
+| `IndexedPriorityQueue.setAll(IntFunction init)`           | `void`     | 全indexをgeneric costで登録        |
+| `IntIndexedPriorityQueue.setAll(IntUnaryOperator init)`   | `void`     | 全indexをint costで登録            |
+| `LongIndexedPriorityQueue.setAll(IntToLongFunction init)` | `void`     | 全indexをlong costで登録           |
+| `IndexedPriorityQueue.relax(int i, T c)`                  | `boolean`  | より優先される場合だけ登録・更新   |
+| `IntIndexedPriorityQueue.relax(int i, int c)`             | `boolean`  | int版relax                         |
+| `LongIndexedPriorityQueue.relax(int i, long c)`           | `boolean`  | long版relax                        |
 
 ### 5. 優先要素
 
-| メソッド                               |           戻り値の型 | 説明                            |
-|----------------------------------------|---------------------:|---------------------------------|
+| メソッド                               | 戻り値の型           | 説明                            |
+|----------------------------------------|----------------------|---------------------------------|
 | `peek()`                               | `T` / `int` / `long` | 最優先costを返す                |
 | `peekOrDefault(defaultValue)`          | `T` / `int` / `long` | 空ならdefaultValue              |
-| `peekIndex()`                          |                `int` | 最優先indexを返す               |
-| `peekIndexOrDefault(int defaultIndex)` |                `int` | 空ならdefaultIndex              |
+| `peekIndex()`                          | `int`                | 最優先indexを返す               |
+| `peekIndexOrDefault(int defaultIndex)` | `int`                | 空ならdefaultIndex              |
 | `peekSecond()`                         | `T` / `int` / `long` | 2番目に優先されるcostを返す     |
 | `poll()`                               | `T` / `int` / `long` | 最優先要素を削除してcostを返す  |
 | `pollOrDefault(defaultValue)`          | `T` / `int` / `long` | 空ならdefaultValue              |
-| `pollIndex()`                          |                `int` | 最優先要素を削除してindexを返す |
-| `pollIndexOrDefault(int defaultIndex)` |                `int` | 空ならdefaultIndex              |
-| `remove(int i)`                        |            `boolean` | activeなら削除してtrue          |
+| `pollIndex()`                          | `int`                | 最優先要素を削除してindexを返す |
+| `pollIndexOrDefault(int defaultIndex)` | `int`                | 空ならdefaultIndex              |
+| `remove(int i)`                        | `boolean`            | activeなら削除してtrue          |
 
 ### 6. indexごとのcost取得
 
@@ -137,16 +137,16 @@
 
 ### 7. 状態・反復
 
-| メソッド                              |                 戻り値の型 | 説明                                               |
-|---------------------------------------|---------------------------:|----------------------------------------------------|
-| `containsIndex(int i)`                |                  `boolean` | indexがactiveか判定                                |
-| `hasCost(int i)`                      |                  `boolean` | 現在世代のcost記録があるか判定                     |
-| `size()`                              |                      `int` | activeなindex数                                    |
-| `indexCount()`                        |                      `int` | 使用可能なindex数                                  |
-| `isEmpty()`                           |                  `boolean` | active要素がないか判定                             |
-| `clear()`                             |                     `void` | active要素と現在世代の記録を$\mathcal{O}(1)$で消去 |
-| `IndexedPriorityQueue.iterator()`     |              `Iterator<T>` | generic costを内部順で走査                         |
-| `IntIndexedPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int costを内部順で走査                             |
+| メソッド                              | 戻り値の型                 | 説明                                               |
+|---------------------------------------|----------------------------|----------------------------------------------------|
+| `containsIndex(int i)`                | `boolean`                  | indexがactiveか判定                                |
+| `hasCost(int i)`                      | `boolean`                  | 現在世代のcost記録があるか判定                     |
+| `size()`                              | `int`                      | activeなindex数                                    |
+| `indexCount()`                        | `int`                      | 使用可能なindex数                                  |
+| `isEmpty()`                           | `boolean`                  | active要素がないか判定                             |
+| `clear()`                             | `void`                     | active要素と現在世代の記録を$\mathcal{O}(1)$で消去 |
+| `IndexedPriorityQueue.iterator()`     | `Iterator<T>`              | generic costを内部順で走査                         |
+| `IntIndexedPriorityQueue.iterator()`  | `PrimitiveIterator.OfInt`  | int costを内部順で走査                             |
 | `LongIndexedPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long costを内部順で走査                            |
 
 primitive版では`contains(cost)`、`toArray()`、`intStream()` / `longStream()`などのCollection由来メソッドも利用できる。`contains`はindexではなくcostを検索する。
@@ -186,7 +186,7 @@ int first = q.pollIndex(); // 7
 ```
 
 
-- [Example.java](../../../test/verify/ds/priorityqueue/Example.java)
+- [Example.java](../../../test/example/ds/priorityqueue/Example.java)
 
 
 
@@ -223,7 +223,7 @@ int first = q.pollIndex(); // 7
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                                                                                                                                                            |
-|:-------------------|:-----------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 4.0** | 2026-07-20 | generic版の自然順序/Comparator構築、Primitive Comparator、`add` / `remove`のboolean化、default系、配列構築、`generate`、`indexCount`を追加し、bulk操作とiteratorのheapifyを遅延 |
 | **バージョン 3.0** | 2026-07-18 | `setAll`を追加し、`set` / `relax`が未整列領域を展開しないよう改善                                                                                                               |
 | **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによる$\mathcal{O}(1)$ clear、`set`、active限定getter、`getLast`を追加                                                                                 |

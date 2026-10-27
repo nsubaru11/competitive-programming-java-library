@@ -8,7 +8,10 @@
 
 - `src/lib`: importして再利用する公開API
 - `src/patterns`: 読んで写経・改変する実装パターン
-- `test/verify`: Example、Check、オンラインジャッジ用検証、ベンチマークドライバ
+- `test/example`: 利用例・出力デモ
+- `test/unit`: 期待値を照合するローカル検証
+- `test/judge`: オンラインジャッジ用の `Judge*.java`
+- `test/benchmark`: 性能測定ドライバ・比較用実装
 - `docs`: モジュールREADME、詳細ガイド、ベンチマークランナー
 
 `src/lib`のパッケージは次の責務で分けます。
@@ -62,7 +65,7 @@ $verify = @(rg --files test -g '*.java')
 javac --release 24 -encoding UTF-8 -cp out -d out/test $verify
 ```
 
-`src/lib/io/compat17/*.java`は`--release 17`でも確認してください。検証コードは完全修飾名で実行します。
+`src/lib/io/compat17/*.java`は`--release 17`でも確認してください。検証コードは完全修飾名で実行します。既存の `unit.*` は main 形式であり、実行時は `-ea` を付けて Java の assert を有効にします。配置・命名の詳細は `test/README.md` を参照してください。
 
 ## ドキュメント保守
 

@@ -16,11 +16,11 @@ ENABLE_JFR=${ENABLE_JFR:-0}
 JFR_SETTINGS=${JFR_SETTINGS:-profile}
 
 # ディレクトリおよびファイル設定
-# このスクリプトは docs/io/java24/Benchmark/ に配置されている前提
+# このスクリプトは docs/io/java24/benchmark/ に配置されている前提
 BENCH_PATH="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "${BENCH_PATH}/../../../.." && pwd)/"
 SRC_PATH="${PROJECT_ROOT}src/lib/io"
-TEST_PATH="${PROJECT_ROOT}test/verify/io/bench24"
+TEST_PATH="${PROJECT_ROOT}test/benchmark/io/bench24"
 # 生成物（クラス・入力・CSV・ログ）はすべて work/ 配下に出力（gitignore対象）
 WORK_PATH="${BENCH_PATH}/work"
 OUT_PATH="${WORK_PATH}/out"
@@ -100,14 +100,14 @@ fi
 
 if [ ! -f "$INPUT_FILE" ]; then
     echo "[2/4] Input file not found. Generating large_input.txt..."
-    $JAVA_EXE -cp "$OUT_PATH" verify.io.bench24.GenerateTestInput "$INPUT_FILE"
+    $JAVA_EXE -cp "$OUT_PATH" benchmark.io.bench24.GenerateTestInput "$INPUT_FILE"
 else
     echo "[2/4] Using existing input file: $INPUT_FILE"
 fi
 echo ""
 
 echo "[3/4] Profiling JIT and Startup Time (Dry Run)..."
-$JAVA_EXE "${CP_FAST_START_OPTS[@]}" "$(java_jit_log_opts "$JIT_LOG")" "$(java_gc_log_opts "$DRY_RUN_GC_LOG")" -cp "$BENCH_CLASSPATH" verify.io.bench24.Test1 "$DRY_RUN_TOKEN_COUNT" "$DRY_RUN_TOKEN_COUNT" "$DRY_RUN_STRING_PRINT_COUNT" < "$INPUT_FILE" > /dev/null 2> "$DRY_RUN_STARTUP_LOG"
+$JAVA_EXE "${CP_FAST_START_OPTS[@]}" "$(java_jit_log_opts "$JIT_LOG")" "$(java_gc_log_opts "$DRY_RUN_GC_LOG")" -cp "$BENCH_CLASSPATH" benchmark.io.bench24.Test1 "$DRY_RUN_TOKEN_COUNT" "$DRY_RUN_TOKEN_COUNT" "$DRY_RUN_STRING_PRINT_COUNT" < "$INPUT_FILE" > /dev/null 2> "$DRY_RUN_STARTUP_LOG"
 if [ $? -ne 0 ]; then
     echo "[ERROR] Dry run profiling failed."
     exit 1
@@ -136,7 +136,7 @@ for i in $(seq 1 $RUN_COUNT); do
         TEST1_JAVA_OPTS+=("$(java_jfr_opts "$TEST1_JFR_LOG")")
     fi
 
-    $JAVA_EXE "${TEST1_JAVA_OPTS[@]}" -cp "$BENCH_CLASSPATH" verify.io.bench24.Test1 $TOKEN_COUNT $TOKEN_COUNT $STRING_PRINT_COUNT < "$INPUT_FILE" > "$TMP1" 2> "$TEST1_STARTUP_LOG"
+    $JAVA_EXE "${TEST1_JAVA_OPTS[@]}" -cp "$BENCH_CLASSPATH" benchmark.io.bench24.Test1 $TOKEN_COUNT $TOKEN_COUNT $STRING_PRINT_COUNT < "$INPUT_FILE" > "$TMP1" 2> "$TEST1_STARTUP_LOG"
     if [ $? -ne 0 ]; then
         echo "[ERROR] Runtime failed in Test1 at run $i."
         exit 1
@@ -155,7 +155,7 @@ for i in $(seq 1 $RUN_COUNT); do
         TEST2_JAVA_OPTS+=("$(java_jfr_opts "$TEST2_JFR_LOG")")
     fi
 
-    $JAVA_EXE "${TEST2_JAVA_OPTS[@]}" -cp "$BENCH_CLASSPATH" verify.io.bench24.Test2 $TOKEN_COUNT $TOKEN_COUNT $STRING_PRINT_COUNT < "$INPUT_FILE" > "$TMP2" 2> "$TEST2_STARTUP_LOG"
+    $JAVA_EXE "${TEST2_JAVA_OPTS[@]}" -cp "$BENCH_CLASSPATH" benchmark.io.bench24.Test2 $TOKEN_COUNT $TOKEN_COUNT $STRING_PRINT_COUNT < "$INPUT_FILE" > "$TMP2" 2> "$TEST2_STARTUP_LOG"
     if [ $? -ne 0 ]; then
         echo "[ERROR] Runtime failed in Test2 at run $i. See: $TEST2_STARTUP_LOG"
         exit 1

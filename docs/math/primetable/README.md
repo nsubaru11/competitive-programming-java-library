@@ -4,6 +4,6 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `PrimeTable` | `PrimeTable`は、指定上限までの素数を構築し、同じテーブルを判定・近傍検索・列挙・素因数分解へ再利用する。 | [PrimeTableGuide](./PrimeTableGuide.md) | [Java](../../../src/lib/math/PrimeTable.java) | [Test.java](../../../test/verify/math/primetable/Test.java) |
+| クラス       | 用途                                                                                                     | Guide                                   | ソース                                        | Example / 検証                                               |
+|--------------|----------------------------------------------------------------------------------------------------------|-----------------------------------------|-----------------------------------------------|--------------------------------------------------------------|
+| `PrimeTable` | `PrimeTable`は、指定上限までの素数を構築し、同じテーブルを判定・近傍検索・列挙・素因数分解へ再利用する。 | [PrimeTableGuide](./PrimeTableGuide.md) | [Java](../../../src/lib/math/PrimeTable.java) | [Test.java](../../../test/example/math/primetable/Test.java) |

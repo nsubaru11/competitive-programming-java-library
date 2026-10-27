@@ -4,15 +4,15 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `IndexedPriorityQueue` | indexごとのcost更新に対応する汎用優先度キュー | [IndexedPriorityQueueGuide](./IndexedPriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java) | [Test.java](../../../test/verify/ds/priorityqueue/Test.java) |
-| `IntIndexedPriorityQueue` | indexごとのcost更新に対応するint優先度キュー | [IndexedPriorityQueueGuide](./IndexedPriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java) | [Check1.java](../../../test/verify/ds/priorityqueue/intindexedpriorityqueue/Check1.java) |
-| `LongIndexedPriorityQueue` | indexごとのcost更新に対応するlong優先度キュー | [IndexedPriorityQueueGuide](./IndexedPriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java) | [Test.java](../../../test/verify/ds/priorityqueue/Test.java) |
-| `PriorityQueue` | 自然順序またはComparatorを使う汎用優先度キュー | [PriorityQueueGuide](./PriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/PriorityQueue.java) | [Test.java](../../../test/verify/ds/priorityqueue/Test.java) |
-| `IntPriorityQueue` | int値専用の可変容量優先度キュー | [PriorityQueueGuide](./PriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java) | [Example.java](../../../test/verify/ds/priorityqueue/Example.java) · [Test.java](../../../test/verify/ds/priorityqueue/Test.java) |
-| `LongPriorityQueue` | long値専用の可変容量優先度キュー | [PriorityQueueGuide](./PriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java) | [Test.java](../../../test/verify/ds/priorityqueue/Test.java) |
-| `IntDoubleEndedPriorityQueue` | 最小値・最大値の両端取得、動的容量 | — | [Java](../../../src/lib/ds/priorityqueue/IntDoubleEndedPriorityQueue.java) | — |
+| クラス                        | 用途                                           | Guide                                                       | ソース                                                                     | Example / 検証                                                                                                                   |
+|-------------------------------|------------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `IndexedPriorityQueue`        | indexごとのcost更新に対応する汎用優先度キュー  | [IndexedPriorityQueueGuide](./IndexedPriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)        | [Test.java](../../../test/unit/ds/priorityqueue/Test.java)                                                                       |
+| `IntIndexedPriorityQueue`     | indexごとのcost更新に対応するint優先度キュー   | [IndexedPriorityQueueGuide](./IndexedPriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)     | [Judge1.java](../../../test/judge/ds/priorityqueue/intindexedpriorityqueue/Judge1.java)                                          |
+| `LongIndexedPriorityQueue`    | indexごとのcost更新に対応するlong優先度キュー  | [IndexedPriorityQueueGuide](./IndexedPriorityQueueGuide.md) | [Java](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)    | [Test.java](../../../test/unit/ds/priorityqueue/Test.java)                                                                       |
+| `PriorityQueue`               | 自然順序またはComparatorを使う汎用優先度キュー | [PriorityQueueGuide](./PriorityQueueGuide.md)               | [Java](../../../src/lib/ds/priorityqueue/PriorityQueue.java)               | [Test.java](../../../test/unit/ds/priorityqueue/Test.java)                                                                       |
+| `IntPriorityQueue`            | int値専用の可変容量優先度キュー                | [PriorityQueueGuide](./PriorityQueueGuide.md)               | [Java](../../../src/lib/ds/priorityqueue/IntPriorityQueue.java)            | [Example.java](../../../test/example/ds/priorityqueue/Example.java) · [Test.java](../../../test/unit/ds/priorityqueue/Test.java) |
+| `LongPriorityQueue`           | long値専用の可変容量優先度キュー               | [PriorityQueueGuide](./PriorityQueueGuide.md)               | [Java](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java)           | [Test.java](../../../test/unit/ds/priorityqueue/Test.java)                                                                       |
+| `IntDoubleEndedPriorityQueue` | 最小値・最大値の両端取得、動的容量             | —                                                           | [Java](../../../src/lib/ds/priorityqueue/IntDoubleEndedPriorityQueue.java) | —                                                                                                                                |
 
 ## 実装クラス
 
@@ -58,4 +58,4 @@ import lib.util.function.LongComparator;
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/ds/priorityqueue/Example.java)
+- [Example.java](../../../test/example/ds/priorityqueue/Example.java)

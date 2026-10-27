@@ -6,9 +6,9 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `PersistentSegmentTree` | - 永続的な区間クエリ・更新 | — | [Java](../../../src/lib/ds/segmenttree/PersistentSegmentTree.java) | — |
+| クラス                  | 用途                       | Guide | ソース                                                             | Example / 検証 |
+|-------------------------|----------------------------|-------|--------------------------------------------------------------------|----------------|
+| `PersistentSegmentTree` | - 永続的な区間クエリ・更新 | —     | [Java](../../../src/lib/ds/segmenttree/PersistentSegmentTree.java) | —              |
 
 ## 実装クラス
 

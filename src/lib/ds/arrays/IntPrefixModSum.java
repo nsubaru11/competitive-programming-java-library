@@ -9,17 +9,17 @@ import java.util.function.*;
  * sum の結果は {@code [0, mod)} に正規化する。
  */
 public final class IntPrefixModSum implements IntArray {
-	public final int length, mod;
+	public final int size, mod;
 	private final int[] pref;
 
 	/**
 	 * init を添字の昇順に1回ずつ呼び出して構築する。
 	 */
 	public IntPrefixModSum(final int n, final int mod, final IntUnaryOperator init) {
-		length = n;
+		size = n;
 		this.mod = mod;
-		pref = new int[length + 1];
-		for (int i = 0; i < length; i++) {
+		pref = new int[size + 1];
+		for (int i = 0; i < size; i++) {
 			final int v = pref[i] + init.applyAsInt(i);
 			pref[i + 1] = v >= mod ? v - mod : v;
 		}
@@ -29,10 +29,10 @@ public final class IntPrefixModSum implements IntArray {
 	 * 指定配列の論理順で構築する。入力は変更しない。
 	 */
 	public IntPrefixModSum(final int[] a, final int mod) {
-		length = a.length;
+		size = a.length;
 		this.mod = mod;
-		pref = new int[length + 1];
-		for (int i = 0; i < length; i++) {
+		pref = new int[size + 1];
+		for (int i = 0; i < size; i++) {
 			final int v = pref[i] + a[i];
 			pref[i + 1] = v >= mod ? v - mod : v;
 		}
@@ -42,17 +42,17 @@ public final class IntPrefixModSum implements IntArray {
 	 * 指定配列の論理順で構築する。入力は変更しない。
 	 */
 	public IntPrefixModSum(final IntArray a, final int mod) {
-		length = a.size();
+		size = a.size();
 		this.mod = mod;
-		pref = new int[length + 1];
-		for (int i = 0; i < length; i++) {
+		pref = new int[size + 1];
+		for (int i = 0; i < size; i++) {
 			final int v = pref[i] + a.get(i);
 			pref[i + 1] = v >= mod ? v - mod : v;
 		}
 	}
 
 	public int size() {
-		return length;
+		return size;
 	}
 
 	/**
@@ -61,13 +61,12 @@ public final class IntPrefixModSum implements IntArray {
 	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
 	 */
 	public int get(final int i) {
-		Objects.checkIndex(i, length);
 		final int res = pref[i + 1] - pref[i];
 		return res < 0 ? res + mod : res;
 	}
 
 	public int sum() {
-		return pref[length];
+		return pref[size];
 	}
 
 	/**
@@ -76,7 +75,7 @@ public final class IntPrefixModSum implements IntArray {
 	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
 	 */
 	public int sum(final int i) {
-		Objects.checkIndex(i, length);
+		Objects.checkIndex(i, size);
 		return pref[i + 1];
 	}
 
@@ -86,7 +85,6 @@ public final class IntPrefixModSum implements IntArray {
 	 * @throws IndexOutOfBoundsException 添字が範囲外、または閉区間の始点が終点を超える場合
 	 */
 	public int sum(final int i, final int j) {
-		Objects.checkIndex(j, length);
 		Objects.checkIndex(i, j + 1);
 		final int res = pref[j + 1] - pref[i];
 		return res < 0 ? res + mod : res;
@@ -100,7 +98,7 @@ public final class IntPrefixModSum implements IntArray {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < length;
+				return i < size;
 			}
 
 			public int nextInt() {
@@ -114,10 +112,10 @@ public final class IntPrefixModSum implements IntArray {
 	 * 元の要素を半角スペースで区切った文字列として返す。
 	 */
 	public String toString() {
-		if (length == 0) return "";
-		final StringBuilder sb = new StringBuilder(11 * length - 1);
+		if (size == 0) return "";
+		final StringBuilder sb = new StringBuilder(11 * size - 1);
 		sb.append(get(0));
-		for (int i = 1; i < length; i++) sb.append(' ').append(get(i));
+		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }

@@ -90,62 +90,62 @@
 ### 4. 追加
 
 | メソッド                                             | 戻り値の型 | 説明                            |
-|------------------------------------------------------|-----------:|---------------------------------|
-| `PriorityQueue.add(T v)`                             |  `boolean` | 要素を追加。常にtrue            |
-| `PriorityQueue.addAll(T[] values)`                   |  `boolean` | 配列を追加。1件以上ならtrue     |
-| `PriorityQueue.addAll(Iterable<? extends T> values)` |  `boolean` | Iterableを追加。1件以上ならtrue |
-| `IntPriorityQueue.add(int v)`                        |  `boolean` | int値を追加。常にtrue           |
-| `IntPriorityQueue.addAll(int[] values)`              |  `boolean` | int配列を追加                   |
-| `IntPriorityQueue.addAll(Iterable<Integer> values)`  |  `boolean` | Iterableのint値を追加           |
-| `LongPriorityQueue.add(long v)`                      |  `boolean` | long値を追加。常にtrue          |
-| `LongPriorityQueue.addAll(long[] values)`            |  `boolean` | long配列を追加                  |
-| `LongPriorityQueue.addAll(Iterable<Long> values)`    |  `boolean` | Iterableのlong値を追加          |
+|------------------------------------------------------|------------|---------------------------------|
+| `PriorityQueue.add(T v)`                             | `boolean`  | 要素を追加。常にtrue            |
+| `PriorityQueue.addAll(T[] values)`                   | `boolean`  | 配列を追加。1件以上ならtrue     |
+| `PriorityQueue.addAll(Iterable<? extends T> values)` | `boolean`  | Iterableを追加。1件以上ならtrue |
+| `IntPriorityQueue.add(int v)`                        | `boolean`  | int値を追加。常にtrue           |
+| `IntPriorityQueue.addAll(int[] values)`              | `boolean`  | int配列を追加                   |
+| `IntPriorityQueue.addAll(Iterable<Integer> values)`  | `boolean`  | Iterableのint値を追加           |
+| `LongPriorityQueue.add(long v)`                      | `boolean`  | long値を追加。常にtrue          |
+| `LongPriorityQueue.addAll(long[] values)`            | `boolean`  | long配列を追加                  |
+| `LongPriorityQueue.addAll(Iterable<Long> values)`    | `boolean`  | Iterableのlong値を追加          |
 
 ### 5. 優先要素
 
 | メソッド                                             | 戻り値の型 | 説明                          |
-|------------------------------------------------------|-----------:|-------------------------------|
-| `PriorityQueue.peek()`                               |        `T` | 最優先要素を返す              |
-| `PriorityQueue.peekOrDefault(T defaultValue)`        |        `T` | 空ならdefaultValueを返す      |
-| `PriorityQueue.peekSecond()`                         |        `T` | 2番目に優先される要素を返す   |
-| `PriorityQueue.poll()`                               |        `T` | 最優先要素を削除して返す      |
-| `PriorityQueue.pollOrDefault(T defaultValue)`        |        `T` | 空ならdefaultValueを返す      |
-| `PriorityQueue.replaceTop(T v)`                      |        `T` | 先頭を置換して旧要素を返す    |
-| `IntPriorityQueue.peek()`                            |      `int` | 最優先int値を返す             |
-| `IntPriorityQueue.peekOrDefault(int defaultValue)`   |      `int` | 空ならdefaultValueを返す      |
-| `IntPriorityQueue.peekSecond()`                      |      `int` | 2番目に優先されるint値を返す  |
-| `IntPriorityQueue.poll()`                            |      `int` | 最優先int値を削除して返す     |
-| `IntPriorityQueue.pollOrDefault(int defaultValue)`   |      `int` | 空ならdefaultValueを返す      |
-| `IntPriorityQueue.replaceTop(int v)`                 |      `int` | 先頭を置換して旧値を返す      |
-| `LongPriorityQueue.peek()`                           |     `long` | 最優先long値を返す            |
-| `LongPriorityQueue.peekOrDefault(long defaultValue)` |     `long` | 空ならdefaultValueを返す      |
-| `LongPriorityQueue.peekSecond()`                     |     `long` | 2番目に優先されるlong値を返す |
-| `LongPriorityQueue.poll()`                           |     `long` | 最優先long値を削除して返す    |
-| `LongPriorityQueue.pollOrDefault(long defaultValue)` |     `long` | 空ならdefaultValueを返す      |
-| `LongPriorityQueue.replaceTop(long v)`               |     `long` | 先頭を置換して旧値を返す      |
+|------------------------------------------------------|------------|-------------------------------|
+| `PriorityQueue.peek()`                               | `T`        | 最優先要素を返す              |
+| `PriorityQueue.peekOrDefault(T defaultValue)`        | `T`        | 空ならdefaultValueを返す      |
+| `PriorityQueue.peekSecond()`                         | `T`        | 2番目に優先される要素を返す   |
+| `PriorityQueue.poll()`                               | `T`        | 最優先要素を削除して返す      |
+| `PriorityQueue.pollOrDefault(T defaultValue)`        | `T`        | 空ならdefaultValueを返す      |
+| `PriorityQueue.replaceTop(T v)`                      | `T`        | 先頭を置換して旧要素を返す    |
+| `IntPriorityQueue.peek()`                            | `int`      | 最優先int値を返す             |
+| `IntPriorityQueue.peekOrDefault(int defaultValue)`   | `int`      | 空ならdefaultValueを返す      |
+| `IntPriorityQueue.peekSecond()`                      | `int`      | 2番目に優先されるint値を返す  |
+| `IntPriorityQueue.poll()`                            | `int`      | 最優先int値を削除して返す     |
+| `IntPriorityQueue.pollOrDefault(int defaultValue)`   | `int`      | 空ならdefaultValueを返す      |
+| `IntPriorityQueue.replaceTop(int v)`                 | `int`      | 先頭を置換して旧値を返す      |
+| `LongPriorityQueue.peek()`                           | `long`     | 最優先long値を返す            |
+| `LongPriorityQueue.peekOrDefault(long defaultValue)` | `long`     | 空ならdefaultValueを返す      |
+| `LongPriorityQueue.peekSecond()`                     | `long`     | 2番目に優先されるlong値を返す |
+| `LongPriorityQueue.poll()`                           | `long`     | 最優先long値を削除して返す    |
+| `LongPriorityQueue.pollOrDefault(long defaultValue)` | `long`     | 空ならdefaultValueを返す      |
+| `LongPriorityQueue.replaceTop(long v)`               | `long`     | 先頭を置換して旧値を返す      |
 
 ### 6. 状態・反復
 
-| メソッド                       |                 戻り値の型 | 説明                                  |
-|--------------------------------|---------------------------:|---------------------------------------|
-| `size()`                       |                      `int` | 現在の要素数                          |
-| `capacity()`                   |                      `int` | 現在の内部配列容量                    |
-| `isEmpty()`                    |                  `boolean` | 空か判定。primitive版はCollection由来 |
-| `clear()`                      |                     `void` | $\mathcal{O}(1)$で論理的に空にする    |
-| `PriorityQueue.iterator()`     |              `Iterator<T>` | 内部順で走査                          |
-| `IntPriorityQueue.iterator()`  |  `PrimitiveIterator.OfInt` | int値を内部順で走査                   |
+| メソッド                       | 戻り値の型                 | 説明                                  |
+|--------------------------------|----------------------------|---------------------------------------|
+| `size()`                       | `int`                      | 現在の要素数                          |
+| `capacity()`                   | `int`                      | 現在の内部配列容量                    |
+| `isEmpty()`                    | `boolean`                  | 空か判定。primitive版はCollection由来 |
+| `clear()`                      | `void`                     | $\mathcal{O}(1)$で論理的に空にする    |
+| `PriorityQueue.iterator()`     | `Iterator<T>`              | 内部順で走査                          |
+| `IntPriorityQueue.iterator()`  | `PrimitiveIterator.OfInt`  | int値を内部順で走査                   |
 | `LongPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long値を内部順で走査                  |
 
 ### 7. primitive Collection由来
 
-| メソッド                                     |                     戻り値の型 | 説明                   |
-|----------------------------------------------|-------------------------------:|------------------------|
-| `contains(value)`                            |                      `boolean` | 値を線形探索           |
-| `forEachInt(action)` / `forEachLong(action)` |                         `void` | 全要素へ処理を適用     |
+| メソッド                                     | 戻り値の型                     | 説明                   |
+|----------------------------------------------|--------------------------------|------------------------|
+| `contains(value)`                            | `boolean`                      | 値を線形探索           |
+| `forEachInt(action)` / `forEachLong(action)` | `void`                         | 全要素へ処理を適用     |
 | `spliterator()`                              | `Spliterator.OfInt` / `OfLong` | primitive spliterator  |
-| `intStream()` / `longStream()`               |     `IntStream` / `LongStream` | primitive Stream       |
+| `intStream()` / `longStream()`               | `IntStream` / `LongStream`     | primitive Stream       |
 | `toList()`                                   | `List<Integer>` / `List<Long>` | ボックス化した不変List |
-| `toArray()`                                  |             `int[]` / `long[]` | primitive配列へコピー  |
+| `toArray()`                                  | `int[]` / `long[]`             | primitive配列へコピー  |
 
 ## 利用例
 
@@ -170,7 +170,7 @@ PriorityQueue<Integer> natural = new PriorityQueue<>();
 ```
 
 
-- [Example.java](../../../test/verify/ds/priorityqueue/Example.java)
+- [Example.java](../../../test/example/ds/priorityqueue/Example.java)
 
 
 
@@ -201,7 +201,7 @@ PriorityQueue<Integer> natural = new PriorityQueue<>();
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                                                                                                     |
-|:-------------------|:-----------|:-------------------------------------------------------------------------------------------------------------------------|
+|--------------------|------------|--------------------------------------------------------------------------------------------------------------------------|
 | **バージョン 4.0** | 2026-07-20 | `add`へ統一し、Primitive Comparator、generic自然順序/Comparator構築、配列構築、default系、`peekSecond`、`capacity`を追加 |
 | **バージョン 3.0** | 2026-07-18 | `lib.ds.priorityqueue`へ移動し、primitive版をCollection化、`addAll(Iterable)`を追加                                      |
 | **バージョン 2.0** | 2025-10-08 | 遅延ヒープ構築、降順、`replaceTop`を追加                                                                                 |

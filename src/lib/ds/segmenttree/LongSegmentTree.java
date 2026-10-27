@@ -46,8 +46,15 @@ public final class LongSegmentTree implements LongCollection {
 		return tree[size + i];
 	}
 
+	/**
+	 * 指定位置を更新し、更新前の値を返す。
+	 */
 	public long set(final int i, final long v) {
-		return apply(i, 0, v);
+		final int idx = size + i;
+		final long prev = tree[idx];
+		tree[idx] = v;
+		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
+		return prev;
 	}
 
 	public long add(final int i, final long d) {

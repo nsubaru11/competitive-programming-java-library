@@ -5,11 +5,11 @@ import java.util.function.*;
 
 /**
  * 固定長の回転可能なlong配列である。
- * 長さは正、論理添字は {@code 0 <= i < length} とする。
+ * 長さは正、論理添字は {@code 0 <= i < size} とする。
+ * 回転・resetRotation はこのインスタンスを変更し、自身を返す。
  */
-@SuppressWarnings("unused")
 public final class LongCircularArray implements LongMutableArray {
-	public final int length;
+	public final int size;
 	private final long[] arr;
 	private long rotation;
 	private int offset;
@@ -18,16 +18,16 @@ public final class LongCircularArray implements LongMutableArray {
 	 * 長さ n の0初期化配列を構築する。
 	 */
 	public LongCircularArray(final int n) {
-		length = n;
+		size = n;
 		arr = new long[n];
 	}
 
 	/**
-	 * 長さ n の全要素を initialValue で初期化する。
+	 * 長さ n の全要素を v で初期化する。
 	 */
-	public LongCircularArray(final int n, final long initialValue) {
+	public LongCircularArray(final int n, final long v) {
 		this(n);
-		fill(initialValue);
+		fill(v);
 	}
 
 	/**
@@ -42,7 +42,7 @@ public final class LongCircularArray implements LongMutableArray {
 	 * 指定された配列の要素を同じ順序で保持する循環配列を構築する。
 	 */
 	public LongCircularArray(final long[] a) {
-		length = a.length;
+		size = a.length;
 		arr = a.clone();
 	}
 
@@ -50,23 +50,22 @@ public final class LongCircularArray implements LongMutableArray {
 	 * 指定された配列の論理順を保持する循環配列を構築する。
 	 */
 	public LongCircularArray(final LongArray a) {
-		length = a.size();
-		arr = new long[length];
-		for (int i = 0; i < length; i++) arr[i] = a.get(i);
+		size = a.size();
+		arr = a.toArray();
 	}
 
 	/**
 	 * 全要素・回転状態・総回転数を保持する独立したコピーを構築する。
 	 */
 	public LongCircularArray(final LongCircularArray other) {
-		length = other.length;
+		size = other.size;
 		arr = other.arr.clone();
 		rotation = other.rotation;
 		offset = other.offset;
 	}
 
 	public int size() {
-		return length;
+		return size;
 	}
 
 	/**
@@ -79,22 +78,22 @@ public final class LongCircularArray implements LongMutableArray {
 	/**
 	 * 指定した有効な論理添字の値を返す。
 	 *
-	 * @throws IndexOutOfBoundsException i が {@code 0 <= i < length} を満たさない場合
+	 * @throws IndexOutOfBoundsException i が {@code 0 <= i < size} を満たさない場合
 	 */
 	public long get(final int i) {
-		int p = offset + Objects.checkIndex(i, length);
-		if (p >= length) p -= length;
+		int p = offset + Objects.checkIndex(i, size);
+		if (p >= size) p -= size;
 		return arr[p];
 	}
 
 	/**
 	 * 指定した有効な論理添字を更新し、更新前の値を返す。
 	 *
-	 * @throws IndexOutOfBoundsException i が {@code 0 <= i < length} を満たさない場合
+	 * @throws IndexOutOfBoundsException i が {@code 0 <= i < size} を満たさない場合
 	 */
 	public long set(final int i, final long v) {
-		int p = offset + Objects.checkIndex(i, length);
-		if (p >= length) p -= length;
+		int p = offset + Objects.checkIndex(i, size);
+		if (p >= size) p -= size;
 		final long old = arr[p];
 		arr[p] = v;
 		return old;
@@ -114,7 +113,7 @@ public final class LongCircularArray implements LongMutableArray {
 	 * init は添字の昇順に呼ぶ。
 	 */
 	public void setAll(final IntToLongFunction init) {
-		for (int i = 0; i < length; i++) arr[i] = init.applyAsLong(i);
+		for (int i = 0; i < size; i++) arr[i] = init.applyAsLong(i);
 		rotation = 0;
 		offset = 0;
 	}
@@ -122,61 +121,60 @@ public final class LongCircularArray implements LongMutableArray {
 	/**
 	 * 論理配列を左へ1要素回転する。
 	 */
-	public void shiftLeft() {
+	public LongCircularArray rotateLeft() {
 		offset++;
-		if (offset == length) offset = 0;
+		if (offset == size) offset = 0;
 		rotation++;
+		return this;
 	}
 
 	/**
 	 * 論理配列を左へn要素回転する。
 	 */
-	public void shiftLeft(final int n) {
-		if (n < 0) {
-			ShiftRight(-n);
-			return;
-		}
-		offset += n % length;
-		if (offset >= length) offset -= length;
+	public LongCircularArray rotateLeft(final int n) {
+		if (n < 0) return rotateRight(-n);
+		offset += n % size;
+		if (offset >= size) offset -= size;
 		rotation += n;
+		return this;
 	}
 
 	/**
 	 * 論理配列を右へ1要素回転する。
 	 */
-	public void ShiftRight() {
+	public LongCircularArray rotateRight() {
 		offset--;
-		if (offset == -1) offset = length - 1;
+		if (offset == -1) offset = size - 1;
 		rotation--;
+		return this;
 	}
 
 	/**
 	 * 論理配列を右へn要素回転する。
 	 */
-	public void ShiftRight(final int n) {
-		if (n < 0) {
-			shiftLeft(-n);
-			return;
-		}
-		offset -= n % length;
-		if (offset < 0) offset += length;
+	public LongCircularArray rotateRight(final int n) {
+		if (n < 0) return rotateLeft(-n);
+		offset -= n % size;
+		if (offset < 0) offset += size;
 		rotation -= n;
+		return this;
 	}
 
 	/**
 	 * 回転状態を初期位置へ戻す。
 	 */
-	public void resetRotation() {
+	public LongCircularArray resetRotation() {
 		rotation = 0;
 		offset = 0;
+		return this;
 	}
 
 	/**
 	 * 現在の論理順で独立した配列へコピーする。
 	 */
 	public long[] toArray() {
-		final long[] res = new long[length];
-		final int n = length - offset;
+		final long[] res = new long[size];
+		final int n = size - offset;
 		System.arraycopy(arr, offset, res, 0, n);
 		System.arraycopy(arr, 0, res, n, offset);
 		return res;
@@ -190,7 +188,7 @@ public final class LongCircularArray implements LongMutableArray {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < length;
+				return i < size;
 			}
 
 			public long nextLong() {
@@ -204,9 +202,10 @@ public final class LongCircularArray implements LongMutableArray {
 	 * 論理順の要素を半角スペースで区切った文字列として返す。
 	 */
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(21 * length - 1);
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder(21 * size - 1);
 		sb.append(arr[offset]);
-		for (int i = 1; i < length; i++) sb.append(' ').append(get(i));
+		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }

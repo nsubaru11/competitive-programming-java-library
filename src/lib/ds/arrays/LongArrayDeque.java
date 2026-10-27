@@ -8,10 +8,9 @@ import lib.ds.*;
 
 /**
  * long 型に特化した可変容量の循環 deque。
- * 添字は先頭を0とし、有効範囲は {@code 0 <= i < size()} とする。空の poll・peek は例外、OrDefault 系は指定値を返す。
+ * 添字は先頭を0とし、有効範囲は {@code 0 <= i < size()} とする。空の get・remove は例外、OrDefault 系は指定値を返す。
  * equals・hashCode は Object の実装を継承し、内容による比較は行わない。
  */
-@SuppressWarnings("unused")
 public final class LongArrayDeque implements LongMutableArray {
 	private int capacity;
 	private long[] buf;
@@ -49,55 +48,12 @@ public final class LongArrayDeque implements LongMutableArray {
 	}
 
 	/**
-	 * 現在の内部配列の容量を返す。要素の追加により拡張される。
-	 */
-	public int capacity() {
-		return capacity;
-	}
-
-	/**
 	 * 指定した論理位置の値を返す。
 	 *
 	 * @throws IndexOutOfBoundsException 論理添字が範囲外の場合
 	 */
 	public long get(final int i) {
 		return buf[physicalIndex(Objects.checkIndex(i, size))];
-	}
-
-	/**
-	 * 先頭の要素を削除せず返す。
-	 *
-	 * @throws NoSuchElementException deque が空の場合
-	 */
-	public long peekFirst() {
-		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
-		return buf[head];
-	}
-
-	/**
-	 * 先頭の要素を削除せず返す。空の場合は状態を変更せず defaultValue を返す。
-	 */
-	public long peekFirstOrDefault(final long defaultValue) {
-		if (isEmpty()) return defaultValue;
-		return buf[head];
-	}
-
-	/**
-	 * 末尾の要素を削除せず返す。
-	 *
-	 * @throws NoSuchElementException deque が空の場合
-	 */
-	public long peekLast() {
-		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
-		return buf[physicalIndex(size - 1)];
-	}
-
-	/**
-	 * 末尾の要素を削除せず返す。空の場合は状態を変更せず defaultValue を返す。
-	 */
-	public long peekLastOrDefault(final long defaultValue) {
-		if (isEmpty()) return defaultValue;
-		return buf[physicalIndex(size - 1)];
 	}
 
 	/**
@@ -135,7 +91,7 @@ public final class LongArrayDeque implements LongMutableArray {
 	 *
 	 * @throws NoSuchElementException deque が空の場合
 	 */
-	public long pollFirst() {
+	public long removeFirst() {
 		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
 		final long first = buf[head];
 		size--;
@@ -146,7 +102,7 @@ public final class LongArrayDeque implements LongMutableArray {
 	/**
 	 * 先頭の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。
 	 */
-	public long pollFirstOrDefault(final long defaultValue) {
+	public long removeFirstOrDefault(final long defaultValue) {
 		if (isEmpty()) return defaultValue;
 		final long first = buf[head];
 		size--;
@@ -159,7 +115,7 @@ public final class LongArrayDeque implements LongMutableArray {
 	 *
 	 * @throws NoSuchElementException deque が空の場合
 	 */
-	public long pollLast() {
+	public long removeLast() {
 		if (isEmpty()) throw new NoSuchElementException("LongArrayDeque is empty.");
 		return buf[physicalIndex(--size)];
 	}
@@ -167,7 +123,7 @@ public final class LongArrayDeque implements LongMutableArray {
 	/**
 	 * 末尾の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。
 	 */
-	public long pollLastOrDefault(final long defaultValue) {
+	public long removeLastOrDefault(final long defaultValue) {
 		if (isEmpty()) return defaultValue;
 		return buf[physicalIndex(--size)];
 	}

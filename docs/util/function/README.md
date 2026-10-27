@@ -7,39 +7,39 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `IntBinaryConsumer` | `(int, int) -> void` | — | [Java](../../../src/lib/util/function/IntBinaryConsumer.java) | — |
-| `IntTernaryConsumer` | `(int, int, int) -> void` | — | [Java](../../../src/lib/util/function/IntTernaryConsumer.java) | — |
-| `IntQuaternaryConsumer` | `(int, int, int, int) -> void` | — | [Java](../../../src/lib/util/function/IntQuaternaryConsumer.java) | — |
-| `IntLongConsumer` | `(int, long) -> void` | — | [Java](../../../src/lib/util/function/IntLongConsumer.java) | — |
-| `LongIntConsumer` | `(long, int) -> void` | — | [Java](../../../src/lib/util/function/LongIntConsumer.java) | — |
-| `LongBinaryConsumer` | `(long, long) -> void` | — | [Java](../../../src/lib/util/function/LongBinaryConsumer.java) | — |
-| `IntBinaryLongConsumer` | `(int, int, long) -> void` | — | [Java](../../../src/lib/util/function/IntBinaryLongConsumer.java) | — |
-| `IntTernaryLongConsumer` | `(int, int, int, long) -> void` | — | [Java](../../../src/lib/util/function/IntTernaryLongConsumer.java) | — |
-| `IntBinaryToLongFunction` | `(int, int) -> long` | — | [Java](../../../src/lib/util/function/IntBinaryToLongFunction.java) | — |
-| `IntTernaryOperator` | `(int, int, int) -> int` | — | [Java](../../../src/lib/util/function/IntTernaryOperator.java) | — |
-| `IntTernaryToLongFunction` | `(int, int, int) -> long` | — | [Java](../../../src/lib/util/function/IntTernaryToLongFunction.java) | — |
-| `IntComparator` | `(int, int) -> int` | — | [Java](../../../src/lib/util/function/IntComparator.java) | — |
-| `LongComparator` | `(long, long) -> int` | — | [Java](../../../src/lib/util/function/LongComparator.java) | — |
+| クラス                     | 用途                            | Guide | ソース                                                               | Example / 検証 |
+|----------------------------|---------------------------------|-------|----------------------------------------------------------------------|----------------|
+| `IntBinaryConsumer`        | `(int, int) -> void`            | —     | [Java](../../../src/lib/util/function/IntBinaryConsumer.java)        | —              |
+| `IntTernaryConsumer`       | `(int, int, int) -> void`       | —     | [Java](../../../src/lib/util/function/IntTernaryConsumer.java)       | —              |
+| `IntQuaternaryConsumer`    | `(int, int, int, int) -> void`  | —     | [Java](../../../src/lib/util/function/IntQuaternaryConsumer.java)    | —              |
+| `IntLongConsumer`          | `(int, long) -> void`           | —     | [Java](../../../src/lib/util/function/IntLongConsumer.java)          | —              |
+| `LongIntConsumer`          | `(long, int) -> void`           | —     | [Java](../../../src/lib/util/function/LongIntConsumer.java)          | —              |
+| `LongBinaryConsumer`       | `(long, long) -> void`          | —     | [Java](../../../src/lib/util/function/LongBinaryConsumer.java)       | —              |
+| `IntBinaryLongConsumer`    | `(int, int, long) -> void`      | —     | [Java](../../../src/lib/util/function/IntBinaryLongConsumer.java)    | —              |
+| `IntTernaryLongConsumer`   | `(int, int, int, long) -> void` | —     | [Java](../../../src/lib/util/function/IntTernaryLongConsumer.java)   | —              |
+| `IntBinaryToLongFunction`  | `(int, int) -> long`            | —     | [Java](../../../src/lib/util/function/IntBinaryToLongFunction.java)  | —              |
+| `IntTernaryOperator`       | `(int, int, int) -> int`        | —     | [Java](../../../src/lib/util/function/IntTernaryOperator.java)       | —              |
+| `IntTernaryToLongFunction` | `(int, int, int) -> long`       | —     | [Java](../../../src/lib/util/function/IntTernaryToLongFunction.java) | —              |
+| `IntComparator`            | `(int, int) -> int`             | —     | [Java](../../../src/lib/util/function/IntComparator.java)            | —              |
+| `LongComparator`           | `(long, long) -> int`           | —     | [Java](../../../src/lib/util/function/LongComparator.java)           | —              |
 
 ## インターフェース
 
-| インターフェース | シグネチャ |
-|------------------|------------|
-| [`IntBinaryConsumer`](../../../src/lib/util/function/IntBinaryConsumer.java)        | `(int, int) -> void`            |
-| [`IntTernaryConsumer`](../../../src/lib/util/function/IntTernaryConsumer.java)       | `(int, int, int) -> void`       |
-| [`IntQuaternaryConsumer`](../../../src/lib/util/function/IntQuaternaryConsumer.java)    | `(int, int, int, int) -> void`  |
-| [`IntLongConsumer`](../../../src/lib/util/function/IntLongConsumer.java)          | `(int, long) -> void`           |
-| [`LongIntConsumer`](../../../src/lib/util/function/LongIntConsumer.java)          | `(long, int) -> void`           |
-| [`LongBinaryConsumer`](../../../src/lib/util/function/LongBinaryConsumer.java)       | `(long, long) -> void`          |
-| [`IntBinaryLongConsumer`](../../../src/lib/util/function/IntBinaryLongConsumer.java)    | `(int, int, long) -> void`      |
-| [`IntTernaryLongConsumer`](../../../src/lib/util/function/IntTernaryLongConsumer.java)   | `(int, int, int, long) -> void` |
-| [`IntBinaryToLongFunction`](../../../src/lib/util/function/IntBinaryToLongFunction.java)  | `(int, int) -> long`            |
-| [`IntTernaryOperator`](../../../src/lib/util/function/IntTernaryOperator.java)       | `(int, int, int) -> int`        |
+| インターフェース                                                                           | シグネチャ                      |
+|--------------------------------------------------------------------------------------------|---------------------------------|
+| [`IntBinaryConsumer`](../../../src/lib/util/function/IntBinaryConsumer.java)               | `(int, int) -> void`            |
+| [`IntTernaryConsumer`](../../../src/lib/util/function/IntTernaryConsumer.java)             | `(int, int, int) -> void`       |
+| [`IntQuaternaryConsumer`](../../../src/lib/util/function/IntQuaternaryConsumer.java)       | `(int, int, int, int) -> void`  |
+| [`IntLongConsumer`](../../../src/lib/util/function/IntLongConsumer.java)                   | `(int, long) -> void`           |
+| [`LongIntConsumer`](../../../src/lib/util/function/LongIntConsumer.java)                   | `(long, int) -> void`           |
+| [`LongBinaryConsumer`](../../../src/lib/util/function/LongBinaryConsumer.java)             | `(long, long) -> void`          |
+| [`IntBinaryLongConsumer`](../../../src/lib/util/function/IntBinaryLongConsumer.java)       | `(int, int, long) -> void`      |
+| [`IntTernaryLongConsumer`](../../../src/lib/util/function/IntTernaryLongConsumer.java)     | `(int, int, int, long) -> void` |
+| [`IntBinaryToLongFunction`](../../../src/lib/util/function/IntBinaryToLongFunction.java)   | `(int, int) -> long`            |
+| [`IntTernaryOperator`](../../../src/lib/util/function/IntTernaryOperator.java)             | `(int, int, int) -> int`        |
 | [`IntTernaryToLongFunction`](../../../src/lib/util/function/IntTernaryToLongFunction.java) | `(int, int, int) -> long`       |
-| [`IntComparator`](../../../src/lib/util/function/IntComparator.java)            | `(int, int) -> int`             |
-| [`LongComparator`](../../../src/lib/util/function/LongComparator.java)           | `(long, long) -> int`           |
+| [`IntComparator`](../../../src/lib/util/function/IntComparator.java)                       | `(int, int) -> int`             |
+| [`LongComparator`](../../../src/lib/util/function/LongComparator.java)                     | `(long, long) -> int`           |
 
 ## 命名方針
 

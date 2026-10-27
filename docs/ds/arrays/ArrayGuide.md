@@ -15,7 +15,8 @@
 ## 特徴
 
 - `int` / `long` をプリミティブのまま取得できる
-- `getLast` による末尾取得と、範囲外・空の場合に指定値を返す取得に対応
+- `getFirst` / `getLast` による先頭・末尾取得と、範囲外・空の場合に指定値を返す取得に対応
+- `indexOf` / `lastIndexOf` で指定値の論理添字を線形探索
 - `PrimitiveIterator` とプリミティブ Stream に対応
 - `ORDERED`, `SIZED`, `SUBSIZED` の特性を持つ `Spliterator` を提供
 - `PrefixSum`, `CircularArray`, `ArrayDeque`, `CompressedArray` の共通引数として利用可能
@@ -38,8 +39,12 @@
 |-----------------------------------------|---------------------|----------------------------------------------------------------------------|
 | `get(int i)`                            | `int`               | 指定位置の値を返す。範囲外の添字に対する動作は実装に依存する。             |
 | `getOrDefault(int i, int defaultValue)` | `int`               | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。           |
+| `getFirst()`                            | `int`               | 現在の論理順の先頭の値を返す。空の場合は NoSuchElementException を投げる。 |
+| `getFirstOrDefault(int defaultValue)`   | `int`               | 先頭の値を返す。空の場合は defaultValue を返す。                           |
 | `getLast()`                             | `int`               | 現在の論理順の末尾の値を返す。空の場合は NoSuchElementException を投げる。 |
 | `getLastOrDefault(int defaultValue)`    | `int`               | 現在の論理順の末尾の値を返す。空の場合は defaultValue をそのまま返す。     |
+| `indexOf(int v)`                        | `int`               | 指定値の最初の論理添字を返す。存在しなければ -1。                          |
+| `lastIndexOf(int v)`                    | `int`               | 指定値の最後の論理添字を返す。存在しなければ -1。                          |
 | `spliterator()`                         | `Spliterator.OfInt` | 論理添字の昇順に走査する ORDERED・SIZED・SUBSIZED の spliterator を返す。  |
 
 ### `LongArray`
@@ -48,8 +53,12 @@
 |------------------------------------------|----------------------|----------------------------------------------------------------------------|
 | `get(int i)`                             | `long`               | 指定位置の値を返す。範囲外の添字に対する動作は実装に依存する。             |
 | `getOrDefault(int i, long defaultValue)` | `long`               | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。           |
+| `getFirst()`                             | `long`               | 現在の論理順の先頭の値を返す。空の場合は NoSuchElementException を投げる。 |
+| `getFirstOrDefault(long defaultValue)`   | `long`               | 先頭の値を返す。空の場合は defaultValue を返す。                           |
 | `getLast()`                              | `long`               | 現在の論理順の末尾の値を返す。空の場合は NoSuchElementException を投げる。 |
 | `getLastOrDefault(long defaultValue)`    | `long`               | 現在の論理順の末尾の値を返す。空の場合は defaultValue をそのまま返す。     |
+| `indexOf(long v)`                        | `int`                | 指定値の最初の論理添字を返す。存在しなければ -1。                          |
+| `lastIndexOf(long v)`                    | `int`                | 指定値の最後の論理添字を返す。存在しなければ -1。                          |
 | `spliterator()`                          | `Spliterator.OfLong` | 論理添字の昇順に走査する ORDERED・SIZED・SUBSIZED の spliterator を返す。  |
 
 ### 継承元のコレクション API
@@ -93,11 +102,11 @@
 ## 制約・注意事項
 
 - `get(i)` は `0 <= i < size()` の有効な論理添字で呼び出す。範囲外の動作は実装に依存する。
-- getOrDefault は範囲外で指定値を返す。既定実装は範囲内の場合のみ get を呼ぶ。
+- `getOrDefault` は範囲外で指定値を返す。既定実装は範囲内の場合のみ `get` を呼ぶ。
+- `getFirst()` は空かを確認してから `get(0)` を呼ぶ。`getFirstOrDefault(defaultValue)` は `getOrDefault(0, defaultValue)` を呼ぶ。
 - `getLast()` は空かを確認してから `get(size() - 1)` を呼ぶ。`getLastOrDefault(defaultValue)` は `getOrDefault(size() - 1, defaultValue)` を呼ぶ。どちらも要素を削除しない。
 - iterator / spliterator / Stream と、それらを使う一括処理の実行中は、要素数や走査順を変更しないこと。このインターフェースはスナップショットや変更検出を保証しない。具体的な変更操作は各クラスのGuideを参照する。
-- 読み取り用インターフェースであり、実装が不変であることは保証しない。
-- `IntArray` / `LongArray` 自体は格納形式や可変性を規定しない。
+- 読み取り用インターフェースであり、格納形式や実装の不変性を規定しない。
 - 更新が必要な共通引数には `IntMutableArray` / `LongMutableArray` を使用する。更新関数の注意事項は [MutableArrayGuide](./MutableArrayGuide.md#制約注意事項) を参照する。
 - `toList()` はボックス化を伴うため、性能重視のループでは `iterator()` またはプリミティブ Stream を使用する。
 
@@ -105,12 +114,12 @@
 
 `n` は要素数とする。既定メソッドは `size()` と iterator の1要素取得が `O(1)` の実装を前提とする。
 
-| 操作                                                                                        | 時間計算量 | 追加領域 |
-|---------------------------------------------------------------------------------------------|------------|----------|
-| `size`, `isEmpty`, 現在の配列実装の `get` / `getOrDefault` / `getLast` / `getLastOrDefault` | `O(1)`     | `O(1)`   |
-| `spliterator`, `intStream`, `longStream` の生成                                             | `O(1)`     | `O(1)`   |
-| `contains`, `forEachInt`, `forEachLong`, 全要素の走査                                       | `O(n)`     | `O(1)`   |
-| `toArray`, `toList`                                                                         | `O(n)`     | `O(n)`   |
+| 操作                                                                                                                           | 時間計算量 | 追加領域 |
+|--------------------------------------------------------------------------------------------------------------------------------|------------|----------|
+| `size`, `isEmpty`, 現在の配列実装の `get` / `getOrDefault` / `getFirst` / `getFirstOrDefault` / `getLast` / `getLastOrDefault` | `O(1)`     | `O(1)`   |
+| `spliterator`, `intStream`, `longStream` の生成                                                                                | `O(1)`     | `O(1)`   |
+| `contains`, `indexOf`, `lastIndexOf`, `forEachInt`, `forEachLong`, 全要素の走査                                                | `O(n)`     | `O(1)`   |
+| `toArray`, `toList`                                                                                                            | `O(n)`     | `O(n)`   |
 
 関数の評価時間は別途加算する。Stream は終端操作時に走査する。インターフェース自体は各実装の計算量を制約しない。
 
@@ -122,3 +131,4 @@
 | **バージョン 2.0** | 2026-07-15 | `IntCollection` / `LongCollection` を継承する読み取り専用 API へ分離し、順序付き `spliterator()` を追加 |
 | **バージョン 3.0** | 2026-10-23 | IntArray / LongArray に既定の getOrDefault を追加                                                       |
 | **バージョン 4.0** | 2026-10-24 | IntArray / LongArray に既定の getLast / getLastOrDefault を追加                                         |
+| **バージョン 5.0** | 2026-10-25 | getFirst / getFirstOrDefault と indexOf / lastIndexOf を両インターフェースへ追加                        |

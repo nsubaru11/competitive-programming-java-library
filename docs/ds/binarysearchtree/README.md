@@ -7,14 +7,14 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `BinarySearchTree` | 汎用的な二分探索木の実装で、要素の追加、検索、削除などの基本操作を提供 | [BinarySearchTreeGuide](./BinarySearchTreeGuide.md) | [Java](../../../src/lib/ds/set/BinarySearchTree.java) | — |
-| `BTree` | 多分岐の平衡探索木であるB木を実装するためのTODO雛形である。 | [BTreeGuide](./BTreeGuide.md) | [Java](../../../src/lib/ds/set/BTree.java) | — |
-| `RedBlackTree` | 自己平衡二分探索木の一種で、赤黒規則に従って平衡を維持 | [RedBlackTreeGuide](./RedBlackTreeGuide.md) | [Java](../../../src/lib/ds/set/RedBlackTree.java) | — |
-| `Treap` | 乱択優先度による平衡二分探索木。順序統計（インデックスアクセス・rank）付きの順序付き集合 | — | [Java](../../../src/lib/ds/set/Treap.java) | — |
-| `IntTreap` | int特化版のTreap（ボクシング回避による高速化） | — | [Java](../../../src/lib/ds/set/IntTreap.java) | [Check1.java](../../../test/verify/ds/set/inttreap/Check1.java) |
-| `VanEmdeBoasTree` | 整数キー集合に対する挿入・削除・前後検索を $\mathcal{O}(\log \log U)$ で提供 | — | [Java](../../../src/lib/ds/set/VanEmdeBoasTree.java) | — |
+| クラス             | 用途                                                                                     | Guide                                               | ソース                                                | Example / 検証                                                 |
+|--------------------|------------------------------------------------------------------------------------------|-----------------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------|
+| `BinarySearchTree` | 汎用的な二分探索木の実装で、要素の追加、検索、削除などの基本操作を提供                   | [BinarySearchTreeGuide](./BinarySearchTreeGuide.md) | [Java](../../../src/lib/ds/set/BinarySearchTree.java) | —                                                              |
+| `BTree`            | 多分岐の平衡探索木であるB木を実装するためのTODO雛形である。                              | [BTreeGuide](./BTreeGuide.md)                       | [Java](../../../src/lib/ds/set/BTree.java)            | —                                                              |
+| `RedBlackTree`     | 自己平衡二分探索木の一種で、赤黒規則に従って平衡を維持                                   | [RedBlackTreeGuide](./RedBlackTreeGuide.md)         | [Java](../../../src/lib/ds/set/RedBlackTree.java)     | —                                                              |
+| `Treap`            | 乱択優先度による平衡二分探索木。順序統計（インデックスアクセス・rank）付きの順序付き集合 | —                                                   | [Java](../../../src/lib/ds/set/Treap.java)            | —                                                              |
+| `IntTreap`         | int特化版のTreap（ボクシング回避による高速化）                                           | —                                                   | [Java](../../../src/lib/ds/set/IntTreap.java)         | [Judge1.java](../../../test/judge/ds/set/inttreap/Judge1.java) |
+| `VanEmdeBoasTree`  | 整数キー集合に対する挿入・削除・前後検索を $\mathcal{O}(\log \log U)$ で提供             | —                                                   | [Java](../../../src/lib/ds/set/VanEmdeBoasTree.java)  | —                                                              |
 
 ## 実装クラス
 

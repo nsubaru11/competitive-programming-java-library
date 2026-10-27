@@ -8,16 +8,16 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `BellmanFord` | 負辺を含むグラフの単一始点・複数始点最短経路 | [BellmanFordGuide](./BellmanFordGuide.md) | [Java](../../../src/lib/graph/BellmanFord.java) | [Check1.java](../../../test/verify/graph/bellmanford/Check1.java) |
-| `BFS` | 辺をすべて重み1として扱うグラフの単一始点・複数始点最短経路 | [BFSGuide](./BFSGuide.md) | [Java](../../../src/lib/graph/BFS.java) | — |
-| `Dijkstra` | 非負重み付きグラフの単一始点・複数始点最短経路 | [DijkstraGuide](./DijkstraGuide.md) | [Java](../../../src/lib/graph/Dijkstra.java) | [Check1.java](../../../test/verify/graph/dijkstra/Check1.java) |
-| `PathResult` | 最短経路計算の距離・親・経路を保持する共通結果型 | [PathResultGuide](./PathResultGuide.md) | [Java](../../../src/lib/graph/PathResult.java) | — |
-| `TopologicalShortestPath` | DAGの単一始点・複数始点の最短経路・最長経路 | [TopologicalShortestPathGuide](./TopologicalShortestPathGuide.md) | [Java](../../../src/lib/graph/TopologicalShortestPath.java) | — |
-| `WarshallFloyd` | 全頂点対間の最短経路 | [WarshallFloydGuide](./WarshallFloydGuide.md) | [Java](../../../src/lib/graph/WarshallFloyd.java) | [Check1.java](../../../test/verify/graph/warshallfloyd/Check1.java) |
-| `ZeroOneBFS` | 辺の重みが0または1のグラフの単一始点・複数始点最短経路 | [ZeroOneBFSGuide](./ZeroOneBFSGuide.md) | [Java](../../../src/lib/graph/ZeroOneBFS.java) | — |
-| `Johnson` | 負辺を許す疎な有向グラフの全頂点対最短路 | — | [Java](../../../src/lib/graph/Johnson.java) | — |
+| クラス                    | 用途                                                        | Guide                                                             | ソース                                                      | Example / 検証                                                     |
+|---------------------------|-------------------------------------------------------------|-------------------------------------------------------------------|-------------------------------------------------------------|--------------------------------------------------------------------|
+| `BellmanFord`             | 負辺を含むグラフの単一始点・複数始点最短経路                | [BellmanFordGuide](./BellmanFordGuide.md)                         | [Java](../../../src/lib/graph/BellmanFord.java)             | [Judge1.java](../../../test/judge/graph/bellmanford/Judge1.java)   |
+| `BFS`                     | 辺をすべて重み1として扱うグラフの単一始点・複数始点最短経路 | [BFSGuide](./BFSGuide.md)                                         | [Java](../../../src/lib/graph/BFS.java)                     | —                                                                  |
+| `Dijkstra`                | 非負重み付きグラフの単一始点・複数始点最短経路              | [DijkstraGuide](./DijkstraGuide.md)                               | [Java](../../../src/lib/graph/Dijkstra.java)                | [Judge1.java](../../../test/judge/graph/dijkstra/Judge1.java)      |
+| `PathResult`              | 最短経路計算の距離・親・経路を保持する共通結果型            | [PathResultGuide](./PathResultGuide.md)                           | [Java](../../../src/lib/graph/PathResult.java)              | —                                                                  |
+| `TopologicalShortestPath` | DAGの単一始点・複数始点の最短経路・最長経路                 | [TopologicalShortestPathGuide](./TopologicalShortestPathGuide.md) | [Java](../../../src/lib/graph/TopologicalShortestPath.java) | —                                                                  |
+| `WarshallFloyd`           | 全頂点対間の最短経路                                        | [WarshallFloydGuide](./WarshallFloydGuide.md)                     | [Java](../../../src/lib/graph/WarshallFloyd.java)           | [Judge1.java](../../../test/judge/graph/warshallfloyd/Judge1.java) |
+| `ZeroOneBFS`              | 辺の重みが0または1のグラフの単一始点・複数始点最短経路      | [ZeroOneBFSGuide](./ZeroOneBFSGuide.md)                           | [Java](../../../src/lib/graph/ZeroOneBFS.java)              | —                                                                  |
+| `Johnson`                 | 負辺を許す疎な有向グラフの全頂点対最短路                    | —                                                                 | [Java](../../../src/lib/graph/Johnson.java)                 | —                                                                  |
 
 ## 実装クラス
 
@@ -77,7 +77,7 @@
 ## アルゴリズムの選択ガイド
 
 | アルゴリズム   | 辺の重み    | 負辺 | 負閉路の影響判定       | 対象           | 時間計算量                    |
-|----------------|-------------|-----:|------------------------|----------------|-------------------------------|
+|----------------|-------------|-----|------------------------|----------------|-------------------------------|
 | BFS            | 1           | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
 | 0-1 BFS        | 0または1    | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}(V + E)$          |
 | Dijkstra       | 非負        | 不可 | なし                   | 単一・複数始点 | $\mathcal{O}((V + E) \log V)$ |
@@ -103,4 +103,4 @@
 - `UndirectedGraph`では負辺を往復できるため、負辺が1本でもその連結範囲は負閉路の影響を受ける。
 - 各呼び出しは新しい結果を計算し、以前の始点に対するキャッシュは保持しない。
 - パッケージは`lib.graph`で、`Graph`、`DirectedGraph`、`UndirectedGraph`に依存する。
-- 検証コードは[Dijkstra](../../../test/verify/graph/dijkstra)、[Bellman-Ford](../../../test/verify/graph/bellmanford)、[Warshall-Floyd](../../../test/verify/graph/warshallfloyd)を参照すること。
+- 検証コードは[Dijkstra](../../../test/judge/graph/dijkstra)、[Bellman-Ford](../../../test/judge/graph/bellmanford)、[Warshall-Floyd](../../../test/judge/graph/warshallfloyd)を参照すること。

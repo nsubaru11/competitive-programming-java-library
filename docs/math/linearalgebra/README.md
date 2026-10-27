@@ -4,12 +4,12 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `IntMatrixUtils` | `int[][]`のコピー・単位行列・加減算・乗算・累乗・剰余演算。 | — | [Java](../../../src/lib/math/linearalgebra/IntMatrixUtils.java) | — |
-| `LongMatrixUtils` | `long[][]`のコピー・単位行列・加減算・乗算・累乗・剰余演算。 | — | [Java](../../../src/lib/math/linearalgebra/LongMatrixUtils.java) | — |
-| `LinearAlgebra` | 連立一次方程式・行列式・ランク計算用の未実装クラス。 | — | [Java](../../../src/lib/math/linearalgebra/LinearAlgebra.java) | — |
-| `Matrix` | `Fraction`を使う有理数行列。現在はパッケージ外から構築できない。 | — | [Java](../../../src/lib/math/linearalgebra/Matrix.java) | — |
+| クラス            | 用途                                                             | Guide | ソース                                                           | Example / 検証 |
+|-------------------|------------------------------------------------------------------|-------|------------------------------------------------------------------|----------------|
+| `IntMatrixUtils`  | `int[][]`のコピー・単位行列・加減算・乗算・累乗・剰余演算。      | —     | [Java](../../../src/lib/math/linearalgebra/IntMatrixUtils.java)  | —              |
+| `LongMatrixUtils` | `long[][]`のコピー・単位行列・加減算・乗算・累乗・剰余演算。     | —     | [Java](../../../src/lib/math/linearalgebra/LongMatrixUtils.java) | —              |
+| `LinearAlgebra`   | 連立一次方程式・行列式・ランク計算用の未実装クラス。             | —     | [Java](../../../src/lib/math/linearalgebra/LinearAlgebra.java)   | —              |
+| `Matrix`          | `Fraction`を使う有理数行列。現在はパッケージ外から構築できない。 | —     | [Java](../../../src/lib/math/linearalgebra/Matrix.java)          | —              |
 
 ## 実装クラス
 

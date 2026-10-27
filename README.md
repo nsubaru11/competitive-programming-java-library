@@ -22,9 +22,11 @@
 | `lib.string` | 文字列アルゴリズム           | [モジュール一覧](./docs/string/README.md) |
 | `lib.util`   | 変換・順列・その他の汎用処理 | [モジュール一覧](./docs/util/README.md)   |
 
-配列系の API は [Primitive Array Utilities](./docs/ds/arrays/README.md) にまとめる。読み取り・更新インターフェース、int / long / char の2次元配列、deque、循環配列、座標圧縮、累積和の仕様は各クラスの Guide を参照する。添字・座標の範囲外を指定値で扱う `getOrDefault` にも対応する。`IntArray` / `LongArray` では `getLast()` で現在の論理順の末尾を取得でき、`getLastOrDefault` で空の場合の値を指定できる。座標圧縮・累積和の添字検査と閉区間の条件は各Guideに記載する。
+配列とFenwick Treeの更新API・添字規約は、[Primitive Array Utilities](./docs/ds/arrays/README.md) と [Binary Indexed Tree](./docs/ds/fenwick/README.md) を参照する。
 
 ## 実装環境
+
+利用例・検証コードは `test/example`、`test/unit`、`test/judge`、`test/benchmark` に分ける。配置と実行方法は [テスト・利用例の構成](./test/README.md) を参照する。
 
 基本ターゲットはJava 24です。`lib.io.compat17`はJava 17互換です。外部ライブラリやビルドツールには依存していません。
 

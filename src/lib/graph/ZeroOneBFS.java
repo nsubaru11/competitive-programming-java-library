@@ -52,7 +52,7 @@ public final class ZeroOneBFS {
 		final boolean[] visited = new boolean[n];
 
 		while (!dq.isEmpty()) {
-			final int u = dq.pollFirst();
+			final int u = dq.removeFirst();
 			if (visited[u]) continue;
 			visited[u] = true;
 			final long du = dist[u];
@@ -116,7 +116,7 @@ public final class ZeroOneBFS {
 		final boolean[] visited = new boolean[n];
 
 		while (!dq.isEmpty()) {
-			final int u = dq.pollFirst();
+			final int u = dq.removeFirst();
 			if (u == g) break;
 			if (visited[u]) continue;
 			visited[u] = true;

@@ -7,11 +7,11 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `SparseTable` | Sparse Table は、値を変更しない配列に対して、冪等な区間演算を高速に行うデータ構造である。 | [SparseTableGuide](./SparseTableGuide.md) | [Java](../../../src/lib/ds/sparsetable/SparseTable.java) | — |
-| `IntSparseTable` | IntSparseTableの用途・状態。 | — | [Java](../../../src/lib/ds/sparsetable/IntSparseTable.java) | — |
-| `LongSparseTable` | LongSparseTableの用途・状態。 | — | [Java](../../../src/lib/ds/sparsetable/LongSparseTable.java) | — |
+| クラス            | 用途                                                                                      | Guide                                     | ソース                                                       | Example / 検証 |
+|-------------------|-------------------------------------------------------------------------------------------|-------------------------------------------|--------------------------------------------------------------|----------------|
+| `SparseTable`     | Sparse Table は、値を変更しない配列に対して、冪等な区間演算を高速に行うデータ構造である。 | [SparseTableGuide](./SparseTableGuide.md) | [Java](../../../src/lib/ds/sparsetable/SparseTable.java)     | —              |
+| `IntSparseTable`  | IntSparseTableの用途・状態。                                                              | —                                         | [Java](../../../src/lib/ds/sparsetable/IntSparseTable.java)  | —              |
+| `LongSparseTable` | LongSparseTableの用途・状態。                                                             | —                                         | [Java](../../../src/lib/ds/sparsetable/LongSparseTable.java) | —              |
 
 ## 実装クラス
 

@@ -4,12 +4,12 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `PolynomialUtils` | `double[]`係数の加減算・乗算・微積分・評価・次数・GCD。 | — | [Java](../../../src/lib/math/polynomial/PolynomialUtils.java) | [Example.java](../../../test/verify/math/polynomial/polynomialutils/Example.java) |
-| `Convolution` | NTTによる多項式畳み込みと、各種演算の畳み込み。 | — | [Java](../../../src/lib/math/polynomial/Convolution.java) | [Check1.java](../../../test/verify/math/polynomial/convolution/Check1.java) |
-| `Transform` | NTT・FWHT・ゼータ変換・メビウス変換。 | — | [Java](../../../src/lib/math/polynomial/Transform.java) | [Check1.java](../../../test/verify/math/polynomial/transform/Check1.java) |
-| `FormalPowerSeries` | 形式的冪級数の操作をまとめる未実装クラス。 | — | [Java](../../../src/lib/math/polynomial/FormalPowerSeries.java) | — |
+| クラス              | 用途                                                    | Guide | ソース                                                          | Example / 検証                                                                     |
+|---------------------|---------------------------------------------------------|-------|-----------------------------------------------------------------|------------------------------------------------------------------------------------|
+| `PolynomialUtils`   | `double[]`係数の加減算・乗算・微積分・評価・次数・GCD。 | —     | [Java](../../../src/lib/math/polynomial/PolynomialUtils.java)   | [Example.java](../../../test/example/math/polynomial/polynomialutils/Example.java) |
+| `Convolution`       | NTTによる多項式畳み込みと、各種演算の畳み込み。         | —     | [Java](../../../src/lib/math/polynomial/Convolution.java)       | [Judge1.java](../../../test/judge/math/polynomial/convolution/Judge1.java)         |
+| `Transform`         | NTT・FWHT・ゼータ変換・メビウス変換。                   | —     | [Java](../../../src/lib/math/polynomial/Transform.java)         | [Judge1.java](../../../test/judge/math/polynomial/transform/Judge1.java)           |
+| `FormalPowerSeries` | 形式的冪級数の操作をまとめる未実装クラス。              | —     | [Java](../../../src/lib/math/polynomial/FormalPowerSeries.java) | —                                                                                  |
 
 ## 実装クラス
 
@@ -50,4 +50,4 @@
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/math/polynomial/polynomialutils/Example.java)
+- [Example.java](../../../test/example/math/polynomial/polynomialutils/Example.java)

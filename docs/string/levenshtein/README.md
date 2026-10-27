@@ -7,11 +7,11 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `LevenshteinDP` | 2つの文字列、文字配列、または整数配列間の編集距離を計算する | [LevenshteinDPGuide](./LevenshteinDPGuide.md) | [Java](../../../src/lib/string/approximate/LevenshteinDP.java) | [Test.java](../../../test/verify/string/approximate/levenshteindp/Test.java) |
-| `Myers` | Myers のビットパラレル法による編集距離計算（$\mathcal{O}(n*m/w)$） | — | [Java](../../../src/lib/string/approximate/Myers.java) | — |
-| `Wu` | Wu–Manber 法（$\mathcal{O}(NP)$アルゴリズム）による編集距離計算 | — | [Java](../../../src/lib/string/approximate/Wu.java) | — |
+| クラス          | 用途                                                               | Guide                                         | ソース                                                         | Example / 検証                                                                |
+|-----------------|--------------------------------------------------------------------|-----------------------------------------------|----------------------------------------------------------------|-------------------------------------------------------------------------------|
+| `LevenshteinDP` | 2つの文字列、文字配列、または整数配列間の編集距離を計算する        | [LevenshteinDPGuide](./LevenshteinDPGuide.md) | [Java](../../../src/lib/string/approximate/LevenshteinDP.java) | [Test.java](../../../test/example/string/approximate/levenshteindp/Test.java) |
+| `Myers`         | Myers のビットパラレル法による編集距離計算（$\mathcal{O}(n*m/w)$） | —                                             | [Java](../../../src/lib/string/approximate/Myers.java)         | —                                                                             |
+| `Wu`            | Wu–Manber 法（$\mathcal{O}(NP)$アルゴリズム）による編集距離計算    | —                                             | [Java](../../../src/lib/string/approximate/Wu.java)            | —                                                                             |
 
 ## 実装クラス
 

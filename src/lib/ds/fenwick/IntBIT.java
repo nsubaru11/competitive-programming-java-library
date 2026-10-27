@@ -7,63 +7,42 @@ import lib.ds.*;
 
 /**
  * 競技プログラミング向け Binary Indexed Tree (Fenwick Tree) の int 型特化実装。
- * <p>
- * 0-indexed での操作を提供し、点更新と区間和の計算を O(log N) で行う。
- * また、BIT上の二分探索による lowerBound を O(log N) で提供する。
+ * 各操作後の要素は int の範囲内とし、更新差分と和は long で扱う。
+ * 0-indexed の点更新・区間和・累積和境界探索を O(log N) で行う。
  */
 @SuppressWarnings("unused")
 public final class IntBIT implements IntCollection {
-	public final int n;
+	public final int size;
 	private final int headBit;
-	private final int[] tree, raw;
-	private int total;
+	private final int[] raw;
+	private final long[] tree;
+	private long total;
 
 	/**
-	 * サイズ n の BIT を構築する。初期値はすべて 0。
+	 * サイズ size の BIT を構築する。初期値はすべて 0。
 	 *
-	 * @param n 要素数
+	 * @param size 要素数
 	 */
-	public IntBIT(final int n) {
-		this.n = n;
-		headBit = Integer.highestOneBit(n);
-		tree = new int[n + 1];
-		raw = new int[n];
+	public IntBIT(final int size) {
+		this.size = size;
+		headBit = Integer.highestOneBit(size);
+		raw = new int[size];
+		tree = new long[size + 1];
 	}
 
 	/**
 	 * 初期値関数を用いて BIT を O(N) で構築する。
 	 *
-	 * @param n    要素数
+	 * @param size 要素数
 	 * @param init 初期値関数 (index -> value)
 	 */
-	public IntBIT(final int n, final IntUnaryOperator init) {
-		this(n);
+	public IntBIT(final int size, final IntUnaryOperator init) {
+		this(size);
 		setAll(init);
 	}
 
-	public void fill(final int val) {
-		total = n * val;
-		tree[0] = 0;
-		for (int i = 0; i < n; i++) raw[i] = tree[i + 1] = val;
-		for (int i = 1; i <= n; i++) {
-			int j = i + (i & -i);
-			if (j <= n) tree[j] += tree[i];
-		}
-	}
-
-	/**
-	 * BIT の全要素を再構築する。
-	 *
-	 * @param init 初期値関数
-	 */
-	public void setAll(final IntUnaryOperator init) {
-		total = 0;
-		tree[0] = 0;
-		for (int i = 0; i < n; i++) total += raw[i] = tree[i + 1] = init.applyAsInt(i);
-		for (int i = 1; i <= n; i++) {
-			int j = i + (i & -i);
-			if (j <= n) tree[j] += tree[i];
-		}
+	public int size() {
+		return size;
 	}
 
 	/**
@@ -81,58 +60,85 @@ public final class IntBIT implements IntCollection {
 	 *
 	 * @param i インデックス
 	 * @param v 更新後の値
+	 * @return 更新前の値
 	 */
 	public int set(final int i, final int v) {
-		return add(i, v - raw[i]);
+		final int old = raw[i];
+		add(i, (long) v - old);
+		return old;
 	}
 
 	/**
-	 * インデックス i (0-indexed) の要素に v を加算する。
+	 * インデックス i (0-indexed) の要素に d を加算する。
 	 *
 	 * @param i インデックス
-	 * @param v 加算する値
+	 * @param d 加算する値
 	 */
-	public int add(final int i, final int v) {
-		raw[i] += v;
-		total += v;
-		for (int cur = i + 1; cur <= n; cur += cur & -cur) tree[cur] += v;
-		return raw[i];
+	public int add(final int i, final int d) {
+		return add(i, (long) d);
 	}
 
-	public int multiply(final int i, final int a) {
-		return add(i, raw[i] * (a - 1));
-	}
-
-	public int apply(final int i, final int a, final int b) {
-		return add(i, raw[i] * (a - 1) + b);
-	}
-
-	public int apply(final int i, final int v, final IntBinaryOperator op) {
-		return add(i, op.applyAsInt(raw[i], v) - raw[i]);
+	public int multiply(final int i, final int m) {
+		return add(i, raw[i] * (m - 1L));
 	}
 
 	/**
-	 * 閉区間 [0, r] の和を計算する。
+	 * 指定位置を {@code 現在値 * m + d} に更新する。
+	 */
+	public int affine(final int i, final int m, final int d) {
+		return add(i, raw[i] * (m - 1L) + d);
+	}
+
+	public int apply(final int i, final int x, final IntBinaryOperator f) {
+		return add(i, (long) f.applyAsInt(raw[i], x) - raw[i]);
+	}
+
+	public void fill(final int v) {
+		total = (long) size * v;
+		tree[0] = 0;
+		for (int i = 0; i < size; i++) tree[i + 1] = raw[i] = v;
+		for (int i = 1; i <= size; i++) {
+			final int j = i + (i & -i);
+			if (j <= size) tree[j] += tree[i];
+		}
+	}
+
+	/**
+	 * BIT の全要素を再構築する。
+	 *
+	 * @param init 初期値関数
+	 */
+	public void setAll(final IntUnaryOperator init) {
+		total = 0;
+		tree[0] = 0;
+		for (int i = 0; i < size; i++) total += tree[i + 1] = raw[i] = init.applyAsInt(i);
+		for (int i = 1; i <= size; i++) {
+			final int j = i + (i & -i);
+			if (j <= size) tree[j] += tree[i];
+		}
+	}
+
+	/**
+	 * 閉区間 [0, r] の和を計算する。r = -1 は空区間として扱う。
 	 *
 	 * @param r 右端の境界 (includes)
 	 * @return [0, r] の和
 	 */
-	public int sum(int r) {
-		int s = 0;
-		for (r++; r > 0; r -= r & -r) s += tree[r];
-		return s;
+	public long sum(final int r) {
+		return prefixSum(Objects.checkIndex(r + 1, size + 1));
 	}
 
 	/**
-	 * 閉区間 [l, r] の和を計算する。
+	 * 閉区間 [l, r] の和を計算する。l > r は空区間として扱う。
 	 *
 	 * @param l 左端の境界 (includes)
 	 * @param r 右端の境界 (includes)
 	 * @return [l, r] の和
 	 */
-	public int sum(final int l, final int r) {
+	public long sum(final int l, final int r) {
 		if (l > r) return 0;
-		return sum(r) - sum(l - 1);
+		Objects.checkFromToIndex(l, r + 1, size);
+		return prefixSum(r + 1) - prefixSum(l);
 	}
 
 	/**
@@ -140,23 +146,23 @@ public final class IntBIT implements IntCollection {
 	 *
 	 * @return 全要素の和
 	 */
-	public int sumAll() {
+	public long sumAll() {
 		return total;
 	}
 
 	/**
 	 * 累積和が w 以上となる最小のインデックス i (0-indexed) を返す。
 	 * 全ての要素が非負であることを前提とする。
-	 * 存在しない場合は n を返す。
+	 * 存在しない場合は size を返す。
 	 *
 	 * @param w ターゲットとなる累積和
 	 * @return 累積和が w 以上となる最小のインデックス
 	 */
-	public int lowerBound(int w) {
+	public int lowerBound(long w) {
 		if (w <= 0) return 0;
 		int i = 0;
-		for (int k = Integer.highestOneBit(n); k > 0; k >>= 1) {
-			if (i + k <= n && tree[i + k] < w) {
+		for (int k = headBit; k > 0; k >>= 1) {
+			if (i + k <= size && tree[i + k] < w) {
 				w -= tree[i + k];
 				i += k;
 			}
@@ -167,16 +173,16 @@ public final class IntBIT implements IntCollection {
 	/**
 	 * 累積和が w より大きくなる最小のインデックス i (0-indexed) を返す。
 	 * 全ての要素が非負であることを前提とする。
-	 * 存在しない場合は n を返す。
+	 * 存在しない場合は size を返す。
 	 *
 	 * @param w ターゲットとなる累積和の上限
 	 * @return 累積和が w より大きくなる最小のインデックス
 	 */
-	public int upperBound(int w) {
+	public int upperBound(long w) {
 		if (w < 0) return 0;
 		int i = 0;
 		for (int k = headBit; k > 0; k >>= 1) {
-			if (i + k <= n && tree[i + k] <= w) {
+			if (i + k <= size && tree[i + k] <= w) {
 				w -= tree[i + k];
 				i += k;
 			}
@@ -184,8 +190,12 @@ public final class IntBIT implements IntCollection {
 		return i;
 	}
 
-	public int size() {
-		return n;
+	public int[] toArray() {
+		return raw.clone();
+	}
+
+	public void forEachInt(final IntConsumer action) {
+		for (int i = 0; i < size; i++) action.accept(raw[i]);
 	}
 
 	public PrimitiveIterator.OfInt iterator() {
@@ -193,7 +203,7 @@ public final class IntBIT implements IntCollection {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < n;
+				return i < size;
 			}
 
 			public int nextInt() {
@@ -204,9 +214,23 @@ public final class IntBIT implements IntCollection {
 	}
 
 	public String toString() {
-		final StringBuilder s = new StringBuilder();
-		s.append(raw[0]);
-		for (int i = 1; i < n; i++) s.append(' ').append(raw[i]);
-		return s.toString();
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder();
+		sb.append(raw[0]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(raw[i]);
+		return sb.toString();
+	}
+
+	private int add(final int i, final long d) {
+		raw[i] += d;
+		total += d;
+		for (int cur = i + 1; cur <= size; cur += cur & -cur) tree[cur] += d;
+		return raw[i];
+	}
+
+	private long prefixSum(int r) {
+		long s = 0;
+		for (; r > 0; r -= r & -r) s += tree[r];
+		return s;
 	}
 }

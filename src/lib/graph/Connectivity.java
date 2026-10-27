@@ -58,15 +58,25 @@ public final class Connectivity {
 		return new Result(ord, low, bridge, articulation);
 	}
 
-	/** low-linkの計算結果。配列は結果を直接参照するために公開されています。 */
+	/**
+	 * low-linkの計算結果。配列は結果を直接参照するために公開されています。
+	 */
 	public static class Result {
-		/** 各頂点のDFS訪問順。未訪問の頂点はありません。 */
+		/**
+		 * 各頂点のDFS訪問順。未訪問の頂点はありません。
+		 */
 		public final int[] ord;
-		/** 各頂点のlow-link値。 */
+		/**
+		 * 各頂点のlow-link値。
+		 */
 		public final int[] low;
-		/** 論理辺IDごとの橋の判定。 */
+		/**
+		 * 論理辺IDごとの橋の判定。
+		 */
 		public final boolean[] bridge;
-		/** 頂点番号ごとの関節点の判定。 */
+		/**
+		 * 頂点番号ごとの関節点の判定。
+		 */
 		public final boolean[] articulation;
 
 		private Result(final int[] ord, final int[] low, final boolean[] bridge, final boolean[] articulation) {

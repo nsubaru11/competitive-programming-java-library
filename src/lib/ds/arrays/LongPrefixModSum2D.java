@@ -1,15 +1,17 @@
 package lib.ds.arrays;
 
 import java.util.*;
-import java.util.function.*;
+
+import lib.ds.*;
+import lib.util.function.*;
 
 /**
  * long値の2次元累積和を法 mod で保持する。
  * 各次元の長さは正とし、指定区間は0始まりの有効な閉区間とする。法は正、入力値は {@code 0 <= v < mod} とする。
  * sum の結果は {@code [0, mod)} に正規化する。
  */
-public final class LongPrefixModSum2D {
-	public final int h, w, length;
+public final class LongPrefixModSum2D implements LongCollection {
+	public final int h, w, size;
 	public final long mod;
 	private final int stride;
 	private final long[] pref;
@@ -17,11 +19,11 @@ public final class LongPrefixModSum2D {
 	/**
 	 * 各座標に {@code init(i, j)} を行優先順で適用して構築する。
 	 */
-	public LongPrefixModSum2D(final int h, final int w, final long mod, final LongBinaryOperator init) {
+	public LongPrefixModSum2D(final int h, final int w, final long mod, final IntBinaryToLongFunction init) {
 		this.h = h;
 		this.w = w;
 		this.mod = mod;
-		length = h * w;
+		size = h * w;
 		stride = w + 1;
 		pref = new long[(h + 1) * stride];
 		for (int i = 0; i < h; i++) {
@@ -37,7 +39,7 @@ public final class LongPrefixModSum2D {
 		h = a.length;
 		w = a[0].length;
 		this.mod = mod;
-		length = h * w;
+		size = h * w;
 		stride = w + 1;
 		pref = new long[(h + 1) * stride];
 		for (int i = 0; i < h; i++) {
@@ -49,20 +51,34 @@ public final class LongPrefixModSum2D {
 		}
 	}
 
+	public int size() {
+		return size;
+	}
+
+	/**
+	 * {@code 0 <= i < h} かつ {@code 0 <= j < w} かを返す。
+	 */
+	public boolean inRange(final int i, final int j) {
+		return (i | j | (h - 1 - i) | (w - 1 - j)) >= 0;
+	}
+
 	/**
 	 * 指定位置の元の値を返す。
 	 *
 	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
 	 */
 	public long get(final int i, final int j) {
-		return sum(i, j, i, j);
+		Objects.checkIndex(j, w);
+		final int p = (i + 1) * stride + j + 1;
+		final long res = (pref[p] - pref[p - stride] - pref[p - 1] + pref[p - stride - 1]) % mod;
+		return res < 0 ? res + mod : res;
 	}
 
 	/**
 	 * 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。
 	 */
 	public long getOrDefault(final int i, final int j, final long defaultValue) {
-		return 0 <= i && i < h && 0 <= j && j < w ? get(i, j) : defaultValue;
+		return inRange(i, j) ? get(i, j) : defaultValue;
 	}
 
 	public long sum() {
@@ -96,11 +112,40 @@ public final class LongPrefixModSum2D {
 		return res < 0 ? res + mod : res;
 	}
 
+	public PrimitiveIterator.OfLong iterator() {
+		return new PrimitiveIterator.OfLong() {
+			private int i = 0, j = 0, k = 0;
+
+			public boolean hasNext() {
+				return k < size;
+			}
+
+			public long nextLong() {
+				if (!hasNext()) throw new NoSuchElementException();
+				final long v = get(i, j);
+				k++;
+				if (++j == w) {
+					j = 0;
+					i++;
+				}
+				return v;
+			}
+		};
+	}
+
+	/**
+	 * 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。
+	 */
+	public Spliterator.OfLong spliterator() {
+		return Spliterators.spliterator(iterator(), size, Spliterator.ORDERED);
+	}
+
 	/**
 	 * 各行を半角スペース区切り、行間を改行した文字列として返す。
 	 */
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(20 * length - 1);
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder(20 * size - 1);
 		sb.append(get(0, 0));
 		for (int j = 1; j < w; j++) sb.append(' ').append(get(0, j));
 		for (int i = 1; i < h; i++) {

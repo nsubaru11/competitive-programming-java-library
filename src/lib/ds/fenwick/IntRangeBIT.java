@@ -7,49 +7,121 @@ import lib.ds.*;
 
 /**
  * 競技プログラミング向け Range Update Range Query (区間加算・区間和取得) を提供する int 型特化 BIT。
- * <p>
+ * 各操作後の要素は int の範囲内とし、更新差分と和は long で扱う。
  * 2つの BIT を内部で管理することで、区間加算と区間和の計算を共に O(log N) で行う。
  */
 @SuppressWarnings("unused")
 public final class IntRangeBIT implements IntCollection {
-	public final int n;
-	private final int[] bit1, bit2;
-	private int total;
+	public final int size;
+	private final long[] bit1, bit2;
+	private long total;
 
 	/**
-	 * サイズ n の BIT を構築する。初期値はすべて 0。
+	 * サイズ size の BIT を構築する。初期値はすべて 0。
 	 *
-	 * @param n 要素数
+	 * @param size 要素数
 	 */
-	public IntRangeBIT(final int n) {
-		this.n = n;
-		bit1 = new int[n + 1];
-		bit2 = new int[n + 1];
+	public IntRangeBIT(final int size) {
+		this.size = size;
+		bit1 = new long[size + 1];
+		bit2 = new long[size + 1];
 	}
 
 	/**
 	 * 初期値関数を用いて BIT を O(N) で構築する。
 	 *
-	 * @param n    要素数
+	 * @param size 要素数
 	 * @param init 初期値関数 (index -> value)
 	 */
-	public IntRangeBIT(final int n, final IntUnaryOperator init) {
-		this(n);
+	public IntRangeBIT(final int size, final IntUnaryOperator init) {
+		this(size);
 		setAll(init);
 	}
 
-	public void fill(final int val) {
-		total = n * val;
+	/**
+	 * BIT のサイズを返す。
+	 *
+	 * @return サイズ
+	 */
+	public int size() {
+		return size;
+	}
+
+	/**
+	 * インデックス i (0-indexed) の現在の値を取得する。
+	 *
+	 * @param i インデックス
+	 * @return 現在の値
+	 */
+	public int get(final int i) {
+		return (int) prefixSum(bit1, Objects.checkIndex(i, size) + 1);
+	}
+
+	/**
+	 * インデックス i (0-indexed) の要素を v に更新する。
+	 *
+	 * @param i インデックス
+	 * @param v 更新後の値
+	 * @return 更新前の値
+	 */
+	public int set(final int i, final int v) {
+		final int old = get(i);
+		addRange(i, i, (long) v - old);
+		return old;
+	}
+
+	/**
+	 * インデックス i (0-indexed) の要素に d を加算する。
+	 *
+	 * @param i インデックス
+	 * @param d 加算する値
+	 */
+	public void add(final int i, final int d) {
+		Objects.checkIndex(i, size);
+		addRange(i, i, d);
+	}
+
+	/**
+	 * 閉区間 [l, r] に d を加算する。l > r の場合は何もしない。
+	 *
+	 * @param l 左端の境界 (includes)
+	 * @param r 右端の境界 (includes)
+	 * @param d 加算する値
+	 */
+	public void add(final int l, final int r, final int d) {
+		if (l > r) return;
+		Objects.checkFromToIndex(l, r + 1, size);
+		addRange(l, r, d);
+	}
+
+	public void multiply(final int i, final int m) {
+		addRange(i, i, get(i) * (m - 1L));
+	}
+
+	/**
+	 * 指定位置を {@code 現在値 * m + d} に更新する。
+	 */
+	public void affine(final int i, final int m, final int d) {
+		addRange(i, i, get(i) * (m - 1L) + d);
+	}
+
+	public void apply(final int i, final int x, final IntBinaryOperator f) {
+		final int old = get(i);
+		addRange(i, i, (long) f.applyAsInt(old, x) - old);
+	}
+
+	public void fill(final int v) {
+		total = (long) size * v;
 		bit1[0] = bit2[0] = 0;
-		for (int i = 0, prev = 0; i < n; i++) {
-			int diff = val - prev;
+		for (int i = 0, prev = 0; i < size; i++) {
+			final long diff = v - prev;
 			bit1[i + 1] = diff;
 			bit2[i + 1] = 0;
-			prev = val;
+			prev = v;
 		}
-		for (int i = 1; i <= n; i++) {
-			int j = i + (i & -i);
-			if (j <= n) {
+		for (int i = 1; i <= size; i++) {
+			final int j = i + (i & -i);
+			if (j <= size) {
 				bit1[j] += bit1[i];
 				bit2[j] += bit2[i];
 			}
@@ -64,17 +136,17 @@ public final class IntRangeBIT implements IntCollection {
 	public void setAll(final IntUnaryOperator init) {
 		total = 0;
 		bit1[0] = bit2[0] = 0;
-		for (int i = 0, prev = 0; i < n; i++) {
-			int cur = init.applyAsInt(i);
+		for (int i = 0, prev = 0; i < size; i++) {
+			final int cur = init.applyAsInt(i);
 			total += cur;
-			int diff = cur - prev;
+			final long diff = (long) cur - prev;
 			bit1[i + 1] = diff;
 			bit2[i + 1] = diff * i;
 			prev = cur;
 		}
-		for (int i = 1; i <= n; i++) {
-			int j = i + (i & -i);
-			if (j <= n) {
+		for (int i = 1; i <= size; i++) {
+			final int j = i + (i & -i);
+			if (j <= size) {
 				bit1[j] += bit1[i];
 				bit2[j] += bit2[i];
 			}
@@ -82,90 +154,26 @@ public final class IntRangeBIT implements IntCollection {
 	}
 
 	/**
-	 * インデックス i (0-indexed) の現在の値を取得する。
-	 *
-	 * @param i インデックス
-	 * @return 現在の値
-	 */
-	public int get(final int i) {
-		return sum(bit1, i + 1);
-	}
-
-	/**
-	 * インデックス i (0-indexed) の要素を v に更新する。
-	 *
-	 * @param i インデックス
-	 * @param v 更新後の値
-	 */
-	public void set(final int i, final int v) {
-		final int delta = v - get(i);
-		total += delta;
-		add(bit1, i, delta);
-		add(bit1, i + 1, -delta);
-		add(bit2, i, delta * i);
-		add(bit2, i + 1, -delta * (i + 1));
-	}
-
-	/**
-	 * 閉区間 [l, r] に v を加算する。
-	 *
-	 * @param l 左端の境界 (includes)
-	 * @param r 右端の境界 (includes)
-	 * @param v 加算する値
-	 */
-	public void add(final int l, final int r, final int v) {
-		if (l > r) return;
-		total += (r - l + 1) * v;
-		add(bit1, l, v);
-		add(bit1, r + 1, -v);
-		add(bit2, l, v * l);
-		add(bit2, r + 1, -v * (r + 1));
-	}
-
-	/**
-	 * インデックス i (0-indexed) の要素に v を加算する。
-	 *
-	 * @param i インデックス
-	 * @param v 加算する値
-	 */
-	public void add(final int i, final int v) {
-		add(i, i, v);
-	}
-
-	public void multiply(final int i, final int a) {
-		add(i, i, get(i) * (a - 1));
-	}
-
-	public void apply(final int i, final int a, final int b) {
-		add(i, i, get(i) * (a - 1) + b);
-	}
-
-	public void apply(final int i, final int v, final IntBinaryOperator op) {
-		final int ai = get(i);
-		add(i, i, op.applyAsInt(ai, v) - ai);
-	}
-
-	/**
-	 * 閉区間 [0, r] の和を計算する。
+	 * 閉区間 [0, r] の和を計算する。r = -1 は空区間として扱う。
 	 *
 	 * @param r 右端の境界 (includes)
 	 * @return [0, r] の和
 	 */
-	public int sum(final int r) {
-		if (r < 0) return 0;
-		return sum(bit1, r + 1) * (r + 1) - sum(bit2, r + 1);
+	public long sum(final int r) {
+		return prefixSum(Objects.checkIndex(r + 1, size + 1));
 	}
 
 	/**
-	 * 閉区間 [l, r] の和を計算する。
+	 * 閉区間 [l, r] の和を計算する。l > r は空区間として扱う。
 	 *
 	 * @param l 左端の境界 (includes)
 	 * @param r 右端の境界 (includes)
 	 * @return [l, r] の和
 	 */
-	public int sum(final int l, final int r) {
+	public long sum(final int l, final int r) {
 		if (l > r) return 0;
-		return sum(r) - sum(l - 1);
+		Objects.checkFromToIndex(l, r + 1, size);
+		return prefixSum(r + 1) - prefixSum(l);
 	}
 
 	/**
@@ -173,17 +181,8 @@ public final class IntRangeBIT implements IntCollection {
 	 *
 	 * @return 全要素の和
 	 */
-	public int sumAll() {
+	public long sumAll() {
 		return total;
-	}
-
-	/**
-	 * BIT のサイズを返す。
-	 *
-	 * @return サイズ
-	 */
-	public int size() {
-		return n;
 	}
 
 	public PrimitiveIterator.OfInt iterator() {
@@ -191,7 +190,7 @@ public final class IntRangeBIT implements IntCollection {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < n;
+				return i < size;
 			}
 
 			public int nextInt() {
@@ -202,19 +201,32 @@ public final class IntRangeBIT implements IntCollection {
 	}
 
 	public String toString() {
-		final StringBuilder s = new StringBuilder();
-		s.append(get(0));
-		for (int i = 1; i < n; i++) s.append(' ').append(get(i));
-		return s.toString();
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder();
+		sb.append(get(0));
+		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
+		return sb.toString();
 	}
 
-	private void add(final int[] bit, int i, final int v) {
-		for (i++; i <= n; i += i & -i) bit[i] += v;
+	private void addRange(final int l, final int r, final long d) {
+		total += (r - l + 1L) * d;
+		add(bit1, l, d);
+		add(bit1, r + 1, -d);
+		add(bit2, l, d * l);
+		add(bit2, r + 1, -d * (r + 1));
 	}
 
-	private int sum(final int[] bit, int r) {
-		int s = 0;
+	private void add(final long[] bit, int i, final long v) {
+		for (i++; i <= size; i += i & -i) bit[i] += v;
+	}
+
+	private long prefixSum(final long[] bit, int r) {
+		long s = 0;
 		for (; r > 0; r -= r & -r) s += bit[r];
 		return s;
+	}
+
+	private long prefixSum(final int r) {
+		return prefixSum(bit1, r) * r - prefixSum(bit2, r);
 	}
 }

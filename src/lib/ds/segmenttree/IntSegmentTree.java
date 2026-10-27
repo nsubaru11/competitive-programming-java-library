@@ -45,8 +45,15 @@ public final class IntSegmentTree implements IntCollection {
 		return tree[size + Objects.checkIndex(i, n)];
 	}
 
+	/**
+	 * 指定位置を更新し、更新前の値を返す。
+	 */
 	public int set(final int i, final int v) {
-		return apply(i, 0, v);
+		final int idx = size + Objects.checkIndex(i, n);
+		final int prev = tree[idx];
+		tree[idx] = v;
+		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsInt(tree[j << 1], tree[(j << 1) | 1]);
+		return prev;
 	}
 
 	public int add(final int i, final int d) {

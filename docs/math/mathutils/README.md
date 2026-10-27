@@ -4,10 +4,10 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `MathUtils` | `MathUtils`は、一回限りの整数演算、数論、階乗、組み合わせ計算を集約した静的ユーティリティである。 | [MathUtilsGuide](./MathUtilsGuide.md) | [Java](../../../src/lib/math/MathUtils.java) | [Example.java](../../../test/verify/math/mathutils/Example.java) |
+| クラス      | 用途                                                                                              | Guide                                 | ソース                                       | Example / 検証                                                    |
+|-------------|---------------------------------------------------------------------------------------------------|---------------------------------------|----------------------------------------------|-------------------------------------------------------------------|
+| `MathUtils` | `MathUtils`は、一回限りの整数演算、数論、階乗、組み合わせ計算を集約した静的ユーティリティである。 | [MathUtilsGuide](./MathUtilsGuide.md) | [Java](../../../src/lib/math/MathUtils.java) | [Example.java](../../../test/example/math/mathutils/Example.java) |
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/math/mathutils/Example.java)
+- [Example.java](../../../test/example/math/mathutils/Example.java)

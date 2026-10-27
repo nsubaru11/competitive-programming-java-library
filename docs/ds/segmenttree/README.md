@@ -6,18 +6,20 @@ Segment Tree（セグメント木）に関連するクラス群を提供する�
 
 このフォルダでは、通常版セグメント木・遅延セグメント木・一次和/二乗和特化セグメント木を、ジェネリクス版とプリミティブ版の両方で利用できる。
 
+全8クラスの単一点 `set(i, v)` は更新前の値を返す。戻り値の詳細と区間更新の仕様は各Guideに記載する。
+
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `LazySegmentTree` | 区間更新 + 範囲集約クエリ向けの遅延セグメント木。 | [LazySegmentTreeGuide](./LazySegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/LazySegmentTree.java) | — |
-| `IntLazySegmentTree` | `int`値向けの遅延セグメント木。 | [LazySegmentTreeGuide](./LazySegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/IntLazySegmentTree.java) | — |
-| `LongLazySegmentTree` | `long`値向けの遅延セグメント木。 | [LazySegmentTreeGuide](./LazySegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/LongLazySegmentTree.java) | — |
-| `SegmentTree` | 点更新 + 範囲集約クエリ向けの標準セグメント木。 | [SegmentTreeGuide](./SegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/SegmentTree.java) | [Test.java](../../../test/verify/ds/segmenttree/Test.java) |
-| `IntSegmentTree` | `int`値向けの点更新・範囲集約セグメント木。 | [SegmentTreeGuide](./SegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/IntSegmentTree.java) | [Check2.java](../../../test/verify/ds/segmenttree/intsegmenttree/Check2.java) |
-| `LongSegmentTree` | `long`値向けの点更新・範囲集約セグメント木。 | [SegmentTreeGuide](./SegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/LongSegmentTree.java) | [Check1.java](../../../test/verify/ds/segmenttree/longsegmenttree/Check1.java) |
-| `IntSquareSumSegmentTree` | 区間の一次和・二乗和を同時に扱う専用セグメント木。 | [SquareSumSegmentTreeGuide](./SquareSumSegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/IntSquareSumSegmentTree.java) | — |
-| `LongSquareSumSegmentTree` | `long`値の区間和・二乗和を同時に管理する専用セグメント木。 | [SquareSumSegmentTreeGuide](./SquareSumSegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/LongSquareSumSegmentTree.java) | — |
+| クラス                     | 用途                                                       | Guide                                                       | ソース                                                                | Example / 検証                                                                |
+|----------------------------|------------------------------------------------------------|-------------------------------------------------------------|-----------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| `LazySegmentTree`          | 区間更新 + 範囲集約クエリ向けの遅延セグメント木。          | [LazySegmentTreeGuide](./LazySegmentTreeGuide.md)           | [Java](../../../src/lib/ds/segmenttree/LazySegmentTree.java)          | —                                                                             |
+| `IntLazySegmentTree`       | `int`値向けの遅延セグメント木。                            | [LazySegmentTreeGuide](./LazySegmentTreeGuide.md)           | [Java](../../../src/lib/ds/segmenttree/IntLazySegmentTree.java)       | —                                                                             |
+| `LongLazySegmentTree`      | `long`値向けの遅延セグメント木。                           | [LazySegmentTreeGuide](./LazySegmentTreeGuide.md)           | [Java](../../../src/lib/ds/segmenttree/LongLazySegmentTree.java)      | —                                                                             |
+| `SegmentTree`              | 点更新 + 範囲集約クエリ向けの標準セグメント木。            | [SegmentTreeGuide](./SegmentTreeGuide.md)                   | [Java](../../../src/lib/ds/segmenttree/SegmentTree.java)              | [Test.java](../../../test/unit/ds/segmenttree/Test.java)                      |
+| `IntSegmentTree`           | `int`値向けの点更新・範囲集約セグメント木。                | [SegmentTreeGuide](./SegmentTreeGuide.md)                   | [Java](../../../src/lib/ds/segmenttree/IntSegmentTree.java)           | [Judge2.java](../../../test/judge/ds/segmenttree/intsegmenttree/Judge2.java)  |
+| `LongSegmentTree`          | `long`値向けの点更新・範囲集約セグメント木。               | [SegmentTreeGuide](./SegmentTreeGuide.md)                   | [Java](../../../src/lib/ds/segmenttree/LongSegmentTree.java)          | [Judge1.java](../../../test/judge/ds/segmenttree/longsegmenttree/Judge1.java) |
+| `IntSquareSumSegmentTree`  | 区間の一次和・二乗和を同時に扱う専用セグメント木。         | [SquareSumSegmentTreeGuide](./SquareSumSegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/IntSquareSumSegmentTree.java)  | —                                                                             |
+| `LongSquareSumSegmentTree` | `long`値の区間和・二乗和を同時に管理する専用セグメント木。 | [SquareSumSegmentTreeGuide](./SquareSumSegmentTreeGuide.md) | [Java](../../../src/lib/ds/segmenttree/LongSquareSumSegmentTree.java) | —                                                                             |
 
 ## 実装クラス
 
@@ -70,4 +72,4 @@ Segment Tree（セグメント木）に関連するクラス群を提供する�
 
 - すべて非再帰ボトムアップ実装である。
 - 区間指定は半開区間 `[l, r)` を採用している。
-- `src/Check*.java` は検証用コードで、提出用ライブラリ本体とは用途が異なる。
+- オンラインジャッジ用の検証コードは [test/judge/ds/segmenttree](../../../test/judge/ds/segmenttree) に置く。

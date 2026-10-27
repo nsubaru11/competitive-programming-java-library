@@ -1,7 +1,5 @@
 package lib.ds.arrays;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 import java.util.function.*;
 
@@ -13,7 +11,6 @@ import lib.util.function.*;
  * 座標は0始まりの行・列で、走査と配列化は現在の論理状態の行優先順である。
  * 回転・転置・反転はこのインスタンスを変更し、自身を返す。
  */
-@SuppressWarnings("unused")
 public final class LongArray2D implements LongCollection {
 	public final int size;
 	private final long[] arr;
@@ -31,9 +28,9 @@ public final class LongArray2D implements LongCollection {
 		arr = new long[size];
 	}
 
-	public LongArray2D(final int h, final int w, final long initialValue) {
+	public LongArray2D(final int h, final int w, final long v) {
 		this(h, w);
-		fill(initialValue);
+		fill(v);
 	}
 
 	/**
@@ -224,7 +221,7 @@ public final class LongArray2D implements LongCollection {
 	 * 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。
 	 */
 	public LongArray2D rotateLeft(final int distance) {
-		for (int k = floorMod(distance, 4); k > 0; k--) rotateLeft();
+		for (int k = distance & 3; k > 0; k--) rotateLeft();
 		return this;
 	}
 
@@ -232,14 +229,22 @@ public final class LongArray2D implements LongCollection {
 	 * 時計回りに90度論理回転する。
 	 */
 	public LongArray2D rotateRight() {
-		return rotateLeft(-1);
+		base += (h - 1) * di;
+		final int t = di;
+		di = dj;
+		dj = -t;
+		final int s = h;
+		h = w;
+		w = s;
+		return this;
 	}
 
 	/**
 	 * 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。
 	 */
 	public LongArray2D rotateRight(final int distance) {
-		return rotateLeft(-distance);
+		for (int k = distance & 3; k > 0; k--) rotateRight();
+		return this;
 	}
 
 	/**
@@ -291,7 +296,7 @@ public final class LongArray2D implements LongCollection {
 	 */
 	public PrimitiveIterator.OfLong iterator() {
 		return new PrimitiveIterator.OfLong() {
-			private int i = 0, j = 0, k = 0;
+			private int j = 0, k = 0, s = base, p = base;
 
 			public boolean hasNext() {
 				return k < size;
@@ -300,10 +305,13 @@ public final class LongArray2D implements LongCollection {
 			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
 				k++;
-				final long v = arr[index(i, j)];
+				final long v = arr[p];
 				if (++j == w) {
 					j = 0;
-					i++;
+					s += di;
+					p = s;
+				} else {
+					p += dj;
 				}
 				return v;
 			}

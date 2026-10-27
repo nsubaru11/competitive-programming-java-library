@@ -47,11 +47,16 @@ public final class LongLazySegmentTree implements Iterable<Long> {
 		return tree[idx];
 	}
 
-	public void set(final int i, final long v) {
+	/**
+	 * 指定位置を更新し、遅延操作を反映した更新前の値を返す。
+	 */
+	public long set(final int i, final long v) {
 		final int idx = size + i;
 		pushPath(idx);
+		final long prev = tree[idx];
 		tree[idx] = v;
 		for (int j = idx >> 1; j > 0; j >>= 1) update(j);
+		return prev;
 	}
 
 	public void apply(final int i, final long v) {

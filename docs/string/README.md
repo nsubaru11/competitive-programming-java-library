@@ -20,10 +20,10 @@
 
 ## sequence / suffix の実装
 
-| クラス | ソース | 用途 |
-|--------|--------|------|
-| `LongestCommonSubsequence` | [Java](../../src/lib/string/sequence/LongestCommonSubsequence.java) | 最長共通部分列 |
-| `LyndonFactorization` | [Java](../../src/lib/string/sequence/LyndonFactorization.java) | Lyndon分解 |
-| `MinimumRotation` | [Java](../../src/lib/string/sequence/MinimumRotation.java) | 最小巡回シフト |
-| `SuffixArray` | [Java](../../src/lib/string/suffix/SuffixArray.java) | 接尾辞配列 |
-| `SuffixAutomaton`（未実装） | [Java](../../src/lib/string/suffix/SuffixAutomaton.java) | 部分文字列の状態表現 |
+| クラス                      | ソース                                                              | 用途                 |
+|-----------------------------|---------------------------------------------------------------------|----------------------|
+| `LongestCommonSubsequence`  | [Java](../../src/lib/string/sequence/LongestCommonSubsequence.java) | 最長共通部分列       |
+| `LyndonFactorization`       | [Java](../../src/lib/string/sequence/LyndonFactorization.java)      | Lyndon分解           |
+| `MinimumRotation`           | [Java](../../src/lib/string/sequence/MinimumRotation.java)          | 最小巡回シフト       |
+| `SuffixArray`               | [Java](../../src/lib/string/suffix/SuffixArray.java)                | 接尾辞配列           |
+| `SuffixAutomaton`（未実装） | [Java](../../src/lib/string/suffix/SuffixAutomaton.java)            | 部分文字列の状態表現 |

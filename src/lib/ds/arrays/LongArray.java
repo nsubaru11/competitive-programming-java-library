@@ -27,6 +27,23 @@ public interface LongArray extends LongCollection {
 	}
 
 	/**
+	 * 現在の論理順の先頭の値を返す。
+	 *
+	 * @throws NoSuchElementException 要素が空の場合
+	 */
+	default long getFirst() {
+		if (isEmpty()) throw new NoSuchElementException();
+		return get(0);
+	}
+
+	/**
+	 * 現在の論理順の先頭の値を返す。要素が空の場合は defaultValue をそのまま返す。
+	 */
+	default long getFirstOrDefault(final long defaultValue) {
+		return getOrDefault(0, defaultValue);
+	}
+
+	/**
 	 * 現在の論理順の末尾の値を返す。
 	 *
 	 * @throws NoSuchElementException 要素が空の場合
@@ -41,6 +58,26 @@ public interface LongArray extends LongCollection {
 	 */
 	default long getLastOrDefault(final long defaultValue) {
 		return getOrDefault(size() - 1, defaultValue);
+	}
+
+	/**
+	 * 指定値が最初に現れる論理添字を返す。存在しない場合は -1 を返す。
+	 */
+	default int indexOf(final long v) {
+		for (int i = 0, n = size(); i < n; i++) {
+			if (get(i) == v) return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * 指定値が最後に現れる論理添字を返す。存在しない場合は -1 を返す。
+	 */
+	default int lastIndexOf(final long v) {
+		for (int i = size() - 1; i >= 0; i--) {
+			if (get(i) == v) return i;
+		}
+		return -1;
 	}
 
 	/**

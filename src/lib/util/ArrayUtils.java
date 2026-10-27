@@ -524,34 +524,6 @@ public final class ArrayUtils {
 	}
 
 	/**
-	 * 配列を反転します。
-	 */
-	public static void reverse(final IntMutableArray a) {
-		reverse(a, 0, a.size());
-	}
-
-	/**
-	 * 配列の指定範囲を反転します。
-	 */
-	public static void reverse(final IntMutableArray a, int fromIdx, int toIdx) {
-		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
-	}
-
-	/**
-	 * 配列を反転します。
-	 */
-	public static void reverse(final LongMutableArray a) {
-		reverse(a, 0, a.size());
-	}
-
-	/**
-	 * 配列の指定範囲を反転します。
-	 */
-	public static void reverse(final LongMutableArray a, int fromIdx, int toIdx) {
-		while (fromIdx < toIdx) swap(a, fromIdx++, --toIdx);
-	}
-
-	/**
 	 * 二要素を交換します。
 	 */
 	public static void swap(final char[] a, final int i, final int j) {
@@ -576,24 +548,6 @@ public final class ArrayUtils {
 		final long v = a[i];
 		a[i] = a[j];
 		a[j] = v;
-	}
-
-	/**
-	 * 二要素を交換します。
-	 */
-	public static void swap(final IntMutableArray a, final int i, final int j) {
-		final int v = a.get(i);
-		a.set(i, a.get(j));
-		a.set(j, v);
-	}
-
-	/**
-	 * 二要素を交換します。
-	 */
-	public static void swap(final LongMutableArray a, final int i, final int j) {
-		final long v = a.get(i);
-		a.set(i, a.get(j));
-		a.set(j, v);
 	}
 
 	/**

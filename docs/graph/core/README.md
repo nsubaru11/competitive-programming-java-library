@@ -6,12 +6,12 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `DirectedGraph` | 有向グラフの保持 | [DirectedGraphGuide](./DirectedGraphGuide.md) | [Java](../../../src/lib/graph/DirectedGraph.java) | [Check1.java](../../../test/verify/graph/bellmanford/Check1.java) |
-| `Graph` | `DirectedGraph`と`UndirectedGraph`に共通する構築・参照APIの定義 | [GraphGuide](./GraphGuide.md) | [Java](../../../src/lib/graph/Graph.java) | — |
-| `GraphUtils` | BFS訪問順、二部判定、トポロジカルソート、閉路判定・復元、SCC | [GraphUtilsGuide](./GraphUtilsGuide.md) | [Java](../../../src/lib/graph/GraphUtils.java) | [Check1.java](../../../test/verify/graph/graphutils/Check1.java) |
-| `UndirectedGraph` | 無向グラフの保持 | [UndirectedGraphGuide](./UndirectedGraphGuide.md) | [Java](../../../src/lib/graph/UndirectedGraph.java) | [Example.java](../../../test/verify/graph/Example.java) · [Check3.java](../../../test/verify/graph/graphutils/Check3.java) |
+| クラス            | 用途                                                            | Guide                                             | ソース                                              | Example / 検証                                                                                                             |
+|-------------------|-----------------------------------------------------------------|---------------------------------------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `DirectedGraph`   | 有向グラフの保持                                                | [DirectedGraphGuide](./DirectedGraphGuide.md)     | [Java](../../../src/lib/graph/DirectedGraph.java)   | [Judge1.java](../../../test/judge/graph/bellmanford/Judge1.java)                                                           |
+| `Graph`           | `DirectedGraph`と`UndirectedGraph`に共通する構築・参照APIの定義 | [GraphGuide](./GraphGuide.md)                     | [Java](../../../src/lib/graph/Graph.java)           | —                                                                                                                          |
+| `GraphUtils`      | BFS訪問順、二部判定、トポロジカルソート、閉路判定・復元、SCC    | [GraphUtilsGuide](./GraphUtilsGuide.md)           | [Java](../../../src/lib/graph/GraphUtils.java)      | [Judge1.java](../../../test/judge/graph/graphutils/Judge1.java)                                                            |
+| `UndirectedGraph` | 無向グラフの保持                                                | [UndirectedGraphGuide](./UndirectedGraphGuide.md) | [Java](../../../src/lib/graph/UndirectedGraph.java) | [Example.java](../../../test/example/graph/Example.java) · [Judge3.java](../../../test/judge/graph/graphutils/Judge3.java) |
 
 ## 実装クラス
 
@@ -57,4 +57,4 @@
 - グラフ本体と内部配列へ直接アクセスするアルゴリズムのパッケージは`lib.graph`である。
 - 辺配列の容量はコンストラクタで固定され、自動拡張されない。
 - `Tree`と`RootedTree`は`lib.graph.tree`にあり、一般グラフとは独立した木専用の内部表現を持つ。
-- 検証例は[`test/verify/graph`](../../../test/verify/graph)を参照すること。
+- [グラフの利用例](../../../test/example/graph)、[ローカル検証](../../../test/unit/graph)、[オンラインジャッジ用コード](../../../test/judge/graph)を参照すること。

@@ -5,7 +5,7 @@
 - This repository is a competitive-programming Java library collection, not a single app or service.
 - `src/lib/` is the importable API source tree. Packages are grouped as `lib.ds`, `lib.graph`, `lib.io`, `lib.math`, `lib.search`, `lib.sort`, `lib.string`, and `lib.util`.
 - `src/patterns/` contains code meant to be read, copied, or adapted rather than treated as a stable reusable API.
-- `test/verify/` contains executable examples, online-judge checks, and benchmark drivers. It is a test source root.
+- `test/` is the test source root. `test/example/` contains usage examples, `test/unit/` contains local correctness checks, `test/judge/` contains online-judge programs, and `test/benchmark/` contains benchmark drivers and their supporting implementations.
 - `docs/` contains module READMEs, detailed guides, and benchmark runners.
 - Fast I/O is split by runtime target: `lib.io` is Java 24 optimized; `lib.io.compat17` must remain Java 17 compatible.
 
@@ -53,8 +53,8 @@
   `javac --release 24 -encoding UTF-8 -cp out -d out/test (rg --files test -g '*.java')`
 
 - Check Java 17 compatibility separately for `src/lib/io/compat17/*.java` using `--release 17`.
-- Run executable checks by fully qualified name, for example `java -cp "out;out/test" verify.graph.mst.Example` on Windows.
-- The Java 24 benchmark entrypoints are `docs/io/java24/Benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
+- Run executable examples by fully qualified name, for example `java -cp "out;out/test" example.graph.Example` on Windows. Existing local checks use `main` methods; enable Java assertions with `-ea` when running `unit.*` classes. See `test/README.md` for the layout and naming rules.
+- The Java 24 benchmark entrypoints are `docs/io/java24/benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
 
 ## Submission Integration
 

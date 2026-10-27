@@ -27,13 +27,13 @@
 
 ## API
 
-| メソッド                                      |                          戻り値 | 説明                          |
-|-----------------------------------------------|--------------------------------:|-------------------------------|
-| `isPrime(long n)`                             |                       `boolean` | 試し割りによる素数判定        |
-| `isProbablePrime(long n, int k)`              |                       `boolean` | certaintyを指定した確率的判定 |
-| `primeCount(int n)`                           |                           `int` | `[2, n]`の素数個数            |
-| `primeCount(int min, int max)`                |                           `int` | `[min, max]`の素数個数        |
-| `eratosthenes(int min, int max)`              |                         `int[]` | 範囲内の素数を昇順配列で返す  |
+| メソッド                                      | 戻り値                          | 説明                          |
+|-----------------------------------------------|---------------------------------|-------------------------------|
+| `isPrime(long n)`                             | `boolean`                       | 試し割りによる素数判定        |
+| `isProbablePrime(long n, int k)`              | `boolean`                       | certaintyを指定した確率的判定 |
+| `primeCount(int n)`                           | `int`                           | `[2, n]`の素数個数            |
+| `primeCount(int min, int max)`                | `int`                           | `[min, max]`の素数個数        |
+| `eratosthenes(int min, int max)`              | `int[]`                         | 範囲内の素数を昇順配列で返す  |
 | `eratosthenes(int min, int max, Supplier<T>)` | `T extends Collection<Integer>` | 指定Collectionへ追加          |
 
 ## 利用例
@@ -55,5 +55,5 @@
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                               |
-|:-------------------|:-----------|:---------------------------------------------------|
+|--------------------|------------|----------------------------------------------------|
 | **バージョン 1.0** | 2026-08-01 | 素数判定・個数計算・篩の配列版とCollection版を実装 |

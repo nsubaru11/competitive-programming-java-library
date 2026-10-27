@@ -7,11 +7,11 @@ Manacherのアルゴリズムを用いた線形時間での回文検出や、様
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `Manacher` | 線形時間で文字列内の全ての回文を検出するアルゴリズム | [ManacherGuide](./ManacherGuide.md) | [Java](../../../src/lib/string/palindrome/Manacher.java) | [Check1.java](../../../test/verify/string/palindrome/manacher/Check1.java) |
-| `PalindromeNaive` | 回文に関する様々なユーティリティ関数を提供 | [PalindromeNaiveGuide](./PalindromeNaiveGuide.md) | [Java](../../../src/lib/string/palindrome/PalindromeNaive.java) | [Test.java](../../../test/verify/string/palindrome/Test.java) |
-| `Eertree` | 相異なる回文部分文字列をオンラインに管理する回文木 | — | [Java](../../../src/lib/string/palindrome/Eertree.java) | — |
+| クラス            | 用途                                                 | Guide                                             | ソース                                                          | Example / 検証                                                            |
+|-------------------|------------------------------------------------------|---------------------------------------------------|-----------------------------------------------------------------|---------------------------------------------------------------------------|
+| `Manacher`        | 線形時間で文字列内の全ての回文を検出するアルゴリズム | [ManacherGuide](./ManacherGuide.md)               | [Java](../../../src/lib/string/palindrome/Manacher.java)        | [Judge1.java](../../../test/judge/string/palindrome/manacher/Judge1.java) |
+| `PalindromeNaive` | 回文に関する様々なユーティリティ関数を提供           | [PalindromeNaiveGuide](./PalindromeNaiveGuide.md) | [Java](../../../src/lib/string/palindrome/PalindromeNaive.java) | [Test.java](../../../test/example/string/palindrome/Test.java)            |
+| `Eertree`         | 相異なる回文部分文字列をオンラインに管理する回文木   | —                                                 | [Java](../../../src/lib/string/palindrome/Eertree.java)         | —                                                                         |
 
 ## 実装クラス
 

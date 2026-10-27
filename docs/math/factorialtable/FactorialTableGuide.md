@@ -27,20 +27,20 @@
 ## API
 
 | メソッド                         | 戻り値 | 説明                            |
-|----------------------------------|-------:|---------------------------------|
-| `FactorialTable()`               |      - | 最大添字1024、法998244353で作成 |
-| `FactorialTable(int n)`          |      - | 最大添字`n`、法998244353で作成  |
-| `FactorialTable(int n, int mod)` |      - | 最大添字と素数modを指定         |
-| `inv(int n)`                     |  `int` | `n`の乗法逆元                   |
-| `fact(int n)`                    |  `int` | `n! mod mod`                    |
-| `invFact(int n)`                 |  `int` | `(n!)^-1 mod mod`               |
-| `nCr(int n, int r)`              |  `int` | 二項係数                        |
-| `nPr(int n, int r)`              |  `int` | 順列数                          |
-| `nHr(int n, int r)`              |  `int` | 重複組み合わせ                  |
-| `catalan(int n)`                 |  `int` | Catalan数                       |
-| `lah(int n, int k)`              |  `int` | Lah数                           |
-| `narayana(int n, int k)`         |  `int` | Narayana数                      |
-| `ballotTheorem(int n, int k)`    |  `int` | Ballot数／Catalan三角形         |
+|----------------------------------|--------|---------------------------------|
+| `FactorialTable()`               | -      | 最大添字1024、法998244353で作成 |
+| `FactorialTable(int n)`          | -      | 最大添字`n`、法998244353で作成  |
+| `FactorialTable(int n, int mod)` | -      | 最大添字と素数modを指定         |
+| `inv(int n)`                     | `int`  | `n`の乗法逆元                   |
+| `fact(int n)`                    | `int`  | `n! mod mod`                    |
+| `invFact(int n)`                 | `int`  | `(n!)^-1 mod mod`               |
+| `nCr(int n, int r)`              | `int`  | 二項係数                        |
+| `nPr(int n, int r)`              | `int`  | 順列数                          |
+| `nHr(int n, int r)`              | `int`  | 重複組み合わせ                  |
+| `catalan(int n)`                 | `int`  | Catalan数                       |
+| `lah(int n, int k)`              | `int`  | Lah数                           |
+| `narayana(int n, int k)`         | `int`  | Narayana数                      |
+| `ballotTheorem(int n, int k)`    | `int`  | Ballot数／Catalan三角形         |
 
 ## 利用例
 
@@ -64,5 +64,5 @@
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                              |
-|:-------------------|:-----------|:--------------------------------------------------|
+|--------------------|------------|---------------------------------------------------|
 | **バージョン 1.0** | 2026-08-01 | 動的な逆元・階乗テーブルと組み合わせ数列APIを実装 |

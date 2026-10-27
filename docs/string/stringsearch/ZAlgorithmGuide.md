@@ -39,7 +39,7 @@ int[] z = ZAlgorithm.getZArray("ababa");
 ```
 
 
-- [Example.java](../../../test/verify/string/matching/zalgorithm/Example.java)
+- [Example.java](../../../test/example/string/matching/zalgorithm/Example.java)
 
 
 
@@ -57,5 +57,5 @@ int[] z = ZAlgorithm.getZArray("ababa");
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                  |
-|:-------------------|:-----------|:--------------------------------------|
+|--------------------|------------|---------------------------------------|
 | **バージョン 1.0** | 2026-08-10 | 現行の`String` / `char[]` APIを文書化 |

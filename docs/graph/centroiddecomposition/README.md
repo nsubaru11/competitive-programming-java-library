@@ -6,9 +6,9 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `CentroidDecomposition` | - 重心分解木の構築 | — | [Java](../../../src/lib/graph/tree/CentroidDecomposition.java) | — |
+| クラス                  | 用途               | Guide | ソース                                                         | Example / 検証 |
+|-------------------------|--------------------|-------|----------------------------------------------------------------|----------------|
+| `CentroidDecomposition` | - 重心分解木の構築 | —     | [Java](../../../src/lib/graph/tree/CentroidDecomposition.java) | —              |
 
 ## 実装クラス
 

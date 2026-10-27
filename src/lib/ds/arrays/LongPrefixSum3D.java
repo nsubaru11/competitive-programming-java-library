@@ -3,12 +3,14 @@ package lib.ds.arrays;
 import java.util.*;
 import java.util.function.*;
 
+import lib.ds.*;
+
 /**
  * long値の3次元累積和を保持する。
  * 各次元の長さは正とし、指定区間は0始まりの有効な閉区間とする。
  */
-public final class LongPrefixSum3D {
-	public final int d, h, w, length;
+public final class LongPrefixSum3D implements LongCollection {
+	public final int d, h, w, size;
 	private final int strideI, strideJ;
 	private final long[] pref;
 
@@ -19,7 +21,7 @@ public final class LongPrefixSum3D {
 		this.d = d;
 		this.h = h;
 		this.w = w;
-		length = d * h * w;
+		size = d * h * w;
 		strideJ = w + 1;
 		strideI = (h + 1) * strideJ;
 		pref = new long[(d + 1) * strideI];
@@ -37,7 +39,7 @@ public final class LongPrefixSum3D {
 		d = a.length;
 		h = a[0].length;
 		w = a[0][0].length;
-		length = d * h * w;
+		size = d * h * w;
 		strideJ = w + 1;
 		strideI = (h + 1) * strideJ;
 		pref = new long[(d + 1) * strideI];
@@ -51,13 +53,20 @@ public final class LongPrefixSum3D {
 		}
 	}
 
+	public int size() {
+		return size;
+	}
+
 	/**
 	 * 指定位置の元の値を返す。
 	 *
 	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
 	 */
 	public long get(final int i, final int j, final int k) {
-		return sum(i, j, k, i, j, k);
+		Objects.checkIndex(j, h);
+		Objects.checkIndex(k, w);
+		final int p = index(i + 1, j + 1, k + 1);
+		return pref[p] - pref[p - strideI] - pref[p - strideJ] - pref[p - 1] + pref[p - strideI - strideJ] + pref[p - strideI - 1] + pref[p - strideJ - 1] - pref[p - strideI - strideJ - 1];
 	}
 
 	/**
@@ -99,11 +108,43 @@ public final class LongPrefixSum3D {
 		return pref[index(i, j, k)] - pref[index(i1, j, k)] - pref[index(i, j1, k)] - pref[index(i, j, k1)] + pref[index(i1, j1, k)] + pref[index(i1, j, k1)] + pref[index(i, j1, k1)] - pref[index(i1, j1, k1)];
 	}
 
+	public PrimitiveIterator.OfLong iterator() {
+		return new PrimitiveIterator.OfLong() {
+			private int i = 0, j = 0, k = 0, s = 0;
+
+			public boolean hasNext() {
+				return s < size;
+			}
+
+			public long nextLong() {
+				if (!hasNext()) throw new NoSuchElementException();
+				final long v = get(i, j, k);
+				s++;
+				if (++k == w) {
+					k = 0;
+					if (++j == h) {
+						j = 0;
+						i++;
+					}
+				}
+				return v;
+			}
+		};
+	}
+
+	/**
+	 * i, j, k の辞書順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。
+	 */
+	public Spliterator.OfLong spliterator() {
+		return Spliterators.spliterator(iterator(), size, Spliterator.ORDERED);
+	}
+
 	/**
 	 * 最終軸の要素を半角スペースで区切り、各行を改行した文字列として返す。
 	 */
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(21 * length - 1);
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder(21 * size - 1);
 		for (int i = 0; i < d; i++) {
 			for (int j = 0; j < h; j++) {
 				if (i != 0 || j != 0) sb.append('\n');

@@ -6,9 +6,9 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `MoAlgorithm` | 静的な区間クエリをオフラインで処理する Mo's Algorithm を提供する。 | — | [Java](../../../src/lib/util/MoAlgorithm.java) | [Example.java](../../../test/verify/util/mo/Example.java) · [Check1.java](../../../test/verify/util/mo/Check1.java) |
+| クラス        | 用途                                                               | Guide | ソース                                         | Example / 検証                                                                                                      |
+|---------------|--------------------------------------------------------------------|-------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `MoAlgorithm` | 静的な区間クエリをオフラインで処理する Mo's Algorithm を提供する。 | —     | [Java](../../../src/lib/util/MoAlgorithm.java) | [Example.java](../../../test/example/util/mo/Example.java) · [Judge1.java](../../../test/judge/util/mo/Judge1.java) |
 
 ## 実装クラス
 
@@ -71,9 +71,9 @@ MoAlgorithm.run(n, lr,
 ## 更新履歴
 
 | 年月日     | 詳細                                                                         |
-|:-----------|:-----------------------------------------------------------------------------|
+|------------|------------------------------------------------------------------------------|
 | 2026-08-10 | `blockSize`を指定できる4方向callback版・共通callback版のオーバーロードを追加 |
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/util/mo/Example.java)
+- [Example.java](../../../test/example/util/mo/Example.java)

@@ -7,18 +7,18 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `SuffixTrie` | - 語尾一致（サフィックス）条件での件数取得や完全一致検索（逆向き格納） | [SuffixTrieGuide](./SuffixTrieGuide.md) | [Java](../../../src/lib/ds/trie/SuffixTrie.java) | [Example.java](../../../test/verify/ds/trie/Example.java) |
-| `Trie` | - 文字列集合に対する前方一致（プレフィックス）検索、完全一致検索、挿入 | [TrieGuide](./TrieGuide.md) | [Java](../../../src/lib/ds/trie/Trie.java) | [Example.java](../../../test/verify/ds/trie/Example.java) |
-| `RadixTrie` | RadixTrieの用途・状態。 | — | [Java](../../../src/lib/ds/trie/RadixTrie.java) | — |
-| `PatriciaTrie` | PatriciaTrieの用途・状態。 | — | [Java](../../../src/lib/ds/trie/PatriciaTrie.java) | — |
-| `TernarySearchTree` | TernarySearchTreeの用途・状態。 | — | [Java](../../../src/lib/ds/trie/TernarySearchTree.java) | — |
-| `DoubleArrayTrie` | DoubleArrayTrieの用途・状態。 | — | [Java](../../../src/lib/ds/trie/DoubleArrayTrie.java) | — |
-| `SuffixArray` | SuffixArrayの用途・状態。 | — | [Java](../../../src/lib/string/suffix/SuffixArray.java) | — |
-| `CompactTrie` | CompactTrieの用途・状態。 | — | [Java](../../../src/lib/ds/trie/CompactTrie.java) | — |
-| `SuffixAutomaton` | SuffixAutomatonの用途・状態。 | — | [Java](../../../src/lib/string/suffix/SuffixAutomaton.java) | — |
-| `BinaryTrie` | BinaryTrieの用途・状態。 | — | [Java](../../../src/lib/ds/trie/BinaryTrie.java) | — |
+| クラス              | 用途                                                                   | Guide                                   | ソース                                                      | Example / 検証                                             |
+|---------------------|------------------------------------------------------------------------|-----------------------------------------|-------------------------------------------------------------|------------------------------------------------------------|
+| `SuffixTrie`        | - 語尾一致（サフィックス）条件での件数取得や完全一致検索（逆向き格納） | [SuffixTrieGuide](./SuffixTrieGuide.md) | [Java](../../../src/lib/ds/trie/SuffixTrie.java)            | [Example.java](../../../test/example/ds/trie/Example.java) |
+| `Trie`              | - 文字列集合に対する前方一致（プレフィックス）検索、完全一致検索、挿入 | [TrieGuide](./TrieGuide.md)             | [Java](../../../src/lib/ds/trie/Trie.java)                  | [Example.java](../../../test/example/ds/trie/Example.java) |
+| `RadixTrie`         | RadixTrieの用途・状態。                                                | —                                       | [Java](../../../src/lib/ds/trie/RadixTrie.java)             | —                                                          |
+| `PatriciaTrie`      | PatriciaTrieの用途・状態。                                             | —                                       | [Java](../../../src/lib/ds/trie/PatriciaTrie.java)          | —                                                          |
+| `TernarySearchTree` | TernarySearchTreeの用途・状態。                                        | —                                       | [Java](../../../src/lib/ds/trie/TernarySearchTree.java)     | —                                                          |
+| `DoubleArrayTrie`   | DoubleArrayTrieの用途・状態。                                          | —                                       | [Java](../../../src/lib/ds/trie/DoubleArrayTrie.java)       | —                                                          |
+| `SuffixArray`       | SuffixArrayの用途・状態。                                              | —                                       | [Java](../../../src/lib/string/suffix/SuffixArray.java)     | —                                                          |
+| `CompactTrie`       | CompactTrieの用途・状態。                                              | —                                       | [Java](../../../src/lib/ds/trie/CompactTrie.java)           | —                                                          |
+| `SuffixAutomaton`   | SuffixAutomatonの用途・状態。                                          | —                                       | [Java](../../../src/lib/string/suffix/SuffixAutomaton.java) | —                                                          |
+| `BinaryTrie`        | BinaryTrieの用途・状態。                                               | —                                       | [Java](../../../src/lib/ds/trie/BinaryTrie.java)            | —                                                          |
 
 ## 実装クラス
 
@@ -76,4 +76,4 @@
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/ds/trie/Example.java)
+- [Example.java](../../../test/example/ds/trie/Example.java)

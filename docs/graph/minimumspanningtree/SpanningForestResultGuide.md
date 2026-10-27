@@ -68,7 +68,7 @@ for (int edgeId : result.edgeIds) {
 ```
 
 
-- [Example.java](../../../test/verify/graph/Example.java)
+- [Example.java](../../../test/example/graph/Example.java)
 
 
 
@@ -91,5 +91,5 @@ for (int edgeId : result.edgeIds) {
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                          |
-|:-------------------|:-----------|:----------------------------------------------|
+|--------------------|------------|-----------------------------------------------|
 | **バージョン 1.0** | 2026-07-24 | Kruskal法・Prim法共通の全域森Resultとして追加 |

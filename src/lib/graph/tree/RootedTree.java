@@ -2,8 +2,6 @@ package lib.graph.tree;
 
 import static java.util.Arrays.*;
 
-import java.util.function.*;
-
 import lib.util.function.*;
 
 /**

@@ -8,9 +8,9 @@ Union-Find（または素集合データ構造）は、素集合を効率的に�
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `UnionFind` | 素集合を効率的に管理し、要素のグループ化と検索を行うためのデータ構造 | [UnionFindGuide](./UnionFindGuide.md) | [Java](../../../src/lib/ds/unionfind/UnionFind.java) | [Check1.java](../../../test/verify/ds/unionfind/unionfind/Check1.java) |
+| クラス      | 用途                                                                 | Guide                                 | ソース                                               | Example / 検証                                                        |
+|-------------|----------------------------------------------------------------------|---------------------------------------|------------------------------------------------------|-----------------------------------------------------------------------|
+| `UnionFind` | 素集合を効率的に管理し、要素のグループ化と検索を行うためのデータ構造 | [UnionFindGuide](./UnionFindGuide.md) | [Java](../../../src/lib/ds/unionfind/UnionFind.java) | [Judge1.java](../../../test/judge/ds/unionfind/unionfind/Judge1.java) |
 
 ## 実装クラス
 

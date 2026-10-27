@@ -8,14 +8,14 @@ Set（重複なし）とMultiset（重複あり）の両方を提供する。
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `AVLSet` | 重複を許さない要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/AVLSet.java) | [Example.java](../../../test/verify/ds/set/Example.java) |
-| `AVLMultiset` | 重複を許す要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/AVLMultiset.java) | [Example.java](../../../test/verify/ds/set/Example.java) |
-| `IntAVLSet` | `int` 型の重複を許さない要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/IntAVLSet.java) | [Check1.java](../../../test/verify/ds/set/intavlset/Check1.java) |
-| `IntAVLMultiset` | `int` 型の重複を許す要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/IntAVLMultiset.java) | — |
-| `LongAVLSet` | `long` 型の重複を許さない要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/LongAVLSet.java) | — |
-| `LongAVLMultiset` | `long` 型の重複を許す要素の集合を管理する。 | — | [Java](../../../src/lib/ds/set/LongAVLMultiset.java) | — |
+| クラス            | 用途                                            | Guide | ソース                                               | Example / 検証                                                  |
+|-------------------|-------------------------------------------------|-------|------------------------------------------------------|-----------------------------------------------------------------|
+| `AVLSet`          | 重複を許さない要素の集合を管理する。            | —     | [Java](../../../src/lib/ds/set/AVLSet.java)          | [Example.java](../../../test/example/ds/set/Example.java)       |
+| `AVLMultiset`     | 重複を許す要素の集合を管理する。                | —     | [Java](../../../src/lib/ds/set/AVLMultiset.java)     | [Example.java](../../../test/example/ds/set/Example.java)       |
+| `IntAVLSet`       | `int` 型の重複を許さない要素の集合を管理する。  | —     | [Java](../../../src/lib/ds/set/IntAVLSet.java)       | [Judge1.java](../../../test/judge/ds/set/intavlset/Judge1.java) |
+| `IntAVLMultiset`  | `int` 型の重複を許す要素の集合を管理する。      | —     | [Java](../../../src/lib/ds/set/IntAVLMultiset.java)  | —                                                               |
+| `LongAVLSet`      | `long` 型の重複を許さない要素の集合を管理する。 | —     | [Java](../../../src/lib/ds/set/LongAVLSet.java)      | —                                                               |
+| `LongAVLMultiset` | `long` 型の重複を許す要素の集合を管理する。     | —     | [Java](../../../src/lib/ds/set/LongAVLMultiset.java) | —                                                               |
 
 ## 実装クラス
 
@@ -92,4 +92,4 @@ Set（重複なし）とMultiset（重複あり）の両方を提供する。
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/ds/set/Example.java)
+- [Example.java](../../../test/example/ds/set/Example.java)

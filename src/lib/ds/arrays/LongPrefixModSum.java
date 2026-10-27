@@ -9,7 +9,7 @@ import java.util.function.*;
  * sum の結果は {@code [0, mod)} に正規化する。
  */
 public final class LongPrefixModSum implements LongArray {
-	public final int length;
+	public final int size;
 	public final long mod;
 	private final long[] pref;
 
@@ -17,10 +17,10 @@ public final class LongPrefixModSum implements LongArray {
 	 * init を添字の昇順に1回ずつ呼び出して構築する。
 	 */
 	public LongPrefixModSum(final int n, final long mod, final IntToLongFunction init) {
-		length = n;
+		size = n;
 		this.mod = mod;
-		pref = new long[length + 1];
-		for (int i = 0; i < length; i++) {
+		pref = new long[size + 1];
+		for (int i = 0; i < size; i++) {
 			final long v = pref[i] + init.applyAsLong(i);
 			pref[i + 1] = v >= mod ? v - mod : v;
 		}
@@ -30,10 +30,10 @@ public final class LongPrefixModSum implements LongArray {
 	 * 指定配列の論理順で構築する。入力は変更しない。
 	 */
 	public LongPrefixModSum(final long[] a, final long mod) {
-		length = a.length;
+		size = a.length;
 		this.mod = mod;
-		pref = new long[length + 1];
-		for (int i = 0; i < length; i++) {
+		pref = new long[size + 1];
+		for (int i = 0; i < size; i++) {
 			final long v = pref[i] + a[i];
 			pref[i + 1] = v >= mod ? v - mod : v;
 		}
@@ -43,17 +43,17 @@ public final class LongPrefixModSum implements LongArray {
 	 * 指定配列の論理順で構築する。入力は変更しない。
 	 */
 	public LongPrefixModSum(final LongArray a, final long mod) {
-		length = a.size();
+		size = a.size();
 		this.mod = mod;
-		pref = new long[length + 1];
-		for (int i = 0; i < length; i++) {
+		pref = new long[size + 1];
+		for (int i = 0; i < size; i++) {
 			final long v = pref[i] + a.get(i);
 			pref[i + 1] = v >= mod ? v - mod : v;
 		}
 	}
 
 	public int size() {
-		return length;
+		return size;
 	}
 
 	/**
@@ -62,13 +62,12 @@ public final class LongPrefixModSum implements LongArray {
 	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
 	 */
 	public long get(final int i) {
-		Objects.checkIndex(i, length);
 		final long res = pref[i + 1] - pref[i];
 		return res < 0 ? res + mod : res;
 	}
 
 	public long sum() {
-		return pref[length];
+		return pref[size];
 	}
 
 	/**
@@ -77,7 +76,7 @@ public final class LongPrefixModSum implements LongArray {
 	 * @throws IndexOutOfBoundsException 添字が範囲外の場合
 	 */
 	public long sum(final int i) {
-		Objects.checkIndex(i, length);
+		Objects.checkIndex(i, size);
 		return pref[i + 1];
 	}
 
@@ -87,7 +86,6 @@ public final class LongPrefixModSum implements LongArray {
 	 * @throws IndexOutOfBoundsException 添字が範囲外、または閉区間の始点が終点を超える場合
 	 */
 	public long sum(final int i, final int j) {
-		Objects.checkIndex(j, length);
 		Objects.checkIndex(i, j + 1);
 		final long res = pref[j + 1] - pref[i];
 		return res < 0 ? res + mod : res;
@@ -101,7 +99,7 @@ public final class LongPrefixModSum implements LongArray {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < length;
+				return i < size;
 			}
 
 			public long nextLong() {
@@ -115,10 +113,10 @@ public final class LongPrefixModSum implements LongArray {
 	 * 元の要素を半角スペースで区切った文字列として返す。
 	 */
 	public String toString() {
-		if (length == 0) return "";
-		final StringBuilder sb = new StringBuilder(20 * length - 1);
+		if (size == 0) return "";
+		final StringBuilder sb = new StringBuilder(20 * size - 1);
 		sb.append(get(0));
-		for (int i = 1; i < length; i++) sb.append(' ').append(get(i));
+		for (int i = 1; i < size; i++) sb.append(' ').append(get(i));
 		return sb.toString();
 	}
 }

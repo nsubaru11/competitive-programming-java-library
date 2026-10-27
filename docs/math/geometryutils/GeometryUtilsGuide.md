@@ -28,18 +28,18 @@
 ### 交差・包含
 
 | メソッド                | 戻り値 | 説明                      |
-|-------------------------|-------:|---------------------------|
-| `crossLine(...)`        |  `int` | 2次元の線分交差状態       |
-| `crossLine3D(...)`      |  `int` | 3次元の線分交差状態       |
-| `crossRect(...)`        |  `int` | 2次元の矩形交差状態       |
-| `crossRect3D(...)`      |  `int` | 3次元の直方体交差状態     |
-| `containsPoint(...)`    |  `int` | 点と直方体の位置関係      |
-| `containsPointTri(...)` |  `int` | 点と3次元三角形の位置関係 |
+|-------------------------|--------|---------------------------|
+| `crossLine(...)`        | `int`  | 2次元の線分交差状態       |
+| `crossLine3D(...)`      | `int`  | 3次元の線分交差状態       |
+| `crossRect(...)`        | `int`  | 2次元の矩形交差状態       |
+| `crossRect3D(...)`      | `int`  | 3次元の直方体交差状態     |
+| `containsPoint(...)`    | `int`  | 点と直方体の位置関係      |
+| `containsPointTri(...)` | `int`  | 点と3次元三角形の位置関係 |
 
 ### 距離
 
-| メソッド                                                            |   戻り値 | 説明          |
-|---------------------------------------------------------------------|---------:|---------------|
+| メソッド                                                            | 戻り値   | 説明          |
+|---------------------------------------------------------------------|----------|---------------|
 | `euclidDist(...)`、`euclidDist3D(...)`、`euclidDistN(...)`          | `double` | Euclid距離    |
 | `manhattanDist(...)`、`manhattanDist3D(...)`、`manhattanDistN(...)` | `double` | Manhattan距離 |
 | `chebyshevDist(...)`、`chebyshevDist3D(...)`、`chebyshevDistN(...)` | `double` | Chebyshev距離 |
@@ -54,7 +54,7 @@ int intersection = GeometryUtils.crossLine(0, 0, 4, 4, 0, 4, 4, 0);
 ```
 
 
-- [Example.java](../../../test/verify/math/geometryutils/Example.java)
+- [Example.java](../../../test/example/math/geometryutils/Example.java)
 
 
 
@@ -72,5 +72,5 @@ int intersection = GeometryUtils.crossLine(0, 0, 4, 4, 0, 4, 4, 0);
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                    |
-|:-------------------|:-----------|:----------------------------------------|
+|--------------------|------------|-----------------------------------------|
 | **バージョン 2.0** | 2026-08-01 | 2次元・3次元の交差、包含、距離APIを整備 |

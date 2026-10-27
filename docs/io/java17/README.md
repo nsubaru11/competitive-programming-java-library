@@ -13,11 +13,11 @@
 
 ## クラス一覧
 
-| クラス | 用途 | Guide | ソース | Example / 検証 |
-|--------|------|-------|--------|----------------|
-| `FastPrinter` | 標準出力への高速な書き込みを提供するクラス。 | [FastPrinterGuide](./FastPrinterGuide.md) | [Java](../../../src/lib/io/compat17/FastPrinter.java) | [Example.java](../../../test/verify/io/compat17/Example.java) · [Check0.java](../../../test/verify/io/compat17/Check0.java) |
-| `FastScanner` | 標準入力からの高速な読み込みを提供するクラス。 | [FastScannerGuide](./FastScannerGuide.md) | [Java](../../../src/lib/io/compat17/FastScanner.java) | [Example.java](../../../test/verify/io/compat17/Example.java) · [Check0.java](../../../test/verify/io/compat17/Check0.java) |
-| `InteractiveScanner` | 対話型問題向けに入力を逐次読み取るスキャナ。 | — | [Java](../../../src/lib/io/compat17/InteractiveScanner.java) | — |
+| クラス               | 用途                                           | Guide                                     | ソース                                                       | Example / 検証                                                                                                              |
+|----------------------|------------------------------------------------|-------------------------------------------|--------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `FastPrinter`        | 標準出力への高速な書き込みを提供するクラス。   | [FastPrinterGuide](./FastPrinterGuide.md) | [Java](../../../src/lib/io/compat17/FastPrinter.java)        | [Example.java](../../../test/example/io/compat17/Example.java) · [Judge0.java](../../../test/judge/io/compat17/Judge0.java) |
+| `FastScanner`        | 標準入力からの高速な読み込みを提供するクラス。 | [FastScannerGuide](./FastScannerGuide.md) | [Java](../../../src/lib/io/compat17/FastScanner.java)        | [Example.java](../../../test/example/io/compat17/Example.java) · [Judge0.java](../../../test/judge/io/compat17/Judge0.java) |
+| `InteractiveScanner` | 対話型問題向けに入力を逐次読み取るスキャナ。   | —                                         | [Java](../../../src/lib/io/compat17/InteractiveScanner.java) | —                                                                                                                           |
 
 ## 実装クラス
 
@@ -89,4 +89,4 @@ try (FastScanner fs = new FastScanner(); FastPrinter fp = new FastPrinter()) {
 
 ## Example / 検証
 
-- [Example.java](../../../test/verify/io/compat17/Example.java)
+- [Example.java](../../../test/example/io/compat17/Example.java)

@@ -73,7 +73,7 @@ long maximum = Prim.maximumCost(graph); // 12
 ```
 
 
-- [Example.java](../../../test/verify/graph/Example.java)
+- [Example.java](../../../test/example/graph/Example.java)
 
 
 
@@ -102,7 +102,7 @@ long maximum = Prim.maximumCost(graph); // 12
 ## 実装履歴
 
 | バージョン番号     | 年月日     | 詳細                                                                                    |
-|:-------------------|:-----------|:----------------------------------------------------------------------------------------|
+|--------------------|------------|-----------------------------------------------------------------------------------------|
 | **バージョン 3.0** | 2026-07-24 | `UndirectedGraph`を受け取る静的APIへ変更。非連結な全域森、共通Result、cost-only版に対応 |
 | **バージョン 2.1** | 2026-07-20 | Indexed PriorityQueueの追加APIを`add`へ移行                                             |
 | **バージョン 2.0** | 2026-07-18 | private優先度キューを削除し、`LongIndexedPriorityQueue`を再利用                         |
