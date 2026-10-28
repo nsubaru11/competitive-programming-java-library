@@ -5,12 +5,11 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * 3つの {@code int} をキー、{@code long} を値として保持する高速マップです。
- * 各キー成分をオフセット付きの符号付き21bitとして1つの {@code long} に圧縮し、
- * {@link LongLongMap} に処理を委譲します。各成分の有効範囲は
- * {@code -1_048_576} 以上 {@code 1_048_575} 以下です。
+ * int の3つ組 (a, b, c) をキー、long を値とするハッシュマップ。
+ * 各成分に 2^20 を加えた下位21bitを a, b, c の順に上位から並べた long へパックし、LongLongMap へ委譲する。
+ * 各成分は -2^20 以上 2^20 - 1 以下とする。範囲外の成分は下位21bitだけが残り、別のキーと衝突する。
+ * 戻り値・既定値・走査順の仕様は LongLongMap と同じである。
  */
-@SuppressWarnings("unused")
 public final class IntTripleLongMap {
 	private static final int KEY_OFFSET = 1 << 20;
 	private static final long KEY_MASK = (1L << 21) - 1;
@@ -28,8 +27,15 @@ public final class IntTripleLongMap {
 		baseMap = new LongLongMap(expectedSize, defaultValue);
 	}
 
+	/**
+	 * 既定値・エントリ・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
+	 */
+	public IntTripleLongMap(final IntTripleLongMap other) {
+		baseMap = new LongLongMap(other.baseMap);
+	}
+
 	private static long pack(final int a, final int b, final int c) {
-		return ((((long) a + KEY_OFFSET) & KEY_MASK) << 42) | (((long) b + KEY_OFFSET) & KEY_MASK) << 21 | (((long) c + KEY_OFFSET) & KEY_MASK);
+		return ((a + KEY_OFFSET) & KEY_MASK) << 42 | ((b + KEY_OFFSET) & KEY_MASK) << 21 | ((c + KEY_OFFSET) & KEY_MASK);
 	}
 
 	private static int unpack(final long key) {
@@ -72,7 +78,7 @@ public final class IntTripleLongMap {
 		return baseMap.addOrDefault(pack(a, b, c), delta, absentValue);
 	}
 
-	public boolean remove(final int a, final int b, final int c) {
+	public long remove(final int a, final int b, final int c) {
 		return baseMap.remove(pack(a, b, c));
 	}
 
@@ -190,31 +196,16 @@ public final class IntTripleLongMap {
 	}
 
 	/**
-	 * 現在の累積値と3成分のキーを受け取り、次の累積値を返します。
+	 * 現在の累積値と3成分のキーを受け取り、次の累積値を返す。
 	 */
 	public interface KeysToLongAccumulator {
-		/**
-		 * @param accumulator 現在の累積値
-		 * @param key1        キー1
-		 * @param key2        キー2
-		 * @param key3        キー3
-		 * @return 次の累積値
-		 */
 		long apply(long accumulator, int key1, int key2, int key3);
 	}
 
 	/**
-	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 * 現在の累積値とエントリを受け取り、次の累積値を返す。
 	 */
 	public interface EntryToLongAccumulator {
-		/**
-		 * @param accumulator 現在の累積値
-		 * @param key1        キー1
-		 * @param key2        キー2
-		 * @param key3        キー3
-		 * @param value       値
-		 * @return 次の累積値
-		 */
 		long apply(long accumulator, int key1, int key2, int key3, long value);
 	}
 }

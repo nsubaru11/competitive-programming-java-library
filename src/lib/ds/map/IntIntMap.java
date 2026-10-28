@@ -8,19 +8,24 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * {@code int} 型のキーと値を保持する、オープンアドレス方式の高速マップです。
- * 線形探索、backward-shift deletion、世代番号による {@code O(1)} の {@link #clear()} を使用し、
- * 未存在キーの取得では設定済みの既定値を返します。
+ * int キー・int 値のオープンアドレス法（線形探索）によるハッシュマップ。
+ * 削除は backward-shift deletion で行い、clear は世代番号の更新により O(1) で行う。
+ * expectedSize はリサイズせずに保持できる要素数の目安であり、要素数が容量の 3/4 に達した状態で新しいキーを挿入すると容量を2倍へ拡張する。
+ * put・putIfAbsent・remove は操作前の値を返し、キーが存在しなかった場合は defaultValue を返す。存在の区別には containsKey を使う。
+ * その他の更新系メソッドは操作後にキーへ対応する値を返し、computeIfAbsent はキーが存在すれば既存の値を返す。
+ * 未存在キーの get は defaultValue を返し、キーを挿入しない。add・increment・decrement は未存在キーを defaultValue に増分を加えた値で挿入し、
+ * merge・mergeMin・mergeMax は value で、addOrDefault は absentValue で挿入する。
+ * computeIfAbsent の関数が同じマップを構造変更した場合は、関数の適用後にキーを再探索する。
+ * 走査はハッシュ配置順に行い、挿入順ではない。走査中にマップを変更しない。
  */
-@SuppressWarnings("unused")
 public final class IntIntMap {
+	private static final int DEFAULT_EXPECTED_SIZE = 1024;
 	private static final int SALT32 = ThreadLocalRandom.current().nextInt();
-
-	int[] keys, values, stamps;
+	private int[] keys, values, stamps;
 	private int defaultValue, stamp, size, capacity, resizeThreshold, mask, modCount;
 
 	public IntIntMap() {
-		this(1024, 0);
+		this(DEFAULT_EXPECTED_SIZE, 0);
 	}
 
 	public IntIntMap(final int expectedSize) {
@@ -30,13 +35,27 @@ public final class IntIntMap {
 	public IntIntMap(final int expectedSize, final int defaultValue) {
 		this.defaultValue = defaultValue;
 		capacity = normalizeCapacity(expectedSize);
-		size = 0;
 		stamp = 1;
 		resizeThreshold = capacity - (capacity >>> 2);
-		stamps = new int[capacity];
+		mask = capacity - 1;
 		keys = new int[capacity];
 		values = new int[capacity];
-		mask = capacity - 1;
+		stamps = new int[capacity];
+	}
+
+	/**
+	 * 既定値・エントリ・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
+	 */
+	public IntIntMap(final IntIntMap other) {
+		defaultValue = other.defaultValue;
+		stamp = other.stamp;
+		size = other.size;
+		capacity = other.capacity;
+		resizeThreshold = other.resizeThreshold;
+		mask = other.mask;
+		keys = other.keys.clone();
+		values = other.values.clone();
+		stamps = other.stamps.clone();
 	}
 
 	private static int normalizeCapacity(final int expectedSize) {
@@ -103,7 +122,11 @@ public final class IntIntMap {
 	public int put(final int key, final int value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return values[hash] = value;
+			if (keys[hash] == key) {
+				final int old = values[hash];
+				values[hash] = value;
+				return old;
+			}
 		}
 		if (size >= resizeThreshold) {
 			resize();
@@ -114,28 +137,29 @@ public final class IntIntMap {
 		keys[hash] = key;
 		size++;
 		modCount++;
-		return values[hash] = value;
+		values[hash] = value;
+		return defaultValue;
 	}
 
-	public boolean remove(final int key) {
+	public int remove(final int key) {
 		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] != key) continue;
+			final int old = values[hash];
 			int hole = hash;
 			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
 				final int home = hash(keys[next]);
 				if (((next - home) & mask) >= ((next - hole) & mask)) {
 					keys[hole] = keys[next];
 					values[hole] = values[next];
-					stamps[hole] = stamp;
 					hole = next;
 				}
 			}
 			stamps[hole] = 0;
 			size--;
 			modCount++;
-			return true;
+			return old;
 		}
-		return false;
+		return defaultValue;
 	}
 
 	public boolean containsKey(final int key) {
@@ -176,7 +200,8 @@ public final class IntIntMap {
 		keys[hash] = key;
 		size++;
 		modCount++;
-		return values[hash] = value;
+		values[hash] = value;
+		return defaultValue;
 	}
 
 	public int computeIfAbsent(final int key, final IntUnaryOperator op) {
@@ -186,7 +211,10 @@ public final class IntIntMap {
 		}
 		final int expectedModCount = modCount;
 		final int value = op.applyAsInt(key);
-		if (modCount != expectedModCount) return putIfAbsent(key, value);
+		if (modCount != expectedModCount) {
+			putIfAbsent(key, value);
+			return get(key);
+		}
 		if (size >= resizeThreshold) {
 			resize();
 			hash = hash(key);
@@ -355,15 +383,9 @@ public final class IntIntMap {
 	}
 
 	/**
-	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 * 現在の累積値とエントリを受け取り、次の累積値を返す。
 	 */
 	public interface EntryToLongAccumulator {
-		/**
-		 * @param accumulator 現在の累積値
-		 * @param key         キー
-		 * @param value       値
-		 * @return 次の累積値
-		 */
 		long apply(long accumulator, int key, int value);
 	}
 }

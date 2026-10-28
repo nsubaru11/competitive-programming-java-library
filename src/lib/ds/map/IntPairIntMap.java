@@ -5,11 +5,10 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * 2つの {@code int} をキー、{@code int} を値として保持する高速マップです。
- * キーの組を1つの {@code long} に可逆圧縮し、{@link LongIntMap} に処理を委譲します。
- * 未存在キーの取得では設定済みの既定値を返します。
+ * int の組 (a, b) をキー、int を値とするハッシュマップ。
+ * キーを a を上位32bit、b を下位32bitとする long へ可逆にパックし、LongIntMap へ委譲する。
+ * 戻り値・既定値・走査順の仕様は LongIntMap と同じである。
  */
-@SuppressWarnings("unused")
 public final class IntPairIntMap {
 	private static final long KEY_MASK = (1L << 32) - 1;
 	private final LongIntMap baseMap;
@@ -24,6 +23,13 @@ public final class IntPairIntMap {
 
 	public IntPairIntMap(final int expectedSize, final int defaultValue) {
 		baseMap = new LongIntMap(expectedSize, defaultValue);
+	}
+
+	/**
+	 * 既定値・エントリ・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
+	 */
+	public IntPairIntMap(final IntPairIntMap other) {
+		baseMap = new LongIntMap(other.baseMap);
 	}
 
 	private static long pack(final int a, final int b) {
@@ -66,7 +72,7 @@ public final class IntPairIntMap {
 		return baseMap.addOrDefault(pack(a, b), delta, absentValue);
 	}
 
-	public boolean remove(final int a, final int b) {
+	public int remove(final int a, final int b) {
 		return baseMap.remove(pack(a, b));
 	}
 
@@ -162,29 +168,16 @@ public final class IntPairIntMap {
 	}
 
 	/**
-	 * 現在の累積値と2成分のキーを受け取り、次の累積値を返します。
+	 * 現在の累積値と2成分のキーを受け取り、次の累積値を返す。
 	 */
 	public interface KeysToLongAccumulator {
-		/**
-		 * @param accumulator 現在の累積値
-		 * @param key1        キー1
-		 * @param key2        キー2
-		 * @return 次の累積値
-		 */
 		long apply(long accumulator, int key1, int key2);
 	}
 
 	/**
-	 * 現在の累積値とエントリを受け取り、次の累積値を返します。
+	 * 現在の累積値とエントリを受け取り、次の累積値を返す。
 	 */
 	public interface EntryToLongAccumulator {
-		/**
-		 * @param accumulator 現在の累積値
-		 * @param key1        キー1
-		 * @param key2        キー2
-		 * @param value       値
-		 * @return 次の累積値
-		 */
 		long apply(long accumulator, int key1, int key2, int value);
 	}
 }

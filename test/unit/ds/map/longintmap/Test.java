@@ -11,6 +11,7 @@ public final class Test {
 		testResizeAndDeletion();
 		testViewsAndReducers();
 		testRandomized();
+		testCopy();
 	}
 
 	private static void testDefaultsAndUpdates() {
@@ -31,24 +32,24 @@ public final class Test {
 		check(map.add(7L, 8) == 10);
 		check(map.size() == 1);
 
-		check(map.put(7L, 100) == 100);
-		check(map.put(7L, 200) == 200);
+		map.put(7L, 100);
+		map.put(7L, 200);
 		check(map.size() == 1);
-		check(map.putIfAbsent(7L, 300) == 200);
+		map.putIfAbsent(7L, 300);
 		check(map.get(7L) == 200);
 
 		check(map.addOrDefault(8L, 4, 50) == 50);
 		check(map.addOrDefault(8L, 4, 60) == 54);
 		check(map.merge(8L, 6, Integer::sum) == 60);
 		check(map.merge(9L, 12, Integer::sum) == 12);
-		check(map.putIfAbsent(10L, 13) == 13);
+		map.putIfAbsent(10L, 13);
 		check(map.size() == 4);
 
 		map.setDefaultValue(999);
 		check(map.get(12345L) == 999);
 		check(map.get(7L) == 200);
-		check(!map.remove(12345L));
-		check(map.remove(7L));
+		map.remove(12345L);
+		map.remove(7L);
 		check(!map.containsKey(7L));
 		check(map.get(7L) == 999);
 		check(map.size() == 3);
@@ -62,7 +63,7 @@ public final class Test {
 		for (int i = 0; i < count; i++) {
 			final long key = i * 0x9e3779b97f4a7c15L;
 			final int value = i * 3 + 1;
-			check(map.put(key, value) == value);
+			map.put(key, value);
 			check(map.get(key) == value, "insert i=" + i + ", key=" + key);
 			expected.put(key, value);
 		}
@@ -70,10 +71,10 @@ public final class Test {
 
 		for (int i = 0; i < count; i += 3) {
 			final long key = i * 0x9e3779b97f4a7c15L;
-			check(map.remove(key), "remove i=" + i + ", key=" + key);
+			map.remove(key);
 			expected.remove(key);
 		}
-		check(!map.remove(0x13579bdf2468aceL));
+		map.remove(0x13579bdf2468aceL);
 		checkEquivalent(map, expected, -1, -count, count);
 
 		for (int i = count; i < count * 2; i++) {
@@ -146,7 +147,7 @@ public final class Test {
 			final int delta = random.nextInt(101) - 50;
 			switch (random.nextInt(9)) {
 				case 0 -> {
-					check(map.put(key, value) == value);
+					map.put(key, value);
 					expected.put(key, value);
 				}
 				case 1 -> {
@@ -166,11 +167,12 @@ public final class Test {
 				}
 				case 4 -> {
 					final Integer old = expected.putIfAbsent(key, value);
-					check(map.putIfAbsent(key, value) == (old == null ? value : old));
+					map.putIfAbsent(key, value);
 				}
 				case 5 -> {
 					final boolean existed = expected.remove(key) != null;
-					check(map.remove(key) == existed);
+					check(map.containsKey(key) == existed);
+					map.remove(key);
 				}
 				case 6 -> {
 					check(map.get(key) == expected.getOrDefault(key, defaultValue));
@@ -189,6 +191,20 @@ public final class Test {
 			}
 			checkEquivalent(map, expected, defaultValue, -64L, 65L);
 		}
+	}
+
+	private static void testCopy() {
+		final LongIntMap map = new LongIntMap(1, 5);
+		for (int i = 0; i < 100; i++) map.put(i, i * 2);
+		map.remove(3L);
+		final LongIntMap copy = new LongIntMap(map);
+		check(copy.size() == 99 && copy.getDefaultValue() == 5);
+		check(copy.get(3L) == 5 && copy.get(10L) == 20);
+		copy.put(10L, -1);
+		copy.put(1000L, 1);
+		check(map.get(10L) == 20 && !map.containsKey(1000L));
+		map.clear();
+		check(copy.size() == 100 && copy.get(10L) == -1);
 	}
 
 	private static void checkEquivalent(final LongIntMap map, final Map<Long, Integer> expected, final int defaultValue, final long from, final long to) {

@@ -8,7 +8,7 @@
 | [AVL木](./avltree/README.md)                                 | 順序付きSet・Multiset、int / long特化版       |
 | [二分探索木](./binarysearchtree/README.md)                   | BST、Treap、B木、赤黒木                       |
 | [Fenwick Tree](./fenwick/README.md)                          | BIT、2D BIT、区間加算BIT                      |
-| [HashMap](./hashmap/README.md)                               | プリミティブ特化Map、ペア・トリプルキーMap    |
+| [HashMap](./map/README.md)                                   | プリミティブ特化Map、ペア・トリプルキーMap    |
 | [Li Chao Tree](./lichaotree/README.md)                       | Li Chao Tree                                  |
 | [Persistent Segment Tree](./persistentsegmenttree/README.md) | 永続セグメント木                              |
 | [Persistent Union-Find](./persistentunionfind/README.md)     | 永続Union-Find                                |
@@ -45,7 +45,7 @@
 |------------------------|---------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | `lib.ds.arrays`        | [src](../../src/lib/ds/arrays)        | [Arrays](./arrays/README.md)                                                                                              |
 | `lib.ds.fenwick`       | [src](../../src/lib/ds/fenwick)       | [Fenwick Tree](./fenwick/README.md)                                                                                       |
-| `lib.ds.map`           | [src](../../src/lib/ds/map)           | [HashMap](./hashmap/README.md)                                                                                            |
+| `lib.ds.map`           | [src](../../src/lib/ds/map)           | [HashMap](./map/README.md)                                                                                                |
 | `lib.ds.priorityqueue` | [src](../../src/lib/ds/priorityqueue) | [Priority Queue](./priorityqueue/README.md)                                                                               |
 | `lib.ds.segmenttree`   | [src](../../src/lib/ds/segmenttree)   | [Segment Tree](./segmenttree/README.md)、[2D](./segmenttree2d/README.md)、[Persistent](./persistentsegmenttree/README.md) |
 | `lib.ds.set`           | [src](../../src/lib/ds/set)           | [AVL Tree](./avltree/README.md)、[Binary Search Tree](./binarysearchtree/README.md)、[Skip List](./skiplist/README.md)    |
