@@ -26,11 +26,6 @@ public final class LongBIT implements LongCollection {
 		tree = new long[n + 1];
 	}
 
-	public LongBIT(final int n, final IntToLongFunction init) {
-		this(n);
-		setAll(init);
-	}
-
 	public LongBIT(final long[] a) {
 		this(a.length);
 		System.arraycopy(a, 0, raw, 0, size);
@@ -87,16 +82,18 @@ public final class LongBIT implements LongCollection {
 		return add(i, f.applyAsLong(raw[i], x) - raw[i]);
 	}
 
-	public void fill(final long v) {
+	public LongBIT fill(final long v) {
 		total = size * v;
 		for (int i = 0; i < size; i++) tree[i + 1] = raw[i] = v;
 		build();
+		return this;
 	}
 
-	public void setAll(final IntToLongFunction init) {
+	public LongBIT setAll(final IntToLongFunction init) {
 		total = 0;
 		for (int i = 0; i < size; i++) total += tree[i + 1] = raw[i] = init.applyAsLong(i);
 		build();
+		return this;
 	}
 
 	public long sum(final int i) {

@@ -24,11 +24,6 @@ public final class IntRangeBIT implements IntCollection {
 		bit2 = new long[n + 1];
 	}
 
-	public IntRangeBIT(final int n, final IntUnaryOperator init) {
-		this(n);
-		setAll(init);
-	}
-
 	public IntRangeBIT(final int[] a) {
 		this(a.length);
 		for (int i = 0; i < size; i++) total += bit1[i + 1] = a[i];
@@ -87,16 +82,18 @@ public final class IntRangeBIT implements IntCollection {
 		addRange(i, i, (long) f.applyAsInt(old, x) - old);
 	}
 
-	public void fill(final int v) {
+	public IntRangeBIT fill(final int v) {
 		total = (long) size * v;
 		Arrays.fill(bit1, 1, size + 1, v);
 		build();
+		return this;
 	}
 
-	public void setAll(final IntUnaryOperator init) {
+	public IntRangeBIT setAll(final IntUnaryOperator init) {
 		total = 0;
 		for (int i = 0; i < size; i++) total += bit1[i + 1] = init.applyAsInt(i);
 		build();
+		return this;
 	}
 
 	public long sum(final int i) {

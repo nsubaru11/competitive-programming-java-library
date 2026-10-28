@@ -25,11 +25,6 @@ public final class IntCircularArray implements IntMutableArray {
 		fill(v);
 	}
 
-	public IntCircularArray(final int n, final IntUnaryOperator init) {
-		this(n);
-		setAll(init);
-	}
-
 	public IntCircularArray(final int[] a) {
 		size = a.length;
 		arr = a.clone();
@@ -69,16 +64,18 @@ public final class IntCircularArray implements IntMutableArray {
 		return old;
 	}
 
-	public void fill(final int v) {
+	public IntCircularArray fill(final int v) {
 		Arrays.fill(arr, v);
 		rotation = 0;
 		offset = 0;
+		return this;
 	}
 
-	public void setAll(final IntUnaryOperator init) {
+	public IntCircularArray setAll(final IntUnaryOperator init) {
 		for (int i = 0; i < size; i++) arr[i] = init.applyAsInt(i);
 		rotation = 0;
 		offset = 0;
+		return this;
 	}
 
 	public IntCircularArray rotateLeft() {

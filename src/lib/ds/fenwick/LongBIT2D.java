@@ -28,11 +28,6 @@ public final class LongBIT2D implements LongCollection {
 		tree = new long[(h + 1) * (w + 1)];
 	}
 
-	public LongBIT2D(final int h, final int w, final IntBinaryToLongFunction init) {
-		this(h, w);
-		setAll(init);
-	}
-
 	public LongBIT2D(final long[][] a) {
 		this(a.length, a[0].length);
 		final int w1 = w + 1;
@@ -87,7 +82,7 @@ public final class LongBIT2D implements LongCollection {
 		return add(i, j, p, f.applyAsLong(raw[p], x) - raw[p]);
 	}
 
-	public void fill(final long v) {
+	public LongBIT2D fill(final long v) {
 		total = size * v;
 		final int w1 = w + 1;
 		for (int i = 0, p = 0; i < h; i++) {
@@ -96,9 +91,10 @@ public final class LongBIT2D implements LongCollection {
 			}
 		}
 		build();
+		return this;
 	}
 
-	public void setAll(final IntBinaryToLongFunction init) {
+	public LongBIT2D setAll(final IntBinaryToLongFunction init) {
 		total = 0;
 		final int w1 = w + 1;
 		for (int i = 0, p = 0; i < h; i++) {
@@ -107,6 +103,7 @@ public final class LongBIT2D implements LongCollection {
 			}
 		}
 		build();
+		return this;
 	}
 
 	public long sum(final int i, final int j) {

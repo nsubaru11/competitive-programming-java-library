@@ -39,11 +39,6 @@ public final class IntArray2D implements IntCollection {
 		System.arraycopy(a, 0, arr, 0, size);
 	}
 
-	public IntArray2D(final int h, final int w, final IntBinaryOperator init) {
-		this(h, w);
-		setAll(init);
-	}
-
 	public IntArray2D(final int[][] a) {
 		this(a.length, a[0].length);
 		for (int i = 0, p = 0; i < h; i++, p += w) System.arraycopy(a[i], 0, arr, p, w);
@@ -108,16 +103,18 @@ public final class IntArray2D implements IntCollection {
 		return arr[p] = f.applyAsInt(arr[p], x);
 	}
 
-	public void fill(final int v) {
+	public IntArray2D fill(final int v) {
 		Arrays.fill(arr, v);
+		return this;
 	}
 
-	public void setAll(final IntBinaryOperator init) {
+	public IntArray2D setAll(final IntBinaryOperator init) {
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
 				arr[index(i, j)] = init.applyAsInt(i, j);
 			}
 		}
+		return this;
 	}
 
 	public IntArray2D rotateLeft() {

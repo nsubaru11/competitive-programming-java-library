@@ -40,11 +40,6 @@ public final class LongArray2D implements LongCollection {
 		System.arraycopy(a, 0, arr, 0, size);
 	}
 
-	public LongArray2D(final int h, final int w, final IntBinaryToLongFunction init) {
-		this(h, w);
-		setAll(init);
-	}
-
 	public LongArray2D(final long[][] a) {
 		this(a.length, a[0].length);
 		for (int i = 0, p = 0; i < h; i++, p += w) System.arraycopy(a[i], 0, arr, p, w);
@@ -109,16 +104,18 @@ public final class LongArray2D implements LongCollection {
 		return arr[p] = f.applyAsLong(arr[p], x);
 	}
 
-	public void fill(final long v) {
+	public LongArray2D fill(final long v) {
 		Arrays.fill(arr, v);
+		return this;
 	}
 
-	public void setAll(final IntBinaryToLongFunction init) {
+	public LongArray2D setAll(final IntBinaryToLongFunction init) {
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
 				arr[index(i, j)] = init.applyAsLong(i, j);
 			}
 		}
+		return this;
 	}
 
 	public LongArray2D rotateLeft() {

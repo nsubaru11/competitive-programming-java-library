@@ -3,6 +3,7 @@ package lib.ds.arrays;
 import static java.lang.Math.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import lib.ds.*;
 
@@ -10,7 +11,7 @@ import lib.ds.*;
  * long値の可変容量の循環 deque。内部容量は2のべき乗とし、満杯での追加時に2倍へ拡張する。
  * 論理添字は先頭を0とし、{@code 0 <= i < size()} の範囲外では IndexOutOfBoundsException を投げる。
  * 空の removeFirst・removeLast は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * fill は要素数と容量を維持し、clear は内部配列を再利用する。走査と toString は先頭から末尾の順とする。
+ * fill・setAll は要素数と容量を維持して自身を返し、clear は内部配列を再利用する。走査と toString は先頭から末尾の順とする。
  * equals・hashCode は Object の実装を継承する。
  */
 public final class LongArrayDeque implements LongMutableArray {
@@ -92,9 +93,16 @@ public final class LongArrayDeque implements LongMutableArray {
 		return isEmpty() ? defaultValue : removeLast();
 	}
 
-	public void fill(final long v) {
+	public LongArrayDeque fill(final long v) {
 		Arrays.fill(buf, 0, size, v);
 		head = 0;
+		return this;
+	}
+
+	public LongArrayDeque setAll(final IntToLongFunction init) {
+		for (int i = 0; i < size; i++) buf[i] = init.applyAsLong(i);
+		head = 0;
+		return this;
 	}
 
 	public void clear() {

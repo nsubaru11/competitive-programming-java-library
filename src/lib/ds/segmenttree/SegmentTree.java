@@ -3,7 +3,15 @@ package lib.ds.segmenttree;
 import java.util.*;
 import java.util.function.*;
 
-@SuppressWarnings({"unused", "unchecked"})
+/**
+ * 結合則を満たす演算と単位元を指定する汎用セグメント木。点更新・区間集計・二分探索を O(log n) で行う。
+ * 添字は0始まりとする。{@code query(l, r)} は半開区間 {@code [l, r)} の集計結果を返し、{@code l >= r} は空区間として単位元を返す。
+ * 範囲外の添字・区間では IndexOutOfBoundsException を投げる。set は更新前の値、apply は {@code f(現在値, x)} へ更新した後の値を返す。
+ * maxRight は {@code tester(query(l, r))} が真となる最大の r、minLeft は {@code tester(query(l, r))} が真となる最小の l を返す。
+ * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
+ * identity が null の場合、operator は null を受け付けること。配列とコピーからの構築は内部配列を共有せず、要素オブジェクトは共有する。
+ */
+@SuppressWarnings("unchecked")
 public final class SegmentTree<T> implements Iterable<T> {
 	private final int n, size;
 	private final T identity;
@@ -19,53 +27,59 @@ public final class SegmentTree<T> implements Iterable<T> {
 		if (identity != null) Arrays.fill(tree, identity);
 	}
 
-	public SegmentTree(final T[] data, final BinaryOperator<T> operator, final T identity) {
-		this.n = data.length;
-		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-		this.identity = identity;
-		this.operator = operator;
-		tree = (T[]) new Object[size << 1];
-		System.arraycopy(data, 0, tree, size, n);
-		if (identity != null) Arrays.fill(tree, size + n, size << 1, identity);
-		buildAll();
+	public SegmentTree(final T[] a, final BinaryOperator<T> operator, final T identity) {
+		this(a.length, operator, identity);
+		System.arraycopy(a, 0, tree, size, n);
+		build();
+	}
+
+	public SegmentTree(final SegmentTree<T> other) {
+		n = other.n;
+		size = other.size;
+		identity = other.identity;
+		operator = other.operator;
+		tree = other.tree.clone();
+	}
+
+	public int size() {
+		return n;
+	}
+
+	public boolean isEmpty() {
+		return n == 0;
 	}
 
 	public T get(final int i) {
-		return tree[size + i];
+		return tree[size + Objects.checkIndex(i, n)];
 	}
 
-	/**
-	 * 指定位置を更新し、更新前の値を返す。
-	 */
 	public T set(final int i, final T v) {
-		final int idx = size + i;
+		final int idx = size + Objects.checkIndex(i, n);
 		final T prev = tree[idx];
-		tree[idx] = v;
-		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.apply(tree[j << 1], tree[(j << 1) | 1]);
+		update(idx, v);
 		return prev;
 	}
 
-	/**
-	 * 指定位置に演算を適用し、更新後の値を返す。
-	 */
-	public T apply(final int i, final T v, final BinaryOperator<T> op) {
-		final T res = op.apply(tree[size + i], v);
-		set(i, res);
-		return res;
+	public T apply(final int i, final T x, final BinaryOperator<T> f) {
+		final int idx = size + Objects.checkIndex(i, n);
+		return update(idx, f.apply(tree[idx], x));
 	}
 
-	public void fill(final T val) {
-		Arrays.fill(tree, size, size + n, val);
-		buildAll();
+	public SegmentTree<T> fill(final T v) {
+		Arrays.fill(tree, size, size + n, v);
+		build();
+		return this;
 	}
 
-	public void setAll(final IntFunction<T> func) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = func.apply(i);
-		buildAll();
+	public SegmentTree<T> setAll(final IntFunction<T> init) {
+		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.apply(i);
+		build();
+		return this;
 	}
 
 	public T query(final int l, final int r) {
 		if (l >= r) return identity;
+		Objects.checkFromToIndex(l, r, n);
 		T sml = identity, smr = identity;
 		for (int cl = l + size, cr = r + size; cl < cr; cl >>= 1, cr >>= 1) {
 			if ((cl & 1) == 1) sml = operator.apply(sml, tree[cl++]);
@@ -79,6 +93,7 @@ public final class SegmentTree<T> implements Iterable<T> {
 	}
 
 	public int maxRight(final int l, final Predicate<T> tester) {
+		Objects.checkIndex(l, n + 1);
 		if (l == n) return n;
 		T ans = identity;
 		int cl = l + size;
@@ -103,10 +118,12 @@ public final class SegmentTree<T> implements Iterable<T> {
 	}
 
 	public int minLeft(final int r, final Predicate<T> tester) {
+		Objects.checkIndex(r, n + 1);
 		if (r == 0) return 0;
 		T ans = identity;
-		int cr = r + size - 1;
+		int cr = r + size;
 		do {
+			cr--;
 			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
 			T combined = operator.apply(tree[cr], ans);
 			if (!tester.test(combined)) {
@@ -121,40 +138,40 @@ public final class SegmentTree<T> implements Iterable<T> {
 				return cr - size + 1;
 			}
 			ans = combined;
-			cr--;
 		} while ((cr & -cr) != cr);
 		return 0;
 	}
 
-	public int size() {
-		return n;
-	}
-
-	private void buildAll() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.apply(tree[i << 1], tree[(i << 1) | 1]);
-	}
-
 	public Iterator<T> iterator() {
 		return new Iterator<>() {
-			private int idx = 0;
+			private int i = 0;
 
 			public boolean hasNext() {
-				return idx < n;
+				return i < n;
 			}
 
 			public T next() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + idx++];
+				return tree[size + i++];
 			}
 		};
 	}
 
-	@Override
 	public String toString() {
-		final StringBuilder s = new StringBuilder();
-		s.append(tree[size]);
-		for (int i = size + 1; i < size + n; i++) s.append(' ').append(tree[i]);
-		return s.toString();
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder();
+		sb.append(tree[size]);
+		for (int i = 1; i < n; i++) sb.append(' ').append(tree[size + i]);
+		return sb.toString();
 	}
 
+	private T update(final int idx, final T v) {
+		tree[idx] = v;
+		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.apply(tree[j << 1], tree[(j << 1) | 1]);
+		return v;
+	}
+
+	private void build() {
+		for (int i = size - 1; i > 0; i--) tree[i] = operator.apply(tree[i << 1], tree[(i << 1) | 1]);
+	}
 }

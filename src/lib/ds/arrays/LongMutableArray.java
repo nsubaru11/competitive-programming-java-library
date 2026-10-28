@@ -7,7 +7,7 @@ import java.util.function.*;
  * long値を格納する可変配列の共通インターフェースである。単一要素の添字は {@code [0, size())} とし、範囲外の動作は get・set の実装に依存する。
  * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
  * {@code reverse(l, r)} は半開区間 {@code [l, r)} を反転し、{@code 0 <= l <= r <= size()} を満たさない場合は IndexOutOfBoundsException を投げる。
- * fill・setAll は要素数を変えず、setAll の init は添字の昇順に1回ずつ呼ぶ。
+ * fill・setAll は要素数を変えずに自身を返す。setAll の init は添字の昇順に1回ずつ呼ぶ。
  */
 public interface LongMutableArray extends LongArray {
 
@@ -46,11 +46,13 @@ public interface LongMutableArray extends LongArray {
 		while (l < --r) swap(l++, r);
 	}
 
-	default void fill(final long v) {
+	default LongMutableArray fill(final long v) {
 		for (int i = 0, n = size(); i < n; i++) set(i, v);
+		return this;
 	}
 
-	default void setAll(final IntToLongFunction init) {
+	default LongMutableArray setAll(final IntToLongFunction init) {
 		for (int i = 0, n = size(); i < n; i++) set(i, init.applyAsLong(i));
+		return this;
 	}
 }

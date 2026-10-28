@@ -40,11 +40,6 @@ public final class CharArray2D implements IntCollection {
 		System.arraycopy(a, 0, arr, 0, size);
 	}
 
-	public CharArray2D(final int h, final int w, final IntBinaryOperator init) {
-		this(h, w);
-		setAll(init);
-	}
-
 	public CharArray2D(final char[][] a) {
 		this(a.length, a[0].length);
 		for (int i = 0, p = 0; i < h; i++, p += w) System.arraycopy(a[i], 0, arr, p, w);
@@ -104,16 +99,18 @@ public final class CharArray2D implements IntCollection {
 		return arr[p] = (char) f.applyAsInt(arr[p], x);
 	}
 
-	public void fill(final char v) {
+	public CharArray2D fill(final char v) {
 		Arrays.fill(arr, v);
+		return this;
 	}
 
-	public void setAll(final IntBinaryOperator init) {
+	public CharArray2D setAll(final IntBinaryOperator init) {
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
 				arr[index(i, j)] = (char) init.applyAsInt(i, j);
 			}
 		}
+		return this;
 	}
 
 	public CharArray2D rotateLeft() {

@@ -25,11 +25,6 @@ public final class LongCircularArray implements LongMutableArray {
 		fill(v);
 	}
 
-	public LongCircularArray(final int n, final IntToLongFunction init) {
-		this(n);
-		setAll(init);
-	}
-
 	public LongCircularArray(final long[] a) {
 		size = a.length;
 		arr = a.clone();
@@ -69,16 +64,18 @@ public final class LongCircularArray implements LongMutableArray {
 		return old;
 	}
 
-	public void fill(final long v) {
+	public LongCircularArray fill(final long v) {
 		Arrays.fill(arr, v);
 		rotation = 0;
 		offset = 0;
+		return this;
 	}
 
-	public void setAll(final IntToLongFunction init) {
+	public LongCircularArray setAll(final IntToLongFunction init) {
 		for (int i = 0; i < size; i++) arr[i] = init.applyAsLong(i);
 		rotation = 0;
 		offset = 0;
+		return this;
 	}
 
 	public LongCircularArray rotateLeft() {

@@ -27,11 +27,6 @@ public final class IntBIT implements IntCollection {
 		tree = new long[n + 1];
 	}
 
-	public IntBIT(final int n, final IntUnaryOperator init) {
-		this(n);
-		setAll(init);
-	}
-
 	public IntBIT(final int[] a) {
 		this(a.length);
 		for (int i = 0; i < size; i++) total += tree[i + 1] = raw[i] = a[i];
@@ -83,16 +78,18 @@ public final class IntBIT implements IntCollection {
 		return add(i, (long) f.applyAsInt(raw[i], x) - raw[i]);
 	}
 
-	public void fill(final int v) {
+	public IntBIT fill(final int v) {
 		total = (long) size * v;
 		for (int i = 0; i < size; i++) tree[i + 1] = raw[i] = v;
 		build();
+		return this;
 	}
 
-	public void setAll(final IntUnaryOperator init) {
+	public IntBIT setAll(final IntUnaryOperator init) {
 		total = 0;
 		for (int i = 0; i < size; i++) total += tree[i + 1] = raw[i] = init.applyAsInt(i);
 		build();
+		return this;
 	}
 
 	public long sum(final int i) {

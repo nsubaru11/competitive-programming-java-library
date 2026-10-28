@@ -12,21 +12,24 @@ public final class Test {
 
 	private static void testArray() {
 		// IntCircularArray: 循環シフト後に ArrayUtils で集計
-		IntCircularArray ia = new IntCircularArray(5, i -> i + 1); // [1,2,3,4,5]
+		IntCircularArray ia = new IntCircularArray(5);
+		ia.setAll(i -> i + 1); // [1,2,3,4,5]
 		ia.rotateLeft(); // 論理的に [2,3,4,5,1]
 		System.out.println("IntCircularArray sum = " + ArrayUtils.sum(ia)); // 1+2+3+4+5=15
 
 		// LongCircularArray: 部分和（任意個）
-		LongCircularArray la = new LongCircularArray(4, i -> (i * 2L + 1)); // [1,3,5,7]
+		LongCircularArray la = new LongCircularArray(4);
+		la.setAll(i -> i * 2L + 1); // [1,3,5,7]
 		System.out.println("LongCircularArray subset(target=8) = " + ArrayUtils.subsetMitm(la, 8)); // 1+7, 3+5
 
 		// IntArray2D: 回転してアクセス
-		IntArray2D gI = new IntArray2D(2, 3, (i, j) -> i * 10 + j); // [[0,1,2],[10,11,12]]
+		IntArray2D gI = new IntArray2D(2, 3);
+		gI.setAll((i, j) -> i * 10 + j); // [[0,1,2],[10,11,12]]
 		gI.rotateLeft(); // 左回転
 		System.out.println("IntArray2D get(0,0) after rotateLeft = " + gI.get(0, 0));
 
 		// LongArray2D: 値の設定と取得
-		LongArray2D gL = new LongArray2D(2, 2, (_, _) -> 0L);
+		LongArray2D gL = new LongArray2D(2, 2);
 		gL.set(1, 1, 42L);
 		System.out.println("LongArray2D get(1,1) = " + gL.get(1, 1));
 	}

@@ -41,33 +41,33 @@
 
 ### `IntMutableArray`
 
-| 種別   | シグネチャ                                 | 戻り値 | 説明                                                                             |
-|--------|--------------------------------------------|--------|----------------------------------------------------------------------------------|
-| Method | `set(int i, int v)`                        | `int`  | 指定位置を更新し、更新前の値を返す。                                             |
-| Method | `add(int i, int d)`                        | `int`  | 指定位置に d を加算し、更新後の値を返す。                                        |
-| Method | `multiply(int i, int m)`                   | `int`  | 指定位置を m 倍し、更新後の値を返す。                                            |
-| Method | `affine(int i, int m, int d)`              | `int`  | 現在値 * m + d に更新し、更新後の値を返す。                                      |
-| Method | `apply(int i, int x, IntBinaryOperator f)` | `int`  | f(現在値, x) に更新し、更新後の値を返す。                                        |
-| Method | `swap(int i, int j)`                       | `void` | 指定した2要素を交換する。                                                        |
-| Method | `reverse()`                                | `void` | 全要素の順序を反転する。                                                         |
-| Method | `reverse(int l, int r)`                    | `void` | 半開区間 [l, r) 内の順序を反転する。                                             |
-| Method | `fill(int v)`                              | `void` | 全要素を指定値で更新する。要素数は変えない。                                     |
-| Method | `setAll(IntUnaryOperator init)`            | `void` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
+| 種別   | シグネチャ                                 | 戻り値            | 説明                                                                             |
+|--------|--------------------------------------------|-------------------|----------------------------------------------------------------------------------|
+| Method | `set(int i, int v)`                        | `int`             | 指定位置を更新し、更新前の値を返す。                                             |
+| Method | `add(int i, int d)`                        | `int`             | 指定位置に d を加算し、更新後の値を返す。                                        |
+| Method | `multiply(int i, int m)`                   | `int`             | 指定位置を m 倍し、更新後の値を返す。                                            |
+| Method | `affine(int i, int m, int d)`              | `int`             | 現在値 * m + d に更新し、更新後の値を返す。                                      |
+| Method | `apply(int i, int x, IntBinaryOperator f)` | `int`             | f(現在値, x) に更新し、更新後の値を返す。                                        |
+| Method | `swap(int i, int j)`                       | `void`            | 指定した2要素を交換する。                                                        |
+| Method | `reverse()`                                | `void`            | 全要素の順序を反転する。                                                         |
+| Method | `reverse(int l, int r)`                    | `void`            | 半開区間 [l, r) 内の順序を反転する。                                             |
+| Method | `fill(int v)`                              | `IntMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
+| Method | `setAll(IntUnaryOperator init)`            | `IntMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
 
 ### `LongMutableArray`
 
-| 種別   | シグネチャ                                   | 戻り値 | 説明                                                                             |
-|--------|----------------------------------------------|--------|----------------------------------------------------------------------------------|
-| Method | `set(int i, long v)`                         | `long` | 指定位置を更新し、更新前の値を返す。                                             |
-| Method | `add(int i, long d)`                         | `long` | 指定位置に d を加算し、更新後の値を返す。                                        |
-| Method | `multiply(int i, long m)`                    | `long` | 指定位置を m 倍し、更新後の値を返す。                                            |
-| Method | `affine(int i, long m, long d)`              | `long` | 現在値 * m + d に更新し、更新後の値を返す。                                      |
-| Method | `apply(int i, long x, LongBinaryOperator f)` | `long` | f(現在値, x) に更新し、更新後の値を返す。                                        |
-| Method | `swap(int i, int j)`                         | `void` | 指定した2要素を交換する。                                                        |
-| Method | `reverse()`                                  | `void` | 全要素の順序を反転する。                                                         |
-| Method | `reverse(int l, int r)`                      | `void` | 半開区間 [l, r) 内の順序を反転する。                                             |
-| Method | `fill(long v)`                               | `void` | 全要素を指定値で更新する。要素数は変えない。                                     |
-| Method | `setAll(IntToLongFunction init)`             | `void` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
+| 種別   | シグネチャ                                   | 戻り値             | 説明                                                                             |
+|--------|----------------------------------------------|--------------------|----------------------------------------------------------------------------------|
+| Method | `set(int i, long v)`                         | `long`             | 指定位置を更新し、更新前の値を返す。                                             |
+| Method | `add(int i, long d)`                         | `long`             | 指定位置に d を加算し、更新後の値を返す。                                        |
+| Method | `multiply(int i, long m)`                    | `long`             | 指定位置を m 倍し、更新後の値を返す。                                            |
+| Method | `affine(int i, long m, long d)`              | `long`             | 現在値 * m + d に更新し、更新後の値を返す。                                      |
+| Method | `apply(int i, long x, LongBinaryOperator f)` | `long`             | f(現在値, x) に更新し、更新後の値を返す。                                        |
+| Method | `swap(int i, int j)`                         | `void`             | 指定した2要素を交換する。                                                        |
+| Method | `reverse()`                                  | `void`             | 全要素の順序を反転する。                                                         |
+| Method | `reverse(int l, int r)`                      | `void`             | 半開区間 [l, r) 内の順序を反転する。                                             |
+| Method | `fill(long v)`                               | `LongMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
+| Method | `setAll(IntToLongFunction init)`             | `LongMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
 
 読み取り・走査・変換の継承 API は [IntArray / LongArray 利用ガイド](./ArrayGuide.md) を参照する。
 
@@ -108,3 +108,4 @@
 | **バージョン 3.1** | 2026-10-26 | Int / Long の reverse の停止条件を変更し、奇数長での中央要素の自己交換を除去                           |
 | **バージョン 3.2** | 2026-10-27 | reverseの入口で半開区間を検査し、不正な範囲の黙認と交換途中の失敗を防止                                |
 | **バージョン 3.3** | 2026-10-27 | IntMutableArray / LongMutableArray: reverse の区間引数名を半開区間の規約に合わせて l / r へ変更        |
+| **バージョン 4.0** | 2026-10-28 | IntMutableArray / LongMutableArray: fill・setAll の既定実装が自身を返すように変更                      |

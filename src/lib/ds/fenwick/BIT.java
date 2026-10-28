@@ -30,16 +30,6 @@ public final class BIT<T> implements Iterable<T> {
 		this.identity = identity;
 	}
 
-	public BIT(final int n, final BinaryOperator<T> op, final BinaryOperator<T> inv, final IntFunction<T> init, final T identity) {
-		size = n;
-		raw = (T[]) new Object[n];
-		tree = (T[]) new Object[n + 1];
-		this.op = op;
-		this.inv = inv;
-		this.identity = identity;
-		setAll(init);
-	}
-
 	public BIT(final T[] a, final BinaryOperator<T> op, final BinaryOperator<T> inv, final T identity) {
 		size = a.length;
 		raw = a.clone();
@@ -84,14 +74,16 @@ public final class BIT<T> implements Iterable<T> {
 		return raw[i];
 	}
 
-	public void fill(final T v) {
+	public BIT<T> fill(final T v) {
 		for (int i = 0; i < size; i++) tree[i + 1] = raw[i] = v;
 		build();
+		return this;
 	}
 
-	public void setAll(final IntFunction<T> init) {
+	public BIT<T> setAll(final IntFunction<T> init) {
 		for (int i = 0; i < size; i++) tree[i + 1] = raw[i] = init.apply(i);
 		build();
+		return this;
 	}
 
 	public T query(final int r) {

@@ -25,7 +25,7 @@ public final class Judge2 {
 	private static void solve() {
 		int n = sc.nextInt();
 		int q = sc.nextInt();
-		LongBIT bit = new LongBIT(n, i -> sc.nextInt());
+		LongBIT bit = new LongBIT(n).setAll(_ -> sc.nextInt());
 		while (q-- > 0) {
 			int t = sc.nextInt();
 			int a = sc.nextInt();

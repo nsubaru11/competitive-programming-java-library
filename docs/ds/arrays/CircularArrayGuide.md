@@ -18,7 +18,7 @@
 - 現在の論理順に対する $\mathcal{O}(1)$ の `get` / `set`
 - 左回転を正、右回転を負とする総回転数を保持
 - `fill` と `setAll` による一括更新と回転状態の正規化
-- 長さ・初期値・添字関数・配列・コピーによる構築に対応
+- 長さ・初期値・配列・コピーによる構築に対応。添字関数による初期化は構築後に `setAll` を呼ぶ
 - `IntMutableArray` / `LongMutableArray` として汎用アルゴリズムへ渡せる
 - iterator、配列化、文字列化はいずれも現在の論理順を反映
 
@@ -47,7 +47,6 @@
 |-------------|--------------------------------------------------|---------------------------|-------------------------------------------------------------------------------------|
 | Constructor | `IntCircularArray(int n)`                        | —                         | 長さ n の0初期化配列を構築する。                                                    |
 | Constructor | `IntCircularArray(int n, int v)`                 | —                         | 長さ n の全要素を v で初期化する。                                                  |
-| Constructor | `IntCircularArray(int n, IntUnaryOperator init)` | —                         | init を添字の昇順に1回ずつ呼び出して構築する。                                      |
 | Constructor | `IntCircularArray(int[] a)`                      | —                         | 指定された配列の要素を同じ順序で保持する循環配列を構築する。                        |
 | Constructor | `IntCircularArray(IntArray a)`                   | —                         | 指定された配列の論理順を保持する循環配列を構築する。                                |
 | Constructor | `IntCircularArray(IntCircularArray other)`       | —                         | 全要素・回転状態・総回転数を保持する独立したコピーを構築する。                      |
@@ -57,8 +56,8 @@
 | Method      | `getLast()`                                      | `int`                     | IntArray から継承。現在の論理順の末尾の値を返す。                                   |
 | Method      | `getLastOrDefault(int defaultValue)`             | `int`                     | IntArray から継承。長さが正のため、現在の論理順の末尾の値を返す。                   |
 | Method      | `set(int i, int v)`                              | `int`                     | 指定した有効な論理添字を更新し、更新前の値を返す。                                  |
-| Method      | `fill(int v)`                                    | `void`                    | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
-| Method      | `setAll(IntUnaryOperator init)`                  | `void`                    | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
+| Method      | `fill(int v)`                                    | `IntCircularArray`        | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
+| Method      | `setAll(IntUnaryOperator init)`                  | `IntCircularArray`        | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
 | Method      | `rotateLeft()`                                   | `IntCircularArray`        | 論理配列を左へ1要素回転する。                                                       |
 | Method      | `rotateLeft(int distance)`                       | `IntCircularArray`        | 論理配列を左へ distance 要素回転する。                                              |
 | Method      | `rotateRight()`                                  | `IntCircularArray`        | 論理配列を右へ1要素回転する。                                                       |
@@ -74,7 +73,6 @@
 |-------------|----------------------------------------------------|----------------------------|-------------------------------------------------------------------------------------|
 | Constructor | `LongCircularArray(int n)`                         | —                          | 長さ n の0初期化配列を構築する。                                                    |
 | Constructor | `LongCircularArray(int n, long v)`                 | —                          | 長さ n の全要素を v で初期化する。                                                  |
-| Constructor | `LongCircularArray(int n, IntToLongFunction init)` | —                          | init を添字の昇順に1回ずつ呼び出して構築する。                                      |
 | Constructor | `LongCircularArray(long[] a)`                      | —                          | 指定された配列の要素を同じ順序で保持する循環配列を構築する。                        |
 | Constructor | `LongCircularArray(LongArray a)`                   | —                          | 指定された配列の論理順を保持する循環配列を構築する。                                |
 | Constructor | `LongCircularArray(LongCircularArray other)`       | —                          | 全要素・回転状態・総回転数を保持する独立したコピーを構築する。                      |
@@ -84,8 +82,8 @@
 | Method      | `getLast()`                                        | `long`                     | LongArray から継承。現在の論理順の末尾の値を返す。                                  |
 | Method      | `getLastOrDefault(long defaultValue)`              | `long`                     | LongArray から継承。長さが正のため、現在の論理順の末尾の値を返す。                  |
 | Method      | `set(int i, long v)`                               | `long`                     | 指定した有効な論理添字を更新し、更新前の値を返す。                                  |
-| Method      | `fill(long v)`                                     | `void`                     | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
-| Method      | `setAll(IntToLongFunction init)`                   | `void`                     | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
+| Method      | `fill(long v)`                                     | `LongCircularArray`        | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
+| Method      | `setAll(IntToLongFunction init)`                   | `LongCircularArray`        | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
 | Method      | `rotateLeft()`                                     | `LongCircularArray`        | 論理配列を左へ1要素回転する。                                                       |
 | Method      | `rotateLeft(int distance)`                         | `LongCircularArray`        | 論理配列を左へ distance 要素回転する。                                              |
 | Method      | `rotateRight()`                                    | `LongCircularArray`        | 論理配列を右へ1要素回転する。                                                       |
@@ -134,19 +132,20 @@
 
 ## 実装履歴
 
-| バージョン         | 日付       | 対象クラス・変更内容                                                                                                            |
-|--------------------|------------|---------------------------------------------------------------------------------------------------------------------------------|
-| **バージョン 1.0** | 2026-07-12 | 旧一次元配列実装を、固定長の論理回転・更新・合計保持を行う `CircularArray` として再編                                           |
-| **バージョン 2.0** | 2026-07-15 | `IntMutableArray` / `LongMutableArray` の実装へ変更                                                                             |
-| **バージョン 2.1** | 2026-07-15 | `toString()` を現在の論理順の空白区切り形式へ改善                                                                               |
-| **バージョン 3.0** | 2026-07-15 | 配列・配列インターフェース・supplierからの構築を追加                                                                            |
-| **バージョン 4.0** | 2026-07-27 | 公開 `length` と `rotation()` を追加し、一括更新時の回転状態の正規化と `toString()` の容量調整を実施                            |
-| **バージョン 4.1** | 2026-10-23 | toArray を2回の arraycopy に変更。iterator の終端例外とメソッドの定義順を統一                                                   |
-| **バージョン 4.2** | 2026-10-23 | sum メソッドと合計保持フィールドを削除し、構築・更新時の集計処理を除去                                                          |
-| **バージョン 5.0** | 2026-10-23 | 長さ・初期値指定・回転状態を保持するコピーのコンストラクタを追加。contains を既定実装へ移行し、複製方法・命名・メソッド順を統一 |
-| **バージョン 6.0** | 2026-10-24 | get / set に論理添字の範囲検査を追加し、負の添字を禁止。現在の論理順の末尾を取得する getLast() を追加                           |
-| **バージョン 7.0** | 2026-10-24 | getLast を配列インターフェースの既定実装へ移行し、getLastOrDefault を継承                                                       |
-| **バージョン 7.1** | 2026-10-25 | 右回転名を shiftRight に統一。配列インターフェースからの構築でコピー元の toArray を利用                                         |
-| **バージョン 8.0** | 2026-10-25 | 左右の回転名を rotateLeft / rotateRight に統一し、回転・resetRotation が自身を返すよう変更。公開の長さを size に統一            |
-| **バージョン 8.1** | 2026-10-27 | 初期値指定コンストラクタの引数名をvに統一                                                                                       |
-| **バージョン 8.2** | 2026-10-27 | IntCircularArray / LongCircularArray: 回転量の引数名を distance に統一し、初期値関数による構築を setAll へ委譲                  |
+| バージョン         | 日付       | 対象クラス・変更内容                                                                                                                                    |
+|--------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2026-07-12 | 旧一次元配列実装を、固定長の論理回転・更新・合計保持を行う `CircularArray` として再編                                                                   |
+| **バージョン 2.0** | 2026-07-15 | `IntMutableArray` / `LongMutableArray` の実装へ変更                                                                                                     |
+| **バージョン 2.1** | 2026-07-15 | `toString()` を現在の論理順の空白区切り形式へ改善                                                                                                       |
+| **バージョン 3.0** | 2026-07-15 | 配列・配列インターフェース・supplierからの構築を追加                                                                                                    |
+| **バージョン 4.0** | 2026-07-27 | 公開 `length` と `rotation()` を追加し、一括更新時の回転状態の正規化と `toString()` の容量調整を実施                                                    |
+| **バージョン 4.1** | 2026-10-23 | toArray を2回の arraycopy に変更。iterator の終端例外とメソッドの定義順を統一                                                                           |
+| **バージョン 4.2** | 2026-10-23 | sum メソッドと合計保持フィールドを削除し、構築・更新時の集計処理を除去                                                                                  |
+| **バージョン 5.0** | 2026-10-23 | 長さ・初期値指定・回転状態を保持するコピーのコンストラクタを追加。contains を既定実装へ移行し、複製方法・命名・メソッド順を統一                         |
+| **バージョン 6.0** | 2026-10-24 | get / set に論理添字の範囲検査を追加し、負の添字を禁止。現在の論理順の末尾を取得する getLast() を追加                                                   |
+| **バージョン 7.0** | 2026-10-24 | getLast を配列インターフェースの既定実装へ移行し、getLastOrDefault を継承                                                                               |
+| **バージョン 7.1** | 2026-10-25 | 右回転名を shiftRight に統一。配列インターフェースからの構築でコピー元の toArray を利用                                                                 |
+| **バージョン 8.0** | 2026-10-25 | 左右の回転名を rotateLeft / rotateRight に統一し、回転・resetRotation が自身を返すよう変更。公開の長さを size に統一                                    |
+| **バージョン 8.1** | 2026-10-27 | 初期値指定コンストラクタの引数名をvに統一                                                                                                               |
+| **バージョン 8.2** | 2026-10-27 | IntCircularArray / LongCircularArray: 回転量の引数名を distance に統一し、初期値関数による構築を setAll へ委譲                                          |
+| **バージョン 9.0** | 2026-10-28 | IntCircularArray / LongCircularArray: 添字関数を受け取るコンストラクタを削除し、関数による初期化を setAll に一本化。fill・setAll が自身を返すように変更 |

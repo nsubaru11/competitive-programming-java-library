@@ -28,11 +28,6 @@ public final class IntBIT2D implements IntCollection {
 		tree = new long[(h + 1) * (w + 1)];
 	}
 
-	public IntBIT2D(final int h, final int w, final IntBinaryOperator init) {
-		this(h, w);
-		setAll(init);
-	}
-
 	public IntBIT2D(final int[][] a) {
 		this(a.length, a[0].length);
 		final int w1 = w + 1;
@@ -87,7 +82,7 @@ public final class IntBIT2D implements IntCollection {
 		return add(i, j, p, (long) f.applyAsInt(raw[p], x) - raw[p]);
 	}
 
-	public void fill(final int v) {
+	public IntBIT2D fill(final int v) {
 		total = (long) size * v;
 		final int w1 = w + 1;
 		for (int i = 0, p = 0; i < h; i++) {
@@ -96,9 +91,10 @@ public final class IntBIT2D implements IntCollection {
 			}
 		}
 		build();
+		return this;
 	}
 
-	public void setAll(final IntBinaryOperator init) {
+	public IntBIT2D setAll(final IntBinaryOperator init) {
 		total = 0;
 		final int w1 = w + 1;
 		for (int i = 0, p = 0; i < h; i++) {
@@ -107,6 +103,7 @@ public final class IntBIT2D implements IntCollection {
 			}
 		}
 		build();
+		return this;
 	}
 
 	public long sum(final int i, final int j) {

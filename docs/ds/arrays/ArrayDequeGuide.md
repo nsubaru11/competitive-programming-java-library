@@ -37,26 +37,27 @@
 
 ### `IntArrayDeque`
 
-| 種別        | シグネチャ                               | 戻り値                    | 説明                                                                                                |
-|-------------|------------------------------------------|---------------------------|-----------------------------------------------------------------------------------------------------|
-| Constructor | `IntArrayDeque()`                        | —                         | 初期容量16の空の deque を構築する。                                                                 |
-| Constructor | `IntArrayDeque(int capacity)`            | —                         | 空の deque を構築する。初期容量は非負とし、最低1の2のべき乗へ切り上げる。確保可能な容量を指定する。 |
-| Constructor | `IntArrayDeque(int[] a)`                 | —                         | 配列の全要素を同じ順序でコピーして構築する。                                                        |
-| Constructor | `IntArrayDeque(IntCollection a)`         | —                         | コレクションの iterator 順に全要素をコピーして構築する。                                            |
-| Method      | `size()`                                 | `int`                     | 現在の要素数を返す。                                                                                |
-| Method      | `get(int i)`                             | `int`                     | 指定した論理位置の値を返す。                                                                        |
-| Method      | `set(int i, int v)`                      | `int`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                   |
-| Method      | `addFirst(int v)`                        | `void`                    | 先頭に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                          |
-| Method      | `addLast(int v)`                         | `void`                    | 末尾に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                          |
-| Method      | `removeFirst()`                          | `int`                     | 先頭の要素を削除して返す。                                                                          |
-| Method      | `removeFirstOrDefault(int defaultValue)` | `int`                     | 先頭の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                            |
-| Method      | `removeLast()`                           | `int`                     | 末尾の要素を削除して返す。                                                                          |
-| Method      | `removeLastOrDefault(int defaultValue)`  | `int`                     | 末尾の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                            |
-| Method      | `fill(int v)`                            | `void`                    | 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。                              |
-| Method      | `clear()`                                | `void`                    | 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。                                |
-| Method      | `toArray()`                              | `int[]`                   | 先頭から末尾の論理順で独立した配列へコピーする。                                                    |
-| Method      | `iterator()`                             | `PrimitiveIterator.OfInt` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。    |
-| Method      | `toString()`                             | `String`                  | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                        |
+| 種別        | シグネチャ                               | 戻り値                    | 説明                                                                                                                     |
+|-------------|------------------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| Constructor | `IntArrayDeque()`                        | —                         | 初期容量16の空の deque を構築する。                                                                                      |
+| Constructor | `IntArrayDeque(int capacity)`            | —                         | 空の deque を構築する。初期容量は非負とし、最低1の2のべき乗へ切り上げる。確保可能な容量を指定する。                      |
+| Constructor | `IntArrayDeque(int[] a)`                 | —                         | 配列の全要素を同じ順序でコピーして構築する。                                                                             |
+| Constructor | `IntArrayDeque(IntCollection a)`         | —                         | コレクションの iterator 順に全要素をコピーして構築する。                                                                 |
+| Method      | `size()`                                 | `int`                     | 現在の要素数を返す。                                                                                                     |
+| Method      | `get(int i)`                             | `int`                     | 指定した論理位置の値を返す。                                                                                             |
+| Method      | `set(int i, int v)`                      | `int`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                                        |
+| Method      | `addFirst(int v)`                        | `void`                    | 先頭に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                                               |
+| Method      | `addLast(int v)`                         | `void`                    | 末尾に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                                               |
+| Method      | `removeFirst()`                          | `int`                     | 先頭の要素を削除して返す。                                                                                               |
+| Method      | `removeFirstOrDefault(int defaultValue)` | `int`                     | 先頭の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                                                 |
+| Method      | `removeLast()`                           | `int`                     | 末尾の要素を削除して返す。                                                                                               |
+| Method      | `removeLastOrDefault(int defaultValue)`  | `int`                     | 末尾の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                                                 |
+| Method      | `fill(int v)`                            | `IntArrayDeque`           | 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。                                                   |
+| Method      | `setAll(IntUnaryOperator init)`          | `IntArrayDeque`           | 先頭から論理添字の昇順に init を1回ずつ呼んで全要素を更新し、自身を返す。要素数と容量を維持し、内部の先頭位置を0へ移す。 |
+| Method      | `clear()`                                | `void`                    | 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。                                                     |
+| Method      | `toArray()`                              | `int[]`                   | 先頭から末尾の論理順で独立した配列へコピーする。                                                                         |
+| Method      | `iterator()`                             | `PrimitiveIterator.OfInt` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。                         |
+| Method      | `toString()`                             | `String`                  | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                                             |
 
 継承する API：
 
@@ -73,31 +74,31 @@
 | Method | `intStream()`                               | `IntStream`         | 論理順の逐次 Stream を生成                                             |
 | Method | `toList()`                                  | `List<Integer>`     | 論理順の不変リストを生成                                               |
 | Method | `forEach(Consumer<? super Integer> action)` | `void`              | Iterable の既定実装。ボクシングして論理順に適用                        |
-| Method | `setAll(IntUnaryOperator init)`             | `void`              | 各論理添字から生成した値で更新。既定実装は set を呼ぶ                  |
 | Method | `spliterator()`                             | `Spliterator.OfInt` | ORDERED・SIZED・SUBSIZED を持つ                                        |
 
 ### `LongArrayDeque`
 
-| 種別        | シグネチャ                                | 戻り値                     | 説明                                                                                                |
-|-------------|-------------------------------------------|----------------------------|-----------------------------------------------------------------------------------------------------|
-| Constructor | `LongArrayDeque()`                        | —                          | 初期容量16の空の deque を構築する。                                                                 |
-| Constructor | `LongArrayDeque(int capacity)`            | —                          | 空の deque を構築する。初期容量は非負とし、最低1の2のべき乗へ切り上げる。確保可能な容量を指定する。 |
-| Constructor | `LongArrayDeque(long[] a)`                | —                          | 配列の全要素を同じ順序でコピーして構築する。                                                        |
-| Constructor | `LongArrayDeque(LongCollection a)`        | —                          | コレクションの iterator 順に全要素をコピーして構築する。                                            |
-| Method      | `size()`                                  | `int`                      | 現在の要素数を返す。                                                                                |
-| Method      | `get(int i)`                              | `long`                     | 指定した論理位置の値を返す。                                                                        |
-| Method      | `set(int i, long v)`                      | `long`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                   |
-| Method      | `addFirst(long v)`                        | `void`                     | 先頭に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                          |
-| Method      | `addLast(long v)`                         | `void`                     | 末尾に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                          |
-| Method      | `removeFirst()`                           | `long`                     | 先頭の要素を削除して返す。                                                                          |
-| Method      | `removeFirstOrDefault(long defaultValue)` | `long`                     | 先頭の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                            |
-| Method      | `removeLast()`                            | `long`                     | 末尾の要素を削除して返す。                                                                          |
-| Method      | `removeLastOrDefault(long defaultValue)`  | `long`                     | 末尾の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                            |
-| Method      | `fill(long v)`                            | `void`                     | 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。                              |
-| Method      | `clear()`                                 | `void`                     | 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。                                |
-| Method      | `toArray()`                               | `long[]`                   | 先頭から末尾の論理順で独立した配列へコピーする。                                                    |
-| Method      | `iterator()`                              | `PrimitiveIterator.OfLong` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。    |
-| Method      | `toString()`                              | `String`                   | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                        |
+| 種別        | シグネチャ                                | 戻り値                     | 説明                                                                                                                     |
+|-------------|-------------------------------------------|----------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| Constructor | `LongArrayDeque()`                        | —                          | 初期容量16の空の deque を構築する。                                                                                      |
+| Constructor | `LongArrayDeque(int capacity)`            | —                          | 空の deque を構築する。初期容量は非負とし、最低1の2のべき乗へ切り上げる。確保可能な容量を指定する。                      |
+| Constructor | `LongArrayDeque(long[] a)`                | —                          | 配列の全要素を同じ順序でコピーして構築する。                                                                             |
+| Constructor | `LongArrayDeque(LongCollection a)`        | —                          | コレクションの iterator 順に全要素をコピーして構築する。                                                                 |
+| Method      | `size()`                                  | `int`                      | 現在の要素数を返す。                                                                                                     |
+| Method      | `get(int i)`                              | `long`                     | 指定した論理位置の値を返す。                                                                                             |
+| Method      | `set(int i, long v)`                      | `long`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                                        |
+| Method      | `addFirst(long v)`                        | `void`                     | 先頭に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                                               |
+| Method      | `addLast(long v)`                         | `void`                     | 末尾に v を追加する。満杯の場合は内部容量を2倍に拡張する。                                                               |
+| Method      | `removeFirst()`                           | `long`                     | 先頭の要素を削除して返す。                                                                                               |
+| Method      | `removeFirstOrDefault(long defaultValue)` | `long`                     | 先頭の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                                                 |
+| Method      | `removeLast()`                            | `long`                     | 末尾の要素を削除して返す。                                                                                               |
+| Method      | `removeLastOrDefault(long defaultValue)`  | `long`                     | 末尾の要素を削除して返す。空の場合は状態を変更せず defaultValue を返す。                                                 |
+| Method      | `fill(long v)`                            | `LongArrayDeque`           | 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。                                                   |
+| Method      | `setAll(IntToLongFunction init)`          | `LongArrayDeque`           | 先頭から論理添字の昇順に init を1回ずつ呼んで全要素を更新し、自身を返す。要素数と容量を維持し、内部の先頭位置を0へ移す。 |
+| Method      | `clear()`                                 | `void`                     | 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。                                                     |
+| Method      | `toArray()`                               | `long[]`                   | 先頭から末尾の論理順で独立した配列へコピーする。                                                                         |
+| Method      | `iterator()`                              | `PrimitiveIterator.OfLong` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。                         |
+| Method      | `toString()`                              | `String`                   | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                                             |
 
 継承する API：
 
@@ -114,7 +115,6 @@
 | Method | `longStream()`                           | `LongStream`         | 論理順の逐次 Stream を生成                                             |
 | Method | `toList()`                               | `List<Long>`         | 論理順の不変リストを生成                                               |
 | Method | `forEach(Consumer<? super Long> action)` | `void`               | Iterable の既定実装。ボクシングして論理順に適用                        |
-| Method | `setAll(IntToLongFunction init)`         | `void`               | 各論理添字から生成した値で更新。既定実装は set を呼ぶ                  |
 | Method | `spliterator()`                          | `Spliterator.OfLong` | ORDERED・SIZED・SUBSIZED を持つ                                        |
 
 探索の `indexOf` / `lastIndexOf` は [ArrayGuide](./ArrayGuide.md)、要素演算・交換・反転の継承 API は [MutableArrayGuide](./MutableArrayGuide.md) を参照する。
@@ -169,3 +169,4 @@
 | **バージョン 6.0** | 2026-10-25 | 削除操作を removeFirst / removeLast 系に変更。peek 系を継承する getFirst / getLast 系へ統合し、capacity() を削除                                                                                                                                                               |
 | **バージョン 6.1** | 2026-10-27 | IntArrayDeque / LongArrayDeque: 容量フィールドを内部配列長で代替し、例外メッセージを削除。OrDefault 系の削除を対応する削除操作へ委譲                                                                                                                                           |
 | **バージョン 7.0** | 2026-10-27 | IntArrayDeque / LongArrayDeque: 初期容量16の引数なしコンストラクタを追加                                                                                                                                                                                                       |
+| **バージョン 8.0** | 2026-10-28 | IntArrayDeque / LongArrayDeque: fill が自身を返すように変更し、論理添字順に内部配列へ直接書き込む setAll を追加                                                                                                                                                                |

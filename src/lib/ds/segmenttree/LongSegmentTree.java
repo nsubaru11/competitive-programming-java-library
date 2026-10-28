@@ -5,7 +5,14 @@ import java.util.function.*;
 
 import lib.ds.*;
 
-@SuppressWarnings("unused")
+/**
+ * long値のセグメント木。結合則を満たす演算と単位元を指定し、点更新・区間集計・二分探索を O(log n) で行う。
+ * 添字は0始まりとする。{@code query(l, r)} は半開区間 {@code [l, r)} の集計結果を返し、{@code l >= r} は空区間として単位元を返す。
+ * 範囲外の添字・区間では IndexOutOfBoundsException を投げる。set は更新前の値、add・multiply・affine・apply は更新後の値を返す。
+ * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
+ * maxRight は {@code tester(query(l, r))} が真となる最大の r、minLeft は {@code tester(query(l, r))} が真となる最小の l を返す。
+ * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
+ */
 public final class LongSegmentTree implements LongCollection {
 	private final int n, size;
 	private final long identity;
@@ -21,63 +28,77 @@ public final class LongSegmentTree implements LongCollection {
 		if (identity != 0) Arrays.fill(tree, identity);
 	}
 
-	public LongSegmentTree(final long[] data, final LongBinaryOperator operator, final long identity) {
-		this.n = data.length;
-		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-		this.identity = identity;
-		this.operator = operator;
-		tree = new long[size << 1];
-		System.arraycopy(data, 0, tree, size, n);
-		if (identity != 0) Arrays.fill(tree, size + n, size << 1, identity);
-		buildAll();
+	public LongSegmentTree(final long[] a, final LongBinaryOperator operator, final long identity) {
+		this(a.length, operator, identity);
+		System.arraycopy(a, 0, tree, size, n);
+		build();
 	}
 
-	public void fill(final long val) {
-		Arrays.fill(tree, size, size + n, val);
-		buildAll();
+	public LongSegmentTree(final LongCollection a, final LongBinaryOperator operator, final long identity) {
+		this(a.size(), operator, identity);
+		final PrimitiveIterator.OfLong it = a.iterator();
+		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = it.nextLong();
+		build();
 	}
 
-	public void setAll(final IntToLongFunction init) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.applyAsLong(i);
-		buildAll();
+	public LongSegmentTree(final LongSegmentTree other) {
+		n = other.n;
+		size = other.size;
+		identity = other.identity;
+		operator = other.operator;
+		tree = other.tree.clone();
+	}
+
+	public int size() {
+		return n;
 	}
 
 	public long get(final int i) {
-		return tree[size + i];
+		return tree[size + Objects.checkIndex(i, n)];
 	}
 
-	/**
-	 * 指定位置を更新し、更新前の値を返す。
-	 */
 	public long set(final int i, final long v) {
-		final int idx = size + i;
+		final int idx = size + Objects.checkIndex(i, n);
 		final long prev = tree[idx];
-		tree[idx] = v;
-		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
+		update(idx, v);
 		return prev;
 	}
 
 	public long add(final int i, final long d) {
-		return apply(i, 1, d);
+		final int idx = size + Objects.checkIndex(i, n);
+		return update(idx, tree[idx] + d);
 	}
 
 	public long multiply(final int i, final long m) {
-		return apply(i, m, 0);
+		final int idx = size + Objects.checkIndex(i, n);
+		return update(idx, tree[idx] * m);
 	}
 
-	public long apply(final int i, final long m, final long d) {
-		final int idx = size + i;
-		tree[idx] = tree[idx] * m + d;
-		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
-		return tree[idx];
+	public long affine(final int i, final long m, final long d) {
+		final int idx = size + Objects.checkIndex(i, n);
+		return update(idx, tree[idx] * m + d);
 	}
 
 	public long apply(final int i, final long x, final LongBinaryOperator f) {
-		return apply(i, 0, f.applyAsLong(tree[size + i], x));
+		final int idx = size + Objects.checkIndex(i, n);
+		return update(idx, f.applyAsLong(tree[idx], x));
+	}
+
+	public LongSegmentTree fill(final long v) {
+		Arrays.fill(tree, size, size + n, v);
+		build();
+		return this;
+	}
+
+	public LongSegmentTree setAll(final IntToLongFunction init) {
+		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.applyAsLong(i);
+		build();
+		return this;
 	}
 
 	public long query(final int l, final int r) {
 		if (l >= r) return identity;
+		Objects.checkFromToIndex(l, r, n);
 		long sml = identity, smr = identity;
 		for (int cl = l + size, cr = r + size; cl < cr; cl >>= 1, cr >>= 1) {
 			if ((cl & 1) == 1) sml = operator.applyAsLong(sml, tree[cl++]);
@@ -91,6 +112,7 @@ public final class LongSegmentTree implements LongCollection {
 	}
 
 	public int maxRight(final int l, final LongPredicate tester) {
+		Objects.checkIndex(l, n + 1);
 		if (l == n) return n;
 		long ans = identity;
 		int cl = l + size;
@@ -115,10 +137,12 @@ public final class LongSegmentTree implements LongCollection {
 	}
 
 	public int minLeft(final int r, final LongPredicate tester) {
+		Objects.checkIndex(r, n + 1);
 		if (r == 0) return 0;
 		long ans = identity;
-		int cr = r + size - 1;
+		int cr = r + size;
 		do {
+			cr--;
 			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
 			long combined = operator.applyAsLong(tree[cr], ans);
 			if (!tester.test(combined)) {
@@ -133,38 +157,44 @@ public final class LongSegmentTree implements LongCollection {
 				return cr - size + 1;
 			}
 			ans = combined;
-			cr--;
 		} while ((cr & -cr) != cr);
 		return 0;
 	}
 
-	public int size() {
-		return n;
+	public long[] toArray() {
+		return Arrays.copyOfRange(tree, size, size + n);
 	}
 
 	public PrimitiveIterator.OfLong iterator() {
 		return new PrimitiveIterator.OfLong() {
-			private int idx = 0;
+			private int i = 0;
 
 			public boolean hasNext() {
-				return idx < n;
+				return i < n;
 			}
 
 			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + idx++];
+				return tree[size + i++];
 			}
 		};
 	}
 
 	public String toString() {
-		final StringBuilder s = new StringBuilder();
-		s.append(tree[size]);
-		for (int i = 1; i < n; i++) s.append(' ').append(tree[i + size]);
-		return s.toString();
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder(21 * n - 1);
+		sb.append(tree[size]);
+		for (int i = 1; i < n; i++) sb.append(' ').append(tree[size + i]);
+		return sb.toString();
 	}
 
-	private void buildAll() {
+	private long update(final int idx, final long v) {
+		tree[idx] = v;
+		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsLong(tree[j << 1], tree[(j << 1) | 1]);
+		return v;
+	}
+
+	private void build() {
 		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsLong(tree[i << 1], tree[(i << 1) | 1]);
 	}
 }

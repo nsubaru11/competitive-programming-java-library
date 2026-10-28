@@ -24,11 +24,6 @@ public final class LongRangeBIT implements LongCollection {
 		bit2 = new long[n + 1];
 	}
 
-	public LongRangeBIT(final int n, final IntToLongFunction init) {
-		this(n);
-		setAll(init);
-	}
-
 	public LongRangeBIT(final long[] a) {
 		this(a.length);
 		System.arraycopy(a, 0, bit1, 1, size);
@@ -88,16 +83,18 @@ public final class LongRangeBIT implements LongCollection {
 		addRange(i, i, f.applyAsLong(old, x) - old);
 	}
 
-	public void fill(final long v) {
+	public LongRangeBIT fill(final long v) {
 		total = size * v;
 		Arrays.fill(bit1, 1, size + 1, v);
 		build();
+		return this;
 	}
 
-	public void setAll(final IntToLongFunction init) {
+	public LongRangeBIT setAll(final IntToLongFunction init) {
 		total = 0;
 		for (int i = 0; i < size; i++) total += bit1[i + 1] = init.applyAsLong(i);
 		build();
+		return this;
 	}
 
 	public long sum(final int i) {
