@@ -12,6 +12,9 @@ import lib.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class IntDoubleEndedPriorityQueue implements IntCollection {
+	// TODO: 開発中。interval heap がヒープ性を保てず pollFirst・pollLast が誤った値を返すため、完成まで使用しない
+	// TODO: 要素数が奇数の末尾ノードを考慮して siftUp・siftDown・heapify を実装し、siftUp・siftDown を private にする
+	// TODO: JavaDoc・Comparator の null 検査・Guide・Test・Long 版を整備する
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
 	private final IntComparator comparator;
 	private int[] buf;

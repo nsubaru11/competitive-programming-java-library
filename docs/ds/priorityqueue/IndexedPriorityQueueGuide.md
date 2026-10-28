@@ -1,6 +1,6 @@
-# IndexedPriorityQueue / IntIndexedPriorityQueue / LongIndexedPriorityQueue 利用ガイド
+# IndexedPriorityQueue 利用ガイド
 
-> [`IndexedPriorityQueue<T>`](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)、[`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)、[`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)は、固定範囲`0 <= i < n`のindexへcostを対応付ける優先度キューである。
+> 固定範囲の添字にコストを対応付け、コストの更新・改善・削除と削除後の最終コストの取得を行う `IndexedPriorityQueue<T>`・`IntIndexedPriorityQueue`・`LongIndexedPriorityQueue` の仕様をまとめる。
 
 [← README: Priority Queue](./README.md) · ソース: [IndexedPriorityQueue.java](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java) · [IntIndexedPriorityQueue.java](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java) · [LongIndexedPriorityQueue.java](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)
 
@@ -10,221 +10,224 @@
 
 ## 概要
 
-同じindexを高々1個だけactiveにし、costの更新、改善、削除、削除後の最終cost取得を行える。
+添字 `0 <= i < n` ごとに高々1個のコストを持つ二分ヒープである。n は構築時に固定する。
+添字からヒープ上の位置を引く配列を持ち、任意の添字のコスト更新と削除を O(log n) で行う。Dijkstra 法や Prim 法のように、頂点ごとの暫定コストを改善しながら最小のものを確定させる用途を想定する。
+active な添字の数を s、未整列領域の添字の数を k、一括登録する組の数を m とする。
 
 ## 特徴
 
-- generic / int / longの3種類
-- generic版はComparable costの自然順序構築と、比較不能なcost型向けのComparator構築に対応
-- primitive版は昇順、降順、`IntComparator` / `LongComparator`に対応
-- indexからヒープ位置を$\mathcal{O}(1)$で取得
-- `add`はinactiveなindexを登録し、重複時はfalse
-- `set`は無条件更新または登録
-- `relax`はより優先されるcostだけ反映し、削除済みindexを再登録しない
-- `remove`は削除成否をbooleanで返す
-- `get`系と`getLast`系でactive限定値と削除後を含む値を分離
-- `peekOrDefault` / `pollOrDefault`とindex版を提供
-- `position`配列とstampによる$\mathcal{O}(1)$ `clear`
-- 一括追加、配列構築、`setAll`、`generate`のヒープ構築を遅延
-- iteratorはcostを内部順で走査し、indexは付属情報として扱う
+- 各添字は「未追加」「active（キュー内）」「削除済み（`poll` 系・`remove` で取り出し済み）」の3状態を持つ。
+- `add` は active でない添字を登録し、`set` は無条件に更新・登録し、`relax` はより優先されるコストだけを反映する。`relax` は削除済みの添字を再登録しない。
+- `get` 系は active な添字のコスト、`getLast` 系は削除済みを含めて最後に持ったコストを返す。Dijkstra 法の確定距離を `getLastOrDefault` で取得できる。
+- コストと添字の両方について `peek`・`poll` と `OrDefault` 系を提供する。
+- `clear` は世代番号 stamp を1減らすだけで全添字を未追加に戻し、O(1) で動作する。
+- 登録・配列からの構築・`setAll` はヒープ化を遅延する。ヒープ領域内の `set`・`relax` は即座に `siftUp`・`siftDown` し、未整列領域内では値の更新だけを行う。未整列領域の添字の `remove` は末尾の添字と入れ替えて O(1) で外す。
+- 比較順は昇順（汎用版は自然順序）・降順（汎用版は逆順）・Comparator から選ぶ。
+- index 数・配列・コピーから構築できる。関数による初期化は構築後に `setAll` を呼ぶ。
+
+### 型別クラス
+
+| クラス                                                                                        | 対象型 | 選ぶ目安                                       |
+|-----------------------------------------------------------------------------------------------|--------|------------------------------------------------|
+| [`IndexedPriorityQueue<T>`](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)      | `T`    | Comparable なコスト、Comparator で並べるコスト |
+| [`IntIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)   | `int`  | int のコストをボクシングせずに扱う場合         |
+| [`LongIndexedPriorityQueue`](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java) | `long` | 距離など long のコストを扱う場合               |
 
 ## 依存関係
 
-- `java.util.Arrays`
-- `java.util.Comparator`
-- `java.util.Iterator`
-- `java.util.PrimitiveIterator`
-- `java.util.NoSuchElementException`
-- `java.util.function.IntFunction`
-- `java.util.function.IntUnaryOperator`
-- `java.util.function.IntToLongFunction`
-- [`IntCollection`](../../../src/lib/ds/IntCollection.java)
-- [`LongCollection`](../../../src/lib/ds/LongCollection.java)
-- [`IntComparator`](../../../src/lib/util/function/IntComparator.java)
-- [`LongComparator`](../../../src/lib/util/function/LongComparator.java)
+- Java標準ライブラリ: `java.util.*`、`java.util.function.*`
+- int 版: [IntCollection](../../../src/lib/ds/IntCollection.java)、[IntComparator](../../../src/lib/util/function/IntComparator.java)
+- long 版: [LongCollection](../../../src/lib/ds/LongCollection.java)、[LongComparator](../../../src/lib/util/function/LongComparator.java)
+- 利用側: [Dijkstra](../../../src/lib/graph/Dijkstra.java)・[Prim](../../../src/lib/graph/Prim.java) が `LongIndexedPriorityQueue` を使う。
 
 ## API
 
-### 1. generic版コンストラクタ・ファクトリ
+### `IndexedPriorityQueue<T>`
 
-| メソッド                                                                        | 説明                                          |
-|---------------------------------------------------------------------------------|-----------------------------------------------|
-| `IndexedPriorityQueue(int n)`                                                   | index数を指定して自然順序で構築               |
-| `IndexedPriorityQueue(int n, boolean descending)`                               | index数を指定して自然順序または逆順で構築     |
-| `IndexedPriorityQueue(int n, Comparator<? super T> comparator)`                 | index数とComparatorを指定                     |
-| `IndexedPriorityQueue(T[] costs)`                                               | `costs[i]`をindex iへ自然順序で登録           |
-| `IndexedPriorityQueue(T[] costs, boolean descending)`                           | 配列から自然順序または逆順で構築              |
-| `IndexedPriorityQueue(T[] costs, Comparator<? super T> comparator)`             | `costs[i]`をindex iへ登録                     |
-| `IndexedPriorityQueue.naturalOrder(int n)`                                      | Comparable costの自然順序キューを生成         |
-| `IndexedPriorityQueue.reverseOrder(int n)`                                      | Comparable costの逆順キューを生成             |
-| `IndexedPriorityQueue.naturalOrder(T[] costs)`                                  | 配列から自然順序キューを生成                  |
-| `IndexedPriorityQueue.reverseOrder(T[] costs)`                                  | 配列から逆順キューを生成                      |
-| `IndexedPriorityQueue.generate(int n, IntFunction init)`                        | `init(i)`を自然順序costとして全登録           |
-| `IndexedPriorityQueue.generate(int n, IntFunction init, boolean descending)`    | `init(i)`を自然順序または逆順costとして全登録 |
-| `IndexedPriorityQueue.generate(int n, IntFunction init, Comparator comparator)` | `init(i)`とComparatorを指定                   |
+[ソース](../../../src/lib/ds/priorityqueue/IndexedPriorityQueue.java)
 
-### 2. IntIndexedPriorityQueueコンストラクタ・ファクトリ
+`Iterable<T>` を実装する。
 
-| メソッド                                                                                   | 説明                                  |
-|--------------------------------------------------------------------------------------------|---------------------------------------|
-| `IntIndexedPriorityQueue(int n)`                                                           | index数を指定して昇順で構築           |
-| `IntIndexedPriorityQueue(int n, boolean descending)`                                       | index数を指定して昇順または降順で構築 |
-| `IntIndexedPriorityQueue(int n, IntComparator comparator)`                                 | index数とComparatorを指定             |
-| `IntIndexedPriorityQueue(int[] costs)`                                                     | 全indexを配列から昇順で登録           |
-| `IntIndexedPriorityQueue(int[] costs, boolean descending)`                                 | 全indexを配列から昇順または降順で登録 |
-| `IntIndexedPriorityQueue(int[] costs, IntComparator comparator)`                           | 配列とComparatorを指定                |
-| `IntIndexedPriorityQueue.generate(int n, IntUnaryOperator init)`                           | 全indexを昇順で生成                   |
-| `IntIndexedPriorityQueue.generate(int n, IntUnaryOperator init, boolean descending)`       | 全indexを昇順または降順で生成         |
-| `IntIndexedPriorityQueue.generate(int n, IntUnaryOperator init, IntComparator comparator)` | 生成関数とComparatorを指定            |
+| 種別        | シグネチャ                                                          | 戻り値                    | 説明                                                                                             |
+|-------------|---------------------------------------------------------------------|---------------------------|--------------------------------------------------------------------------------------------------|
+| Constructor | `IndexedPriorityQueue(int n)`                                       | —                         | 添字数 n、自然順序で構築する。全添字は未追加。                                                   |
+| Constructor | `IndexedPriorityQueue(int n, boolean isDescendingOrder)`            | —                         | 添字数 n、自然順序または逆順で構築する。                                                         |
+| Constructor | `IndexedPriorityQueue(int n, Comparator<? super T> comparator)`     | —                         | 添字数 n、Comparator の順で構築する。                                                            |
+| Constructor | `IndexedPriorityQueue(T[] costs)`                                   | —                         | n = costs.length とし、costs[i] を添字 i のコストとして全添字を自然順序で登録する。              |
+| Constructor | `IndexedPriorityQueue(T[] costs, boolean isDescendingOrder)`        | —                         | 全添字を自然順序または逆順で登録する。                                                           |
+| Constructor | `IndexedPriorityQueue(T[] costs, Comparator<? super T> comparator)` | —                         | 全添字を Comparator の順で登録する。                                                             |
+| Constructor | `IndexedPriorityQueue(IndexedPriorityQueue<T> other)`               | —                         | 比較順・状態・コストを引き継ぐ独立したコピー。コスト自体は共有する。                             |
+| Method      | `set(int i, T c)`                                                   | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
+| Method      | `setAll(IntFunction<? extends T> init)`                             | `IndexedPriorityQueue<T>` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
+| Method      | `add(int i, T c)`                                                   | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
+| Method      | `addAll(int[] is, T[] cs)`                                          | `boolean`                 | 組 (is[j], cs[j]) を順に `add` する。1件以上登録した場合に true。                                |
+| Method      | `relax(int i, T c)`                                                 | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
+| Method      | `peek()`                                                            | `T`                       | 最優先のコストを返す。                                                                           |
+| Method      | `peekOrDefault(T defaultValue)`                                     | `T`                       | 空なら defaultValue、そうでなければ最優先のコストを返す。                                        |
+| Method      | `peekIndex()`                                                       | `int`                     | 最優先の添字を返す。                                                                             |
+| Method      | `peekIndexOrDefault(int defaultIndex)`                              | `int`                     | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
+| Method      | `peekSecond()`                                                      | `T`                       | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `poll()`                                                            | `T`                       | 最優先の添字を削除済みにしてコストを返す。                                                       |
+| Method      | `pollOrDefault(T defaultValue)`                                     | `T`                       | 空なら defaultValue、そうでなければ `poll` する。                                                |
+| Method      | `pollIndex()`                                                       | `int`                     | 最優先の添字を削除済みにして添字を返す。                                                         |
+| Method      | `pollIndexOrDefault(int defaultIndex)`                              | `int`                     | 空なら defaultIndex、そうでなければ `pollIndex` する。                                           |
+| Method      | `remove(int i)`                                                     | `boolean`                 | active なら削除済みにして true、そうでなければ false。未整列領域の添字はヒープを復元せずに外す。 |
+| Method      | `get(int i)`                                                        | `T`                       | active な添字のコストを返す。                                                                    |
+| Method      | `getOrDefault(int i, T defaultValue)`                               | `T`                       | active でなければ defaultValue を返す。                                                          |
+| Method      | `getLast(int i)`                                                    | `T`                       | active または削除済みの添字が最後に持ったコストを返す。                                          |
+| Method      | `getLastOrDefault(int i, T defaultValue)`                           | `T`                       | 未追加なら defaultValue を返す。                                                                 |
+| Method      | `size()`                                                            | `int`                     | active な添字の数を返す。                                                                        |
+| Method      | `indexCount()`                                                      | `int`                     | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `clear()`                                                           | `void`                    | 全添字を未追加に戻す。                                                                           |
+| Method      | `isEmpty()`                                                         | `boolean`                 | active な添字がないかを返す。                                                                    |
+| Method      | `containsIndex(int i)`                                              | `boolean`                 | 添字が active かを返す。                                                                         |
+| Method      | `hasCost(int i)`                                                    | `boolean`                 | 添字が active または削除済みかを返す。                                                           |
+| Method      | `iterator()`                                                        | `Iterator<T>`             | active な添字のコストを内部配列の順に走査する。                                                  |
 
-### 3. LongIndexedPriorityQueueコンストラクタ・ファクトリ
+`Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
 
-| メソッド                                                                                      | 説明                                  |
-|-----------------------------------------------------------------------------------------------|---------------------------------------|
-| `LongIndexedPriorityQueue(int n)`                                                             | index数を指定して昇順で構築           |
-| `LongIndexedPriorityQueue(int n, boolean descending)`                                         | index数を指定して昇順または降順で構築 |
-| `LongIndexedPriorityQueue(int n, LongComparator comparator)`                                  | index数とComparatorを指定             |
-| `LongIndexedPriorityQueue(long[] costs)`                                                      | 全indexを配列から昇順で登録           |
-| `LongIndexedPriorityQueue(long[] costs, boolean descending)`                                  | 全indexを配列から昇順または降順で登録 |
-| `LongIndexedPriorityQueue(long[] costs, LongComparator comparator)`                           | 配列とComparatorを指定                |
-| `LongIndexedPriorityQueue.generate(int n, IntToLongFunction init)`                            | 全indexを昇順で生成                   |
-| `LongIndexedPriorityQueue.generate(int n, IntToLongFunction init, boolean descending)`        | 全indexを昇順または降順で生成         |
-| `LongIndexedPriorityQueue.generate(int n, IntToLongFunction init, LongComparator comparator)` | 生成関数とComparatorを指定            |
+### `IntIndexedPriorityQueue`
 
-### 4. 追加・更新
+[ソース](../../../src/lib/ds/priorityqueue/IntIndexedPriorityQueue.java)
 
-| メソッド                                                  | 戻り値の型 | 説明                               |
-|-----------------------------------------------------------|------------|------------------------------------|
-| `IndexedPriorityQueue.add(int i, T c)`                    | `boolean`  | inactiveなら登録                   |
-| `IntIndexedPriorityQueue.add(int i, int c)`               | `boolean`  | inactiveなら登録                   |
-| `LongIndexedPriorityQueue.add(int i, long c)`             | `boolean`  | inactiveなら登録                   |
-| `IndexedPriorityQueue.addAll(int[] is, T[] cs)`           | `boolean`  | inactiveなindexを一括登録          |
-| `IntIndexedPriorityQueue.addAll(int[] is, int[] cs)`      | `boolean`  | int costを一括登録                 |
-| `LongIndexedPriorityQueue.addAll(int[] is, long[] cs)`    | `boolean`  | long costを一括登録                |
-| `IndexedPriorityQueue.set(int i, T c)`                    | `void`     | activeなら更新、そうでなければ登録 |
-| `IntIndexedPriorityQueue.set(int i, int c)`               | `void`     | int costを設定                     |
-| `LongIndexedPriorityQueue.set(int i, long c)`             | `void`     | long costを設定                    |
-| `IndexedPriorityQueue.setAll(IntFunction init)`           | `void`     | 全indexをgeneric costで登録        |
-| `IntIndexedPriorityQueue.setAll(IntUnaryOperator init)`   | `void`     | 全indexをint costで登録            |
-| `LongIndexedPriorityQueue.setAll(IntToLongFunction init)` | `void`     | 全indexをlong costで登録           |
-| `IndexedPriorityQueue.relax(int i, T c)`                  | `boolean`  | より優先される場合だけ登録・更新   |
-| `IntIndexedPriorityQueue.relax(int i, int c)`             | `boolean`  | int版relax                         |
-| `LongIndexedPriorityQueue.relax(int i, long c)`           | `boolean`  | long版relax                        |
+`IntCollection` を実装する。コストを `int` とし、比較順は昇順・降順・`IntComparator` から選ぶ。
 
-### 5. 優先要素
+| 種別        | シグネチャ                                                        | 戻り値                    | 説明                                                                                             |
+|-------------|-------------------------------------------------------------------|---------------------------|--------------------------------------------------------------------------------------------------|
+| Constructor | `IntIndexedPriorityQueue(int n)`                                  | —                         | 添字数 n、昇順で構築する。全添字は未追加。                                                       |
+| Constructor | `IntIndexedPriorityQueue(int n, boolean isDescendingOrder)`       | —                         | 添字数 n、昇順または降順で構築する。                                                             |
+| Constructor | `IntIndexedPriorityQueue(int n, IntComparator comparator)`        | —                         | 添字数 n、Comparator の順で構築する。                                                            |
+| Constructor | `IntIndexedPriorityQueue(int[] costs)`                            | —                         | n = costs.length とし、costs[i] を添字 i のコストとして全添字を昇順で登録する。                  |
+| Constructor | `IntIndexedPriorityQueue(int[] costs, boolean isDescendingOrder)` | —                         | 全添字を昇順または降順で登録する。                                                               |
+| Constructor | `IntIndexedPriorityQueue(int[] costs, IntComparator comparator)`  | —                         | 全添字を Comparator の順で登録する。                                                             |
+| Constructor | `IntIndexedPriorityQueue(IntIndexedPriorityQueue other)`          | —                         | 比較順・状態・コストを引き継ぐ独立したコピー。                                                   |
+| Method      | `set(int i, int c)`                                               | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
+| Method      | `setAll(IntUnaryOperator init)`                                   | `IntIndexedPriorityQueue` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
+| Method      | `add(int i, int c)`                                               | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
+| Method      | `addAll(int[] is, int[] cs)`                                      | `boolean`                 | 組 (is[j], cs[j]) を順に `add` する。1件以上登録した場合に true。                                |
+| Method      | `relax(int i, int c)`                                             | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
+| Method      | `peek()`                                                          | `int`                     | 最優先のコストを返す。                                                                           |
+| Method      | `peekOrDefault(int defaultValue)`                                 | `int`                     | 空なら defaultValue、そうでなければ最優先のコストを返す。                                        |
+| Method      | `peekIndex()`                                                     | `int`                     | 最優先の添字を返す。                                                                             |
+| Method      | `peekIndexOrDefault(int defaultIndex)`                            | `int`                     | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
+| Method      | `peekSecond()`                                                    | `int`                     | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `poll()`                                                          | `int`                     | 最優先の添字を削除済みにしてコストを返す。                                                       |
+| Method      | `pollOrDefault(int defaultValue)`                                 | `int`                     | 空なら defaultValue、そうでなければ `poll` する。                                                |
+| Method      | `pollIndex()`                                                     | `int`                     | 最優先の添字を削除済みにして添字を返す。                                                         |
+| Method      | `pollIndexOrDefault(int defaultIndex)`                            | `int`                     | 空なら defaultIndex、そうでなければ `pollIndex` する。                                           |
+| Method      | `remove(int i)`                                                   | `boolean`                 | active なら削除済みにして true、そうでなければ false。未整列領域の添字はヒープを復元せずに外す。 |
+| Method      | `get(int i)`                                                      | `int`                     | active な添字のコストを返す。                                                                    |
+| Method      | `getOrDefault(int i, int defaultValue)`                           | `int`                     | active でなければ defaultValue を返す。                                                          |
+| Method      | `getLast(int i)`                                                  | `int`                     | active または削除済みの添字が最後に持ったコストを返す。                                          |
+| Method      | `getLastOrDefault(int i, int defaultValue)`                       | `int`                     | 未追加なら defaultValue を返す。                                                                 |
+| Method      | `size()`                                                          | `int`                     | active な添字の数を返す。                                                                        |
+| Method      | `indexCount()`                                                    | `int`                     | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `clear()`                                                         | `void`                    | 全添字を未追加に戻す。                                                                           |
+| Method      | `containsIndex(int i)`                                            | `boolean`                 | 添字が active かを返す。コストを探索する `contains` とは異なる。                                 |
+| Method      | `hasCost(int i)`                                                  | `boolean`                 | 添字が active または削除済みかを返す。                                                           |
+| Method      | `iterator()`                                                      | `PrimitiveIterator.OfInt` | active な添字のコストを内部配列の順に走査する。                                                  |
 
-| メソッド                               | 戻り値の型           | 説明                            |
-|----------------------------------------|----------------------|---------------------------------|
-| `peek()`                               | `T` / `int` / `long` | 最優先costを返す                |
-| `peekOrDefault(defaultValue)`          | `T` / `int` / `long` | 空ならdefaultValue              |
-| `peekIndex()`                          | `int`                | 最優先indexを返す               |
-| `peekIndexOrDefault(int defaultIndex)` | `int`                | 空ならdefaultIndex              |
-| `peekSecond()`                         | `T` / `int` / `long` | 2番目に優先されるcostを返す     |
-| `poll()`                               | `T` / `int` / `long` | 最優先要素を削除してcostを返す  |
-| `pollOrDefault(defaultValue)`          | `T` / `int` / `long` | 空ならdefaultValue              |
-| `pollIndex()`                          | `int`                | 最優先要素を削除してindexを返す |
-| `pollIndexOrDefault(int defaultIndex)` | `int`                | 空ならdefaultIndex              |
-| `remove(int i)`                        | `boolean`            | activeなら削除してtrue          |
+### `LongIndexedPriorityQueue`
 
-### 6. indexごとのcost取得
+[ソース](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)
 
-| メソッド                                | 未追加  | active | 削除済み   |
-|-----------------------------------------|---------|--------|------------|
-| `get(int i)`                            | 例外    | cost   | 例外       |
-| `getOrDefault(int i, defaultValue)`     | default | cost   | default    |
-| `getLast(int i)`                        | 例外    | cost   | 最後のcost |
-| `getLastOrDefault(int i, defaultValue)` | default | cost   | 最後のcost |
+`LongCollection` を実装する。`IntIndexedPriorityQueue` のコストを `long` に、`IntComparator`・`IntUnaryOperator` を `LongComparator`・`IntToLongFunction` に置き換えた API を持つ。添字の引数・戻り値は `int` のままである。
 
-### 7. 状態・反復
+| 種別        | シグネチャ                                                          | 戻り値                     | 説明                                                                                             |
+|-------------|---------------------------------------------------------------------|----------------------------|--------------------------------------------------------------------------------------------------|
+| Constructor | `LongIndexedPriorityQueue(int n)`                                   | —                          | 添字数 n、昇順で構築する。全添字は未追加。                                                       |
+| Constructor | `LongIndexedPriorityQueue(int n, boolean isDescendingOrder)`        | —                          | 添字数 n、昇順または降順で構築する。                                                             |
+| Constructor | `LongIndexedPriorityQueue(int n, LongComparator comparator)`        | —                          | 添字数 n、Comparator の順で構築する。                                                            |
+| Constructor | `LongIndexedPriorityQueue(long[] costs)`                            | —                          | n = costs.length とし、costs[i] を添字 i のコストとして全添字を昇順で登録する。                  |
+| Constructor | `LongIndexedPriorityQueue(long[] costs, boolean isDescendingOrder)` | —                          | 全添字を昇順または降順で登録する。                                                               |
+| Constructor | `LongIndexedPriorityQueue(long[] costs, LongComparator comparator)` | —                          | 全添字を Comparator の順で登録する。                                                             |
+| Constructor | `LongIndexedPriorityQueue(LongIndexedPriorityQueue other)`          | —                          | 比較順・状態・コストを引き継ぐ独立したコピー。                                                   |
+| Method      | `set(int i, long c)`                                                | `boolean`                  | active なら c へ更新して false、そうでなければ c で登録して true。                               |
+| Method      | `setAll(IntToLongFunction init)`                                    | `LongIndexedPriorityQueue` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
+| Method      | `add(int i, long c)`                                                | `boolean`                  | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
+| Method      | `addAll(int[] is, long[] cs)`                                       | `boolean`                  | 組 (is[j], cs[j]) を順に `add` する。1件以上登録した場合に true。                                |
+| Method      | `relax(int i, long c)`                                              | `boolean`                  | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
+| Method      | `peek()`                                                            | `long`                     | 最優先のコストを返す。                                                                           |
+| Method      | `peekOrDefault(long defaultValue)`                                  | `long`                     | 空なら defaultValue、そうでなければ最優先のコストを返す。                                        |
+| Method      | `peekIndex()`                                                       | `int`                      | 最優先の添字を返す。                                                                             |
+| Method      | `peekIndexOrDefault(int defaultIndex)`                              | `int`                      | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
+| Method      | `peekSecond()`                                                      | `long`                     | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `poll()`                                                            | `long`                     | 最優先の添字を削除済みにしてコストを返す。                                                       |
+| Method      | `pollOrDefault(long defaultValue)`                                  | `long`                     | 空なら defaultValue、そうでなければ `poll` する。                                                |
+| Method      | `pollIndex()`                                                       | `int`                      | 最優先の添字を削除済みにして添字を返す。                                                         |
+| Method      | `pollIndexOrDefault(int defaultIndex)`                              | `int`                      | 空なら defaultIndex、そうでなければ `pollIndex` する。                                           |
+| Method      | `remove(int i)`                                                     | `boolean`                  | active なら削除済みにして true、そうでなければ false。未整列領域の添字はヒープを復元せずに外す。 |
+| Method      | `get(int i)`                                                        | `long`                     | active な添字のコストを返す。                                                                    |
+| Method      | `getOrDefault(int i, long defaultValue)`                            | `long`                     | active でなければ defaultValue を返す。                                                          |
+| Method      | `getLast(int i)`                                                    | `long`                     | active または削除済みの添字が最後に持ったコストを返す。                                          |
+| Method      | `getLastOrDefault(int i, long defaultValue)`                        | `long`                     | 未追加なら defaultValue を返す。                                                                 |
+| Method      | `size()`                                                            | `int`                      | active な添字の数を返す。                                                                        |
+| Method      | `indexCount()`                                                      | `int`                      | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `clear()`                                                           | `void`                     | 全添字を未追加に戻す。                                                                           |
+| Method      | `containsIndex(int i)`                                              | `boolean`                  | 添字が active かを返す。コストを探索する `contains` とは異なる。                                 |
+| Method      | `hasCost(int i)`                                                    | `boolean`                  | 添字が active または削除済みかを返す。                                                           |
+| Method      | `iterator()`                                                        | `PrimitiveIterator.OfLong` | active な添字のコストを内部配列の順に走査する。                                                  |
 
-| メソッド                              | 戻り値の型                 | 説明                                               |
-|---------------------------------------|----------------------------|----------------------------------------------------|
-| `containsIndex(int i)`                | `boolean`                  | indexがactiveか判定                                |
-| `hasCost(int i)`                      | `boolean`                  | 現在世代のcost記録があるか判定                     |
-| `size()`                              | `int`                      | activeなindex数                                    |
-| `indexCount()`                        | `int`                      | 使用可能なindex数                                  |
-| `isEmpty()`                           | `boolean`                  | active要素がないか判定                             |
-| `clear()`                             | `void`                     | active要素と現在世代の記録を$\mathcal{O}(1)$で消去 |
-| `IndexedPriorityQueue.iterator()`     | `Iterator<T>`              | generic costを内部順で走査                         |
-| `IntIndexedPriorityQueue.iterator()`  | `PrimitiveIterator.OfInt`  | int costを内部順で走査                             |
-| `LongIndexedPriorityQueue.iterator()` | `PrimitiveIterator.OfLong` | long costを内部順で走査                            |
+### 数値版の継承 API
 
-primitive版では`contains(cost)`、`toArray()`、`intStream()` / `longStream()`などのCollection由来メソッドも利用できる。`contains`はindexではなくcostを検索する。
+`IntIndexedPriorityQueue`・`LongIndexedPriorityQueue` は `IntCollection`・`LongCollection` の `isEmpty`、`contains`、`forEachInt` / `forEachLong`、`spliterator`、`intStream` / `longStream`、`toList`、`toArray`、`forEach` を既定実装のまま継承する。全シグネチャは [配列・コレクションの継承API](../arrays/ArrayGuide.md#継承元のコレクション-api) を参照する。対象は active な添字のコストであり、`contains` は添字ではなくコストを探索する。
 
-### 状態管理
+### 状態と操作の対応
 
-| 状態     | `add(i,c)`     | `set(i,c)` | `relax(i,c)`   | `remove(i)`  | `getLast(i)` |
-|----------|----------------|------------|----------------|--------------|--------------|
-| 未追加   | 登録してtrue   | 登録       | 登録してtrue   | false        | 例外         |
-| active   | false          | 無条件更新 | 改善時だけtrue | 削除してtrue | cost         |
-| 削除済み | 再登録してtrue | 再登録     | false          | false        | 最後のcost   |
+| 状態     | `add(i, c)`     | `set(i, c)`     | `relax(i, c)`   | `remove(i)`   | `get(i)` | `getLast(i)` |
+|----------|-----------------|-----------------|-----------------|---------------|----------|--------------|
+| 未追加   | 登録して true   | 登録して true   | 登録して true   | false         | 例外     | 例外         |
+| active   | false           | 更新して false  | 改善時だけ true | 削除して true | コスト   | コスト       |
+| 削除済み | 再登録して true | 再登録して true | false           | false         | 例外     | 最後のコスト |
 
-active判定は`position[i]`が指すヒープ位置と`heap[position[i]] == i`の一致で行う。
-削除時は`position[i]`へ現在のstampを保存し、`clear()`ではstampを1つ減らすだけで全indexを次世代の未追加状態として扱う。
+`OrDefault` 系は「例外」の欄で defaultValue を返す。`containsIndex` は active、`hasCost` は active または削除済みで true を返す。
+
+active の判定は `position[i]` が `[0, size)` にあり、かつ `heap[position[i]] == i` であることで行う。削除時は `position[i]` に現在の stamp を書き、削除済みの判定は `position[i] == stamp` で行う。`clear` は stamp を1減らすため、それ以前の削除済み・active の添字はすべて未追加として扱われる。
 
 ## 利用例
 
-```java
-LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(5);
-q.add(0, 10);
-q.add(1, 4);
-q.set(0, 3);
-
-int i = q.pollIndex();                 // 0
-long active = q.getOrDefault(i, -1);   // -1
-long last = q.getLastOrDefault(i, -1); // 3
-```
-
-```java
-record Job(int priority, String name) {}
-
-IndexedPriorityQueue<Job> q =
-	new IndexedPriorityQueue<>(10, Comparator.comparingInt(Job::priority));
-q.add(3, new Job(2, "build"));
-q.add(7, new Job(1, "test"));
-int first = q.pollIndex(); // 7
-```
-
-
-- [Example.java](../../../test/example/ds/priorityqueue/Example.java)
-
-
+準備中
 
 ## 制約・注意事項
 
-- Comparatorなしのgenericコンストラクタは全costが相互にComparableであることを前提とする。
-- 比較不能なcost型でComparatorを省略すると、実際に比較した時点で`ClassCastException`になる。
-- コンパイル時にComparable制約を確認したい場合は`naturalOrder` / `reverseOrder`ファクトリを使用する。
-- Comparableでないcost型はComparatorを渡す。
-- 構築時のnと配列長は使用可能なindex範囲全体を表す。
-- 各index引数は`0 <= i < indexCount()`を満たす必要がある。
-- `add`はactiveなindexではfalse、削除済みindexは明示的に再登録する。
-- `relax`は削除済みindexを再登録しない。
-- `addAll`内の重複indexは最初の1件だけ登録され、activeなindexは無視される。
-- `addAll`のindex配列とcost配列は同じ長さにする。
-- `setAll`は以前の状態を消去して全indexをactiveにし、ヒープ構築は遅延する。
-- `peek`、`peekIndex`、`poll`、`pollIndex`は空の場合に`NoSuchElementException`を投げる。
-- `peekSecond`は要素数2以上で呼び出す。
-- iteratorとCollection由来の変換結果は優先順ではなく、iterator生成時もヒープ化しない。
+- 添字は `0 <= i < indexCount()` とする。範囲は検査せず、範囲外では配列アクセスの `ArrayIndexOutOfBoundsException` を投げる。
+- `compare(a, b) < 0` となるコスト a を持つ添字が先に取り出される。同順位のコストを持つ添字の取り出し順は規定しない。
+- 空のキューの `peek`・`peekIndex`・`poll`・`pollIndex` と、要素数2未満の `peekSecond` は `NoSuchElementException` を投げる。
+- `get` は active でない添字、`getLast` は未追加の添字で `NoSuchElementException` を投げる。
+- `relax` は削除済みの添字を再登録しない。確定済みの頂点を再び開く場合は `add` または `set` を使う。
+- `addAll` の is と cs は同じ長さとする。is に同じ添字が複数あれば最初の組だけを登録し、すでに active な添字は無視する。
+- `setAll` と配列からの構築は全添字を active にする。`setAll` は直前までの削除済みの記録も消去する。
+- Comparator を省略した汎用版は全コストが相互に Comparable であることを前提とする。そうでない型もコンパイルできるが、最初に比較した時点で `ClassCastException` を投げる。汎用版のコストに null を使わない。
+- Comparator を受け取るコンストラクタは null を `NullPointerException` で拒否する。
+- 走査・`contains`・配列化・Stream はヒープを復元せず内部配列の順に行い、優先順ではない。走査中にキューを変更しない。
+- stamp は `clear`・`setAll` のたびに1減る。int の範囲を一巡するほどの回数は想定しない。
 
 ## 性能特性
 
-- `add`: $\mathcal{O}(1)$
-- `addAll`: $\mathcal{O}(k)$
-- 配列構築、`generate`、`setAll`: $\mathcal{O}(n)$で登録し、ヒープ構築を遅延
-- `set`, `relax`: clean領域なら$\mathcal{O}(\log n)$、未整列領域なら$\mathcal{O}(1)$
-- `remove`: cleanなら$\mathcal{O}(\log n)$、dirtyなら先にヒープ構築を伴う
-- `peek`, `peekIndex`, `peekSecond`: cleanなら$\mathcal{O}(1)$、dirtyなら$\mathcal{O}(n)$または$\mathcal{O}(k \log n)$の構築を伴う
-- `poll`, `pollIndex`: cleanなら$\mathcal{O}(\log n)$、dirtyなら構築コストを伴う
-- getter、状態判定、`size`、`indexCount`、`clear`、iterator生成: $\mathcal{O}(1)$
-- iteratorとCollection由来の走査・変換: $\mathcal{O}(n)$
-- 使用メモリ: $\mathcal{O}(n)$。cost、heap、positionの3配列を保持
+| 操作                                                                                      | 時間計算量         | 補足                                                                                      |
+|-------------------------------------------------------------------------------------------|--------------------|-------------------------------------------------------------------------------------------|
+| 構築（添字数指定）                                                                        | O(n)               | 3本の配列を確保する。                                                                     |
+| 配列からの構築・`setAll`・コピー                                                          | O(n)               | ヒープ化は遅延する。                                                                      |
+| `add`                                                                                     | O(1)               | 未整列領域へ置く。                                                                        |
+| `addAll`                                                                                  | O(m)               | —                                                                                         |
+| `set`・`relax`                                                                            | O(log s)           | 対象が未整列領域にあれば O(1)。                                                           |
+| ヒープ性の復元                                                                            | O(min(s, k log s)) | 未整列要素がある場合に `peek`・`poll` や、ヒープ領域内の添字の `remove` の直前で1回行う。 |
+| `peek`・`peekIndex`・`peekSecond`                                                         | O(1)               | 未整列要素があれば復元コストを加える。                                                    |
+| `poll`・`pollIndex`                                                                       | O(log s)           | 未整列要素があれば復元コストを加える。                                                    |
+| `remove`                                                                                  | O(log s)           | 未整列領域の添字は O(1)。ヒープ領域の添字で未整列要素があれば復元コストを加える。         |
+| `get`・`getLast`・`containsIndex`・`hasCost`・`size`・`indexCount`・`clear`・iterator生成 | O(1)               | —                                                                                         |
+| 走査・`contains`・配列化                                                                  | O(s)               | —                                                                                         |
+
+ヒープ性の復元方式の選択は [PriorityQueue 利用ガイド](./PriorityQueueGuide.md#性能特性) と同じである。ヒープ領域内の `set` でコストが劣化した場合は、ヒープ領域の範囲内だけで `siftDown` する。
+
+- **空間計算量**: O(n)。コスト・ヒープ・位置の3本の配列を保持する。
 
 ## 実装履歴
 
-| バージョン番号     | 年月日     | 詳細                                                                                                                                                                            |
-|--------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **バージョン 4.0** | 2026-07-20 | generic版の自然順序/Comparator構築、Primitive Comparator、`add` / `remove`のboolean化、default系、配列構築、`generate`、`indexCount`を追加し、bulk操作とiteratorのheapifyを遅延 |
-| **バージョン 3.0** | 2026-07-18 | `setAll`を追加し、`set` / `relax`が未整列領域を展開しないよう改善                                                                                                               |
-| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによる$\mathcal{O}(1)$ clear、`set`、active限定getter、`getLast`を追加                                                                                 |
-| **バージョン 1.0** | 2025-10-07 | long costのIndexedPriorityQueueとして初回実装                                                                                                                                   |
+| バージョン         | 日付       | 対象クラス・変更内容                                                                                                                                                                                                                                                                                                                               |
+|--------------------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **バージョン 1.0** | 2025-10-07 | long costのIndexedPriorityQueueとして初回実装                                                                                                                                                                                                                                                                                                      |
+| **バージョン 2.0** | 2026-07-18 | Int/Long版へ分割し、stampによる$\mathcal{O}(1)$ clear、`set`、active限定getter、`getLast`を追加                                                                                                                                                                                                                                                    |
+| **バージョン 3.0** | 2026-07-18 | `setAll`を追加し、`set` / `relax`が未整列領域を展開しないよう改善                                                                                                                                                                                                                                                                                  |
+| **バージョン 4.0** | 2026-07-20 | generic版の自然順序/Comparator構築、Primitive Comparator、`add` / `remove`のboolean化、default系、配列構築、`generate`、`indexCount`を追加し、bulk操作とiteratorのheapifyを遅延                                                                                                                                                                    |
+| **バージョン 5.0** | 2026-10-28 | 全クラス: コピーコンストラクタを追加し、`setAll` が自身を返すよう、`set` が新規登録したかを boolean で返すよう変更。`remove` が未整列領域の添字をヒープを復元せず O(1) で外すよう改善。登録処理を `append`、配列からの構築を `build` へ集約し、`siftDown` の2引数版を廃止。LongIndexedPriorityQueue: private コンストラクタの位置を Int 版へ揃えた |

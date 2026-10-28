@@ -2,6 +2,7 @@ package unit.ds.priorityqueue;
 
 import java.util.*;
 
+import lib.ds.*;
 import lib.ds.priorityqueue.*;
 import lib.ds.priorityqueue.PriorityQueue;
 import lib.util.function.*;
@@ -17,6 +18,7 @@ public final class Test {
 		checkConstructorsAndDefaults();
 		checkLazyUpdateBoundary();
 		checkCollections();
+		checkCopiesAndCollectionConstructors();
 		checkRandom(false);
 		checkRandom(true);
 	}
@@ -115,8 +117,8 @@ public final class Test {
 		check(q.peekIndex() == 1);
 		check(q.get(0) == 5);
 
-		q.set(0, 1);
-		q.set(2, 10);
+		check(!q.set(0, 1));
+		check(!q.set(2, 10));
 		check(q.peek() == 1);
 		check(q.relax(2, 2));
 		check(!q.relax(2, 4));
@@ -156,7 +158,7 @@ public final class Test {
 	private static void checkLongIndexed() {
 		final LongIndexedPriorityQueue q = new LongIndexedPriorityQueue(4);
 		q.add(0, 5_000_000_000L);
-		q.set(1, 3_000_000_000L);
+		check(q.set(1, 3_000_000_000L));
 		check(q.relax(0, 2_000_000_000L));
 		check(q.pollIndex() == 0);
 		check(q.getLast(0) == 2_000_000_000L);
@@ -179,7 +181,7 @@ public final class Test {
 		final IndexedPriorityQueue<Job> jobs = new IndexedPriorityQueue<>(3, Comparator.comparingInt(Job::priority));
 		jobs.add(0, new Job(4, "d"));
 		jobs.add(1, new Job(2, "b"));
-		jobs.set(2, new Job(3, "c"));
+		check(jobs.set(2, new Job(3, "c")));
 		check(jobs.peekIndex() == 1);
 		check(jobs.relax(0, new Job(1, "a")));
 		check(jobs.poll().name().equals("a"));
@@ -208,7 +210,7 @@ public final class Test {
 		iq.add(2, 3);
 		check(iq.peek() == 1);
 		iq.add(3, 0);
-		iq.set(0, 10);
+		check(!iq.set(0, 10));
 		check(iq.peek() == 0);
 		check(iq.get(0) == 10);
 
@@ -220,6 +222,21 @@ public final class Test {
 		lq.add(3, 4);
 		check(lq.relax(2, 12));
 		check(lq.peek() == 12);
+
+		final IntIndexedPriorityQueue uq = new IntIndexedPriorityQueue(4);
+		uq.add(0, 5);
+		check(uq.peek() == 5);
+		uq.add(1, 1);
+		uq.add(2, 3);
+		uq.add(3, 2);
+		check(uq.remove(1));
+		check(uq.remove(3));
+		check(!uq.remove(3));
+		check(uq.getLast(1) == 1);
+		check(uq.size() == 2);
+		check(uq.poll() == 3);
+		check(uq.poll() == 5);
+		check(uq.isEmpty());
 	}
 
 	private static void checkCollections() {
@@ -242,6 +259,61 @@ public final class Test {
 		check(!indexed.contains(0));
 	}
 
+	private static void checkCopiesAndCollectionConstructors() {
+		final IntPriorityQueue iq = new IntPriorityQueue(new int[]{4, 1, 3});
+		final IntPriorityQueue iqCopy = new IntPriorityQueue(iq);
+		check(iqCopy.poll() == 1);
+		check(iq.size() == 3);
+		check(iq.capacity() == iqCopy.capacity());
+		final IntPriorityQueue iqDesc = new IntPriorityQueue(iq, true);
+		check(iqDesc.peek() == 4);
+		check(new IntPriorityQueue(iq, IntComparator.reverseOrder()).peek() == 4);
+		check(iq.addAll(iq));
+		check(iq.size() == 6);
+		check(iq.addAll((Iterable<Integer>) iqCopy));
+		check(iq.size() == 8);
+		check(!iq.addAll(new IntPriorityQueue()));
+
+		final LongPriorityQueue lq = new LongPriorityQueue(new long[]{4, 1, 3}, true);
+		final LongPriorityQueue lqCopy = new LongPriorityQueue(lq);
+		check(lqCopy.poll() == 4);
+		check(lq.peek() == 4);
+		check(new LongPriorityQueue((LongCollection) lq).peek() == 1);
+		check(new LongPriorityQueue(lq, true).peek() == 4);
+		check(new LongPriorityQueue(lq, LongComparator.naturalOrder()).peek() == 1);
+		check(lq.addAll(lqCopy));
+		check(lq.size() == 5);
+
+		final PriorityQueue<Integer> gq = new PriorityQueue<>(List.of(5, 2, 8));
+		check(gq.peek() == 2);
+		check(new PriorityQueue<>(List.of(5, 2, 8), true).peek() == 8);
+		check(new PriorityQueue<>(List.of("bb", "a"), Comparator.comparingInt(String::length)).peek().equals("a"));
+		final PriorityQueue<Integer> gqCopy = new PriorityQueue<>(gq);
+		check(gqCopy.poll() == 2);
+		check(gq.size() == 3);
+		check(PriorityQueue.<Integer>naturalOrder(4).capacity() == 4);
+		check(PriorityQueue.reverseOrder(new Integer[]{1, 3}).peek() == 3);
+
+		final IntIndexedPriorityQueue ii = new IntIndexedPriorityQueue(4).setAll(i -> 10 - i);
+		check(ii.peekIndex() == 3);
+		final IntIndexedPriorityQueue iiCopy = new IntIndexedPriorityQueue(ii);
+		check(iiCopy.pollIndex() == 3);
+		check(ii.containsIndex(3));
+		check(!iiCopy.containsIndex(3));
+		check(iiCopy.getLast(3) == 7);
+
+		final LongIndexedPriorityQueue li = new LongIndexedPriorityQueue(3, true).setAll(i -> i * 1_000_000_000_000L);
+		final LongIndexedPriorityQueue liCopy = new LongIndexedPriorityQueue(li);
+		check(liCopy.poll() == 2_000_000_000_000L);
+		check(li.peek() == 2_000_000_000_000L);
+
+		final IndexedPriorityQueue<String> gi = new IndexedPriorityQueue<String>(3).setAll(i -> "c" + i);
+		final IndexedPriorityQueue<String> giCopy = new IndexedPriorityQueue<>(gi);
+		check(giCopy.pollIndex() == 0);
+		check(gi.peekIndex() == 0);
+		check(!gi.isEmpty());
+	}
+
 	private static void checkRandom(final boolean descending) {
 		final int n = 32;
 		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n, descending);
@@ -253,7 +325,7 @@ public final class Test {
 			final int c = random.nextInt(1_000);
 			switch (random.nextInt(6)) {
 				case 0 -> {
-					q.set(i, c);
+					check(q.set(i, c) == (state[i] != 1));
 					state[i] = 1;
 					cost[i] = c;
 				}

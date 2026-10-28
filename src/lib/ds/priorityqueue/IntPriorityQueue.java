@@ -8,93 +8,89 @@ import lib.ds.*;
 import lib.util.function.*;
 
 /**
- * 競技プログラミング向けのint型優先度キューです。
+ * int値の可変容量の優先度キュー。比較順で先頭となる値を最優先とし、同順位の値の取り出し順は規定しない。
+ * 比較順は昇順・降順・IntComparator から選ぶ。初期容量は1未満なら1とし、容量不足時は2倍へ拡張する。
+ * add・addAll・配列や IntCollection からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
+ * addAll は1件以上追加した場合に true を返す。clear は内部配列を再利用する。
+ * 空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
+ * 走査はヒープを復元せず、内部配列の順に行う。
  */
-@SuppressWarnings("unused")
 public final class IntPriorityQueue implements IntCollection {
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
 	private final boolean isDescendingOrder;
 	private final IntComparator comparator;
 	private int[] buf;
-	private int size, capacity, unsortedCount;
+	private int size, unsortedCount;
 
-	/**
-	 * 昇順のキューを構築します。
-	 */
 	public IntPriorityQueue() {
 		this(DEFAULT_INITIAL_CAPACITY, false, null);
 	}
 
-	/**
-	 * 指定した初期容量で昇順のキューを構築します。
-	 */
 	public IntPriorityQueue(final int initialCapacity) {
 		this(initialCapacity, false, null);
 	}
 
-	/**
-	 * 昇順または降順のキューを構築します。
-	 */
 	public IntPriorityQueue(final boolean isDescendingOrder) {
 		this(DEFAULT_INITIAL_CAPACITY, isDescendingOrder, null);
 	}
 
-	/**
-	 * 指定した初期容量で昇順または降順のキューを構築します。
-	 */
 	public IntPriorityQueue(final int initialCapacity, final boolean isDescendingOrder) {
 		this(initialCapacity, isDescendingOrder, null);
 	}
 
-	/**
-	 * 指定したComparatorでキューを構築します。
-	 */
 	public IntPriorityQueue(final IntComparator comparator) {
 		this(DEFAULT_INITIAL_CAPACITY, false, Objects.requireNonNull(comparator));
 	}
 
-	/**
-	 * 指定した初期容量とComparatorでキューを構築します。
-	 */
 	public IntPriorityQueue(final int initialCapacity, final IntComparator comparator) {
 		this(initialCapacity, false, Objects.requireNonNull(comparator));
 	}
 
-	/**
-	 * 配列の全要素を持つ昇順のキューを構築します。
-	 */
 	public IntPriorityQueue(final int[] values) {
 		this(values, false);
 	}
 
-	/**
-	 * 配列の全要素を持つ昇順または降順のキューを構築します。
-	 */
 	public IntPriorityQueue(final int[] values, final boolean isDescendingOrder) {
-		this(max(1, values.length), isDescendingOrder, null);
-		System.arraycopy(values, 0, buf, 0, values.length);
-		size = unsortedCount = values.length;
+		this(values.length, isDescendingOrder, null);
+		addAll(values);
+	}
+
+	public IntPriorityQueue(final int[] values, final IntComparator comparator) {
+		this(values.length, false, Objects.requireNonNull(comparator));
+		addAll(values);
+	}
+
+	public IntPriorityQueue(final IntCollection values) {
+		this(values, false);
+	}
+
+	public IntPriorityQueue(final IntCollection values, final boolean isDescendingOrder) {
+		this(values.size(), isDescendingOrder, null);
+		addAll(values);
+	}
+
+	public IntPriorityQueue(final IntCollection values, final IntComparator comparator) {
+		this(values.size(), false, Objects.requireNonNull(comparator));
+		addAll(values);
 	}
 
 	/**
-	 * 配列の全要素を持つComparator順のキューを構築します。
+	 * 比較順・要素・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
 	 */
-	public IntPriorityQueue(final int[] values, final IntComparator comparator) {
-		this(max(1, values.length), false, Objects.requireNonNull(comparator));
-		System.arraycopy(values, 0, buf, 0, values.length);
-		size = unsortedCount = values.length;
+	public IntPriorityQueue(final IntPriorityQueue other) {
+		isDescendingOrder = other.isDescendingOrder;
+		comparator = other.comparator;
+		buf = other.buf.clone();
+		size = other.size;
+		unsortedCount = other.unsortedCount;
 	}
 
 	private IntPriorityQueue(final int initialCapacity, final boolean isDescendingOrder, final IntComparator comparator) {
-		capacity = max(1, initialCapacity);
 		this.isDescendingOrder = isDescendingOrder;
 		this.comparator = comparator;
-		buf = new int[capacity];
+		buf = new int[max(1, initialCapacity)];
 	}
 
-	/**
-	 * 要素を追加します。
-	 */
 	public boolean add(final int v) {
 		ensureCapacity(size + 1);
 		buf[size++] = v;
@@ -102,9 +98,6 @@ public final class IntPriorityQueue implements IntCollection {
 		return true;
 	}
 
-	/**
-	 * 配列の全要素を追加します。
-	 */
 	public boolean addAll(final int[] values) {
 		final int n = values.length;
 		if (n == 0) return false;
@@ -115,10 +108,18 @@ public final class IntPriorityQueue implements IntCollection {
 		return true;
 	}
 
-	/**
-	 * Iterableの全要素を追加します。
-	 */
+	public boolean addAll(final IntCollection values) {
+		final int n = values.size();
+		if (n == 0) return false;
+		ensureCapacity(size + n);
+		final PrimitiveIterator.OfInt it = values.iterator();
+		for (int i = 0; i < n; i++) buf[size++] = it.nextInt();
+		unsortedCount += n;
+		return true;
+	}
+
 	public boolean addAll(final Iterable<Integer> values) {
+		if (values instanceof final IntCollection c) return addAll(c);
 		if (values instanceof final Collection<Integer> c) {
 			final int n = c.size();
 			if (n == 0) return false;
@@ -135,24 +136,18 @@ public final class IntPriorityQueue implements IntCollection {
 		return changed;
 	}
 
-	/**
-	 * 最優先要素を返します。
-	 */
 	public int peek() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
 		return buf[0];
 	}
 
-	/**
-	 * 空ならdefaultValue、そうでなければ最優先要素を返します。
-	 */
 	public int peekOrDefault(final int defaultValue) {
 		return isEmpty() ? defaultValue : peek();
 	}
 
 	/**
-	 * 2番目に優先される要素を返します。
+	 * 2番目に優先される値を返す。要素数は2以上とする。
 	 */
 	public int peekSecond() {
 		if (size < 2) throw new NoSuchElementException();
@@ -161,9 +156,6 @@ public final class IntPriorityQueue implements IntCollection {
 		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
 	}
 
-	/**
-	 * 最優先要素を削除して返します。
-	 */
 	public int poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -172,49 +164,36 @@ public final class IntPriorityQueue implements IntCollection {
 		return res;
 	}
 
-	/**
-	 * 空ならdefaultValue、そうでなければ最優先要素を削除して返します。
-	 */
 	public int pollOrDefault(final int defaultValue) {
 		return isEmpty() ? defaultValue : poll();
 	}
 
 	/**
-	 * 最優先要素を置き換え、置き換え前の値を返します。
+	 * 最優先の値を v に置き換え、置き換え前の値を返す。poll と add を続けて行うより速い。
 	 */
 	public int replaceTop(final int v) {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
 		final int res = buf[0];
-		buf[0] = v;
 		siftDown(v, 0);
 		return res;
 	}
 
-	/**
-	 * 現在の要素数を返します。
-	 */
 	public int size() {
 		return size;
 	}
 
 	/**
-	 * 現在の内部配列容量を返します。
+	 * 内部配列の長さを返す。
 	 */
 	public int capacity() {
-		return capacity;
+		return buf.length;
 	}
 
-	/**
-	 * 全要素を削除します。
-	 */
 	public void clear() {
 		size = unsortedCount = 0;
 	}
 
-	/**
-	 * 内部順で要素を走査するIteratorを返します。
-	 */
 	public PrimitiveIterator.OfInt iterator() {
 		return new PrimitiveIterator.OfInt() {
 			private int i;
@@ -236,10 +215,10 @@ public final class IntPriorityQueue implements IntCollection {
 	}
 
 	private void ensureCapacity(final int required) {
-		if (required <= capacity) return;
-		int newCapacity = capacity;
+		if (required <= buf.length) return;
+		int newCapacity = buf.length;
 		while (newCapacity < required) newCapacity <<= 1;
-		buf = Arrays.copyOf(buf, capacity = newCapacity);
+		buf = Arrays.copyOf(buf, newCapacity);
 	}
 
 	private void ensureHeapProperty() {
