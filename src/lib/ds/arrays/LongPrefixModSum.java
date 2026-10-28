@@ -47,7 +47,7 @@ public final class LongPrefixModSum implements LongArray {
 		return res < 0 ? res + mod : res;
 	}
 
-	public long sum() {
+	public long sumAll() {
 		return pref[size];
 	}
 

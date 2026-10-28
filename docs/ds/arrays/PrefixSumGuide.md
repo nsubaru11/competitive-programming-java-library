@@ -68,7 +68,7 @@
 | Constructor | `IntPrefixSum(IntArray a)`                   | —                         | 指定配列の論理順で構築する。入力は変更しない。                                     |
 | Method      | `size()`                                     | `int`                     | 要素数を返す。                                                                     |
 | Method      | `get(int i)`                                 | `int`                     | 指定した有効な論理添字の値を返す。                                                 |
-| Method      | `sum()`                                      | `long`                    | 全要素の和を返す。                                                                 |
+| Method      | `sumAll()`                                   | `long`                    | 全要素の和を返す。                                                                 |
 | Method      | `sum(int i)`                                 | `long`                    | 閉区間 [0, i] の和を返す。                                                         |
 | Method      | `sum(int i, int j)`                          | `long`                    | 閉区間 [i, j] の和を返す。                                                         |
 | Method      | `iterator()`                                 | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
@@ -83,7 +83,7 @@
 | Constructor | `LongPrefixSum(LongArray a)`                   | —                          | 指定配列の論理順で構築する。入力は変更しない。                                     |
 | Method      | `size()`                                       | `int`                      | 要素数を返す。                                                                     |
 | Method      | `get(int i)`                                   | `long`                     | 指定した有効な論理添字の値を返す。                                                 |
-| Method      | `sum()`                                        | `long`                     | 全要素の和を返す。                                                                 |
+| Method      | `sumAll()`                                     | `long`                     | 全要素の和を返す。                                                                 |
 | Method      | `sum(int i)`                                   | `long`                     | 閉区間 [0, i] の和を返す。                                                         |
 | Method      | `sum(int i, int j)`                            | `long`                     | 閉区間 [i, j] の和を返す。                                                         |
 | Method      | `iterator()`                                   | `PrimitiveIterator.OfLong` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
@@ -99,7 +99,7 @@
 | Method      | `inRange(int i, int j)`                                | `boolean`                 | 0 <= i < h かつ 0 <= j < w かを返す。                                        |
 | Method      | `get(int i, int j)`                                    | `int`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, int defaultValue)`         | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                | `long`                    | 全要素の和を返す。                                                           |
+| Method      | `sumAll()`                                             | `long`                    | 全要素の和を返す。                                                           |
 | Method      | `sum(int i, int j)`                                    | `long`                    | 閉矩形[0, i] x [0, j]の和を返す。                                            |
 | Method      | `sum(int i1, int j1, int i2, int j2)`                  | `long`                    | 閉矩形[i1, i2] x [j1, j2]の和を返す。                                        |
 | Method      | `iterator()`                                           | `PrimitiveIterator.OfInt` | 元の値を行優先順に走査する。                                                 |
@@ -116,7 +116,7 @@
 | Method      | `inRange(int i, int j)`                                       | `boolean`                  | 0 <= i < h かつ 0 <= j < w かを返す。                                        |
 | Method      | `get(int i, int j)`                                           | `long`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, long defaultValue)`               | `long`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                       | `long`                     | 全要素の和を返す。                                                           |
+| Method      | `sumAll()`                                                    | `long`                     | 全要素の和を返す。                                                           |
 | Method      | `sum(int i, int j)`                                           | `long`                     | 閉矩形[0, i] x [0, j]の和を返す。                                            |
 | Method      | `sum(int i1, int j1, int i2, int j2)`                         | `long`                     | 閉矩形[i1, i2] x [j1, j2]の和を返す。                                        |
 | Method      | `iterator()`                                                  | `PrimitiveIterator.OfLong` | 元の値を行優先順に走査する。                                                 |
@@ -133,7 +133,7 @@
 | Method      | `inRange(int i, int j, int k)`                                 | `boolean`                 | 0 <= i < d かつ 0 <= j < h かつ 0 <= k < w かを返す。                        |
 | Method      | `get(int i, int j, int k)`                                     | `int`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, int k, int defaultValue)`          | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                        | `long`                    | 全要素の和を返す。                                                           |
+| Method      | `sumAll()`                                                     | `long`                    | 全要素の和を返す。                                                           |
 | Method      | `sum(int i, int j, int k)`                                     | `long`                    | 閉直方体[0, i] x [0, j] x [0, k]の和を返す。                                 |
 | Method      | `sum(int i1, int j1, int k1, int i2, int j2, int k2)`          | `long`                    | 閉直方体[i1, i2] x [j1, j2] x [k1, k2]の和を返す。                           |
 | Method      | `iterator()`                                                   | `PrimitiveIterator.OfInt` | 元の値を i, j, k の辞書順に走査する。                                        |
@@ -150,7 +150,7 @@
 | Method      | `inRange(int i, int j, int k)`                                        | `boolean`                  | 0 <= i < d かつ 0 <= j < h かつ 0 <= k < w かを返す。                        |
 | Method      | `get(int i, int j, int k)`                                            | `long`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, int k, long defaultValue)`                | `long`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                               | `long`                     | 全要素の和を返す。                                                           |
+| Method      | `sumAll()`                                                            | `long`                     | 全要素の和を返す。                                                           |
 | Method      | `sum(int i, int j, int k)`                                            | `long`                     | 閉直方体[0, i] x [0, j] x [0, k]の和を返す。                                 |
 | Method      | `sum(int i1, int j1, int k1, int i2, int j2, int k2)`                 | `long`                     | 閉直方体[i1, i2] x [j1, j2] x [k1, k2]の和を返す。                           |
 | Method      | `iterator()`                                                          | `PrimitiveIterator.OfLong` | 元の値を i, j, k の辞書順に走査する。                                        |
@@ -166,7 +166,7 @@
 | Constructor | `IntPrefixModSum(IntArray a, int mod)`                   | —                         | 指定配列の論理順で構築する。入力は変更しない。                                     |
 | Method      | `size()`                                                 | `int`                     | 要素数を返す。                                                                     |
 | Method      | `get(int i)`                                             | `int`                     | 指定した有効な論理添字の値を返す。                                                 |
-| Method      | `sum()`                                                  | `int`                     | 全要素の和を法modで返す。                                                          |
+| Method      | `sumAll()`                                               | `int`                     | 全要素の和を法modで返す。                                                          |
 | Method      | `sum(int i)`                                             | `int`                     | 閉区間 [0, i] の和を法modで返す。                                                  |
 | Method      | `sum(int i, int j)`                                      | `int`                     | 閉区間 [i, j] の和を法modで返す。                                                  |
 | Method      | `iterator()`                                             | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
@@ -181,7 +181,7 @@
 | Constructor | `LongPrefixModSum(LongArray a, long mod)`                   | —                          | 指定配列の論理順で構築する。入力は変更しない。                                     |
 | Method      | `size()`                                                    | `int`                      | 要素数を返す。                                                                     |
 | Method      | `get(int i)`                                                | `long`                     | 指定した有効な論理添字の値を返す。                                                 |
-| Method      | `sum()`                                                     | `long`                     | 全要素の和を法modで返す。                                                          |
+| Method      | `sumAll()`                                                  | `long`                     | 全要素の和を法modで返す。                                                          |
 | Method      | `sum(int i)`                                                | `long`                     | 閉区間 [0, i] の和を法modで返す。                                                  |
 | Method      | `sum(int i, int j)`                                         | `long`                     | 閉区間 [i, j] の和を法modで返す。                                                  |
 | Method      | `iterator()`                                                | `PrimitiveIterator.OfLong` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
@@ -197,7 +197,7 @@
 | Method      | `inRange(int i, int j)`                                            | `boolean`                 | 0 <= i < h かつ 0 <= j < w かを返す。                                        |
 | Method      | `get(int i, int j)`                                                | `int`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, int defaultValue)`                     | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                            | `int`                     | 全要素の和を法modで返す。                                                    |
+| Method      | `sumAll()`                                                         | `int`                     | 全要素の和を法modで返す。                                                    |
 | Method      | `sum(int i, int j)`                                                | `int`                     | 閉矩形[0, i] x [0, j]の和を法modで返す。                                     |
 | Method      | `sum(int i1, int j1, int i2, int j2)`                              | `int`                     | 閉矩形[i1, i2] x [j1, j2]の和を法modで返す。                                 |
 | Method      | `iterator()`                                                       | `PrimitiveIterator.OfInt` | 元の値を行優先順に走査する。                                                 |
@@ -214,7 +214,7 @@
 | Method      | `inRange(int i, int j)`                                                    | `boolean`                  | 0 <= i < h かつ 0 <= j < w かを返す。                                        |
 | Method      | `get(int i, int j)`                                                        | `long`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, long defaultValue)`                            | `long`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                                    | `long`                     | 全要素の和を法modで返す。                                                    |
+| Method      | `sumAll()`                                                                 | `long`                     | 全要素の和を法modで返す。                                                    |
 | Method      | `sum(int i, int j)`                                                        | `long`                     | 閉矩形[0, i] x [0, j]の和を法modで返す。                                     |
 | Method      | `sum(int i1, int j1, int i2, int j2)`                                      | `long`                     | 閉矩形[i1, i2] x [j1, j2]の和を法modで返す。                                 |
 | Method      | `iterator()`                                                               | `PrimitiveIterator.OfLong` | 元の値を行優先順に走査する。                                                 |
@@ -231,7 +231,7 @@
 | Method      | `inRange(int i, int j, int k)`                                             | `boolean`                 | 0 <= i < d かつ 0 <= j < h かつ 0 <= k < w かを返す。                        |
 | Method      | `get(int i, int j, int k)`                                                 | `int`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, int k, int defaultValue)`                      | `int`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                                    | `int`                     | 全要素の和を法modで返す。                                                    |
+| Method      | `sumAll()`                                                                 | `int`                     | 全要素の和を法modで返す。                                                    |
 | Method      | `sum(int i, int j, int k)`                                                 | `int`                     | 閉直方体[0, i] x [0, j] x [0, k]の和を法modで返す。                          |
 | Method      | `sum(int i1, int j1, int k1, int i2, int j2, int k2)`                      | `int`                     | 閉直方体[i1, i2] x [j1, j2] x [k1, k2]の和を法modで返す。                    |
 | Method      | `iterator()`                                                               | `PrimitiveIterator.OfInt` | 元の値を i, j, k の辞書順に走査する。                                        |
@@ -248,7 +248,7 @@
 | Method      | `inRange(int i, int j, int k)`                                                     | `boolean`                  | 0 <= i < d かつ 0 <= j < h かつ 0 <= k < w かを返す。                        |
 | Method      | `get(int i, int j, int k)`                                                         | `long`                     | 指定位置の元の値を返す。                                                     |
 | Method      | `getOrDefault(int i, int j, int k, long defaultValue)`                             | `long`                     | 指定した座標の値を返す。いずれかの座標が範囲外の場合は defaultValue を返す。 |
-| Method      | `sum()`                                                                            | `long`                     | 全要素の和を法modで返す。                                                    |
+| Method      | `sumAll()`                                                                         | `long`                     | 全要素の和を法modで返す。                                                    |
 | Method      | `sum(int i, int j, int k)`                                                         | `long`                     | 閉直方体[0, i] x [0, j] x [0, k]の和を法modで返す。                          |
 | Method      | `sum(int i1, int j1, int k1, int i2, int j2, int k2)`                              | `long`                     | 閉直方体[i1, i2] x [j1, j2] x [k1, k2]の和を法modで返す。                    |
 | Method      | `iterator()`                                                                       | `PrimitiveIterator.OfLong` | 元の値を i, j, k の辞書順に走査する。                                        |
@@ -309,3 +309,4 @@
 | **バージョン 6.2** | 2026-10-27 | getと1D区間和で配列アクセスと重複する範囲検査を削除。座標変換で必要な内側の軸と区間順序の検査は維持                                                                          |
 | **バージョン 6.3** | 2026-10-27 | 全12クラス: 構築処理を build へ集約。IntPrefixSum2D / LongPrefixSum2D: toString に空判定を追加                                                                               |
 | **バージョン 7.0** | 2026-10-27 | IntPrefixSum3D / LongPrefixSum3D / IntPrefixModSum3D / LongPrefixModSum3D: 初期化関数を座標を受け取る IntTernaryOperator / IntTernaryToLongFunction へ変更し、inRange を追加 |
+| **バージョン 8.0** | 2026-10-29 | 全12クラス: 全要素の和を返す `sum()` を fenwick と同じ `sumAll()` へ改名                                                                                                     |

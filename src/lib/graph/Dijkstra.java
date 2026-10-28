@@ -60,7 +60,7 @@ public final class Dijkstra {
 			}
 		}
 		final long[] res = new long[graph.n];
-		setAll(res, i -> dist.getLastOrDefault(i, INF));
+		setAll(res, i -> dist.getCostOrDefault(i, INF));
 		return new PathResult(s, res, parent);
 	}
 
@@ -115,7 +115,7 @@ public final class Dijkstra {
 				dist.relax(v, du + c);
 			}
 		}
-		return dist.getLastOrDefault(g, INF);
+		return dist.getCostOrDefault(g, INF);
 	}
 
 	/**

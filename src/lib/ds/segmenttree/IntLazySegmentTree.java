@@ -17,8 +17,8 @@ import lib.ds.*;
  * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
  */
 public final class IntLazySegmentTree implements IntCollection {
-	private static final IntBinaryOperator DEFAULT_MAPPING = (f, _) -> f;
-	private static final IntBinaryOperator DEFAULT_COMPOSITION = (f, _) -> f;
+	private static final IntBinaryOperator DEFAULT_MAPPING = (f, x) -> f;
+	private static final IntBinaryOperator DEFAULT_COMPOSITION = (f, g) -> f;
 	private final int n, size, log, identity;
 	private final IntBinaryOperator operator, mapping, composition;
 	private final int[] tree, lazy;
@@ -89,10 +89,10 @@ public final class IntLazySegmentTree implements IntCollection {
 	public int set(final int i, final int v) {
 		final int idx = size + Objects.checkIndex(i, n);
 		pushPath(idx);
-		final int prev = tree[idx];
+		final int old = tree[idx];
 		tree[idx] = v;
 		updatePath(idx);
-		return prev;
+		return old;
 	}
 
 	public int apply(final int i, final int f) {

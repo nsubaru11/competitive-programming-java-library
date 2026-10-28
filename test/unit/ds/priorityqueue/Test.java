@@ -126,23 +126,25 @@ public final class Test {
 		check(q.pollIndex() == 0);
 		check(!q.containsIndex(0));
 		check(q.hasCost(0));
-		check(q.getLast(0) == 1);
+		check(q.getCost(0) == 1);
 		check(!q.relax(0, 0));
 		check(q.add(0, 6));
 		check(q.get(0) == 6);
 
 		check(q.remove(2));
 		check(!q.remove(2));
-		check(q.getLast(2) == 2);
+		check(q.getCost(2) == 2);
 
 		q.clear();
 		check(!q.hasCost(0));
-		check(q.addAll(new int[]{0, 0, 3, 4}, new int[]{7, 9, 1, 5}));
+		check(q.add(0, 7));
+		check(!q.add(0, 9));
+		check(q.add(3, 1));
+		check(q.add(4, 5));
 		check(q.get(0) == 7);
 		check(q.poll() == 1);
 		check(q.poll() == 5);
 		check(q.poll() == 7);
-		check(!q.addAll(new int[0], new int[0]));
 
 		final IntIndexedPriorityQueue max = new IntIndexedPriorityQueue(4, true);
 		max.add(0, 2);
@@ -152,7 +154,7 @@ public final class Test {
 		check(max.relax(0, 6));
 		check(!max.relax(2, 1));
 		check(max.pollIndex() == 0);
-		check(max.getLast(0) == 6);
+		check(max.getCost(0) == 6);
 	}
 
 	private static void checkLongIndexed() {
@@ -161,10 +163,10 @@ public final class Test {
 		check(q.set(1, 3_000_000_000L));
 		check(q.relax(0, 2_000_000_000L));
 		check(q.pollIndex() == 0);
-		check(q.getLast(0) == 2_000_000_000L);
+		check(q.getCost(0) == 2_000_000_000L);
 		check(q.getOrDefault(0, -1) == -1);
 		q.clear();
-		check(q.getLastOrDefault(0, -1) == -1);
+		check(q.getCostOrDefault(0, -1) == -1);
 	}
 
 	private static void checkGenericIndexed() {
@@ -172,7 +174,7 @@ public final class Test {
 		check(natural.peek().equals("a"));
 		check(natural.peekSecond().equals("b"));
 		check(natural.pollIndex() == 1);
-		check(natural.getLast(1).equals("a"));
+		check(natural.getCost(1).equals("a"));
 		check(natural.add(1, "d"));
 		check(!natural.add(1, "e"));
 		check(natural.remove(1));
@@ -232,7 +234,7 @@ public final class Test {
 		check(uq.remove(1));
 		check(uq.remove(3));
 		check(!uq.remove(3));
-		check(uq.getLast(1) == 1);
+		check(uq.getCost(1) == 1);
 		check(uq.size() == 2);
 		check(uq.poll() == 3);
 		check(uq.poll() == 5);
@@ -300,7 +302,7 @@ public final class Test {
 		check(iiCopy.pollIndex() == 3);
 		check(ii.containsIndex(3));
 		check(!iiCopy.containsIndex(3));
-		check(iiCopy.getLast(3) == 7);
+		check(iiCopy.getCost(3) == 7);
 
 		final LongIndexedPriorityQueue li = new LongIndexedPriorityQueue(3, true).setAll(i -> i * 1_000_000_000_000L);
 		final LongIndexedPriorityQueue liCopy = new LongIndexedPriorityQueue(li);
@@ -377,7 +379,7 @@ public final class Test {
 				check(q.containsIndex(j) == (state[j] == 1));
 				check(q.hasCost(j) == (state[j] != 0));
 				check(q.getOrDefault(j, -1) == (state[j] == 1 ? cost[j] : -1));
-				check(q.getLastOrDefault(j, -1) == (state[j] != 0 ? cost[j] : -1));
+				check(q.getCostOrDefault(j, -1) == (state[j] != 0 ? cost[j] : -1));
 				if (state[j] == 1) size++;
 			}
 			check(q.size() == size);

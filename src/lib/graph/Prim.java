@@ -79,7 +79,7 @@ public final class Prim {
 			while (!pq.isEmpty()) {
 				final int u = pq.pollIndex();
 				if (parentEdge[u] != -1) {
-					total += pq.getLast(u);
+					total += pq.getCost(u);
 					edgeIds[selected++] = parentEdge[u];
 				}
 				for (int e = first[u]; e != -1; e = next[e]) {
@@ -103,7 +103,7 @@ public final class Prim {
 			pq.add(i, 0);
 			while (!pq.isEmpty()) {
 				final int u = pq.pollIndex();
-				total += pq.getLast(u);
+				total += pq.getCost(u);
 				for (int e = first[u]; e != -1; e = next[e]) {
 					pq.relax(dest[e], cost[e]);
 				}

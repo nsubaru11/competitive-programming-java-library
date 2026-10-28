@@ -56,9 +56,9 @@
 | Method      | `addOrDefault(int a, int b, int delta, int absentValue)`                        | `int`     | 存在すれば delta を加え、未存在なら absentValue を挿入する。格納した値を返す。        |
 | Method      | `remove(int a, int b)`                                                          | `int`     | キー (a, b) を削除し、削除した値を返す。未存在なら defaultValue を返す。              |
 | Method      | `containsKey(int a, int b)`                                                     | `boolean` | キー (a, b) が存在するかを返す。                                                      |
-| Method      | `merge(int a, int b, int value, IntBinaryOperator op)`                          | `int`     | 存在すれば op(既存値, value)、未存在なら value を格納し、格納した値を返す。           |
+| Method      | `merge(int a, int b, int value, IntBinaryOperator f)`                           | `int`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。            |
 | Method      | `putIfAbsent(int a, int b, int value)`                                          | `int`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。     |
-| Method      | `computeIfAbsent(int a, int b, IntBinaryOperator op)`                           | `int`     | 未存在なら op(a, b) を挿入して返す。存在すれば op を呼ばずに既存値を返す。            |
+| Method      | `computeIfAbsent(int a, int b, IntBinaryOperator f)`                            | `int`     | 未存在なら f(a, b) を挿入して返す。存在すれば f を呼ばずに既存値を返す。              |
 | Method      | `mergeMin(int a, int b, int value)`                                             | `int`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
 | Method      | `mergeMax(int a, int b, int value)`                                             | `int`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
 | Method      | `clear()`                                                                       | `void`    | 全エントリを O(1) で削除する。容量は変えない。                                        |
@@ -99,9 +99,9 @@
 | Method      | `addOrDefault(int a, int b, long delta, long absentValue)`                       | `long`     | 存在すれば delta を加え、未存在なら absentValue を挿入する。格納した値を返す。        |
 | Method      | `remove(int a, int b)`                                                           | `long`     | キー (a, b) を削除し、削除した値を返す。未存在なら defaultValue を返す。              |
 | Method      | `containsKey(int a, int b)`                                                      | `boolean`  | キー (a, b) が存在するかを返す。                                                      |
-| Method      | `merge(int a, int b, long value, LongBinaryOperator op)`                         | `long`     | 存在すれば op(既存値, value)、未存在なら value を格納し、格納した値を返す。           |
+| Method      | `merge(int a, int b, long value, LongBinaryOperator f)`                          | `long`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。            |
 | Method      | `putIfAbsent(int a, int b, long value)`                                          | `long`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。     |
-| Method      | `computeIfAbsent(int a, int b, IntBinaryToLongFunction op)`                      | `long`     | 未存在なら op(a, b) を挿入して返す。存在すれば op を呼ばずに既存値を返す。            |
+| Method      | `computeIfAbsent(int a, int b, IntBinaryToLongFunction f)`                       | `long`     | 未存在なら f(a, b) を挿入して返す。存在すれば f を呼ばずに既存値を返す。              |
 | Method      | `mergeMin(int a, int b, long value)`                                             | `long`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
 | Method      | `mergeMax(int a, int b, long value)`                                             | `long`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
 | Method      | `clear()`                                                                        | `void`     | 全エントリを O(1) で削除する。容量は変えない。                                        |
@@ -148,3 +148,4 @@
 | **バージョン 4.0** | 2026-08-03 | コンストラクタと変更可能な `defaultValue` を追加し、抽出時の中間配列生成を削除                                                                                       |
 | **バージョン 5.0** | 2026-08-08 | `computeIfAbsent`、`mergeMin`、`mergeMax` を追加。走査・通常変換は汎用 function 型、reduce は用途固有の Accumulator 型へ整理                                         |
 | **バージョン 6.0** | 2026-10-28 | `put`・`putIfAbsent`・`remove` が操作前の値（未存在なら `defaultValue`）を返すよう変更し、`remove` の戻り値を `boolean` から値の型へ変更。コピーコンストラクタを追加 |
+| **バージョン 6.1** | 2026-10-29 | 全クラス: `merge`・`computeIfAbsent` の関数の引数名を op から f へ変更                                                                                               |

@@ -90,10 +90,10 @@ public final class LongLazySegmentTree implements LongCollection {
 	public long set(final int i, final long v) {
 		final int idx = size + Objects.checkIndex(i, n);
 		pushPath(idx);
-		final long prev = tree[idx];
+		final long old = tree[idx];
 		tree[idx] = v;
 		updatePath(idx);
-		return prev;
+		return old;
 	}
 
 	public long apply(final int i, final long f) {

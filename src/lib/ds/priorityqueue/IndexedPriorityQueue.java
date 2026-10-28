@@ -8,9 +8,9 @@ import java.util.function.*;
  * Comparator の比較順で先頭となるコストを最優先とし、同順位のコストを持つ添字の取り出し順は規定しない。
  * Comparator を省略した場合は自然順序または逆順を使い、コストが相互に Comparable でなければ比較時に ClassCastException を投げる。null はコストにしない。
  * 各添字は「未追加」「active（キュー内）」「削除済み（poll・remove で取り出し済み）」のいずれかの状態を持ち、active な添字は高々1個のコストを持つ。
- * get 系は active な添字のコスト、getLast 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
+ * get 系は active な添字のコスト、getCost 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
  * 登録と配列からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
- * 空の peek・poll 系と、該当する状態にない添字の get・getLast は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
+ * 空の peek・poll 系と、該当する状態にない添字の get・getCost は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
  * 走査はヒープを復元せず、active な添字のコストを内部配列の順に返す。
  *
  * @param <T> コスト型
@@ -108,20 +108,6 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 		if (isActive(i)) return false;
 		append(i, c);
 		return true;
-	}
-
-	/**
-	 * j 番目の組 (is[j], cs[j]) を順に add し、1件以上登録した場合に true を返す。is と cs は同じ長さとする。
-	 */
-	public boolean addAll(final int[] is, final T[] cs) {
-		boolean changed = false;
-		for (int j = 0; j < is.length; j++) {
-			final int i = is[j];
-			if (isActive(i)) continue;
-			append(i, cs[j]);
-			changed = true;
-		}
-		return changed;
 	}
 
 	/**
@@ -227,12 +213,12 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 		return isActive(i) ? cost[i] : defaultValue;
 	}
 
-	public T getLast(final int i) {
+	public T getCost(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	public T getLastOrDefault(final int i, final T defaultValue) {
+	public T getCostOrDefault(final int i, final T defaultValue) {
 		return isUnseen(i) ? defaultValue : cost[i];
 	}
 

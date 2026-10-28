@@ -46,7 +46,7 @@ public final class IntPrefixModSum implements IntArray {
 		return res < 0 ? res + mod : res;
 	}
 
-	public int sum() {
+	public int sumAll() {
 		return pref[size];
 	}
 

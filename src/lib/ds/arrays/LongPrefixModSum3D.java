@@ -71,7 +71,7 @@ public final class LongPrefixModSum3D implements LongCollection {
 		return inRange(i, j, k) ? get(i, j, k) : defaultValue;
 	}
 
-	public long sum() {
+	public long sumAll() {
 		return pref[pref.length - 1];
 	}
 

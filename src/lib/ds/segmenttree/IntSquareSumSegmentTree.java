@@ -15,13 +15,13 @@ import lib.ds.*;
  */
 public final class IntSquareSumSegmentTree implements IntCollection {
 	private static final long IDENTITY_LAZY = 1L << 32;
-	private static final int MOD = 998244353;
+	private static final int DEFAULT_MOD = 998244353;
 	private final int n, size, log, mod;
 	private final int[] tree, tree2;
 	private final long[] lazy;
 
 	public IntSquareSumSegmentTree(final int n) {
-		this(n, MOD);
+		this(n, DEFAULT_MOD);
 	}
 
 	public IntSquareSumSegmentTree(final int n, final int mod) {
@@ -36,7 +36,7 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	public IntSquareSumSegmentTree(final int[] a) {
-		this(a, MOD);
+		this(a, DEFAULT_MOD);
 	}
 
 	public IntSquareSumSegmentTree(final int[] a, final int mod) {
@@ -46,7 +46,7 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	public IntSquareSumSegmentTree(final IntCollection a) {
-		this(a, MOD);
+		this(a, DEFAULT_MOD);
 	}
 
 	public IntSquareSumSegmentTree(final IntCollection a, final int mod) {
@@ -79,10 +79,10 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	public int set(final int i, final int v) {
 		final int idx = size + Objects.checkIndex(i, n);
 		pushPath(idx);
-		final int prev = tree[idx];
+		final int old = tree[idx];
 		setLeaf(idx, v % mod);
 		updatePath(idx);
-		return normalize(prev);
+		return normalize(old);
 	}
 
 	public void set(final int l, final int r, final int v) {
@@ -231,9 +231,9 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	private void allApply(final int i, final int a, final int b, final int a2, final int b2, final int ab2, final int len) {
-		final int before = tree[i];
-		tree2[i] = (int) (((long) a2 * tree2[i] + (long) ab2 * before + (long) b2 * len) % mod);
-		tree[i] = (int) (((long) a * before + (long) b * len) % mod);
+		final int old = tree[i];
+		tree2[i] = (int) (((long) a2 * tree2[i] + (long) ab2 * old + (long) b2 * len) % mod);
+		tree[i] = (int) (((long) a * old + (long) b * len) % mod);
 		if (i >= size) return;
 		final long f = lazy[i];
 		final int oldA = (int) (f >>> 32), oldB = (int) f;

@@ -167,9 +167,9 @@ public final class IntBIT2D implements IntCollection {
 		raw[p] += d;
 		total += d;
 		final int w1 = w + 1;
-		for (int i2 = i + 1; i2 <= h; i2 += i2 & -i2) {
-			final int q = i2 * w1;
-			for (int j2 = j + 1; j2 <= w; j2 += j2 & -j2) tree[q + j2] += d;
+		for (int ci = i + 1; ci <= h; ci += ci & -ci) {
+			final int q = ci * w1;
+			for (int cj = j + 1; cj <= w; cj += cj & -cj) tree[q + cj] += d;
 		}
 		return raw[p];
 	}
@@ -198,9 +198,9 @@ public final class IntBIT2D implements IntCollection {
 	private long prefixSum(final int i, final int j) {
 		long s = 0;
 		final int w1 = w + 1;
-		for (int i2 = i; i2 > 0; i2 -= i2 & -i2) {
-			final int p = i2 * w1;
-			for (int j2 = j; j2 > 0; j2 -= j2 & -j2) s += tree[p + j2];
+		for (int ci = i; ci > 0; ci -= ci & -ci) {
+			final int p = ci * w1;
+			for (int cj = j; cj > 0; cj -= cj & -cj) s += tree[p + cj];
 		}
 		return s;
 	}

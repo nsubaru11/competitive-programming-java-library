@@ -60,7 +60,7 @@ public final class IntPrefixSum2D implements IntCollection {
 		return inRange(i, j) ? get(i, j) : defaultValue;
 	}
 
-	public long sum() {
+	public long sumAll() {
 		return pref[pref.length - 1];
 	}
 

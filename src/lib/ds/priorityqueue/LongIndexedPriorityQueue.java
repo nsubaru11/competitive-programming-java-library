@@ -10,9 +10,9 @@ import lib.util.function.*;
  * 添字 {@code 0 <= i < n} に long のコストを対応付ける優先度キュー。n は構築時に固定し、添字の範囲は検査しない。
  * 比較順は昇順・降順・LongComparator から選び、同順位のコストを持つ添字の取り出し順は規定しない。
  * 各添字は「未追加」「active（キュー内）」「削除済み（poll・remove で取り出し済み）」のいずれかの状態を持ち、active な添字は高々1個のコストを持つ。
- * get 系は active な添字のコスト、getLast 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
+ * get 系は active な添字のコスト、getCost 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
  * 登録と配列からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
- * 空の peek・poll 系と、該当する状態にない添字の get・getLast は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
+ * 空の peek・poll 系と、該当する状態にない添字の get・getCost は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
  * 走査はヒープを復元せず、active な添字のコストを内部配列の順に返す。
  */
 public final class LongIndexedPriorityQueue implements LongCollection {
@@ -112,20 +112,6 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		if (isActive(i)) return false;
 		append(i, c);
 		return true;
-	}
-
-	/**
-	 * j 番目の組 (is[j], cs[j]) を順に add し、1件以上登録した場合に true を返す。is と cs は同じ長さとする。
-	 */
-	public boolean addAll(final int[] is, final long[] cs) {
-		boolean changed = false;
-		for (int j = 0; j < is.length; j++) {
-			final int i = is[j];
-			if (isActive(i)) continue;
-			append(i, cs[j]);
-			changed = true;
-		}
-		return changed;
 	}
 
 	/**
@@ -231,12 +217,12 @@ public final class LongIndexedPriorityQueue implements LongCollection {
 		return isActive(i) ? cost[i] : defaultValue;
 	}
 
-	public long getLast(final int i) {
+	public long getCost(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
 		return cost[i];
 	}
 
-	public long getLastOrDefault(final int i, final long defaultValue) {
+	public long getCostOrDefault(final int i, final long defaultValue) {
 		return isUnseen(i) ? defaultValue : cost[i];
 	}
 

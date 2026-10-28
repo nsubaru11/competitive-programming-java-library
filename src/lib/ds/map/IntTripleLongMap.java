@@ -86,16 +86,16 @@ public final class IntTripleLongMap {
 		return baseMap.containsKey(pack(a, b, c));
 	}
 
-	public long merge(final int a, final int b, final int c, final long value, final LongBinaryOperator op) {
-		return baseMap.merge(pack(a, b, c), value, op);
+	public long merge(final int a, final int b, final int c, final long value, final LongBinaryOperator f) {
+		return baseMap.merge(pack(a, b, c), value, f);
 	}
 
 	public long putIfAbsent(final int a, final int b, final int c, final long value) {
 		return baseMap.putIfAbsent(pack(a, b, c), value);
 	}
 
-	public long computeIfAbsent(final int a, final int b, final int c, final IntTernaryToLongFunction op) {
-		return baseMap.computeIfAbsent(pack(a, b, c), _ -> op.applyAsLong(a, b, c));
+	public long computeIfAbsent(final int a, final int b, final int c, final IntTernaryToLongFunction f) {
+		return baseMap.computeIfAbsent(pack(a, b, c), _ -> f.applyAsLong(a, b, c));
 	}
 
 	public long mergeMin(final int a, final int b, final int c, final long value) {

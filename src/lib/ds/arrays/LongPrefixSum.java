@@ -44,7 +44,7 @@ public final class LongPrefixSum implements LongArray {
 		return pref[i + 1] - pref[i];
 	}
 
-	public long sum() {
+	public long sumAll() {
 		return pref[size];
 	}
 

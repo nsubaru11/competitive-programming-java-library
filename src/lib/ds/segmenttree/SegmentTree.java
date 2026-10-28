@@ -55,9 +55,9 @@ public final class SegmentTree<T> implements Iterable<T> {
 
 	public T set(final int i, final T v) {
 		final int idx = size + Objects.checkIndex(i, n);
-		final T prev = tree[idx];
+		final T old = tree[idx];
 		update(idx, v);
-		return prev;
+		return old;
 	}
 
 	public T apply(final int i, final T x, final BinaryOperator<T> f) {

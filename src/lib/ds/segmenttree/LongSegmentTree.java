@@ -59,9 +59,9 @@ public final class LongSegmentTree implements LongCollection {
 
 	public long set(final int i, final long v) {
 		final int idx = size + Objects.checkIndex(i, n);
-		final long prev = tree[idx];
+		final long old = tree[idx];
 		update(idx, v);
-		return prev;
+		return old;
 	}
 
 	public long add(final int i, final long d) {

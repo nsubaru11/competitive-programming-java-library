@@ -169,10 +169,10 @@ public final class IntIntMap {
 		return false;
 	}
 
-	public int merge(final int key, final int value, final IntBinaryOperator op) {
+	public int merge(final int key, final int value, final IntBinaryOperator f) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return values[hash] = op.applyAsInt(values[hash], value);
+			if (keys[hash] == key) return values[hash] = f.applyAsInt(values[hash], value);
 		}
 		if (size >= resizeThreshold) {
 			resize();
@@ -204,13 +204,13 @@ public final class IntIntMap {
 		return defaultValue;
 	}
 
-	public int computeIfAbsent(final int key, final IntUnaryOperator op) {
+	public int computeIfAbsent(final int key, final IntUnaryOperator f) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
 		final int expectedModCount = modCount;
-		final int value = op.applyAsInt(key);
+		final int value = f.applyAsInt(key);
 		if (modCount != expectedModCount) {
 			putIfAbsent(key, value);
 			return get(key);

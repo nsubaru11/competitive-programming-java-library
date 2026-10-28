@@ -17,6 +17,8 @@ import java.util.function.*;
  */
 @SuppressWarnings("unchecked")
 public final class LazySegmentTree<T> implements Iterable<T> {
+	private static final BiFunction<?, ?, ?> DEFAULT_MAPPING = (f, x) -> f;
+	private static final BinaryOperator<?> DEFAULT_COMPOSITION = (f, g) -> f;
 	private final int n, size, log;
 	private final T identity;
 	private final BinaryOperator<T> operator, composition;
@@ -25,7 +27,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	private final boolean[] hasLazy;
 
 	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity) {
-		this(n, operator, identity, (f, x) -> f, (f, g) -> f);
+		this(n, operator, identity, (BiFunction<T, T, T>) DEFAULT_MAPPING, (BinaryOperator<T>) DEFAULT_COMPOSITION);
 	}
 
 	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
@@ -43,7 +45,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	public LazySegmentTree(final T[] a, final BinaryOperator<T> operator, final T identity) {
-		this(a, operator, identity, (f, x) -> f, (f, g) -> f);
+		this(a, operator, identity, (BiFunction<T, T, T>) DEFAULT_MAPPING, (BinaryOperator<T>) DEFAULT_COMPOSITION);
 	}
 
 	public LazySegmentTree(final T[] a, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
@@ -82,10 +84,10 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	public T set(final int i, final T v) {
 		final int idx = size + Objects.checkIndex(i, n);
 		pushPath(idx);
-		final T prev = tree[idx];
+		final T old = tree[idx];
 		tree[idx] = v;
 		updatePath(idx);
-		return prev;
+		return old;
 	}
 
 	public T apply(final int i, final T f) {

@@ -58,9 +58,9 @@ public final class IntSegmentTree implements IntCollection {
 
 	public int set(final int i, final int v) {
 		final int idx = size + Objects.checkIndex(i, n);
-		final int prev = tree[idx];
+		final int old = tree[idx];
 		update(idx, v);
-		return prev;
+		return old;
 	}
 
 	public int add(final int i, final int d) {

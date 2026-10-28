@@ -80,16 +80,16 @@ public final class IntPairIntMap {
 		return baseMap.containsKey(pack(a, b));
 	}
 
-	public int merge(final int a, final int b, final int value, final IntBinaryOperator op) {
-		return baseMap.merge(pack(a, b), value, op);
+	public int merge(final int a, final int b, final int value, final IntBinaryOperator f) {
+		return baseMap.merge(pack(a, b), value, f);
 	}
 
 	public int putIfAbsent(final int a, final int b, final int value) {
 		return baseMap.putIfAbsent(pack(a, b), value);
 	}
 
-	public int computeIfAbsent(final int a, final int b, final IntBinaryOperator op) {
-		return baseMap.computeIfAbsent(pack(a, b), _ -> op.applyAsInt(a, b));
+	public int computeIfAbsent(final int a, final int b, final IntBinaryOperator f) {
+		return baseMap.computeIfAbsent(pack(a, b), _ -> f.applyAsInt(a, b));
 	}
 
 	public int mergeMin(final int a, final int b, final int value) {

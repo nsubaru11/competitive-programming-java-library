@@ -62,7 +62,7 @@ public final class IntPrefixModSum2D implements IntCollection {
 		return inRange(i, j) ? get(i, j) : defaultValue;
 	}
 
-	public int sum() {
+	public int sumAll() {
 		return pref[pref.length - 1];
 	}
 

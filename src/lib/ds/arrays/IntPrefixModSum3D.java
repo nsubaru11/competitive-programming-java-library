@@ -70,7 +70,7 @@ public final class IntPrefixModSum3D implements IntCollection {
 		return inRange(i, j, k) ? get(i, j, k) : defaultValue;
 	}
 
-	public int sum() {
+	public int sumAll() {
 		return pref[pref.length - 1];
 	}
 

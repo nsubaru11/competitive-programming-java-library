@@ -44,7 +44,7 @@ public final class IntPrefixSum implements IntArray {
 		return (int) (pref[i + 1] - pref[i]);
 	}
 
-	public long sum() {
+	public long sumAll() {
 		return pref[size];
 	}
 

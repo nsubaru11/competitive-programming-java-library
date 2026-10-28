@@ -86,16 +86,16 @@ public final class IntTripleIntMap {
 		return baseMap.containsKey(pack(a, b, c));
 	}
 
-	public int merge(final int a, final int b, final int c, final int value, final IntBinaryOperator op) {
-		return baseMap.merge(pack(a, b, c), value, op);
+	public int merge(final int a, final int b, final int c, final int value, final IntBinaryOperator f) {
+		return baseMap.merge(pack(a, b, c), value, f);
 	}
 
 	public int putIfAbsent(final int a, final int b, final int c, final int value) {
 		return baseMap.putIfAbsent(pack(a, b, c), value);
 	}
 
-	public int computeIfAbsent(final int a, final int b, final int c, final IntTernaryOperator op) {
-		return baseMap.computeIfAbsent(pack(a, b, c), _ -> op.applyAsInt(a, b, c));
+	public int computeIfAbsent(final int a, final int b, final int c, final IntTernaryOperator f) {
+		return baseMap.computeIfAbsent(pack(a, b, c), _ -> f.applyAsInt(a, b, c));
 	}
 
 	public int mergeMin(final int a, final int b, final int c, final int value) {

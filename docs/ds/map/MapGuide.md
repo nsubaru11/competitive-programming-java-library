@@ -60,9 +60,9 @@
 | Method      | `put(int key, int value)`                                            | `int`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。 |
 | Method      | `remove(int key)`                                                    | `int`     | キーを削除し、削除した値を返す。未存在なら defaultValue を返す。                  |
 | Method      | `containsKey(int key)`                                               | `boolean` | キーが存在するかを返す。                                                          |
-| Method      | `merge(int key, int value, IntBinaryOperator op)`                    | `int`     | 存在すれば op(既存値, value)、未存在なら value を格納し、格納した値を返す。       |
+| Method      | `merge(int key, int value, IntBinaryOperator f)`                     | `int`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。        |
 | Method      | `putIfAbsent(int key, int value)`                                    | `int`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。 |
-| Method      | `computeIfAbsent(int key, IntUnaryOperator op)`                      | `int`     | 未存在なら op(key) を挿入して返す。存在すれば op を呼ばずに既存値を返す。         |
+| Method      | `computeIfAbsent(int key, IntUnaryOperator f)`                       | `int`     | 未存在なら f(key) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
 | Method      | `mergeMin(int key, int value)`                                       | `int`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `mergeMax(int key, int value)`                                       | `int`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `clear()`                                                            | `void`    | 全エントリを O(1) で削除する。容量は変えない。                                    |
@@ -102,9 +102,9 @@
 | Method      | `put(int key, long value)`                                            | `long`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。 |
 | Method      | `remove(int key)`                                                     | `long`     | キーを削除し、削除した値を返す。未存在なら defaultValue を返す。                  |
 | Method      | `containsKey(int key)`                                                | `boolean`  | キーが存在するかを返す。                                                          |
-| Method      | `merge(int key, long value, LongBinaryOperator op)`                   | `long`     | 存在すれば op(既存値, value)、未存在なら value を格納し、格納した値を返す。       |
+| Method      | `merge(int key, long value, LongBinaryOperator f)`                    | `long`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。        |
 | Method      | `putIfAbsent(int key, long value)`                                    | `long`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。 |
-| Method      | `computeIfAbsent(int key, IntToLongFunction op)`                      | `long`     | 未存在なら op(key) を挿入して返す。存在すれば op を呼ばずに既存値を返す。         |
+| Method      | `computeIfAbsent(int key, IntToLongFunction f)`                       | `long`     | 未存在なら f(key) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
 | Method      | `mergeMin(int key, long value)`                                       | `long`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `mergeMax(int key, long value)`                                       | `long`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `clear()`                                                             | `void`     | 全エントリを O(1) で削除する。容量は変えない。                                    |
@@ -144,9 +144,9 @@
 | Method      | `put(long key, int value)`                                            | `int`      | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。 |
 | Method      | `remove(long key)`                                                    | `int`      | キーを削除し、削除した値を返す。未存在なら defaultValue を返す。                  |
 | Method      | `containsKey(long key)`                                               | `boolean`  | キーが存在するかを返す。                                                          |
-| Method      | `merge(long key, int value, IntBinaryOperator op)`                    | `int`      | 存在すれば op(既存値, value)、未存在なら value を格納し、格納した値を返す。       |
+| Method      | `merge(long key, int value, IntBinaryOperator f)`                     | `int`      | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。        |
 | Method      | `putIfAbsent(long key, int value)`                                    | `int`      | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。 |
-| Method      | `computeIfAbsent(long key, LongToIntFunction op)`                     | `int`      | 未存在なら op(key) を挿入して返す。存在すれば op を呼ばずに既存値を返す。         |
+| Method      | `computeIfAbsent(long key, LongToIntFunction f)`                      | `int`      | 未存在なら f(key) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
 | Method      | `mergeMin(long key, int value)`                                       | `int`      | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `mergeMax(long key, int value)`                                       | `int`      | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `clear()`                                                             | `void`     | 全エントリを O(1) で削除する。容量は変えない。                                    |
@@ -186,9 +186,9 @@
 | Method      | `put(long key, long value)`                                            | `long`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。 |
 | Method      | `remove(long key)`                                                     | `long`     | キーを削除し、削除した値を返す。未存在なら defaultValue を返す。                  |
 | Method      | `containsKey(long key)`                                                | `boolean`  | キーが存在するかを返す。                                                          |
-| Method      | `merge(long key, long value, LongBinaryOperator op)`                   | `long`     | 存在すれば op(既存値, value)、未存在なら value を格納し、格納した値を返す。       |
+| Method      | `merge(long key, long value, LongBinaryOperator f)`                    | `long`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。        |
 | Method      | `putIfAbsent(long key, long value)`                                    | `long`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。 |
-| Method      | `computeIfAbsent(long key, LongUnaryOperator op)`                      | `long`     | 未存在なら op(key) を挿入して返す。存在すれば op を呼ばずに既存値を返す。         |
+| Method      | `computeIfAbsent(long key, LongUnaryOperator f)`                       | `long`     | 未存在なら f(key) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
 | Method      | `mergeMin(long key, long value)`                                       | `long`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `mergeMax(long key, long value)`                                       | `long`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。      |
 | Method      | `clear()`                                                              | `void`     | 全エントリを O(1) で削除する。容量は変えない。                                    |
@@ -217,7 +217,7 @@
 - 未存在キーを `defaultValue` 以外の値から加算する場合は `addOrDefault` を使う。
 - `put`・`putIfAbsent`・`remove` は `java.util.Map` と同様に操作前の値を返す。キーが存在しなかった場合は null の代わりに `defaultValue` を返すため、格納値が `defaultValue` と等しいエントリと未存在キーを戻り値では区別できない。区別には `containsKey` を使う。
 - `put`・`putIfAbsent`・`remove` 以外の更新系メソッドは操作後にキーへ対応する値を返す。
-- `computeIfAbsent` の `op` が同じマップへ挿入・削除・`clear` を行った場合は、`op` の適用後にキーを再探索し、キーが存在すれば既存値を返して `value` を格納しない。
+- `computeIfAbsent` の `f` が同じマップへ挿入・削除・`clear` を行った場合は、`f` の適用後にキーを再探索し、キーが存在すれば既存値を返して `value` を格納しない。
 - 加算はオーバーフロー時に値の型の範囲で巡回する。
 - 走査（`forEach`・`forEachKey`・`forEachValue`・`reduce`・`reduceKeys`・`reduceValues`）と `keys`・`values`・`entries` は内部配列の順に行い、挿入順ではない。同じ状態のマップでは全メソッドが同じ順に列挙する。走査中にマップを変更しない。
 - `remove`・`clear` は容量を縮小しない。走査と抽出は容量に比例する時間がかかる。
@@ -248,3 +248,4 @@
 | **バージョン 3.1** | 2026-08-03 | Pair・Triple Map が直接抽出できるよう内部フィールドの可視性を調整                                                                                                                                                                                                                                                                                     |
 | **バージョン 4.0** | 2026-08-08 | `IntLongMap`、`computeIfAbsent`、`mergeMin`、`mergeMax` を追加し、走査の callback を汎用 function 型へ統一。reduce は用途固有の Accumulator 名を維持                                                                                                                                                                                                  |
 | **バージョン 5.0** | 2026-10-28 | 全クラス: `put`・`putIfAbsent`・`remove` が操作前の値（未存在なら `defaultValue`）を返すよう変更し、`remove` の戻り値を `boolean` から値の型へ変更。コピーコンストラクタを追加。既定の想定要素数を定数化し、`remove` の冗長な代入を除去。`IntIntMap`・`IntLongMap` の内部配列を private にし、Long 版だけを Pair・Triple Map 向けにパッケージ内へ公開 |
+| **バージョン 5.1** | 2026-10-29 | 全クラス: `merge`・`computeIfAbsent` の関数の引数名を op から f へ変更                                                                                                                                                                                                                                                                                |

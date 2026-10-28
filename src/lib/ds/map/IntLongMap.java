@@ -171,10 +171,10 @@ public final class IntLongMap {
 		return false;
 	}
 
-	public long merge(final int key, final long value, final LongBinaryOperator op) {
+	public long merge(final int key, final long value, final LongBinaryOperator f) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return values[hash] = op.applyAsLong(values[hash], value);
+			if (keys[hash] == key) return values[hash] = f.applyAsLong(values[hash], value);
 		}
 		if (size >= resizeThreshold) {
 			resize();
@@ -206,13 +206,13 @@ public final class IntLongMap {
 		return defaultValue;
 	}
 
-	public long computeIfAbsent(final int key, final IntToLongFunction op) {
+	public long computeIfAbsent(final int key, final IntToLongFunction f) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
 			if (keys[hash] == key) return values[hash];
 		}
 		final int expectedModCount = modCount;
-		final long value = op.applyAsLong(key);
+		final long value = f.applyAsLong(key);
 		if (modCount != expectedModCount) {
 			putIfAbsent(key, value);
 			return get(key);

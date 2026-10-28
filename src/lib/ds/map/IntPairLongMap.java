@@ -80,16 +80,16 @@ public final class IntPairLongMap {
 		return baseMap.containsKey(pack(a, b));
 	}
 
-	public long merge(final int a, final int b, final long value, final LongBinaryOperator op) {
-		return baseMap.merge(pack(a, b), value, op);
+	public long merge(final int a, final int b, final long value, final LongBinaryOperator f) {
+		return baseMap.merge(pack(a, b), value, f);
 	}
 
 	public long putIfAbsent(final int a, final int b, final long value) {
 		return baseMap.putIfAbsent(pack(a, b), value);
 	}
 
-	public long computeIfAbsent(final int a, final int b, final IntBinaryToLongFunction op) {
-		return baseMap.computeIfAbsent(pack(a, b), _ -> op.applyAsLong(a, b));
+	public long computeIfAbsent(final int a, final int b, final IntBinaryToLongFunction f) {
+		return baseMap.computeIfAbsent(pack(a, b), _ -> f.applyAsLong(a, b));
 	}
 
 	public long mergeMin(final int a, final int b, final long value) {
