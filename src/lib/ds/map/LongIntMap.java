@@ -73,12 +73,27 @@ public final class LongIntMap {
 		return cap + 1;
 	}
 
+	public int size() {
+		return size;
+	}
+
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
 	public int getDefaultValue() {
 		return defaultValue;
 	}
 
 	public void setDefaultValue(final int defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	public boolean containsKey(final long key) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return true;
+		}
+		return false;
 	}
 
 	public int get(final long key) {
@@ -90,35 +105,6 @@ public final class LongIntMap {
 			if (keys[hash] == key) return values[hash];
 		}
 		return defaultValue;
-	}
-
-	public int increment(final long key) {
-		return addOrDefault(key, 1, defaultValue + 1);
-	}
-
-	public int decrement(final long key) {
-		return addOrDefault(key, -1, defaultValue - 1);
-	}
-
-	public int add(final long key, final int delta) {
-		return addOrDefault(key, delta, defaultValue + delta);
-	}
-
-	public int addOrDefault(final long key, final int delta, final int absentValue) {
-		int hash = hash(key);
-		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return values[hash] += delta;
-		}
-		if (size >= resizeThreshold) {
-			resize();
-			hash = hash(key);
-			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
-		}
-		stamps[hash] = stamp;
-		keys[hash] = key;
-		size++;
-		modCount++;
-		return values[hash] = absentValue;
 	}
 
 	public int put(final long key, final int value) {
@@ -141,51 +127,6 @@ public final class LongIntMap {
 		modCount++;
 		values[hash] = value;
 		return defaultValue;
-	}
-
-	public int remove(final long key) {
-		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] != key) continue;
-			final int old = values[hash];
-			int hole = hash;
-			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
-				final int home = hash(keys[next]);
-				if (((next - home) & mask) >= ((next - hole) & mask)) {
-					keys[hole] = keys[next];
-					values[hole] = values[next];
-					hole = next;
-				}
-			}
-			stamps[hole] = 0;
-			size--;
-			modCount++;
-			return old;
-		}
-		return defaultValue;
-	}
-
-	public boolean containsKey(final long key) {
-		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return true;
-		}
-		return false;
-	}
-
-	public int merge(final long key, final int value, final IntBinaryOperator f) {
-		int hash = hash(key);
-		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
-			if (keys[hash] == key) return values[hash] = f.applyAsInt(values[hash], value);
-		}
-		if (size >= resizeThreshold) {
-			resize();
-			hash = hash(key);
-			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
-		}
-		stamps[hash] = stamp;
-		keys[hash] = key;
-		size++;
-		modCount++;
-		return values[hash] = value;
 	}
 
 	public int putIfAbsent(final long key, final int value) {
@@ -229,6 +170,56 @@ public final class LongIntMap {
 		return values[hash] = value;
 	}
 
+	public int remove(final long key) {
+		for (int hash = hash(key); stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] != key) continue;
+			final int old = values[hash];
+			int hole = hash;
+			for (int next = (hole + 1) & mask; stamps[next] == stamp; next = (next + 1) & mask) {
+				final int home = hash(keys[next]);
+				if (((next - home) & mask) >= ((next - hole) & mask)) {
+					keys[hole] = keys[next];
+					values[hole] = values[next];
+					hole = next;
+				}
+			}
+			stamps[hole] = 0;
+			size--;
+			modCount++;
+			return old;
+		}
+		return defaultValue;
+	}
+
+	public int increment(final long key) {
+		return addOrDefault(key, 1, defaultValue + 1);
+	}
+
+	public int decrement(final long key) {
+		return addOrDefault(key, -1, defaultValue - 1);
+	}
+
+	public int add(final long key, final int delta) {
+		return addOrDefault(key, delta, defaultValue + delta);
+	}
+
+	public int addOrDefault(final long key, final int delta, final int absentValue) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash] += delta;
+		}
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		modCount++;
+		return values[hash] = absentValue;
+	}
+
 	public int mergeMin(final long key, final int value) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
@@ -263,22 +254,56 @@ public final class LongIntMap {
 		return values[hash] = value;
 	}
 
+	public int merge(final long key, final int value, final IntBinaryOperator f) {
+		int hash = hash(key);
+		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
+			if (keys[hash] == key) return values[hash] = f.applyAsInt(values[hash], value);
+		}
+		if (size >= resizeThreshold) {
+			resize();
+			hash = hash(key);
+			while (stamps[hash] == stamp) hash = (hash + 1) & mask;
+		}
+		stamps[hash] = stamp;
+		keys[hash] = key;
+		size++;
+		modCount++;
+		return values[hash] = value;
+	}
+
 	public void clear() {
 		size = 0;
 		stamp++;
 		modCount++;
 	}
 
-	public int size() {
-		return size;
+	public long[] keys() {
+		final long[] res = new long[size];
+		for (int i = 0, idx = 0; i < capacity; i++) {
+			if (stamps[i] != stamp) continue;
+			res[idx++] = keys[i];
+		}
+		return res;
 	}
 
-	public boolean isEmpty() {
-		return size == 0;
+	public int[] values() {
+		final int[] res = new int[size];
+		for (int i = 0, idx = 0; i < capacity; i++) {
+			if (stamps[i] != stamp) continue;
+			res[idx++] = values[i];
+		}
+		return res;
 	}
 
-	int currentStamp() {
-		return stamp;
+	public long[][] entries() {
+		final long[][] res = new long[2][size];
+		for (int i = 0, idx = 0; i < capacity; i++) {
+			if (stamps[i] != stamp) continue;
+			res[0][idx] = keys[i];
+			res[1][idx] = values[i];
+			idx++;
+		}
+		return res;
 	}
 
 	public void forEach(final LongIntConsumer action) {
@@ -329,33 +354,8 @@ public final class LongIntMap {
 		return result;
 	}
 
-	public long[] keys() {
-		final long[] res = new long[size];
-		for (int i = 0, idx = 0; i < capacity; i++) {
-			if (stamps[i] != stamp) continue;
-			res[idx++] = keys[i];
-		}
-		return res;
-	}
-
-	public int[] values() {
-		final int[] res = new int[size];
-		for (int i = 0, idx = 0; i < capacity; i++) {
-			if (stamps[i] != stamp) continue;
-			res[idx++] = values[i];
-		}
-		return res;
-	}
-
-	public long[][] entries() {
-		final long[][] res = new long[2][size];
-		for (int i = 0, idx = 0; i < capacity; i++) {
-			if (stamps[i] != stamp) continue;
-			res[0][idx] = keys[i];
-			res[1][idx] = values[i];
-			idx++;
-		}
-		return res;
+	int currentStamp() {
+		return stamp;
 	}
 
 	private void resize() {

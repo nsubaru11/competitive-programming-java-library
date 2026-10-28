@@ -46,34 +46,34 @@
 | Constructor | `IntTripleIntMap(int expectedSize)`                                                       | —         | 想定要素数 expectedSize、defaultValue 0 で構築する。                                  |
 | Constructor | `IntTripleIntMap(int expectedSize, int defaultValue)`                                     | —         | 想定要素数 expectedSize と defaultValue を指定して構築する。                          |
 | Constructor | `IntTripleIntMap(IntTripleIntMap other)`                                                  | —         | 既定値・エントリ・容量を引き継ぐ独立したコピーを構築する。                            |
+| Method      | `size()`                                                                                  | `int`     | 要素数を返す。                                                                        |
+| Method      | `isEmpty()`                                                                               | `boolean` | 要素数が0かを返す。                                                                   |
 | Method      | `getDefaultValue()`                                                                       | `int`     | defaultValue を返す。                                                                 |
 | Method      | `setDefaultValue(int defaultValue)`                                                       | `void`    | defaultValue を変更する。既存のエントリは変更しない。                                 |
-| Method      | `put(int a, int b, int c, int value)`                                                     | `int`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。     |
+| Method      | `containsKey(int a, int b, int c)`                                                        | `boolean` | キー (a, b, c) が存在するかを返す。                                                   |
 | Method      | `get(int a, int b, int c)`                                                                | `int`     | キー (a, b, c) の値を返す。未存在なら defaultValue を返し、挿入しない。               |
 | Method      | `getOrDefault(int a, int b, int c, int defaultValue)`                                     | `int`     | キー (a, b, c) の値を返す。未存在なら引数の defaultValue を返す。                     |
+| Method      | `put(int a, int b, int c, int value)`                                                     | `int`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。     |
+| Method      | `putIfAbsent(int a, int b, int c, int value)`                                             | `int`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。     |
+| Method      | `computeIfAbsent(int a, int b, int c, IntTernaryOperator f)`                              | `int`     | 未存在なら f(a, b, c) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
+| Method      | `remove(int a, int b, int c)`                                                             | `int`     | キー (a, b, c) を削除し、削除した値を返す。未存在なら defaultValue を返す。           |
 | Method      | `increment(int a, int b, int c)`                                                          | `int`     | 1を加えた値を格納して返す。未存在なら defaultValue + 1 を挿入する。                   |
 | Method      | `decrement(int a, int b, int c)`                                                          | `int`     | 1を引いた値を格納して返す。未存在なら defaultValue - 1 を挿入する。                   |
 | Method      | `add(int a, int b, int c, int delta)`                                                     | `int`     | delta を加えた値を格納して返す。未存在なら defaultValue + delta を挿入する。          |
 | Method      | `addOrDefault(int a, int b, int c, int delta, int absentValue)`                           | `int`     | 存在すれば delta を加え、未存在なら absentValue を挿入する。格納した値を返す。        |
-| Method      | `remove(int a, int b, int c)`                                                             | `int`     | キー (a, b, c) を削除し、削除した値を返す。未存在なら defaultValue を返す。           |
-| Method      | `containsKey(int a, int b, int c)`                                                        | `boolean` | キー (a, b, c) が存在するかを返す。                                                   |
-| Method      | `merge(int a, int b, int c, int value, IntBinaryOperator f)`                              | `int`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。            |
-| Method      | `putIfAbsent(int a, int b, int c, int value)`                                             | `int`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。     |
-| Method      | `computeIfAbsent(int a, int b, int c, IntTernaryOperator f)`                              | `int`     | 未存在なら f(a, b, c) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
 | Method      | `mergeMin(int a, int b, int c, int value)`                                                | `int`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
 | Method      | `mergeMax(int a, int b, int c, int value)`                                                | `int`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
+| Method      | `merge(int a, int b, int c, int value, IntBinaryOperator f)`                              | `int`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。            |
 | Method      | `clear()`                                                                                 | `void`    | 全エントリを O(1) で削除する。容量は変えない。                                        |
-| Method      | `size()`                                                                                  | `int`     | 要素数を返す。                                                                        |
-| Method      | `isEmpty()`                                                                               | `boolean` | 要素数が0かを返す。                                                                   |
+| Method      | `keys()`                                                                                  | `int[][]` | `[3][size]` 形式でキーを返す。res[j][i] は i 番目のキーの第 j 成分（0始まり）である。 |
+| Method      | `values()`                                                                                | `int[]`   | 値を走査順に並べた配列を返す。                                                        |
+| Method      | `entries()`                                                                               | `int[][]` | `[4][size]` 形式でエントリを返す。res[0..2] がキーの各成分、res[3] が値である。       |
 | Method      | `forEach(IntQuaternaryConsumer action)`                                                   | `void`    | 全エントリを (a, b, c, value) で走査する。                                            |
 | Method      | `forEachKey(IntTernaryConsumer action)`                                                   | `void`    | 全キーを (a, b, c) で走査する。                                                       |
 | Method      | `forEachValue(IntConsumer action)`                                                        | `void`    | 全値を走査する。                                                                      |
 | Method      | `reduce(long identity, EntryToLongAccumulator accumulator)`                               | `long`    | identity から accumulator(累積値, a, b, c, value) を走査順に適用した結果を返す。      |
 | Method      | `reduceKeys(long identity, KeysToLongAccumulator accumulator)`                            | `long`    | identity から accumulator(累積値, a, b, c) を走査順に適用した結果を返す。             |
 | Method      | `reduceValues(long identity, LongBinaryOperator accumulator)`                             | `long`    | identity から accumulator(累積値, value) を走査順に適用した結果を返す。               |
-| Method      | `keys()`                                                                                  | `int[][]` | `[3][size]` 形式でキーを返す。res[j][i] は i 番目のキーの第 j 成分（0始まり）である。 |
-| Method      | `values()`                                                                                | `int[]`   | 値を走査順に並べた配列を返す。                                                        |
-| Method      | `entries()`                                                                               | `int[][]` | `[4][size]` 形式でエントリを返す。res[0..2] がキーの各成分、res[3] が値である。       |
 | Interface   | `KeysToLongAccumulator.apply(long accumulator, int key1, int key2, int key3)`             | `long`    | キーの集約関数。reduceKeys が受け取る。                                               |
 | Interface   | `EntryToLongAccumulator.apply(long accumulator, int key1, int key2, int key3, int value)` | `long`    | エントリの集約関数。reduce が受け取る。                                               |
 
@@ -89,34 +89,34 @@
 | Constructor | `IntTripleLongMap(int expectedSize)`                                                       | —          | 想定要素数 expectedSize、defaultValue 0 で構築する。                                  |
 | Constructor | `IntTripleLongMap(int expectedSize, long defaultValue)`                                    | —          | 想定要素数 expectedSize と defaultValue を指定して構築する。                          |
 | Constructor | `IntTripleLongMap(IntTripleLongMap other)`                                                 | —          | 既定値・エントリ・容量を引き継ぐ独立したコピーを構築する。                            |
+| Method      | `size()`                                                                                   | `int`      | 要素数を返す。                                                                        |
+| Method      | `isEmpty()`                                                                                | `boolean`  | 要素数が0かを返す。                                                                   |
 | Method      | `getDefaultValue()`                                                                        | `long`     | defaultValue を返す。                                                                 |
 | Method      | `setDefaultValue(long defaultValue)`                                                       | `void`     | defaultValue を変更する。既存のエントリは変更しない。                                 |
-| Method      | `put(int a, int b, int c, long value)`                                                     | `long`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。     |
+| Method      | `containsKey(int a, int b, int c)`                                                         | `boolean`  | キー (a, b, c) が存在するかを返す。                                                   |
 | Method      | `get(int a, int b, int c)`                                                                 | `long`     | キー (a, b, c) の値を返す。未存在なら defaultValue を返し、挿入しない。               |
 | Method      | `getOrDefault(int a, int b, int c, long defaultValue)`                                     | `long`     | キー (a, b, c) の値を返す。未存在なら引数の defaultValue を返す。                     |
+| Method      | `put(int a, int b, int c, long value)`                                                     | `long`     | value を格納し、以前の値を返す。未存在なら value を挿入して defaultValue を返す。     |
+| Method      | `putIfAbsent(int a, int b, int c, long value)`                                             | `long`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。     |
+| Method      | `computeIfAbsent(int a, int b, int c, IntTernaryToLongFunction f)`                         | `long`     | 未存在なら f(a, b, c) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
+| Method      | `remove(int a, int b, int c)`                                                              | `long`     | キー (a, b, c) を削除し、削除した値を返す。未存在なら defaultValue を返す。           |
 | Method      | `increment(int a, int b, int c)`                                                           | `long`     | 1を加えた値を格納して返す。未存在なら defaultValue + 1 を挿入する。                   |
 | Method      | `decrement(int a, int b, int c)`                                                           | `long`     | 1を引いた値を格納して返す。未存在なら defaultValue - 1 を挿入する。                   |
 | Method      | `add(int a, int b, int c, long delta)`                                                     | `long`     | delta を加えた値を格納して返す。未存在なら defaultValue + delta を挿入する。          |
 | Method      | `addOrDefault(int a, int b, int c, long delta, long absentValue)`                          | `long`     | 存在すれば delta を加え、未存在なら absentValue を挿入する。格納した値を返す。        |
-| Method      | `remove(int a, int b, int c)`                                                              | `long`     | キー (a, b, c) を削除し、削除した値を返す。未存在なら defaultValue を返す。           |
-| Method      | `containsKey(int a, int b, int c)`                                                         | `boolean`  | キー (a, b, c) が存在するかを返す。                                                   |
-| Method      | `merge(int a, int b, int c, long value, LongBinaryOperator f)`                             | `long`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。            |
-| Method      | `putIfAbsent(int a, int b, int c, long value)`                                             | `long`     | 存在すれば何もせず既存値を返す。未存在なら value を挿入して defaultValue を返す。     |
-| Method      | `computeIfAbsent(int a, int b, int c, IntTernaryToLongFunction f)`                         | `long`     | 未存在なら f(a, b, c) を挿入して返す。存在すれば f を呼ばずに既存値を返す。           |
 | Method      | `mergeMin(int a, int b, int c, long value)`                                                | `long`     | 存在すれば min(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
 | Method      | `mergeMax(int a, int b, int c, long value)`                                                | `long`     | 存在すれば max(既存値, value)、未存在なら value を格納し、格納した値を返す。          |
+| Method      | `merge(int a, int b, int c, long value, LongBinaryOperator f)`                             | `long`     | 存在すれば f(既存値, value)、未存在なら value を格納し、格納した値を返す。            |
 | Method      | `clear()`                                                                                  | `void`     | 全エントリを O(1) で削除する。容量は変えない。                                        |
-| Method      | `size()`                                                                                   | `int`      | 要素数を返す。                                                                        |
-| Method      | `isEmpty()`                                                                                | `boolean`  | 要素数が0かを返す。                                                                   |
+| Method      | `keys()`                                                                                   | `int[][]`  | `[3][size]` 形式でキーを返す。res[j][i] は i 番目のキーの第 j 成分（0始まり）である。 |
+| Method      | `values()`                                                                                 | `long[]`   | 値を走査順に並べた配列を返す。                                                        |
+| Method      | `entries()`                                                                                | `long[][]` | `[4][size]` 形式でエントリを返す。res[0..2] がキーの各成分、res[3] が値である。       |
 | Method      | `forEach(IntTernaryLongConsumer action)`                                                   | `void`     | 全エントリを (a, b, c, value) で走査する。                                            |
 | Method      | `forEachKey(IntTernaryConsumer action)`                                                    | `void`     | 全キーを (a, b, c) で走査する。                                                       |
 | Method      | `forEachValue(LongConsumer action)`                                                        | `void`     | 全値を走査する。                                                                      |
 | Method      | `reduce(long identity, EntryToLongAccumulator accumulator)`                                | `long`     | identity から accumulator(累積値, a, b, c, value) を走査順に適用した結果を返す。      |
 | Method      | `reduceKeys(long identity, KeysToLongAccumulator accumulator)`                             | `long`     | identity から accumulator(累積値, a, b, c) を走査順に適用した結果を返す。             |
 | Method      | `reduceValues(long identity, LongBinaryOperator accumulator)`                              | `long`     | identity から accumulator(累積値, value) を走査順に適用した結果を返す。               |
-| Method      | `keys()`                                                                                   | `int[][]`  | `[3][size]` 形式でキーを返す。res[j][i] は i 番目のキーの第 j 成分（0始まり）である。 |
-| Method      | `values()`                                                                                 | `long[]`   | 値を走査順に並べた配列を返す。                                                        |
-| Method      | `entries()`                                                                                | `long[][]` | `[4][size]` 形式でエントリを返す。res[0..2] がキーの各成分、res[3] が値である。       |
 | Interface   | `KeysToLongAccumulator.apply(long accumulator, int key1, int key2, int key3)`              | `long`     | キーの集約関数。reduceKeys が受け取る。                                               |
 | Interface   | `EntryToLongAccumulator.apply(long accumulator, int key1, int key2, int key3, long value)` | `long`     | エントリの集約関数。reduce が受け取る。                                               |
 

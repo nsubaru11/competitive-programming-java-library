@@ -42,6 +42,14 @@ public final class IntTripleLongMap {
 		return (int) (key & KEY_MASK) - KEY_OFFSET;
 	}
 
+	public int size() {
+		return baseMap.size();
+	}
+
+	public boolean isEmpty() {
+		return baseMap.isEmpty();
+	}
+
 	public long getDefaultValue() {
 		return baseMap.getDefaultValue();
 	}
@@ -50,8 +58,8 @@ public final class IntTripleLongMap {
 		baseMap.setDefaultValue(defaultValue);
 	}
 
-	public long put(final int a, final int b, final int c, final long value) {
-		return baseMap.put(pack(a, b, c), value);
+	public boolean containsKey(final int a, final int b, final int c) {
+		return baseMap.containsKey(pack(a, b, c));
 	}
 
 	public long get(final int a, final int b, final int c) {
@@ -60,6 +68,22 @@ public final class IntTripleLongMap {
 
 	public long getOrDefault(final int a, final int b, final int c, final long defaultValue) {
 		return baseMap.getOrDefault(pack(a, b, c), defaultValue);
+	}
+
+	public long put(final int a, final int b, final int c, final long value) {
+		return baseMap.put(pack(a, b, c), value);
+	}
+
+	public long putIfAbsent(final int a, final int b, final int c, final long value) {
+		return baseMap.putIfAbsent(pack(a, b, c), value);
+	}
+
+	public long computeIfAbsent(final int a, final int b, final int c, final IntTernaryToLongFunction f) {
+		return baseMap.computeIfAbsent(pack(a, b, c), _ -> f.applyAsLong(a, b, c));
+	}
+
+	public long remove(final int a, final int b, final int c) {
+		return baseMap.remove(pack(a, b, c));
 	}
 
 	public long increment(final int a, final int b, final int c) {
@@ -78,26 +102,6 @@ public final class IntTripleLongMap {
 		return baseMap.addOrDefault(pack(a, b, c), delta, absentValue);
 	}
 
-	public long remove(final int a, final int b, final int c) {
-		return baseMap.remove(pack(a, b, c));
-	}
-
-	public boolean containsKey(final int a, final int b, final int c) {
-		return baseMap.containsKey(pack(a, b, c));
-	}
-
-	public long merge(final int a, final int b, final int c, final long value, final LongBinaryOperator f) {
-		return baseMap.merge(pack(a, b, c), value, f);
-	}
-
-	public long putIfAbsent(final int a, final int b, final int c, final long value) {
-		return baseMap.putIfAbsent(pack(a, b, c), value);
-	}
-
-	public long computeIfAbsent(final int a, final int b, final int c, final IntTernaryToLongFunction f) {
-		return baseMap.computeIfAbsent(pack(a, b, c), _ -> f.applyAsLong(a, b, c));
-	}
-
 	public long mergeMin(final int a, final int b, final int c, final long value) {
 		return baseMap.mergeMin(pack(a, b, c), value);
 	}
@@ -106,16 +110,45 @@ public final class IntTripleLongMap {
 		return baseMap.mergeMax(pack(a, b, c), value);
 	}
 
+	public long merge(final int a, final int b, final int c, final long value, final LongBinaryOperator f) {
+		return baseMap.merge(pack(a, b, c), value, f);
+	}
+
 	public void clear() {
 		baseMap.clear();
 	}
 
-	public int size() {
-		return baseMap.size();
+	public int[][] keys() {
+		final int[][] res = new int[3][baseMap.size()];
+		final int stamp = baseMap.currentStamp();
+		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
+			if (baseMap.stamps[i] != stamp) continue;
+			final long key = baseMap.keys[i];
+			res[0][idx] = unpack(key >>> 42);
+			res[1][idx] = unpack(key >>> 21);
+			res[2][idx] = unpack(key);
+			idx++;
+		}
+		return res;
 	}
 
-	public boolean isEmpty() {
-		return baseMap.isEmpty();
+	public long[] values() {
+		return baseMap.values();
+	}
+
+	public long[][] entries() {
+		final long[][] res = new long[4][baseMap.size()];
+		final int stamp = baseMap.currentStamp();
+		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
+			if (baseMap.stamps[i] != stamp) continue;
+			final long key = baseMap.keys[i];
+			res[0][idx] = unpack(key >>> 42);
+			res[1][idx] = unpack(key >>> 21);
+			res[2][idx] = unpack(key);
+			res[3][idx] = baseMap.values[i];
+			idx++;
+		}
+		return res;
 	}
 
 	public void forEach(final IntTernaryLongConsumer action) {
@@ -160,39 +193,6 @@ public final class IntTripleLongMap {
 
 	public long reduceValues(final long identity, final LongBinaryOperator accumulator) {
 		return baseMap.reduceValues(identity, accumulator);
-	}
-
-	public int[][] keys() {
-		final int[][] res = new int[3][baseMap.size()];
-		final int stamp = baseMap.currentStamp();
-		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
-			if (baseMap.stamps[i] != stamp) continue;
-			final long key = baseMap.keys[i];
-			res[0][idx] = unpack(key >>> 42);
-			res[1][idx] = unpack(key >>> 21);
-			res[2][idx] = unpack(key);
-			idx++;
-		}
-		return res;
-	}
-
-	public long[] values() {
-		return baseMap.values();
-	}
-
-	public long[][] entries() {
-		final long[][] res = new long[4][baseMap.size()];
-		final int stamp = baseMap.currentStamp();
-		for (int i = 0, idx = 0; i < baseMap.keys.length; i++) {
-			if (baseMap.stamps[i] != stamp) continue;
-			final long key = baseMap.keys[i];
-			res[0][idx] = unpack(key >>> 42);
-			res[1][idx] = unpack(key >>> 21);
-			res[2][idx] = unpack(key);
-			res[3][idx] = baseMap.values[i];
-			idx++;
-		}
-		return res;
 	}
 
 	/**

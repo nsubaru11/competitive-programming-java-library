@@ -133,18 +133,6 @@ public final class IntRangeBIT implements IntCollection {
 		return sb.toString();
 	}
 
-	private void addRange(final int i, final int j, final long d) {
-		total += (j - i + 1L) * d;
-		add(bit1, i, d);
-		add(bit1, j + 1, -d);
-		add(bit2, i, d * i);
-		add(bit2, j + 1, -d * (j + 1));
-	}
-
-	private void add(final long[] bit, int i, final long v) {
-		for (i++; i <= size; i += i & -i) bit[i] += v;
-	}
-
 	private void build() {
 		for (int i = size; i > 0; i--) {
 			bit1[i] -= bit1[i - 1];
@@ -157,6 +145,18 @@ public final class IntRangeBIT implements IntCollection {
 				bit2[j] += bit2[i];
 			}
 		}
+	}
+
+	private void addRange(final int i, final int j, final long d) {
+		total += (j - i + 1L) * d;
+		add(bit1, i, d);
+		add(bit1, j + 1, -d);
+		add(bit2, i, d * i);
+		add(bit2, j + 1, -d * (j + 1));
+	}
+
+	private void add(final long[] bit, int i, final long v) {
+		for (i++; i <= size; i += i & -i) bit[i] += v;
 	}
 
 	private long prefixSum(final long[] bit, int r) {

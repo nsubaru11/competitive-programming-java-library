@@ -165,13 +165,13 @@ public final class SegmentTree<T> implements Iterable<T> {
 		return sb.toString();
 	}
 
+	private void build() {
+		for (int i = size - 1; i > 0; i--) tree[i] = operator.apply(tree[i << 1], tree[(i << 1) | 1]);
+	}
+
 	private T update(final int idx, final T v) {
 		tree[idx] = v;
 		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.apply(tree[j << 1], tree[(j << 1) | 1]);
 		return v;
-	}
-
-	private void build() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.apply(tree[i << 1], tree[(i << 1) | 1]);
 	}
 }

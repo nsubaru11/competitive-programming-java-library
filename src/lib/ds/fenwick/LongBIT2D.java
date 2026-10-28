@@ -163,17 +163,6 @@ public final class LongBIT2D implements LongCollection {
 		return sb.toString();
 	}
 
-	private long add(final int i, final int j, final int p, final long d) {
-		raw[p] += d;
-		total += d;
-		final int w1 = w + 1;
-		for (int ci = i + 1; ci <= h; ci += ci & -ci) {
-			final int q = ci * w1;
-			for (int cj = j + 1; cj <= w; cj += cj & -cj) tree[q + cj] += d;
-		}
-		return raw[p];
-	}
-
 	private void build() {
 		final int w1 = w + 1;
 		for (int i = 1; i <= h; i++) {
@@ -189,6 +178,17 @@ public final class LongBIT2D implements LongCollection {
 			final int p = i * w1, q = ni * w1;
 			for (int j = 1; j <= w; j++) tree[q + j] += tree[p + j];
 		}
+	}
+
+	private long add(final int i, final int j, final int p, final long d) {
+		raw[p] += d;
+		total += d;
+		final int w1 = w + 1;
+		for (int ci = i + 1; ci <= h; ci += ci & -ci) {
+			final int q = ci * w1;
+			for (int cj = j + 1; cj <= w; cj += cj & -cj) tree[q + cj] += d;
+		}
+		return raw[p];
 	}
 
 	private int checkedIndex(final int i, final int j) {

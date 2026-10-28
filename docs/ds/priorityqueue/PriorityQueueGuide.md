@@ -68,18 +68,18 @@
 | Static      | `reverseOrder()`                                                                  | `PriorityQueue<T>` | Comparable 要素を逆順で扱う空のキューを返す。                         |
 | Static      | `reverseOrder(int initialCapacity)`                                               | `PriorityQueue<T>` | 指定した初期容量で逆順の空のキューを返す。                            |
 | Static      | `reverseOrder(T[] values)`                                                        | `PriorityQueue<T>` | 配列の全要素を逆順で持つキューを返す。                                |
-| Method      | `add(T v)`                                                                        | `boolean`          | 要素を追加する。常に true。                                           |
-| Method      | `addAll(T[] values)`                                                              | `boolean`          | 配列の全要素を追加する。1件以上追加した場合に true。                  |
-| Method      | `addAll(Iterable<? extends T> values)`                                            | `boolean`          | 全要素を追加する。1件以上追加した場合に true。                        |
-| Method      | `peek()`                                                                          | `T`                | 最優先の要素を返す。                                                  |
-| Method      | `peekOrDefault(T defaultValue)`                                                   | `T`                | 空なら defaultValue、そうでなければ最優先の要素を返す。               |
-| Method      | `peekSecond()`                                                                    | `T`                | 2番目に優先される要素を返す。要素数は2以上とする。                    |
-| Method      | `poll()`                                                                          | `T`                | 最優先の要素を削除して返す。                                          |
-| Method      | `pollOrDefault(T defaultValue)`                                                   | `T`                | 空なら defaultValue、そうでなければ最優先の要素を削除して返す。       |
-| Method      | `replaceTop(T v)`                                                                 | `T`                | 最優先の要素を v に置き換え、置き換え前の要素を返す。                 |
 | Method      | `size()`                                                                          | `int`              | 要素数を返す。                                                        |
 | Method      | `capacity()`                                                                      | `int`              | 内部配列の長さを返す。                                                |
 | Method      | `isEmpty()`                                                                       | `boolean`          | 要素数が0かを返す。                                                   |
+| Method      | `peek()`                                                                          | `T`                | 最優先の要素を返す。                                                  |
+| Method      | `peekOrDefault(T defaultValue)`                                                   | `T`                | 空なら defaultValue、そうでなければ最優先の要素を返す。               |
+| Method      | `peekSecond()`                                                                    | `T`                | 2番目に優先される要素を返す。要素数は2以上とする。                    |
+| Method      | `add(T v)`                                                                        | `boolean`          | 要素を追加する。常に true。                                           |
+| Method      | `addAll(T[] values)`                                                              | `boolean`          | 配列の全要素を追加する。1件以上追加した場合に true。                  |
+| Method      | `addAll(Iterable<? extends T> values)`                                            | `boolean`          | 全要素を追加する。1件以上追加した場合に true。                        |
+| Method      | `poll()`                                                                          | `T`                | 最優先の要素を削除して返す。                                          |
+| Method      | `pollOrDefault(T defaultValue)`                                                   | `T`                | 空なら defaultValue、そうでなければ最優先の要素を削除して返す。       |
+| Method      | `replaceTop(T v)`                                                                 | `T`                | 最優先の要素を v に置き換え、置き換え前の要素を返す。                 |
 | Method      | `clear()`                                                                         | `void`             | 内部配列を再利用して空にする。                                        |
 | Method      | `iterator()`                                                                      | `Iterator<T>`      | 内部配列の順に走査する。                                              |
 
@@ -106,18 +106,18 @@
 | Constructor | `IntPriorityQueue(IntCollection values, boolean isDescendingOrder)` | —                         | コレクションの全要素を昇順または降順で持つ。                                |
 | Constructor | `IntPriorityQueue(IntCollection values, IntComparator comparator)`  | —                         | コレクションの全要素を Comparator の順で持つ。                              |
 | Constructor | `IntPriorityQueue(IntPriorityQueue other)`                          | —                         | 比較順・要素・容量を引き継ぐ独立したコピー。                                |
+| Method      | `size()`                                                            | `int`                     | 要素数を返す。                                                              |
+| Method      | `capacity()`                                                        | `int`                     | 内部配列の長さを返す。                                                      |
+| Method      | `peek()`                                                            | `int`                     | 最優先の値を返す。                                                          |
+| Method      | `peekOrDefault(int defaultValue)`                                   | `int`                     | 空なら defaultValue、そうでなければ最優先の値を返す。                       |
+| Method      | `peekSecond()`                                                      | `int`                     | 2番目に優先される値を返す。要素数は2以上とする。                            |
 | Method      | `add(int v)`                                                        | `boolean`                 | 値を追加する。常に true。                                                   |
 | Method      | `addAll(int[] values)`                                              | `boolean`                 | 配列の全要素を追加する。1件以上追加した場合に true。                        |
 | Method      | `addAll(IntCollection values)`                                      | `boolean`                 | 全要素をボクシングせずに追加する。1件以上追加した場合に true。              |
 | Method      | `addAll(Iterable<Integer> values)`                                  | `boolean`                 | 全要素を追加する。`IntCollection` なら `addAll(IntCollection)` へ委譲する。 |
-| Method      | `peek()`                                                            | `int`                     | 最優先の値を返す。                                                          |
-| Method      | `peekOrDefault(int defaultValue)`                                   | `int`                     | 空なら defaultValue、そうでなければ最優先の値を返す。                       |
-| Method      | `peekSecond()`                                                      | `int`                     | 2番目に優先される値を返す。要素数は2以上とする。                            |
 | Method      | `poll()`                                                            | `int`                     | 最優先の値を削除して返す。                                                  |
 | Method      | `pollOrDefault(int defaultValue)`                                   | `int`                     | 空なら defaultValue、そうでなければ最優先の値を削除して返す。               |
 | Method      | `replaceTop(int v)`                                                 | `int`                     | 最優先の値を v に置き換え、置き換え前の値を返す。                           |
-| Method      | `size()`                                                            | `int`                     | 要素数を返す。                                                              |
-| Method      | `capacity()`                                                        | `int`                     | 内部配列の長さを返す。                                                      |
 | Method      | `clear()`                                                           | `void`                    | 内部配列を再利用して空にする。                                              |
 | Method      | `iterator()`                                                        | `PrimitiveIterator.OfInt` | 内部配列の順に走査する。                                                    |
 
@@ -142,18 +142,18 @@
 | Constructor | `LongPriorityQueue(LongCollection values, boolean isDescendingOrder)` | —                          | コレクションの全要素を昇順または降順で持つ。                                  |
 | Constructor | `LongPriorityQueue(LongCollection values, LongComparator comparator)` | —                          | コレクションの全要素を Comparator の順で持つ。                                |
 | Constructor | `LongPriorityQueue(LongPriorityQueue other)`                          | —                          | 比較順・要素・容量を引き継ぐ独立したコピー。                                  |
+| Method      | `size()`                                                              | `int`                      | 要素数を返す。                                                                |
+| Method      | `capacity()`                                                          | `int`                      | 内部配列の長さを返す。                                                        |
+| Method      | `peek()`                                                              | `long`                     | 最優先の値を返す。                                                            |
+| Method      | `peekOrDefault(long defaultValue)`                                    | `long`                     | 空なら defaultValue、そうでなければ最優先の値を返す。                         |
+| Method      | `peekSecond()`                                                        | `long`                     | 2番目に優先される値を返す。要素数は2以上とする。                              |
 | Method      | `add(long v)`                                                         | `boolean`                  | 値を追加する。常に true。                                                     |
 | Method      | `addAll(long[] values)`                                               | `boolean`                  | 配列の全要素を追加する。1件以上追加した場合に true。                          |
 | Method      | `addAll(LongCollection values)`                                       | `boolean`                  | 全要素をボクシングせずに追加する。1件以上追加した場合に true。                |
 | Method      | `addAll(Iterable<Long> values)`                                       | `boolean`                  | 全要素を追加する。`LongCollection` なら `addAll(LongCollection)` へ委譲する。 |
-| Method      | `peek()`                                                              | `long`                     | 最優先の値を返す。                                                            |
-| Method      | `peekOrDefault(long defaultValue)`                                    | `long`                     | 空なら defaultValue、そうでなければ最優先の値を返す。                         |
-| Method      | `peekSecond()`                                                        | `long`                     | 2番目に優先される値を返す。要素数は2以上とする。                              |
 | Method      | `poll()`                                                              | `long`                     | 最優先の値を削除して返す。                                                    |
 | Method      | `pollOrDefault(long defaultValue)`                                    | `long`                     | 空なら defaultValue、そうでなければ最優先の値を削除して返す。                 |
 | Method      | `replaceTop(long v)`                                                  | `long`                     | 最優先の値を v に置き換え、置き換え前の値を返す。                             |
-| Method      | `size()`                                                              | `int`                      | 要素数を返す。                                                                |
-| Method      | `capacity()`                                                          | `int`                      | 内部配列の長さを返す。                                                        |
 | Method      | `clear()`                                                             | `void`                     | 内部配列を再利用して空にする。                                                |
 | Method      | `iterator()`                                                          | `PrimitiveIterator.OfLong` | 内部配列の順に走査する。                                                      |
 

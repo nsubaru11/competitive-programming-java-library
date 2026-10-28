@@ -36,6 +36,14 @@ public final class IntPairLongMap {
 		return ((long) a << 32) | (b & KEY_MASK);
 	}
 
+	public int size() {
+		return baseMap.size();
+	}
+
+	public boolean isEmpty() {
+		return baseMap.isEmpty();
+	}
+
 	public long getDefaultValue() {
 		return baseMap.getDefaultValue();
 	}
@@ -44,8 +52,8 @@ public final class IntPairLongMap {
 		baseMap.setDefaultValue(defaultValue);
 	}
 
-	public long put(final int a, final int b, final long value) {
-		return baseMap.put(pack(a, b), value);
+	public boolean containsKey(final int a, final int b) {
+		return baseMap.containsKey(pack(a, b));
 	}
 
 	public long get(final int a, final int b) {
@@ -54,6 +62,22 @@ public final class IntPairLongMap {
 
 	public long getOrDefault(final int a, final int b, final long defaultValue) {
 		return baseMap.getOrDefault(pack(a, b), defaultValue);
+	}
+
+	public long put(final int a, final int b, final long value) {
+		return baseMap.put(pack(a, b), value);
+	}
+
+	public long putIfAbsent(final int a, final int b, final long value) {
+		return baseMap.putIfAbsent(pack(a, b), value);
+	}
+
+	public long computeIfAbsent(final int a, final int b, final IntBinaryToLongFunction f) {
+		return baseMap.computeIfAbsent(pack(a, b), _ -> f.applyAsLong(a, b));
+	}
+
+	public long remove(final int a, final int b) {
+		return baseMap.remove(pack(a, b));
 	}
 
 	public long increment(final int a, final int b) {
@@ -72,26 +96,6 @@ public final class IntPairLongMap {
 		return baseMap.addOrDefault(pack(a, b), delta, absentValue);
 	}
 
-	public long remove(final int a, final int b) {
-		return baseMap.remove(pack(a, b));
-	}
-
-	public boolean containsKey(final int a, final int b) {
-		return baseMap.containsKey(pack(a, b));
-	}
-
-	public long merge(final int a, final int b, final long value, final LongBinaryOperator f) {
-		return baseMap.merge(pack(a, b), value, f);
-	}
-
-	public long putIfAbsent(final int a, final int b, final long value) {
-		return baseMap.putIfAbsent(pack(a, b), value);
-	}
-
-	public long computeIfAbsent(final int a, final int b, final IntBinaryToLongFunction f) {
-		return baseMap.computeIfAbsent(pack(a, b), _ -> f.applyAsLong(a, b));
-	}
-
 	public long mergeMin(final int a, final int b, final long value) {
 		return baseMap.mergeMin(pack(a, b), value);
 	}
@@ -100,40 +104,12 @@ public final class IntPairLongMap {
 		return baseMap.mergeMax(pack(a, b), value);
 	}
 
+	public long merge(final int a, final int b, final long value, final LongBinaryOperator f) {
+		return baseMap.merge(pack(a, b), value, f);
+	}
+
 	public void clear() {
 		baseMap.clear();
-	}
-
-	public int size() {
-		return baseMap.size();
-	}
-
-	public boolean isEmpty() {
-		return baseMap.isEmpty();
-	}
-
-	public void forEach(final IntBinaryLongConsumer action) {
-		baseMap.forEach((key, value) -> action.accept((int) (key >>> 32), (int) key, value));
-	}
-
-	public void forEachKey(final IntBinaryConsumer action) {
-		baseMap.forEachKey(key -> action.accept((int) (key >>> 32), (int) key));
-	}
-
-	public void forEachValue(final LongConsumer action) {
-		baseMap.forEachValue(action);
-	}
-
-	public long reduce(final long identity, final EntryToLongAccumulator accumulator) {
-		return baseMap.reduce(identity, (acc, key, value) -> accumulator.apply(acc, (int) (key >>> 32), (int) key, value));
-	}
-
-	public long reduceKeys(final long identity, final KeysToLongAccumulator accumulator) {
-		return baseMap.reduceKeys(identity, (acc, key) -> accumulator.apply(acc, (int) (key >>> 32), (int) key));
-	}
-
-	public long reduceValues(final long identity, final LongBinaryOperator accumulator) {
-		return baseMap.reduceValues(identity, accumulator);
 	}
 
 	public int[][] keys() {
@@ -165,6 +141,30 @@ public final class IntPairLongMap {
 			idx++;
 		}
 		return res;
+	}
+
+	public void forEach(final IntBinaryLongConsumer action) {
+		baseMap.forEach((key, value) -> action.accept((int) (key >>> 32), (int) key, value));
+	}
+
+	public void forEachKey(final IntBinaryConsumer action) {
+		baseMap.forEachKey(key -> action.accept((int) (key >>> 32), (int) key));
+	}
+
+	public void forEachValue(final LongConsumer action) {
+		baseMap.forEachValue(action);
+	}
+
+	public long reduce(final long identity, final EntryToLongAccumulator accumulator) {
+		return baseMap.reduce(identity, (acc, key, value) -> accumulator.apply(acc, (int) (key >>> 32), (int) key, value));
+	}
+
+	public long reduceKeys(final long identity, final KeysToLongAccumulator accumulator) {
+		return baseMap.reduceKeys(identity, (acc, key) -> accumulator.apply(acc, (int) (key >>> 32), (int) key));
+	}
+
+	public long reduceValues(final long identity, final LongBinaryOperator accumulator) {
+		return baseMap.reduceValues(identity, accumulator);
 	}
 
 	/**

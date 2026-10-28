@@ -57,30 +57,30 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Constructor | `IndexedPriorityQueue(T[] costs, boolean isDescendingOrder)`        | —                         | 全添字を自然順序または逆順で登録する。                                                           |
 | Constructor | `IndexedPriorityQueue(T[] costs, Comparator<? super T> comparator)` | —                         | 全添字を Comparator の順で登録する。                                                             |
 | Constructor | `IndexedPriorityQueue(IndexedPriorityQueue<T> other)`               | —                         | 比較順・状態・コストを引き継ぐ独立したコピー。コスト自体は共有する。                             |
-| Method      | `set(int i, T c)`                                                   | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
-| Method      | `setAll(IntFunction<? extends T> init)`                             | `IndexedPriorityQueue<T>` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
-| Method      | `add(int i, T c)`                                                   | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
-| Method      | `relax(int i, T c)`                                                 | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
+| Method      | `size()`                                                            | `int`                     | active な添字の数を返す。                                                                        |
+| Method      | `indexCount()`                                                      | `int`                     | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `isEmpty()`                                                         | `boolean`                 | active な添字がないかを返す。                                                                    |
+| Method      | `containsIndex(int i)`                                              | `boolean`                 | 添字が active かを返す。                                                                         |
+| Method      | `hasCost(int i)`                                                    | `boolean`                 | 添字が active または削除済みかを返す。                                                           |
+| Method      | `get(int i)`                                                        | `T`                       | active な添字のコストを返す。                                                                    |
+| Method      | `getOrDefault(int i, T defaultValue)`                               | `T`                       | active でなければ defaultValue を返す。                                                          |
+| Method      | `getCost(int i)`                                                    | `T`                       | active または削除済みの添字が最後に持ったコストを返す。                                          |
+| Method      | `getCostOrDefault(int i, T defaultValue)`                           | `T`                       | 未追加なら defaultValue を返す。                                                                 |
 | Method      | `peek()`                                                            | `T`                       | 最優先のコストを返す。                                                                           |
 | Method      | `peekOrDefault(T defaultValue)`                                     | `T`                       | 空なら defaultValue、そうでなければ最優先のコストを返す。                                        |
 | Method      | `peekIndex()`                                                       | `int`                     | 最優先の添字を返す。                                                                             |
 | Method      | `peekIndexOrDefault(int defaultIndex)`                              | `int`                     | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
 | Method      | `peekSecond()`                                                      | `T`                       | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `set(int i, T c)`                                                   | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
+| Method      | `add(int i, T c)`                                                   | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
+| Method      | `relax(int i, T c)`                                                 | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
 | Method      | `poll()`                                                            | `T`                       | 最優先の添字を削除済みにしてコストを返す。                                                       |
 | Method      | `pollOrDefault(T defaultValue)`                                     | `T`                       | 空なら defaultValue、そうでなければ `poll` する。                                                |
 | Method      | `pollIndex()`                                                       | `int`                     | 最優先の添字を削除済みにして添字を返す。                                                         |
 | Method      | `pollIndexOrDefault(int defaultIndex)`                              | `int`                     | 空なら defaultIndex、そうでなければ `pollIndex` する。                                           |
 | Method      | `remove(int i)`                                                     | `boolean`                 | active なら削除済みにして true、そうでなければ false。未整列領域の添字はヒープを復元せずに外す。 |
-| Method      | `get(int i)`                                                        | `T`                       | active な添字のコストを返す。                                                                    |
-| Method      | `getOrDefault(int i, T defaultValue)`                               | `T`                       | active でなければ defaultValue を返す。                                                          |
-| Method      | `getCost(int i)`                                                    | `T`                       | active または削除済みの添字が最後に持ったコストを返す。                                          |
-| Method      | `getCostOrDefault(int i, T defaultValue)`                           | `T`                       | 未追加なら defaultValue を返す。                                                                 |
-| Method      | `size()`                                                            | `int`                     | active な添字の数を返す。                                                                        |
-| Method      | `indexCount()`                                                      | `int`                     | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `setAll(IntFunction<? extends T> init)`                             | `IndexedPriorityQueue<T>` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
 | Method      | `clear()`                                                           | `void`                    | 全添字を未追加に戻す。                                                                           |
-| Method      | `isEmpty()`                                                         | `boolean`                 | active な添字がないかを返す。                                                                    |
-| Method      | `containsIndex(int i)`                                              | `boolean`                 | 添字が active かを返す。                                                                         |
-| Method      | `hasCost(int i)`                                                    | `boolean`                 | 添字が active または削除済みかを返す。                                                           |
 | Method      | `iterator()`                                                        | `Iterator<T>`             | active な添字のコストを内部配列の順に走査する。                                                  |
 
 `Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
@@ -100,29 +100,29 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Constructor | `IntIndexedPriorityQueue(int[] costs, boolean isDescendingOrder)` | —                         | 全添字を昇順または降順で登録する。                                                               |
 | Constructor | `IntIndexedPriorityQueue(int[] costs, IntComparator comparator)`  | —                         | 全添字を Comparator の順で登録する。                                                             |
 | Constructor | `IntIndexedPriorityQueue(IntIndexedPriorityQueue other)`          | —                         | 比較順・状態・コストを引き継ぐ独立したコピー。                                                   |
-| Method      | `set(int i, int c)`                                               | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
-| Method      | `setAll(IntUnaryOperator init)`                                   | `IntIndexedPriorityQueue` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
-| Method      | `add(int i, int c)`                                               | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
-| Method      | `relax(int i, int c)`                                             | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
+| Method      | `size()`                                                          | `int`                     | active な添字の数を返す。                                                                        |
+| Method      | `indexCount()`                                                    | `int`                     | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `containsIndex(int i)`                                            | `boolean`                 | 添字が active かを返す。コストを探索する `contains` とは異なる。                                 |
+| Method      | `hasCost(int i)`                                                  | `boolean`                 | 添字が active または削除済みかを返す。                                                           |
+| Method      | `get(int i)`                                                      | `int`                     | active な添字のコストを返す。                                                                    |
+| Method      | `getOrDefault(int i, int defaultValue)`                           | `int`                     | active でなければ defaultValue を返す。                                                          |
+| Method      | `getCost(int i)`                                                  | `int`                     | active または削除済みの添字が最後に持ったコストを返す。                                          |
+| Method      | `getCostOrDefault(int i, int defaultValue)`                       | `int`                     | 未追加なら defaultValue を返す。                                                                 |
 | Method      | `peek()`                                                          | `int`                     | 最優先のコストを返す。                                                                           |
 | Method      | `peekOrDefault(int defaultValue)`                                 | `int`                     | 空なら defaultValue、そうでなければ最優先のコストを返す。                                        |
 | Method      | `peekIndex()`                                                     | `int`                     | 最優先の添字を返す。                                                                             |
 | Method      | `peekIndexOrDefault(int defaultIndex)`                            | `int`                     | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
 | Method      | `peekSecond()`                                                    | `int`                     | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `set(int i, int c)`                                               | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
+| Method      | `add(int i, int c)`                                               | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
+| Method      | `relax(int i, int c)`                                             | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
 | Method      | `poll()`                                                          | `int`                     | 最優先の添字を削除済みにしてコストを返す。                                                       |
 | Method      | `pollOrDefault(int defaultValue)`                                 | `int`                     | 空なら defaultValue、そうでなければ `poll` する。                                                |
 | Method      | `pollIndex()`                                                     | `int`                     | 最優先の添字を削除済みにして添字を返す。                                                         |
 | Method      | `pollIndexOrDefault(int defaultIndex)`                            | `int`                     | 空なら defaultIndex、そうでなければ `pollIndex` する。                                           |
 | Method      | `remove(int i)`                                                   | `boolean`                 | active なら削除済みにして true、そうでなければ false。未整列領域の添字はヒープを復元せずに外す。 |
-| Method      | `get(int i)`                                                      | `int`                     | active な添字のコストを返す。                                                                    |
-| Method      | `getOrDefault(int i, int defaultValue)`                           | `int`                     | active でなければ defaultValue を返す。                                                          |
-| Method      | `getCost(int i)`                                                  | `int`                     | active または削除済みの添字が最後に持ったコストを返す。                                          |
-| Method      | `getCostOrDefault(int i, int defaultValue)`                       | `int`                     | 未追加なら defaultValue を返す。                                                                 |
-| Method      | `size()`                                                          | `int`                     | active な添字の数を返す。                                                                        |
-| Method      | `indexCount()`                                                    | `int`                     | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `setAll(IntUnaryOperator init)`                                   | `IntIndexedPriorityQueue` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
 | Method      | `clear()`                                                         | `void`                    | 全添字を未追加に戻す。                                                                           |
-| Method      | `containsIndex(int i)`                                            | `boolean`                 | 添字が active かを返す。コストを探索する `contains` とは異なる。                                 |
-| Method      | `hasCost(int i)`                                                  | `boolean`                 | 添字が active または削除済みかを返す。                                                           |
 | Method      | `iterator()`                                                      | `PrimitiveIterator.OfInt` | active な添字のコストを内部配列の順に走査する。                                                  |
 
 ### `LongIndexedPriorityQueue`
@@ -140,29 +140,29 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Constructor | `LongIndexedPriorityQueue(long[] costs, boolean isDescendingOrder)` | —                          | 全添字を昇順または降順で登録する。                                                               |
 | Constructor | `LongIndexedPriorityQueue(long[] costs, LongComparator comparator)` | —                          | 全添字を Comparator の順で登録する。                                                             |
 | Constructor | `LongIndexedPriorityQueue(LongIndexedPriorityQueue other)`          | —                          | 比較順・状態・コストを引き継ぐ独立したコピー。                                                   |
-| Method      | `set(int i, long c)`                                                | `boolean`                  | active なら c へ更新して false、そうでなければ c で登録して true。                               |
-| Method      | `setAll(IntToLongFunction init)`                                    | `LongIndexedPriorityQueue` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
-| Method      | `add(int i, long c)`                                                | `boolean`                  | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
-| Method      | `relax(int i, long c)`                                              | `boolean`                  | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
+| Method      | `size()`                                                            | `int`                      | active な添字の数を返す。                                                                        |
+| Method      | `indexCount()`                                                      | `int`                      | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `containsIndex(int i)`                                              | `boolean`                  | 添字が active かを返す。コストを探索する `contains` とは異なる。                                 |
+| Method      | `hasCost(int i)`                                                    | `boolean`                  | 添字が active または削除済みかを返す。                                                           |
+| Method      | `get(int i)`                                                        | `long`                     | active な添字のコストを返す。                                                                    |
+| Method      | `getOrDefault(int i, long defaultValue)`                            | `long`                     | active でなければ defaultValue を返す。                                                          |
+| Method      | `getCost(int i)`                                                    | `long`                     | active または削除済みの添字が最後に持ったコストを返す。                                          |
+| Method      | `getCostOrDefault(int i, long defaultValue)`                        | `long`                     | 未追加なら defaultValue を返す。                                                                 |
 | Method      | `peek()`                                                            | `long`                     | 最優先のコストを返す。                                                                           |
 | Method      | `peekOrDefault(long defaultValue)`                                  | `long`                     | 空なら defaultValue、そうでなければ最優先のコストを返す。                                        |
 | Method      | `peekIndex()`                                                       | `int`                      | 最優先の添字を返す。                                                                             |
 | Method      | `peekIndexOrDefault(int defaultIndex)`                              | `int`                      | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
 | Method      | `peekSecond()`                                                      | `long`                     | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `set(int i, long c)`                                                | `boolean`                  | active なら c へ更新して false、そうでなければ c で登録して true。                               |
+| Method      | `add(int i, long c)`                                                | `boolean`                  | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
+| Method      | `relax(int i, long c)`                                              | `boolean`                  | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
 | Method      | `poll()`                                                            | `long`                     | 最優先の添字を削除済みにしてコストを返す。                                                       |
 | Method      | `pollOrDefault(long defaultValue)`                                  | `long`                     | 空なら defaultValue、そうでなければ `poll` する。                                                |
 | Method      | `pollIndex()`                                                       | `int`                      | 最優先の添字を削除済みにして添字を返す。                                                         |
 | Method      | `pollIndexOrDefault(int defaultIndex)`                              | `int`                      | 空なら defaultIndex、そうでなければ `pollIndex` する。                                           |
 | Method      | `remove(int i)`                                                     | `boolean`                  | active なら削除済みにして true、そうでなければ false。未整列領域の添字はヒープを復元せずに外す。 |
-| Method      | `get(int i)`                                                        | `long`                     | active な添字のコストを返す。                                                                    |
-| Method      | `getOrDefault(int i, long defaultValue)`                            | `long`                     | active でなければ defaultValue を返す。                                                          |
-| Method      | `getCost(int i)`                                                    | `long`                     | active または削除済みの添字が最後に持ったコストを返す。                                          |
-| Method      | `getCostOrDefault(int i, long defaultValue)`                        | `long`                     | 未追加なら defaultValue を返す。                                                                 |
-| Method      | `size()`                                                            | `int`                      | active な添字の数を返す。                                                                        |
-| Method      | `indexCount()`                                                      | `int`                      | 使用できる添字の数 n を返す。                                                                    |
+| Method      | `setAll(IntToLongFunction init)`                                    | `LongIndexedPriorityQueue` | 全記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。                      |
 | Method      | `clear()`                                                           | `void`                     | 全添字を未追加に戻す。                                                                           |
-| Method      | `containsIndex(int i)`                                              | `boolean`                  | 添字が active かを返す。コストを探索する `contains` とは異なる。                                 |
-| Method      | `hasCost(int i)`                                                    | `boolean`                  | 添字が active または削除済みかを返す。                                                           |
 | Method      | `iterator()`                                                        | `PrimitiveIterator.OfLong` | active な添字のコストを内部配列の順に走査する。                                                  |
 
 ### 数値版の継承 API

@@ -73,58 +73,53 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 	}
 
 	/**
-	 * active なら c へ更新して false、そうでなければ c で登録して true を返す。
+	 * active な添字の数を返す。
 	 */
-	public boolean set(final int i, final T c) {
-		if (!isActive(i)) {
-			append(i, c);
-			return true;
-		}
-		final int order = comparator.compare(c, cost[i]);
-		cost[i] = c;
-		if (order == 0) return false;
-		final int p = position[i];
-		final int sortedSize = size - unsortedCount;
-		if (p >= sortedSize) return false;
-		if (order < 0) siftUp(i, p);
-		else siftDown(i, p, sortedSize);
-		return false;
+	public int size() {
+		return size;
 	}
 
 	/**
-	 * 全添字の記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。
+	 * 使用できる添字の数 n を返す。
 	 */
-	public IndexedPriorityQueue<T> setAll(final IntFunction<? extends T> init) {
-		clear();
-		for (int i = 0; i < cost.length; i++) cost[i] = init.apply(i);
-		build();
-		return this;
+	public int indexCount() {
+		return cost.length;
+	}
+
+	public boolean isEmpty() {
+		return size == 0;
 	}
 
 	/**
-	 * active でなければ c で登録して true、active なら何もせず false を返す。削除済みの添字も再登録する。
+	 * 添字が active か判定する。
 	 */
-	public boolean add(final int i, final T c) {
-		if (isActive(i)) return false;
-		append(i, c);
-		return true;
+	public boolean containsIndex(final int i) {
+		return isActive(i);
 	}
 
 	/**
-	 * 未追加なら登録し、active で c が現在のコストより優先されるなら更新する。登録・更新した場合に true を返す。
-	 * 削除済みの添字は再登録せず false を返す。
+	 * 添字が active または削除済みか判定する。
 	 */
-	public boolean relax(final int i, final T c) {
-		if (isRemoved(i)) return false;
-		if (!isActive(i)) {
-			append(i, c);
-			return true;
-		}
-		if (comparator.compare(c, cost[i]) >= 0) return false;
-		final int p = position[i];
-		cost[i] = c;
-		if (p < size - unsortedCount) siftUp(i, p);
-		return true;
+	public boolean hasCost(final int i) {
+		return !isUnseen(i);
+	}
+
+	public T get(final int i) {
+		if (!isActive(i)) throw new NoSuchElementException();
+		return cost[i];
+	}
+
+	public T getOrDefault(final int i, final T defaultValue) {
+		return isActive(i) ? cost[i] : defaultValue;
+	}
+
+	public T getCost(final int i) {
+		if (isUnseen(i)) throw new NoSuchElementException();
+		return cost[i];
+	}
+
+	public T getCostOrDefault(final int i, final T defaultValue) {
+		return isUnseen(i) ? defaultValue : cost[i];
 	}
 
 	public T peek() {
@@ -155,6 +150,51 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 		if (unsortedCount > 0) ensureHeapProperty();
 		if (size == 2) return cost[heap[1]];
 		return comparator.compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
+	}
+
+	/**
+	 * active なら c へ更新して false、そうでなければ c で登録して true を返す。
+	 */
+	public boolean set(final int i, final T c) {
+		if (!isActive(i)) {
+			append(i, c);
+			return true;
+		}
+		final int order = comparator.compare(c, cost[i]);
+		cost[i] = c;
+		if (order == 0) return false;
+		final int p = position[i];
+		final int sortedSize = size - unsortedCount;
+		if (p >= sortedSize) return false;
+		if (order < 0) siftUp(i, p);
+		else siftDown(i, p, sortedSize);
+		return false;
+	}
+
+	/**
+	 * active でなければ c で登録して true、active なら何もせず false を返す。削除済みの添字も再登録する。
+	 */
+	public boolean add(final int i, final T c) {
+		if (isActive(i)) return false;
+		append(i, c);
+		return true;
+	}
+
+	/**
+	 * 未追加なら登録し、active で c が現在のコストより優先されるなら更新する。登録・更新した場合に true を返す。
+	 * 削除済みの添字は再登録せず false を返す。
+	 */
+	public boolean relax(final int i, final T c) {
+		if (isRemoved(i)) return false;
+		if (!isActive(i)) {
+			append(i, c);
+			return true;
+		}
+		if (comparator.compare(c, cost[i]) >= 0) return false;
+		final int p = position[i];
+		cost[i] = c;
+		if (p < size - unsortedCount) siftUp(i, p);
+		return true;
 	}
 
 	public T poll() {
@@ -204,59 +244,19 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 		return true;
 	}
 
-	public T get(final int i) {
-		if (!isActive(i)) throw new NoSuchElementException();
-		return cost[i];
-	}
-
-	public T getOrDefault(final int i, final T defaultValue) {
-		return isActive(i) ? cost[i] : defaultValue;
-	}
-
-	public T getCost(final int i) {
-		if (isUnseen(i)) throw new NoSuchElementException();
-		return cost[i];
-	}
-
-	public T getCostOrDefault(final int i, final T defaultValue) {
-		return isUnseen(i) ? defaultValue : cost[i];
-	}
-
 	/**
-	 * active な添字の数を返す。
+	 * 全添字の記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。
 	 */
-	public int size() {
-		return size;
-	}
-
-	/**
-	 * 使用できる添字の数 n を返す。
-	 */
-	public int indexCount() {
-		return cost.length;
+	public IndexedPriorityQueue<T> setAll(final IntFunction<? extends T> init) {
+		clear();
+		for (int i = 0; i < cost.length; i++) cost[i] = init.apply(i);
+		build();
+		return this;
 	}
 
 	public void clear() {
 		size = unsortedCount = 0;
 		stamp--;
-	}
-
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	/**
-	 * 添字が active か判定する。
-	 */
-	public boolean containsIndex(final int i) {
-		return isActive(i);
-	}
-
-	/**
-	 * 添字が active または削除済みか判定する。
-	 */
-	public boolean hasCost(final int i) {
-		return !isUnseen(i);
 	}
 
 	public Iterator<T> iterator() {

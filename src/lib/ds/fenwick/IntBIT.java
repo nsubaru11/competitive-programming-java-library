@@ -169,18 +169,18 @@ public final class IntBIT implements IntCollection {
 		return sb.toString();
 	}
 
-	private int add(final int i, final long d) {
-		raw[i] += d;
-		total += d;
-		for (int cur = i + 1; cur <= size; cur += cur & -cur) tree[cur] += d;
-		return raw[i];
-	}
-
 	private void build() {
 		for (int i = 1; i <= size; i++) {
 			final int j = i + (i & -i);
 			if (j <= size) tree[j] += tree[i];
 		}
+	}
+
+	private int add(final int i, final long d) {
+		raw[i] += d;
+		total += d;
+		for (int cur = i + 1; cur <= size; cur += cur & -cur) tree[cur] += d;
+		return raw[i];
 	}
 
 	private long prefixSum(int r) {

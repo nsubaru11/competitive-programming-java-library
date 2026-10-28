@@ -91,6 +91,37 @@ public final class IntPriorityQueue implements IntCollection {
 		buf = new int[max(1, initialCapacity)];
 	}
 
+	public int size() {
+		return size;
+	}
+
+	/**
+	 * 内部配列の長さを返す。
+	 */
+	public int capacity() {
+		return buf.length;
+	}
+
+	public int peek() {
+		if (isEmpty()) throw new NoSuchElementException();
+		if (unsortedCount > 0) ensureHeapProperty();
+		return buf[0];
+	}
+
+	public int peekOrDefault(final int defaultValue) {
+		return isEmpty() ? defaultValue : peek();
+	}
+
+	/**
+	 * 2番目に優先される値を返す。要素数は2以上とする。
+	 */
+	public int peekSecond() {
+		if (size < 2) throw new NoSuchElementException();
+		if (unsortedCount > 0) ensureHeapProperty();
+		if (size == 2) return buf[1];
+		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
+	}
+
 	public boolean add(final int v) {
 		ensureCapacity(size + 1);
 		buf[size++] = v;
@@ -136,26 +167,6 @@ public final class IntPriorityQueue implements IntCollection {
 		return changed;
 	}
 
-	public int peek() {
-		if (isEmpty()) throw new NoSuchElementException();
-		if (unsortedCount > 0) ensureHeapProperty();
-		return buf[0];
-	}
-
-	public int peekOrDefault(final int defaultValue) {
-		return isEmpty() ? defaultValue : peek();
-	}
-
-	/**
-	 * 2番目に優先される値を返す。要素数は2以上とする。
-	 */
-	public int peekSecond() {
-		if (size < 2) throw new NoSuchElementException();
-		if (unsortedCount > 0) ensureHeapProperty();
-		if (size == 2) return buf[1];
-		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
-	}
-
 	public int poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -177,17 +188,6 @@ public final class IntPriorityQueue implements IntCollection {
 		final int res = buf[0];
 		siftDown(v, 0);
 		return res;
-	}
-
-	public int size() {
-		return size;
-	}
-
-	/**
-	 * 内部配列の長さを返す。
-	 */
-	public int capacity() {
-		return buf.length;
 	}
 
 	public void clear() {

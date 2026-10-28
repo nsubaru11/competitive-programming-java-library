@@ -33,6 +33,16 @@ public interface LongMutableArray extends LongArray {
 		return v;
 	}
 
+	default LongMutableArray fill(final long v) {
+		for (int i = 0, n = size(); i < n; i++) set(i, v);
+		return this;
+	}
+
+	default LongMutableArray setAll(final IntToLongFunction init) {
+		for (int i = 0, n = size(); i < n; i++) set(i, init.applyAsLong(i));
+		return this;
+	}
+
 	default void swap(final int i, final int j) {
 		set(i, set(j, get(i)));
 	}
@@ -44,15 +54,5 @@ public interface LongMutableArray extends LongArray {
 	default void reverse(int l, int r) {
 		Objects.checkFromToIndex(l, r, size());
 		while (l < --r) swap(l++, r);
-	}
-
-	default LongMutableArray fill(final long v) {
-		for (int i = 0, n = size(); i < n; i++) set(i, v);
-		return this;
-	}
-
-	default LongMutableArray setAll(final IntToLongFunction init) {
-		for (int i = 0, n = size(); i < n; i++) set(i, init.applyAsLong(i));
-		return this;
 	}
 }

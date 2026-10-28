@@ -18,6 +18,20 @@
 - Prefer bit operations and low-level optimizations where they measurably help performance.
 - For reusable APIs, add overloads and primitive-specialized variants when appropriate.
 - Public importable classes must live at `src/lib/<package>/<ClassName>.java`; the path, package declaration, public type, and filename must agree.
+- Declare class members in this order: static constants, fields (`public final`, then `private final`, then mutable), constructors, static methods (public static factories, then private static helpers), public instance methods, package-private instance methods, private instance methods, nested types. This matches IntelliJ's default "Rearrange entries" order, which moves static methods directly below the constructors.
+- Order constructors by source kind: empty or size, size with an initial value, array, collection, copy, then private constructors. Within each kind, place fewer parameters first.
+- Group public methods in this order:
+  1. State: `size`, `isEmpty`, `capacity`, `indexCount`, dimension accessors such as `h` / `w`, `rotation`, `getDefaultValue` / `setDefaultValue`.
+  2. Access: membership checks first (`inRange`, `containsKey`, `containsIndex`, `hasCost`), then `get`, `getOrDefault`, `getFirst`, `getCost`, `peek`, and similar reads.
+  3. Element updates: `set`, `add`, `multiply`, `affine`, `apply`, `addFirst` / `addLast`, `removeFirst` / `removeLast`, `put`, `putIfAbsent`, `computeIfAbsent`, `remove`, `increment`, `merge`, `poll`, `replaceTop`, `relax`.
+  4. Bulk updates: `fill`, `setAll`, `clear`.
+  5. Aggregation: `sum`, `sumAll`, `query`, `queryAll`.
+  6. Search: `lowerBound`, `upperBound`, `maxRight`, `minLeft`, `indexOf`, `rankOfValue`, `count`.
+  7. Transformation: `swap`, `reverse`, `rotate*`, `transpose`, `flip*`.
+  8. Conversion and traversal: `restore`, `toArray`, `toArray2D`, `keys` / `values` / `entries`, `forEach*`, `reduce*`, `iterator`, `spliterator`.
+  9. `Object` methods: `toString`.
+- Within a group, keep overloads of the same name adjacent with fewer parameters first, place an `OrDefault` variant immediately after its base method, and order related operations from simple to general (`add`, `multiply`, `affine`, `apply`; `put`, `putIfAbsent`, `computeIfAbsent`; `increment`, `decrement`, `add`, `addOrDefault`; `mergeMin`, `mergeMax`, `merge`).
+- Among private instance methods, place `build` first and order the remaining helpers from callers to callees.
 
 ## Competitive-Programming Assumptions
 
@@ -79,7 +93,7 @@
 ## Integration and Maintenance
 
 - Static analysis is configured in `qodana.yaml` with JDK 24.
-- When creating or updating a detailed class guide, follow the root `docs/GuideTemplate.md`, including features, dependencies, complete overload-aware method tables, examples, cautions, performance characteristics, and implementation version history.
+- When creating or updating a detailed class guide, follow the root `docs/GuideTemplate.md`, including features, dependencies, complete overload-aware method tables listed in source declaration order, examples, cautions, performance characteristics, and implementation version history.
 - When API behavior or location changes, update the relevant module README under `docs/`, detailed guides, root `README.md`, and verification code.
 - Prefer minimal API breakage; contest solutions and the bundler consume these classes as source.
 - Some documentation may lag implementation. Verify claims against `src/` before editing.

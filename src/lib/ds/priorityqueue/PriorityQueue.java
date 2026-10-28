@@ -115,6 +115,41 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return isDescendingOrder ? (Comparator<? super T>) Comparator.reverseOrder() : (Comparator<? super T>) Comparator.naturalOrder();
 	}
 
+	public int size() {
+		return size;
+	}
+
+	/**
+	 * 内部配列の長さを返す。
+	 */
+	public int capacity() {
+		return buf.length;
+	}
+
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	public T peek() {
+		if (isEmpty()) throw new NoSuchElementException();
+		if (unsortedCount > 0) ensureHeapProperty();
+		return buf[0];
+	}
+
+	public T peekOrDefault(final T defaultValue) {
+		return isEmpty() ? defaultValue : peek();
+	}
+
+	/**
+	 * 2番目に優先される要素を返す。要素数は2以上とする。
+	 */
+	public T peekSecond() {
+		if (size < 2) throw new NoSuchElementException();
+		if (unsortedCount > 0) ensureHeapProperty();
+		if (size == 2) return buf[1];
+		return comparator.compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
+	}
+
 	public boolean add(final T v) {
 		ensureCapacity(size + 1);
 		buf[size++] = v;
@@ -149,26 +184,6 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return changed;
 	}
 
-	public T peek() {
-		if (isEmpty()) throw new NoSuchElementException();
-		if (unsortedCount > 0) ensureHeapProperty();
-		return buf[0];
-	}
-
-	public T peekOrDefault(final T defaultValue) {
-		return isEmpty() ? defaultValue : peek();
-	}
-
-	/**
-	 * 2番目に優先される要素を返す。要素数は2以上とする。
-	 */
-	public T peekSecond() {
-		if (size < 2) throw new NoSuchElementException();
-		if (unsortedCount > 0) ensureHeapProperty();
-		if (size == 2) return buf[1];
-		return comparator.compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
-	}
-
 	public T poll() {
 		if (isEmpty()) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
@@ -192,23 +207,8 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return res;
 	}
 
-	public int size() {
-		return size;
-	}
-
-	/**
-	 * 内部配列の長さを返す。
-	 */
-	public int capacity() {
-		return buf.length;
-	}
-
 	public void clear() {
 		size = unsortedCount = 0;
-	}
-
-	public boolean isEmpty() {
-		return size == 0;
 	}
 
 	public Iterator<T> iterator() {

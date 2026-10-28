@@ -33,6 +33,16 @@ public interface IntMutableArray extends IntArray {
 		return v;
 	}
 
+	default IntMutableArray fill(final int v) {
+		for (int i = 0, n = size(); i < n; i++) set(i, v);
+		return this;
+	}
+
+	default IntMutableArray setAll(final IntUnaryOperator init) {
+		for (int i = 0, n = size(); i < n; i++) set(i, init.applyAsInt(i));
+		return this;
+	}
+
 	default void swap(final int i, final int j) {
 		set(i, set(j, get(i)));
 	}
@@ -44,15 +54,5 @@ public interface IntMutableArray extends IntArray {
 	default void reverse(int l, int r) {
 		Objects.checkFromToIndex(l, r, size());
 		while (l < --r) swap(l++, r);
-	}
-
-	default IntMutableArray fill(final int v) {
-		for (int i = 0, n = size(); i < n; i++) set(i, v);
-		return this;
-	}
-
-	default IntMutableArray setAll(final IntUnaryOperator init) {
-		for (int i = 0, n = size(); i < n; i++) set(i, init.applyAsInt(i));
-		return this;
 	}
 }

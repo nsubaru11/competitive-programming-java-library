@@ -48,11 +48,11 @@
 | Method | `multiply(int i, int m)`                   | `int`             | 指定位置を m 倍し、更新後の値を返す。                                            |
 | Method | `affine(int i, int m, int d)`              | `int`             | 現在値 * m + d に更新し、更新後の値を返す。                                      |
 | Method | `apply(int i, int x, IntBinaryOperator f)` | `int`             | f(現在値, x) に更新し、更新後の値を返す。                                        |
+| Method | `fill(int v)`                              | `IntMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
+| Method | `setAll(IntUnaryOperator init)`            | `IntMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
 | Method | `swap(int i, int j)`                       | `void`            | 指定した2要素を交換する。                                                        |
 | Method | `reverse()`                                | `void`            | 全要素の順序を反転する。                                                         |
 | Method | `reverse(int l, int r)`                    | `void`            | 半開区間 [l, r) 内の順序を反転する。                                             |
-| Method | `fill(int v)`                              | `IntMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
-| Method | `setAll(IntUnaryOperator init)`            | `IntMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
 
 ### `LongMutableArray`
 
@@ -63,11 +63,11 @@
 | Method | `multiply(int i, long m)`                    | `long`             | 指定位置を m 倍し、更新後の値を返す。                                            |
 | Method | `affine(int i, long m, long d)`              | `long`             | 現在値 * m + d に更新し、更新後の値を返す。                                      |
 | Method | `apply(int i, long x, LongBinaryOperator f)` | `long`             | f(現在値, x) に更新し、更新後の値を返す。                                        |
+| Method | `fill(long v)`                               | `LongMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
+| Method | `setAll(IntToLongFunction init)`             | `LongMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
 | Method | `swap(int i, int j)`                         | `void`             | 指定した2要素を交換する。                                                        |
 | Method | `reverse()`                                  | `void`             | 全要素の順序を反転する。                                                         |
 | Method | `reverse(int l, int r)`                      | `void`             | 半開区間 [l, r) 内の順序を反転する。                                             |
-| Method | `fill(long v)`                               | `LongMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
-| Method | `setAll(IntToLongFunction init)`             | `LongMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
 
 読み取り・走査・変換の継承 API は [IntArray / LongArray 利用ガイド](./ArrayGuide.md) を参照する。
 

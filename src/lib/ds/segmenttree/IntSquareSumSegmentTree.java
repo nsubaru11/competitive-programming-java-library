@@ -211,6 +211,11 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 		return sb.toString();
 	}
 
+	private void build() {
+		for (int i = size - 1; i > 0; i--) update(i);
+		Arrays.fill(lazy, IDENTITY_LAZY);
+	}
+
 	private int normalize(final int v) {
 		return v < 0 ? v + mod : v;
 	}
@@ -218,11 +223,6 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	private void setLeaf(final int idx, final int x) {
 		tree[idx] = x;
 		tree2[idx] = (int) ((long) x * x % mod);
-	}
-
-	private void build() {
-		for (int i = size - 1; i > 0; i--) update(i);
-		Arrays.fill(lazy, IDENTITY_LAZY);
 	}
 
 	private void update(final int i) {

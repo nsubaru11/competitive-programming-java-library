@@ -187,13 +187,13 @@ public final class IntSegmentTree implements IntCollection {
 		return sb.toString();
 	}
 
+	private void build() {
+		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[(i << 1) | 1]);
+	}
+
 	private int update(final int idx, final int v) {
 		tree[idx] = v;
 		for (int j = idx >> 1; j > 0; j >>= 1) tree[j] = operator.applyAsInt(tree[j << 1], tree[(j << 1) | 1]);
 		return v;
-	}
-
-	private void build() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[(i << 1) | 1]);
 	}
 }
