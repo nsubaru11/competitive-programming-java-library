@@ -50,9 +50,9 @@
 | Method | `apply(int i, int x, IntBinaryOperator f)` | `int`             | f(現在値, x) に更新し、更新後の値を返す。                                        |
 | Method | `fill(int v)`                              | `IntMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
 | Method | `setAll(IntUnaryOperator init)`            | `IntMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
-| Method | `swap(int i, int j)`                       | `void`            | 指定した2要素を交換する。                                                        |
-| Method | `reverse()`                                | `void`            | 全要素の順序を反転する。                                                         |
-| Method | `reverse(int l, int r)`                    | `void`            | 半開区間 [l, r) 内の順序を反転する。                                             |
+| Method | `swap(int i, int j)`                       | `IntMutableArray` | 指定した2要素を交換し、自身を返す。                                              |
+| Method | `reverse()`                                | `IntMutableArray` | 全要素の順序を反転し、自身を返す。                                               |
+| Method | `reverse(int l, int r)`                    | `IntMutableArray` | 半開区間 [l, r) 内の順序を反転し、自身を返す。                                   |
 
 ### `LongMutableArray`
 
@@ -65,9 +65,9 @@
 | Method | `apply(int i, long x, LongBinaryOperator f)` | `long`             | f(現在値, x) に更新し、更新後の値を返す。                                        |
 | Method | `fill(long v)`                               | `LongMutableArray` | 全要素を指定値で更新する。要素数は変えない。                                     |
 | Method | `setAll(IntToLongFunction init)`             | `LongMutableArray` | 各論理添字に対して生成した値で全要素を更新する。init は添字の昇順に1回ずつ呼ぶ。 |
-| Method | `swap(int i, int j)`                         | `void`             | 指定した2要素を交換する。                                                        |
-| Method | `reverse()`                                  | `void`             | 全要素の順序を反転する。                                                         |
-| Method | `reverse(int l, int r)`                      | `void`             | 半開区間 [l, r) 内の順序を反転する。                                             |
+| Method | `swap(int i, int j)`                         | `LongMutableArray` | 指定した2要素を交換し、自身を返す。                                              |
+| Method | `reverse()`                                  | `LongMutableArray` | 全要素の順序を反転し、自身を返す。                                               |
+| Method | `reverse(int l, int r)`                      | `LongMutableArray` | 半開区間 [l, r) 内の順序を反転し、自身を返す。                                   |
 
 読み取り・走査・変換の継承 API は [IntArray / LongArray 利用ガイド](./ArrayGuide.md) を参照する。
 
@@ -109,3 +109,4 @@
 | **バージョン 3.2** | 2026-10-27 | reverseの入口で半開区間を検査し、不正な範囲の黙認と交換途中の失敗を防止                                |
 | **バージョン 3.3** | 2026-10-27 | IntMutableArray / LongMutableArray: reverse の区間引数名を半開区間の規約に合わせて l / r へ変更        |
 | **バージョン 4.0** | 2026-10-28 | IntMutableArray / LongMutableArray: fill・setAll の既定実装が自身を返すように変更                      |
+| **バージョン 5.0** | 2026-10-29 | IntMutableArray / LongMutableArray: swap・reverse の既定実装が自身を返すように変更                     |

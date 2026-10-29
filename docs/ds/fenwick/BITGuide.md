@@ -195,27 +195,27 @@
 
 公開フィールドは `final int size` である。
 
-| 種別        | シグネチャ                                 | 戻り値                    | 説明                                           |
-|-------------|--------------------------------------------|---------------------------|------------------------------------------------|
-| Constructor | `IntRangeBIT(int n)`                       | —                         | 全要素を0で初期化する。                        |
-| Constructor | `IntRangeBIT(int[] a)`                     | —                         | 配列の要素を添字順に保持して構築する。         |
-| Constructor | `IntRangeBIT(IntCollection a)`             | —                         | iterator の順に要素を保持して構築する。        |
-| Constructor | `IntRangeBIT(IntRangeBIT other)`           | —                         | 内部配列を共有しない独立したコピーを構築する。 |
-| Method      | `size()`                                   | `int`                     | 全要素数を返す。                               |
-| Method      | `get(int i)`                               | `int`                     | 指定位置の値を返す。                           |
-| Method      | `set(int i, int v)`                        | `int`                     | 指定値へ更新し、更新前の値を返す。             |
-| Method      | `add(int i, int d)`                        | `void`                    | 指定位置へ加算する。                           |
-| Method      | `add(int i, int j, int d)`                 | `void`                    | [i, j] へ加算する。i > j は何もしない。        |
-| Method      | `multiply(int i, int m)`                   | `void`                    | 指定位置を m 倍する。                          |
-| Method      | `affine(int i, int m, int d)`              | `void`                    | 指定位置を 現在値 * m + d へ更新する。         |
-| Method      | `apply(int i, int x, IntBinaryOperator f)` | `void`                    | 指定位置を f(現在値, x) へ更新する。           |
-| Method      | `fill(int v)`                              | `IntRangeBIT`             | 全要素を指定値で再構築する。                   |
-| Method      | `setAll(IntUnaryOperator init)`            | `IntRangeBIT`             | 添字順に初期値関数を評価して再構築する。       |
-| Method      | `sum(int i)`                               | `long`                    | [0, i] の和を返す。i = -1 は0。                |
-| Method      | `sum(int i, int j)`                        | `long`                    | [i, j] の和を返す。i > j は0。                 |
-| Method      | `sumAll()`                                 | `long`                    | 全要素の和を返す。                             |
-| Method      | `iterator()`                               | `PrimitiveIterator.OfInt` | 添字順に走査する。                             |
-| Method      | `toString()`                               | `String`                  | 要素を空白区切りで返す。空の場合は空文字列。   |
+| 種別        | シグネチャ                                 | 戻り値                    | 説明                                                   |
+|-------------|--------------------------------------------|---------------------------|--------------------------------------------------------|
+| Constructor | `IntRangeBIT(int n)`                       | —                         | 全要素を0で初期化する。                                |
+| Constructor | `IntRangeBIT(int[] a)`                     | —                         | 配列の要素を添字順に保持して構築する。                 |
+| Constructor | `IntRangeBIT(IntCollection a)`             | —                         | iterator の順に要素を保持して構築する。                |
+| Constructor | `IntRangeBIT(IntRangeBIT other)`           | —                         | 内部配列を共有しない独立したコピーを構築する。         |
+| Method      | `size()`                                   | `int`                     | 全要素数を返す。                                       |
+| Method      | `get(int i)`                               | `int`                     | 指定位置の値を返す。                                   |
+| Method      | `set(int i, int v)`                        | `int`                     | 指定値へ更新し、更新前の値を返す。                     |
+| Method      | `add(int i, int d)`                        | `int`                     | 指定位置へ加算し、更新後の値を返す。                   |
+| Method      | `add(int i, int j, int d)`                 | `void`                    | [i, j] へ加算する。i > j は何もしない。                |
+| Method      | `multiply(int i, int m)`                   | `int`                     | 指定位置を m 倍し、更新後の値を返す。                  |
+| Method      | `affine(int i, int m, int d)`              | `int`                     | 指定位置を 現在値 * m + d へ更新し、更新後の値を返す。 |
+| Method      | `apply(int i, int x, IntBinaryOperator f)` | `int`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。   |
+| Method      | `fill(int v)`                              | `IntRangeBIT`             | 全要素を指定値で再構築する。                           |
+| Method      | `setAll(IntUnaryOperator init)`            | `IntRangeBIT`             | 添字順に初期値関数を評価して再構築する。               |
+| Method      | `sum(int i)`                               | `long`                    | [0, i] の和を返す。i = -1 は0。                        |
+| Method      | `sum(int i, int j)`                        | `long`                    | [i, j] の和を返す。i > j は0。                         |
+| Method      | `sumAll()`                                 | `long`                    | 全要素の和を返す。                                     |
+| Method      | `iterator()`                               | `PrimitiveIterator.OfInt` | 添字順に走査する。                                     |
+| Method      | `toString()`                               | `String`                  | 要素を空白区切りで返す。空の場合は空文字列。           |
 
 ### `LongRangeBIT`
 
@@ -223,27 +223,27 @@
 
 公開フィールドは `final int size` である。
 
-| 種別        | シグネチャ                                   | 戻り値                     | 説明                                           |
-|-------------|----------------------------------------------|----------------------------|------------------------------------------------|
-| Constructor | `LongRangeBIT(int n)`                        | —                          | 全要素を0で初期化する。                        |
-| Constructor | `LongRangeBIT(long[] a)`                     | —                          | 配列の要素を添字順に保持して構築する。         |
-| Constructor | `LongRangeBIT(LongCollection a)`             | —                          | iterator の順に要素を保持して構築する。        |
-| Constructor | `LongRangeBIT(LongRangeBIT other)`           | —                          | 内部配列を共有しない独立したコピーを構築する。 |
-| Method      | `size()`                                     | `int`                      | 全要素数を返す。                               |
-| Method      | `get(int i)`                                 | `long`                     | 指定位置の値を返す。                           |
-| Method      | `set(int i, long v)`                         | `long`                     | 指定値へ更新し、更新前の値を返す。             |
-| Method      | `add(int i, long d)`                         | `void`                     | 指定位置へ加算する。                           |
-| Method      | `add(int i, int j, long d)`                  | `void`                     | [i, j] へ加算する。i > j は何もしない。        |
-| Method      | `multiply(int i, long m)`                    | `void`                     | 指定位置を m 倍する。                          |
-| Method      | `affine(int i, long m, long d)`              | `void`                     | 指定位置を 現在値 * m + d へ更新する。         |
-| Method      | `apply(int i, long x, LongBinaryOperator f)` | `void`                     | 指定位置を f(現在値, x) へ更新する。           |
-| Method      | `fill(long v)`                               | `LongRangeBIT`             | 全要素を指定値で再構築する。                   |
-| Method      | `setAll(IntToLongFunction init)`             | `LongRangeBIT`             | 添字順に初期値関数を評価して再構築する。       |
-| Method      | `sum(int i)`                                 | `long`                     | [0, i] の和を返す。i = -1 は0。                |
-| Method      | `sum(int i, int j)`                          | `long`                     | [i, j] の和を返す。i > j は0。                 |
-| Method      | `sumAll()`                                   | `long`                     | 全要素の和を返す。                             |
-| Method      | `iterator()`                                 | `PrimitiveIterator.OfLong` | 添字順に走査する。                             |
-| Method      | `toString()`                                 | `String`                   | 要素を空白区切りで返す。空の場合は空文字列。   |
+| 種別        | シグネチャ                                   | 戻り値                     | 説明                                                   |
+|-------------|----------------------------------------------|----------------------------|--------------------------------------------------------|
+| Constructor | `LongRangeBIT(int n)`                        | —                          | 全要素を0で初期化する。                                |
+| Constructor | `LongRangeBIT(long[] a)`                     | —                          | 配列の要素を添字順に保持して構築する。                 |
+| Constructor | `LongRangeBIT(LongCollection a)`             | —                          | iterator の順に要素を保持して構築する。                |
+| Constructor | `LongRangeBIT(LongRangeBIT other)`           | —                          | 内部配列を共有しない独立したコピーを構築する。         |
+| Method      | `size()`                                     | `int`                      | 全要素数を返す。                                       |
+| Method      | `get(int i)`                                 | `long`                     | 指定位置の値を返す。                                   |
+| Method      | `set(int i, long v)`                         | `long`                     | 指定値へ更新し、更新前の値を返す。                     |
+| Method      | `add(int i, long d)`                         | `long`                     | 指定位置へ加算し、更新後の値を返す。                   |
+| Method      | `add(int i, int j, long d)`                  | `void`                     | [i, j] へ加算する。i > j は何もしない。                |
+| Method      | `multiply(int i, long m)`                    | `long`                     | 指定位置を m 倍し、更新後の値を返す。                  |
+| Method      | `affine(int i, long m, long d)`              | `long`                     | 指定位置を 現在値 * m + d へ更新し、更新後の値を返す。 |
+| Method      | `apply(int i, long x, LongBinaryOperator f)` | `long`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。   |
+| Method      | `fill(long v)`                               | `LongRangeBIT`             | 全要素を指定値で再構築する。                           |
+| Method      | `setAll(IntToLongFunction init)`             | `LongRangeBIT`             | 添字順に初期値関数を評価して再構築する。               |
+| Method      | `sum(int i)`                                 | `long`                     | [0, i] の和を返す。i = -1 は0。                        |
+| Method      | `sum(int i, int j)`                          | `long`                     | [i, j] の和を返す。i > j は0。                         |
+| Method      | `sumAll()`                                   | `long`                     | 全要素の和を返す。                                     |
+| Method      | `iterator()`                                 | `PrimitiveIterator.OfLong` | 添字順に走査する。                                     |
+| Method      | `toString()`                                 | `String`                   | 要素を空白区切りで返す。空の場合は空文字列。           |
 
 ### 数値版の継承 API
 
@@ -307,3 +307,4 @@ Range版は差分と添字で重み付けした差分を2本のBITに保持す�
 | **バージョン 3.0** | 2026-10-27 | 全クラス: 配列とコピーからのコンストラクタを追加。BIT<T>: isEmpty を追加。1次元の数値版: IntCollection / LongCollection からのコンストラクタを追加。数値版: toString の初期容量を指定。IntRangeBIT / LongRangeBIT: build で配置した値から差分を求める形へ変更し、fill・setAll・構築の処理を統一 |
 | **バージョン 4.0** | 2026-10-28 | 全クラス: 初期値関数を受け取るコンストラクタを削除し、関数による初期化を setAll に一本化。fill・setAll が自身を返すように変更                                                                                                                                                                   |
 | **バージョン 4.1** | 2026-10-29 | BIT<T>: 演算と逆演算のフィールド名・コンストラクタ引数名を op・inv から operator・inverse へ変更。IntBIT2D / LongBIT2D: 内部のループ変数名を ci・cj へ変更                                                                                                                                      |
+| **バージョン 5.0** | 2026-10-29 | IntRangeBIT / LongRangeBIT: 単一点の add・multiply・affine・apply が更新後の値を返すように変更                                                                                                                                                                                                  |

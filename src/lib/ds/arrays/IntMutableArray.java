@@ -7,7 +7,7 @@ import java.util.function.*;
  * int値を格納する可変配列の共通インターフェースである。単一要素の添字は {@code [0, size())} とし、範囲外の動作は get・set の実装に依存する。
  * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
  * {@code reverse(l, r)} は半開区間 {@code [l, r)} を反転し、{@code 0 <= l <= r <= size()} を満たさない場合は IndexOutOfBoundsException を投げる。
- * fill・setAll は要素数を変えずに自身を返す。setAll の init は添字の昇順に1回ずつ呼ぶ。
+ * fill・setAll・swap・reverse は要素数を変えずに自身を返す。setAll の init は添字の昇順に1回ずつ呼ぶ。
  */
 public interface IntMutableArray extends IntArray {
 
@@ -43,16 +43,18 @@ public interface IntMutableArray extends IntArray {
 		return this;
 	}
 
-	default void swap(final int i, final int j) {
+	default IntMutableArray swap(final int i, final int j) {
 		set(i, set(j, get(i)));
+		return this;
 	}
 
-	default void reverse() {
-		reverse(0, size());
+	default IntMutableArray reverse() {
+		return reverse(0, size());
 	}
 
-	default void reverse(int l, int r) {
+	default IntMutableArray reverse(int l, int r) {
 		Objects.checkFromToIndex(l, r, size());
 		while (l < --r) swap(l++, r);
+		return this;
 	}
 }

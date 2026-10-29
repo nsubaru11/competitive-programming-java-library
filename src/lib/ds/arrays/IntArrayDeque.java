@@ -11,7 +11,7 @@ import lib.ds.*;
  * int値の可変容量の循環 deque。内部容量は2のべき乗とし、満杯での追加時に2倍へ拡張する。
  * 論理添字は先頭を0とし、{@code 0 <= i < size()} の範囲外では IndexOutOfBoundsException を投げる。
  * 空の removeFirst・removeLast は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * fill・setAll は要素数と容量を維持して自身を返し、clear は内部配列を再利用する。走査と toString は先頭から末尾の順とする。
+ * fill・setAll・swap・reverse は要素数と容量を維持して自身を返し、clear は内部配列を再利用する。走査と toString は先頭から末尾の順とする。
  * equals・hashCode は Object の実装を継承する。
  */
 public final class IntArrayDeque implements IntMutableArray {
@@ -107,6 +107,20 @@ public final class IntArrayDeque implements IntMutableArray {
 
 	public void clear() {
 		head = size = 0;
+	}
+
+	public IntArrayDeque swap(final int i, final int j) {
+		IntMutableArray.super.swap(i, j);
+		return this;
+	}
+
+	public IntArrayDeque reverse() {
+		return reverse(0, size);
+	}
+
+	public IntArrayDeque reverse(final int l, final int r) {
+		IntMutableArray.super.reverse(l, r);
+		return this;
 	}
 
 	public int[] toArray() {

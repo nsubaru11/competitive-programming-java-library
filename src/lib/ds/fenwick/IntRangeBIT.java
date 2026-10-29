@@ -9,7 +9,7 @@ import lib.ds.*;
  * int値の区間加算・区間和を O(log n) で行う Binary Indexed Tree。差分と添字で重み付けした差分を2本の BIT で保持する。
  * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} と {@code add(i, j, d)} は閉区間 {@code [i, j]} を対象とし、
  * {@code i = -1}・{@code i > j} は空区間として扱う。範囲外の添字・区間では IndexOutOfBoundsException を投げる。
- * set は更新前の値を返し、add・multiply・affine・apply は値を返さない。
+ * set は更新前の値、単一点の add・multiply・affine・apply は更新後の値を返し、区間の add は値を返さない。
  * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。get は O(log n) である。
  * 各操作後の要素は int の範囲内とし、更新差分と和は long で扱う。
  */
@@ -58,9 +58,10 @@ public final class IntRangeBIT implements IntCollection {
 		return old;
 	}
 
-	public void add(final int i, final int d) {
-		Objects.checkIndex(i, size);
+	public int add(final int i, final int d) {
+		final int v = get(i) + d;
 		addRange(i, i, d);
+		return v;
 	}
 
 	public void add(final int i, final int j, final int d) {
@@ -69,17 +70,22 @@ public final class IntRangeBIT implements IntCollection {
 		addRange(i, j, d);
 	}
 
-	public void multiply(final int i, final int m) {
-		addRange(i, i, get(i) * (m - 1L));
-	}
-
-	public void affine(final int i, final int m, final int d) {
-		addRange(i, i, get(i) * (m - 1L) + d);
-	}
-
-	public void apply(final int i, final int x, final IntBinaryOperator f) {
+	public int multiply(final int i, final int m) {
 		final int old = get(i);
-		addRange(i, i, (long) f.applyAsInt(old, x) - old);
+		addRange(i, i, old * (m - 1L));
+		return old * m;
+	}
+
+	public int affine(final int i, final int m, final int d) {
+		final int old = get(i);
+		addRange(i, i, old * (m - 1L) + d);
+		return old * m + d;
+	}
+
+	public int apply(final int i, final int x, final IntBinaryOperator f) {
+		final int old = get(i), v = f.applyAsInt(old, x);
+		addRange(i, i, (long) v - old);
+		return v;
 	}
 
 	public IntRangeBIT fill(final int v) {

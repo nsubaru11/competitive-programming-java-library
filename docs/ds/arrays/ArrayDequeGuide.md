@@ -55,6 +55,9 @@
 | Method      | `fill(int v)`                            | `IntArrayDeque`           | 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。                                                   |
 | Method      | `setAll(IntUnaryOperator init)`          | `IntArrayDeque`           | 先頭から論理添字の昇順に init を1回ずつ呼んで全要素を更新し、自身を返す。要素数と容量を維持し、内部の先頭位置を0へ移す。 |
 | Method      | `clear()`                                | `void`                    | 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。                                                     |
+| Method      | `swap(int i, int j)`                     | `IntArrayDeque`           | IntMutableArray の既定実装で2要素を交換し、自身を返す。                                                                  |
+| Method      | `reverse()`                              | `IntArrayDeque`           | 全要素の順序を反転し、自身を返す。                                                                                       |
+| Method      | `reverse(int l, int r)`                  | `IntArrayDeque`           | IntMutableArray の既定実装で半開区間 [l, r) 内の順序を反転し、自身を返す。                                               |
 | Method      | `toArray()`                              | `int[]`                   | 先頭から末尾の論理順で独立した配列へコピーする。                                                                         |
 | Method      | `iterator()`                             | `PrimitiveIterator.OfInt` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。                         |
 | Method      | `toString()`                             | `String`                  | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                                             |
@@ -96,6 +99,9 @@
 | Method      | `fill(long v)`                            | `LongArrayDeque`           | 全要素を v に更新する。要素数と容量を維持し、内部の先頭位置を0へ移す。                                                   |
 | Method      | `setAll(IntToLongFunction init)`          | `LongArrayDeque`           | 先頭から論理添字の昇順に init を1回ずつ呼んで全要素を更新し、自身を返す。要素数と容量を維持し、内部の先頭位置を0へ移す。 |
 | Method      | `clear()`                                 | `void`                     | 全要素を削除する。内部配列の縮小や初期化は行わず、容量を再利用する。                                                     |
+| Method      | `swap(int i, int j)`                      | `LongArrayDeque`           | LongMutableArray の既定実装で2要素を交換し、自身を返す。                                                                 |
+| Method      | `reverse()`                               | `LongArrayDeque`           | 全要素の順序を反転し、自身を返す。                                                                                       |
+| Method      | `reverse(int l, int r)`                   | `LongArrayDeque`           | LongMutableArray の既定実装で半開区間 [l, r) 内の順序を反転し、自身を返す。                                              |
 | Method      | `toArray()`                               | `long[]`                   | 先頭から末尾の論理順で独立した配列へコピーする。                                                                         |
 | Method      | `iterator()`                              | `PrimitiveIterator.OfLong` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。                         |
 | Method      | `toString()`                              | `String`                   | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                                             |
@@ -170,3 +176,4 @@
 | **バージョン 6.1** | 2026-10-27 | IntArrayDeque / LongArrayDeque: 容量フィールドを内部配列長で代替し、例外メッセージを削除。OrDefault 系の削除を対応する削除操作へ委譲                                                                                                                                           |
 | **バージョン 7.0** | 2026-10-27 | IntArrayDeque / LongArrayDeque: 初期容量16の引数なしコンストラクタを追加                                                                                                                                                                                                       |
 | **バージョン 8.0** | 2026-10-28 | IntArrayDeque / LongArrayDeque: fill が自身を返すように変更し、論理添字順に内部配列へ直接書き込む setAll を追加                                                                                                                                                                |
+| **バージョン 9.0** | 2026-10-29 | IntArrayDeque / LongArrayDeque: swap・reverse を自身の型を返すようにオーバーライド                                                                                                                                                                                             |

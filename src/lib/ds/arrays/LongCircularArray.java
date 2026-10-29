@@ -5,7 +5,7 @@ import java.util.function.*;
 
 /**
  * 固定長の回転可能な long 配列。長さは正とし、論理添字 {@code 0 <= i < size} の範囲外では IndexOutOfBoundsException を投げる。
- * 回転はデータを移動せず、rotateLeft・rotateRight・resetRotation はこのインスタンスを変更して自身を返す。
+ * 回転はデータを移動しない。swap・reverse・rotateLeft・rotateRight・resetRotation はこのインスタンスを変更して自身を返す。
  * distance が負の回転は逆方向として扱う。rotation は左回転を正、右回転を負とする総回転数を返す。
  * fill・setAll は回転状態と総回転数を0へ戻す。走査・配列化・toString は現在の論理順とする。
  */
@@ -75,6 +75,20 @@ public final class LongCircularArray implements LongMutableArray {
 		for (int i = 0; i < size; i++) arr[i] = init.applyAsLong(i);
 		rotation = 0;
 		offset = 0;
+		return this;
+	}
+
+	public LongCircularArray swap(final int i, final int j) {
+		LongMutableArray.super.swap(i, j);
+		return this;
+	}
+
+	public LongCircularArray reverse() {
+		return reverse(0, size);
+	}
+
+	public LongCircularArray reverse(final int l, final int r) {
+		LongMutableArray.super.reverse(l, r);
 		return this;
 	}
 
