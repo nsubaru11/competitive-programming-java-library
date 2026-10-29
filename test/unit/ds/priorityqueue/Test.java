@@ -3,6 +3,7 @@ package unit.ds.priorityqueue;
 import java.util.*;
 
 import lib.ds.*;
+import lib.ds.arrays.*;
 import lib.ds.priorityqueue.*;
 import lib.ds.priorityqueue.PriorityQueue;
 import lib.util.function.*;
@@ -19,6 +20,7 @@ public final class Test {
 		checkLazyUpdateBoundary();
 		checkCollections();
 		checkCopiesAndCollectionConstructors();
+		checkToStringAndFactories();
 		checkRandom(false);
 		checkRandom(true);
 	}
@@ -293,8 +295,8 @@ public final class Test {
 		final PriorityQueue<Integer> gqCopy = new PriorityQueue<>(gq);
 		check(gqCopy.poll() == 2);
 		check(gq.size() == 3);
-		check(PriorityQueue.<Integer>naturalOrder(4).capacity() == 4);
-		check(PriorityQueue.reverseOrder(new Integer[]{1, 3}).peek() == 3);
+		check(new PriorityQueue<Integer>(4).capacity() == 4);
+		check(new PriorityQueue<>(new Integer[]{1, 3}, true).peek() == 3);
 
 		final IntIndexedPriorityQueue ii = new IntIndexedPriorityQueue(4).setAll(i -> 10 - i);
 		check(ii.peekIndex() == 3);
@@ -314,6 +316,39 @@ public final class Test {
 		check(giCopy.pollIndex() == 0);
 		check(gi.peekIndex() == 0);
 		check(!gi.isEmpty());
+	}
+
+	private static void checkToStringAndFactories() {
+		check(new IntPriorityQueue().toString().isEmpty());
+		check(new IntPriorityQueue(new int[]{3, 1, 2}).toString().equals("3 1 2"));
+		check(new LongPriorityQueue(new long[]{5_000_000_000L, 4}).toString().equals("5000000000 4"));
+		check(new PriorityQueue<>(List.of("b", "a")).toString().equals("b a"));
+
+		final IntIndexedPriorityQueue ii = new IntIndexedPriorityQueue(new IntArrayDeque(new int[]{7, 4, 9}));
+		check(ii.indexCount == 3 && ii.indexCount() == 3);
+		check(ii.peekIndex() == 1);
+		check(new IntIndexedPriorityQueue(ii).indexCount == 3);
+		check(new IntIndexedPriorityQueue(new IntArrayDeque(new int[]{7, 4, 9}), true).peekIndex() == 2);
+		check(new IntIndexedPriorityQueue(new IntArrayDeque(new int[]{7, 4, 9}), IntComparator.reverseOrder()).peekIndex() == 2);
+		check(new IntIndexedPriorityQueue(new int[]{7, 4, 9}).toString().equals("7 4 9"));
+		check(new IntIndexedPriorityQueue(3).toString().isEmpty());
+
+		final LongIndexedPriorityQueue li = new LongIndexedPriorityQueue(new LongArrayDeque(new long[]{7, 4, 9}));
+		check(li.indexCount == 3 && li.peekIndex() == 1);
+		check(new LongIndexedPriorityQueue(new LongArrayDeque(new long[]{7, 4, 9}), true).peekIndex() == 2);
+		check(new LongIndexedPriorityQueue(new LongArrayDeque(new long[]{7, 4, 9}), LongComparator.reverseOrder()).peekIndex() == 2);
+		check(new LongIndexedPriorityQueue(new long[]{7, 4}).toString().equals("7 4"));
+
+		final IndexedPriorityQueue<Integer> gi = new IndexedPriorityQueue<>(List.of(7, 4, 9));
+		check(gi.indexCount == 3 && gi.peekIndex() == 1);
+		check(new IndexedPriorityQueue<>(gi).indexCount == 3);
+		check(new IndexedPriorityQueue<>(List.of(7, 4, 9), true).peekIndex() == 2);
+		check(new IndexedPriorityQueue<Integer>(5).indexCount == 5);
+		check(new IndexedPriorityQueue<>(List.of("b", "a")).peekIndex() == 1);
+		check(new IndexedPriorityQueue<>(List.of("b", "a"), true).peekIndex() == 0);
+		check(new IndexedPriorityQueue<>(List.of("bb", "a"), Comparator.comparingInt(String::length)).peekIndex() == 1);
+		check(new IndexedPriorityQueue<>(new String[]{"x", "y"}).toString().equals("x y"));
+		check(new IndexedPriorityQueue<String>(2).toString().isEmpty());
 	}
 
 	private static void checkRandom(final boolean descending) {

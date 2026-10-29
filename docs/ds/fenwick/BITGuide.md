@@ -49,23 +49,25 @@
 
 公開フィールドは `final int size` と `final T identity` である。
 
-| 種別        | シグネチャ                                                                      | 戻り値        | 説明                                                     |
-|-------------|---------------------------------------------------------------------------------|---------------|----------------------------------------------------------|
-| Constructor | `BIT(int n, BinaryOperator<T> operator, BinaryOperator<T> inverse, T identity)` | —             | 全要素を単位元で初期化する。                             |
-| Constructor | `BIT(T[] a, BinaryOperator<T> operator, BinaryOperator<T> inverse, T identity)` | —             | 配列の要素を添字順に保持して構築する。                   |
-| Constructor | `BIT(BIT<T> other)`                                                             | —             | 内部配列を複製し、演算・逆演算・単位元を共有する。       |
-| Method      | `size()`                                                                        | `int`         | 要素数を返す。                                           |
-| Method      | `isEmpty()`                                                                     | `boolean`     | 要素数が0かを返す。                                      |
-| Method      | `get(int i)`                                                                    | `T`           | 指定位置の値を返す。                                     |
-| Method      | `set(int i, T v)`                                                               | `T`           | 指定値へ更新し、更新前の値を返す。逆演算が必要。         |
-| Method      | `apply(int i, T v)`                                                             | `T`           | 現在値に operator を作用させ、更新後の値を返す。         |
-| Method      | `fill(T v)`                                                                     | `BIT<T>`      | 全要素を指定値で再構築する。                             |
-| Method      | `setAll(IntFunction<T> init)`                                                   | `BIT<T>`      | 添字順に初期値関数を評価して再構築する。                 |
-| Method      | `query(int r)`                                                                  | `T`           | [0, r) の集計結果を返す。r = 0 は単位元。                |
-| Method      | `query(int l, int r)`                                                           | `T`           | [l, r) の集計結果を返す。l >= r は単位元。逆演算が必要。 |
-| Method      | `queryAll()`                                                                    | `T`           | 全要素の集計結果を返す。                                 |
-| Method      | `iterator()`                                                                    | `Iterator<T>` | 添字順に走査する。                                       |
-| Method      | `toString()`                                                                    | `String`      | 要素を空白区切りで返す。空の場合は空文字列。             |
+| 種別        | シグネチャ                                                                                          | 戻り値        | 説明                                                               |
+|-------------|-----------------------------------------------------------------------------------------------------|---------------|--------------------------------------------------------------------|
+| Constructor | `BIT(int n, BinaryOperator<T> operator, BinaryOperator<T> inverse, T identity)`                     | —             | 全要素を単位元で初期化する。                                       |
+| Constructor | `BIT(T[] a, BinaryOperator<T> operator, BinaryOperator<T> inverse, T identity)`                     | —             | 配列の要素を添字順に保持して構築する。                             |
+| Constructor | `BIT(Collection<? extends T> a, BinaryOperator<T> operator, BinaryOperator<T> inverse, T identity)` | —             | コレクションの iterator 順に要素を保持して構築する。               |
+| Constructor | `BIT(BIT<T> other)`                                                                                 | —             | 内部配列を複製し、演算・逆演算・単位元を共有する。                 |
+| Method      | `size()`                                                                                            | `int`         | 要素数を返す。                                                     |
+| Method      | `isEmpty()`                                                                                         | `boolean`     | 要素数が0かを返す。                                                |
+| Method      | `get(int i)`                                                                                        | `T`           | 指定位置の値を返す。                                               |
+| Method      | `set(int i, T v)`                                                                                   | `T`           | 指定値へ更新し、更新前の値を返す。逆演算が必要。                   |
+| Method      | `add(int i, T v)`                                                                                   | `T`           | 現在値を operator(現在値, v) へ更新し、更新後の値を返す。          |
+| Method      | `apply(int i, T x, BinaryOperator<T> f)`                                                            | `T`           | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。逆演算が必要。 |
+| Method      | `fill(T v)`                                                                                         | `BIT<T>`      | 全要素を指定値で再構築する。                                       |
+| Method      | `setAll(IntFunction<T> init)`                                                                       | `BIT<T>`      | 添字順に初期値関数を評価して再構築する。                           |
+| Method      | `query(int r)`                                                                                      | `T`           | [0, r) の集計結果を返す。r = 0 は単位元。                          |
+| Method      | `query(int l, int r)`                                                                               | `T`           | [l, r) の集計結果を返す。l >= r は単位元。逆演算が必要。           |
+| Method      | `queryAll()`                                                                                        | `T`           | 全要素の集計結果を返す。                                           |
+| Method      | `iterator()`                                                                                        | `Iterator<T>` | 添字順に走査する。                                                 |
+| Method      | `toString()`                                                                                        | `String`      | 要素を空白区切りで返す。空の場合は空文字列。                       |
 
 `Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
 
@@ -260,7 +262,7 @@ Range版の配列化は既定実装を使う。数値版の spliterator は既�
 - 点の添字は0始まりで、1次元は `[0, size)`、2次元は `[0, h) × [0, w)` とする。配列アクセスで検出できない添字は明示的に検査し、範囲外では `IndexOutOfBoundsException` を投げる。
 - 数値版の閉区間の端点は有効な添字とし、1次元は `0 <= i, j < size`、2次元は `0 <= i < h` かつ `0 <= j < w` とする。端点が範囲外の場合は、空区間でも `IndexOutOfBoundsException` を投げる。汎用 `BIT<T>.query(r)` の終端は `0 <= r <= size` とし、r = 0 は空区間を表す。
 - 数値版の区間取得と区間加算は端点が有効で始点が終点を超える場合、汎用 `BIT<T>.query(l, r)` は `l >= r` の場合に空区間として扱う。それ以外は区間全体が有効範囲内にあることを検査する。更新に必要な検査は状態変更前に行う。
-- 係数を指定するアフィン更新は `affine`、関数を指定する更新は `apply` とする。汎用 `BIT<T>.apply(i, v)` は operator を作用させる既存の操作である。
+- 係数を指定するアフィン更新は `affine`、関数を指定する更新は `apply` とする。汎用 `BIT<T>` では operator による合成を `add`、関数の適用を `apply` とする。
 - int版は、各操作後の各要素が int の範囲内に収まることを前提とする。要素の型を拡張するものではなく、更新差分・添字との積・集計値を long で計算する。要素値のオーバーフロー検査は行わない。
 - long版は各要素と計算途中の値が long の範囲内に収まることを前提とする。int版も内部の集計値と計算途中の値は long の範囲内とする。
 - 累積和の境界探索は全要素が非負の場合に使う。戻り値は添字または size であり、ビット反転した挿入位置ではない。
@@ -309,3 +311,4 @@ Range版は差分と添字で重み付けした差分を2本のBITに保持す�
 | **バージョン 4.1** | 2026-10-29 | BIT<T>: 演算と逆演算のフィールド名・コンストラクタ引数名を op・inv から operator・inverse へ変更。IntBIT2D / LongBIT2D: 内部のループ変数名を ci・cj へ変更                                                                                                                                      |
 | **バージョン 5.0** | 2026-10-29 | IntRangeBIT / LongRangeBIT: 単一点の add・multiply・affine・apply が更新後の値を返すように変更                                                                                                                                                                                                  |
 | **バージョン 5.1** | 2026-10-29 | 数値版: 閉区間の両端点を有効な添字として検査し、`sum(i)` の i = -1 を範囲外として扱うよう変更。端点が有効で始点が終点を超える区間は引き続き空区間とする                                                                                                                                         |
+| **バージョン 6.0** | 2026-10-29 | BIT<T>: operator で合成する `apply(i, v)` を `add(i, v)` へ改名し、f(現在値, x) へ更新する `apply(i, x, f)` と Collection からのコンストラクタを追加                                                                                                                                            |

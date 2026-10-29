@@ -3,6 +3,8 @@ package lib.ds.arrays;
 import java.util.*;
 import java.util.function.*;
 
+import lib.ds.*;
+
 /**
  * long値の1次元累積和を保持する。構築後は更新しない。
  * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} は閉区間 {@code [i, j]} の和を返し、
@@ -21,13 +23,14 @@ public final class LongPrefixSum implements LongArray {
 
 	public LongPrefixSum(final long[] a) {
 		this(a.length);
-		if (size >= 0) System.arraycopy(a, 0, pref, 1, size);
+		System.arraycopy(a, 0, pref, 1, size);
 		build();
 	}
 
-	public LongPrefixSum(final LongArray a) {
+	public LongPrefixSum(final LongCollection a) {
 		this(a.size());
-		for (int i = 0; i < size; i++) pref[i + 1] = a.get(i);
+		final PrimitiveIterator.OfLong it = a.iterator();
+		for (int i = 0; i < size; i++) pref[i + 1] = it.nextLong();
 		build();
 	}
 

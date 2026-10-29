@@ -16,7 +16,8 @@ import lib.ds.*;
 public final class IntSquareSumSegmentTree implements IntCollection {
 	private static final long IDENTITY_LAZY = 1L << 32;
 	private static final int DEFAULT_MOD = 998244353;
-	private final int n, size, log, mod;
+	public final int size, mod;
+	private final int leafSize, log;
 	private final int[] tree, tree2;
 	private final long[] lazy;
 
@@ -25,13 +26,13 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	public IntSquareSumSegmentTree(final int n, final int mod) {
-		this.n = n;
-		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-		log = Integer.numberOfTrailingZeros(size);
+		size = n;
+		leafSize = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
+		log = Integer.numberOfTrailingZeros(leafSize);
 		this.mod = mod;
-		tree = new int[size << 1];
-		tree2 = new int[size << 1];
-		lazy = new long[size];
+		tree = new int[leafSize << 1];
+		tree2 = new int[leafSize << 1];
+		lazy = new long[leafSize];
 		Arrays.fill(lazy, IDENTITY_LAZY);
 	}
 
@@ -41,7 +42,7 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 
 	public IntSquareSumSegmentTree(final int[] a, final int mod) {
 		this(a.length, mod);
-		for (int i = 0, idx = size; i < n; i++, idx++) setLeaf(idx, a[i] % mod);
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) setLeaf(idx, a[i] % mod);
 		build();
 	}
 
@@ -52,13 +53,13 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	public IntSquareSumSegmentTree(final IntCollection a, final int mod) {
 		this(a.size(), mod);
 		final PrimitiveIterator.OfInt it = a.iterator();
-		for (int i = 0, idx = size; i < n; i++, idx++) setLeaf(idx, it.nextInt() % mod);
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) setLeaf(idx, it.nextInt() % mod);
 		build();
 	}
 
 	public IntSquareSumSegmentTree(final IntSquareSumSegmentTree other) {
-		n = other.n;
 		size = other.size;
+		leafSize = other.leafSize;
 		log = other.log;
 		mod = other.mod;
 		tree = other.tree.clone();
@@ -67,17 +68,17 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	public int size() {
-		return n;
+		return size;
 	}
 
 	public int get(final int i) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		return normalize(tree[idx]);
 	}
 
 	public int set(final int i, final int v) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		final int old = tree[idx];
 		setLeaf(idx, v % mod);
@@ -106,7 +107,7 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	public int affine(final int i, final int m, final int d) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		final int v = (int) (((long) (m % mod) * tree[idx] + d % mod) % mod);
 		setLeaf(idx, v);
@@ -116,9 +117,9 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 
 	public void affine(int l, int r, final int m, final int d) {
 		if (l >= r) return;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		final int l2 = l, r2 = r;
 		final int a = m % mod, b = d % mod, a2 = (int) ((long) a * a % mod), b2 = (int) ((long) b * b % mod), ab2 = (int) (((long) a * b << 1) % mod);
@@ -131,23 +132,23 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 
 	public IntSquareSumSegmentTree fill(final int v) {
 		final int x = v % mod, x2 = (int) ((long) x * x % mod);
-		Arrays.fill(tree, size, size + n, x);
-		Arrays.fill(tree2, size, size + n, x2);
+		Arrays.fill(tree, leafSize, leafSize + size, x);
+		Arrays.fill(tree2, leafSize, leafSize + size, x2);
 		build();
 		return this;
 	}
 
 	public IntSquareSumSegmentTree setAll(final IntUnaryOperator init) {
-		for (int i = 0, idx = size; i < n; i++, idx++) setLeaf(idx, init.applyAsInt(i) % mod);
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) setLeaf(idx, init.applyAsInt(i) % mod);
 		build();
 		return this;
 	}
 
 	public int query(int l, int r) {
 		if (l >= r) return 0;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		long ans = 0;
 		for (; l < r; l >>= 1, r >>= 1) {
@@ -159,9 +160,9 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 
 	public int query2(int l, int r) {
 		if (l >= r) return 0;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		long ans = 0;
 		for (; l < r; l >>= 1, r >>= 1) {
@@ -181,8 +182,8 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 
 	public int[] toArray() {
 		pushAll();
-		final int[] a = new int[n];
-		for (int i = 0; i < n; i++) a[i] = normalize(tree[size + i]);
+		final int[] a = new int[size];
+		for (int i = 0; i < size; i++) a[i] = normalize(tree[leafSize + i]);
 		return a;
 	}
 
@@ -192,12 +193,12 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < n;
+				return i < size;
 			}
 
 			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return normalize(tree[size + i++]);
+				return normalize(tree[leafSize + i++]);
 			}
 		};
 	}
@@ -205,14 +206,14 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	public String toString() {
 		if (isEmpty()) return "";
 		pushAll();
-		final StringBuilder sb = new StringBuilder(11 * n - 1);
-		sb.append(normalize(tree[size]));
-		for (int i = 1; i < n; i++) sb.append(' ').append(normalize(tree[size + i]));
+		final StringBuilder sb = new StringBuilder(11 * size - 1);
+		sb.append(normalize(tree[leafSize]));
+		for (int i = 1; i < size; i++) sb.append(' ').append(normalize(tree[leafSize + i]));
 		return sb.toString();
 	}
 
 	private void build() {
-		for (int i = size - 1; i > 0; i--) update(i);
+		for (int i = leafSize - 1; i > 0; i--) update(i);
 		Arrays.fill(lazy, IDENTITY_LAZY);
 	}
 
@@ -234,7 +235,7 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 		final int old = tree[i];
 		tree2[i] = (int) (((long) a2 * tree2[i] + (long) ab2 * old + (long) b2 * len) % mod);
 		tree[i] = (int) (((long) a * old + (long) b * len) % mod);
-		if (i >= size) return;
+		if (i >= leafSize) return;
 		final long f = lazy[i];
 		final int oldA = (int) (f >>> 32), oldB = (int) f;
 		final int newA = (int) ((long) a * oldA % mod), newB = (int) (((long) a * oldB + b) % mod);
@@ -252,7 +253,7 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 	}
 
 	private void pushAll() {
-		for (int i = 1; i < size; i++) push(i, size >> (32 - Integer.numberOfLeadingZeros(i)));
+		for (int i = 1; i < leafSize; i++) push(i, leafSize >> (32 - Integer.numberOfLeadingZeros(i)));
 	}
 
 	private void pushPath(final int idx) {

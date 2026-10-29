@@ -13,7 +13,7 @@ import lib.util.function.*;
  * add・addAll・配列や IntCollection からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
  * addAll は1件以上追加した場合に true を返す。clear は内部配列を再利用する。
  * 空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * 走査はヒープを復元せず、内部配列の順に行う。
+ * 走査と toString はヒープを復元せず、内部配列の順に行う。
  */
 public final class IntPriorityQueue implements IntCollection {
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
@@ -207,6 +207,14 @@ public final class IntPriorityQueue implements IntCollection {
 				return buf[i++];
 			}
 		};
+	}
+
+	public String toString() {
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder(12 * size - 1);
+		sb.append(buf[0]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(buf[i]);
+		return sb.toString();
 	}
 
 	private int compare(final int a, final int b) {

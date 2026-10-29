@@ -3,6 +3,8 @@ package lib.ds.arrays;
 import java.util.*;
 import java.util.function.*;
 
+import lib.ds.*;
+
 /**
  * int値の1次元累積和を法 mod で保持する。構築後は更新しない。法は正、入力値は {@code 0 <= v < mod} とし、get・sum の結果は {@code [0, mod)} とする。
  * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} は閉区間 {@code [i, j]} の和を返し、
@@ -21,13 +23,14 @@ public final class IntPrefixModSum implements IntArray {
 
 	public IntPrefixModSum(final int[] a, final int mod) {
 		this(a.length, mod);
-		if (size >= 0) System.arraycopy(a, 0, pref, 1, size);
+		System.arraycopy(a, 0, pref, 1, size);
 		build();
 	}
 
-	public IntPrefixModSum(final IntArray a, final int mod) {
+	public IntPrefixModSum(final IntCollection a, final int mod) {
 		this(a.size(), mod);
-		for (int i = 0; i < size; i++) pref[i + 1] = a.get(i);
+		final PrimitiveIterator.OfInt it = a.iterator();
+		for (int i = 0; i < size; i++) pref[i + 1] = it.nextInt();
 		build();
 	}
 

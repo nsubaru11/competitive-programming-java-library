@@ -34,36 +34,38 @@
 
 [ソース](../../../src/lib/ds/segmenttree/IntSquareSumSegmentTree.java)
 
+公開フィールドは `final int size` と `final int mod` である。
+
 `IntCollection` を実装する。
 
-| 種別        | シグネチャ                                                     | 戻り値                    | 説明                                                                 |
-|-------------|----------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
-| Constructor | `IntSquareSumSegmentTree(int n)`                               | —                         | 全要素を0、法を998244353として初期化する。                           |
-| Constructor | `IntSquareSumSegmentTree(int n, int mod)`                      | —                         | 全要素を0、法を mod として初期化する。                               |
-| Constructor | `IntSquareSumSegmentTree(int[] a)`                             | —                         | 配列の要素を添字順に配置し、法を998244353とする。                    |
-| Constructor | `IntSquareSumSegmentTree(int[] a, int mod)`                    | —                         | 配列の要素を添字順に配置し、法を mod とする。                        |
-| Constructor | `IntSquareSumSegmentTree(IntCollection a)`                     | —                         | コレクションの走査順に要素を配置し、法を998244353とする。            |
-| Constructor | `IntSquareSumSegmentTree(IntCollection a, int mod)`            | —                         | コレクションの走査順に要素を配置し、法を mod とする。                |
-| Constructor | `IntSquareSumSegmentTree(IntSquareSumSegmentTree other)`       | —                         | 内部配列を複製し、法を共有する。                                     |
-| Method      | `size()`                                                       | `int`                     | 要素数 n を返す。                                                    |
-| Method      | `get(int i)`                                                   | `int`                     | 位置 i の値を返す。                                                  |
-| Method      | `set(int i, int v)`                                            | `int`                     | 位置 i を v へ更新し、作用を反映した更新前の値を返す。               |
-| Method      | `set(int l, int r, int v)`                                     | `void`                    | 半開区間 `[l, r)` の各要素を v へ更新する。                          |
-| Method      | `add(int i, int d)`                                            | `int`                     | 位置 i に d を加え、更新後の値を返す。                               |
-| Method      | `add(int l, int r, int d)`                                     | `void`                    | 半開区間 `[l, r)` の各要素に d を加える。                            |
-| Method      | `multiply(int i, int m)`                                       | `int`                     | 位置 i を m 倍し、更新後の値を返す。                                 |
-| Method      | `multiply(int l, int r, int m)`                                | `void`                    | 半開区間 `[l, r)` の各要素を m 倍する。                              |
-| Method      | `affine(int i, int m, int d)`                                  | `int`                     | 位置 i を `現在値 * m + d` へ更新し、更新後の値を返す。              |
-| Method      | `affine(int l, int r, int m, int d)`                           | `void`                    | 半開区間 `[l, r)` の各要素を `現在値 * m + d` へ更新する。           |
-| Method      | `fill(int v)`                                                  | `IntSquareSumSegmentTree` | 全要素を v にして再構築する。                                        |
-| Method      | `setAll(IntUnaryOperator init)`                                | `IntSquareSumSegmentTree` | 添字順に初期値関数を評価して再構築する。                             |
-| Method      | `query(int l, int r)`                                          | `int`                     | 半開区間 `[l, r)` の和を返す。                                       |
-| Method      | `query2(int l, int r)`                                         | `int`                     | 半開区間 `[l, r)` の二乗和を返す。                                   |
-| Method      | `queryAll()`                                                   | `int`                     | 全要素の和を返す。                                                   |
-| Method      | `query2All()`                                                  | `int`                     | 全要素の二乗和を返す。                                               |
-| Method      | `toArray()`                                                    | `int[]`                   | 全作用素を伝播した後、正規化した要素の配列を返す。                   |
-| Method      | `iterator()`                                                   | `PrimitiveIterator.OfInt` | 全作用素を伝播した後、添字順に正規化した要素を走査する。             |
-| Method      | `toString()`                                                   | `String`                  | 正規化した要素を空白区切りで連結する。空の場合は空文字列を返す。     |
+| 種別        | シグネチャ                                               | 戻り値                    | 説明                                                             |
+|-------------|----------------------------------------------------------|---------------------------|------------------------------------------------------------------|
+| Constructor | `IntSquareSumSegmentTree(int n)`                         | —                         | 全要素を0、法を998244353として初期化する。                       |
+| Constructor | `IntSquareSumSegmentTree(int n, int mod)`                | —                         | 全要素を0、法を mod として初期化する。                           |
+| Constructor | `IntSquareSumSegmentTree(int[] a)`                       | —                         | 配列の要素を添字順に配置し、法を998244353とする。                |
+| Constructor | `IntSquareSumSegmentTree(int[] a, int mod)`              | —                         | 配列の要素を添字順に配置し、法を mod とする。                    |
+| Constructor | `IntSquareSumSegmentTree(IntCollection a)`               | —                         | コレクションの走査順に要素を配置し、法を998244353とする。        |
+| Constructor | `IntSquareSumSegmentTree(IntCollection a, int mod)`      | —                         | コレクションの走査順に要素を配置し、法を mod とする。            |
+| Constructor | `IntSquareSumSegmentTree(IntSquareSumSegmentTree other)` | —                         | 内部配列を複製し、法を共有する。                                 |
+| Method      | `size()`                                                 | `int`                     | 要素数 n を返す。                                                |
+| Method      | `get(int i)`                                             | `int`                     | 位置 i の値を返す。                                              |
+| Method      | `set(int i, int v)`                                      | `int`                     | 位置 i を v へ更新し、作用を反映した更新前の値を返す。           |
+| Method      | `set(int l, int r, int v)`                               | `void`                    | 半開区間 `[l, r)` の各要素を v へ更新する。                      |
+| Method      | `add(int i, int d)`                                      | `int`                     | 位置 i に d を加え、更新後の値を返す。                           |
+| Method      | `add(int l, int r, int d)`                               | `void`                    | 半開区間 `[l, r)` の各要素に d を加える。                        |
+| Method      | `multiply(int i, int m)`                                 | `int`                     | 位置 i を m 倍し、更新後の値を返す。                             |
+| Method      | `multiply(int l, int r, int m)`                          | `void`                    | 半開区間 `[l, r)` の各要素を m 倍する。                          |
+| Method      | `affine(int i, int m, int d)`                            | `int`                     | 位置 i を `現在値 * m + d` へ更新し、更新後の値を返す。          |
+| Method      | `affine(int l, int r, int m, int d)`                     | `void`                    | 半開区間 `[l, r)` の各要素を `現在値 * m + d` へ更新する。       |
+| Method      | `fill(int v)`                                            | `IntSquareSumSegmentTree` | 全要素を v にして再構築する。                                    |
+| Method      | `setAll(IntUnaryOperator init)`                          | `IntSquareSumSegmentTree` | 添字順に初期値関数を評価して再構築する。                         |
+| Method      | `query(int l, int r)`                                    | `int`                     | 半開区間 `[l, r)` の和を返す。                                   |
+| Method      | `query2(int l, int r)`                                   | `int`                     | 半開区間 `[l, r)` の二乗和を返す。                               |
+| Method      | `queryAll()`                                             | `int`                     | 全要素の和を返す。                                               |
+| Method      | `query2All()`                                            | `int`                     | 全要素の二乗和を返す。                                           |
+| Method      | `toArray()`                                              | `int[]`                   | 全作用素を伝播した後、正規化した要素の配列を返す。               |
+| Method      | `iterator()`                                             | `PrimitiveIterator.OfInt` | 全作用素を伝播した後、添字順に正規化した要素を走査する。         |
+| Method      | `toString()`                                             | `String`                  | 正規化した要素を空白区切りで連結する。空の場合は空文字列を返す。 |
 
 ### 継承 API
 
@@ -106,3 +108,4 @@
 | **バージョン 2.0** | 2026-10-27 | IntSquareSumSegmentTree / LongSquareSumSegmentTree: 単一点の `set` に更新前の値を返す機能を追加                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | **バージョン 3.0** | 2026-10-28 | LongSquareSumSegmentTree を廃止。保持する剰余は int に収まるため IntSquareSumSegmentTree に一本化。IntSquareSumSegmentTree: `fill`・`setAll` が自身を返すように変更。IntCollection を実装し、コレクションとコピーからのコンストラクタ、`toArray` を追加。単一点の `add`・`multiply`・`affine` を経路の伝播と葉の直接更新へ変更し、更新後の値を返す仕様に変更。走査・文字列化を全ノードの伝播後に葉を読む O(n) の処理へ変更し、空の `toString` を空文字列に変更。作用素の配列長を size へ縮小。アフィン変換の `apply` を `affine` へ改名し、引数名を m / d に統一。配列アクセスで検出できない範囲外の添字・区間の検査を追加 |
 | **バージョン 3.1** | 2026-10-29 | IntSquareSumSegmentTree: 既定の法の定数名を MOD から DEFAULT_MOD へ変更し、更新前の値を保持するローカル変数名を old へ統一                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **バージョン 4.0** | 2026-10-29 | IntSquareSumSegmentTree: 要素数 `size` と法 `mod` を公開フィールドにし、内部の2のべき乗の葉数を `leafSize` へ改名                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |

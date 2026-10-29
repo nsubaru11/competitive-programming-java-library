@@ -11,11 +11,12 @@ import lib.util.function.*;
  * 比較順は昇順・降順・IntComparator から選び、同順位のコストを持つ添字の取り出し順は規定しない。
  * 各添字は「未追加」「active（キュー内）」「削除済み（poll・remove で取り出し済み）」のいずれかの状態を持ち、active な添字は高々1個のコストを持つ。
  * get 系は active な添字のコスト、getCost 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
- * 登録と配列からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
+ * 登録と配列・コレクションからの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
  * 空の peek・poll 系と、該当する状態にない添字の get・getCost は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
- * 走査はヒープを復元せず、active な添字のコストを内部配列の順に返す。
+ * 走査と toString はヒープを復元せず、active な添字のコストを内部配列の順に返す。
  */
 public final class IntIndexedPriorityQueue implements IntCollection {
+	public final int indexCount;
 	private final boolean isDescendingOrder;
 	private final IntComparator comparator;
 	private final int[] heap, position, cost;
@@ -53,11 +54,29 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
+	 * n = costs.size() とし、iterator の j 番目の値を添字 j のコストとして全添字を登録する。
+	 */
+	public IntIndexedPriorityQueue(final IntCollection costs) {
+		this(costs, false);
+	}
+
+	public IntIndexedPriorityQueue(final IntCollection costs, final boolean isDescendingOrder) {
+		this(costs.size(), isDescendingOrder, null);
+		copyCosts(costs);
+	}
+
+	public IntIndexedPriorityQueue(final IntCollection costs, final IntComparator comparator) {
+		this(costs.size(), false, Objects.requireNonNull(comparator));
+		copyCosts(costs);
+	}
+
+	/**
 	 * 比較順・状態・コストを引き継ぎ、内部配列を共有しない独立したコピーを構築する。
 	 */
 	public IntIndexedPriorityQueue(final IntIndexedPriorityQueue other) {
 		isDescendingOrder = other.isDescendingOrder;
 		comparator = other.comparator;
+		indexCount = other.indexCount;
 		heap = other.heap.clone();
 		position = other.position.clone();
 		cost = other.cost.clone();
@@ -69,6 +88,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	private IntIndexedPriorityQueue(final int n, final boolean isDescendingOrder, final IntComparator comparator) {
 		this.isDescendingOrder = isDescendingOrder;
 		this.comparator = comparator;
+		indexCount = n;
 		heap = new int[n];
 		position = new int[n];
 		cost = new int[n];
@@ -86,7 +106,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	 * 使用できる添字の数 n を返す。
 	 */
 	public int indexCount() {
-		return cost.length;
+		return indexCount;
 	}
 
 	/**
@@ -248,7 +268,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	 */
 	public IntIndexedPriorityQueue setAll(final IntUnaryOperator init) {
 		clear();
-		for (int i = 0; i < cost.length; i++) cost[i] = init.applyAsInt(i);
+		for (int i = 0; i < indexCount; i++) cost[i] = init.applyAsInt(i);
 		build();
 		return this;
 	}
@@ -273,9 +293,23 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		};
 	}
 
+	public String toString() {
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder(12 * size - 1);
+		sb.append(cost[heap[0]]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(cost[heap[i]]);
+		return sb.toString();
+	}
+
 	private void build() {
-		size = unsortedCount = cost.length;
+		size = unsortedCount = indexCount;
 		for (int i = 0; i < size; i++) heap[i] = position[i] = i;
+	}
+
+	private void copyCosts(final IntCollection costs) {
+		final PrimitiveIterator.OfInt it = costs.iterator();
+		for (int i = 0; i < indexCount; i++) cost[i] = it.nextInt();
+		build();
 	}
 
 	private int compare(final int a, final int b) {

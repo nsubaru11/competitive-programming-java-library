@@ -3,6 +3,8 @@ package lib.ds.arrays;
 import java.util.*;
 import java.util.function.*;
 
+import lib.ds.*;
+
 /**
  * 固定長の回転可能な long 配列。長さは正とし、論理添字 {@code 0 <= i < size} の範囲外では IndexOutOfBoundsException を投げる。
  * 回転はデータを移動しない。swap・reverse・rotateLeft・rotateRight・resetRotation はこのインスタンスを変更して自身を返す。
@@ -30,7 +32,7 @@ public final class LongCircularArray implements LongMutableArray {
 		arr = a.clone();
 	}
 
-	public LongCircularArray(final LongArray a) {
+	public LongCircularArray(final LongCollection a) {
 		size = a.size();
 		arr = a.toArray();
 	}

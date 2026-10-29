@@ -42,33 +42,39 @@
 
 [ソース](../../../src/lib/ds/segmenttree/LazySegmentTree.java)
 
-| 種別        | シグネチャ                                                                                                                   | 戻り値               | 説明                                                         |
-|-------------|------------------------------------------------------------------------------------------------------------------------------|----------------------|--------------------------------------------------------------|
-| Constructor | `LazySegmentTree(int n, BinaryOperator<T> operator, T identity)`                                                             | —                    | 全要素を単位元で初期化し、作用を区間代入とする。             |
-| Constructor | `LazySegmentTree(int n, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)` | —                    | 全要素を単位元で初期化し、作用と合成を指定する。             |
-| Constructor | `LazySegmentTree(T[] a, BinaryOperator<T> operator, T identity)`                                                             | —                    | 配列の要素を添字順に配置し、作用を区間代入とする。           |
-| Constructor | `LazySegmentTree(T[] a, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)` | —                    | 配列の要素を添字順に配置し、作用と合成を指定する。           |
-| Constructor | `LazySegmentTree(LazySegmentTree<T> other)`                                                                                  | —                    | 内部配列を複製し、関数・単位元・要素オブジェクトを共有する。 |
-| Method      | `size()`                                                                                                                     | `int`                | 要素数 n を返す。                                            |
-| Method      | `isEmpty()`                                                                                                                  | `boolean`            | 要素数が0かを返す。                                          |
-| Method      | `get(int i)`                                                                                                                 | `T`                  | 位置 i の値を返す。                                          |
-| Method      | `set(int i, T v)`                                                                                                            | `T`                  | 位置 i を v へ更新し、作用を反映した更新前の値を返す。       |
-| Method      | `apply(int i, T f)`                                                                                                          | `T`                  | 位置 i を `mapping(f, 現在値)` へ更新し、更新後の値を返す。  |
-| Method      | `apply(int l, int r, T f)`                                                                                                   | `void`               | 半開区間 `[l, r)` の各要素に f を作用させる。                |
-| Method      | `fill(T v)`                                                                                                                  | `LazySegmentTree<T>` | 全要素を v にして再構築する。                                |
-| Method      | `setAll(IntFunction<T> init)`                                                                                                | `LazySegmentTree<T>` | 添字順に初期値関数を評価して再構築する。                     |
-| Method      | `query(int l, int r)`                                                                                                        | `T`                  | 半開区間 `[l, r)` の集計結果を返す。                         |
-| Method      | `queryAll()`                                                                                                                 | `T`                  | 全要素の集計結果を返す。                                     |
-| Method      | `maxRight(int l, Predicate<T> tester)`                                                                                       | `int`                | `tester(query(l, r))` が真となる最大の r を返す。            |
-| Method      | `minLeft(int r, Predicate<T> tester)`                                                                                        | `int`                | `tester(query(l, r))` が真となる最小の l を返す。            |
-| Method      | `iterator()`                                                                                                                 | `Iterator<T>`        | 全作用素を伝播した後、添字順に要素を走査する。               |
-| Method      | `toString()`                                                                                                                 | `String`             | 要素を空白区切りで連結する。空の場合は空文字列を返す。       |
+公開フィールドは `final int size` と `final T identity` である。
+
+| 種別        | シグネチャ                                                                                                                                       | 戻り値               | 説明                                                             |
+|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|------------------------------------------------------------------|
+| Constructor | `LazySegmentTree(int n, BinaryOperator<T> operator, T identity)`                                                                                 | —                    | 全要素を単位元で初期化し、作用を区間代入とする。                 |
+| Constructor | `LazySegmentTree(int n, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)`                     | —                    | 全要素を単位元で初期化し、作用と合成を指定する。                 |
+| Constructor | `LazySegmentTree(T[] a, BinaryOperator<T> operator, T identity)`                                                                                 | —                    | 配列の要素を添字順に配置し、作用を区間代入とする。               |
+| Constructor | `LazySegmentTree(T[] a, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)`                     | —                    | 配列の要素を添字順に配置し、作用と合成を指定する。               |
+| Constructor | `LazySegmentTree(Collection<? extends T> a, BinaryOperator<T> operator, T identity)`                                                             | —                    | コレクションの iterator 順に要素を配置し、作用を区間代入とする。 |
+| Constructor | `LazySegmentTree(Collection<? extends T> a, BinaryOperator<T> operator, T identity, BiFunction<T, T, T> mapping, BinaryOperator<T> composition)` | —                    | コレクションの iterator 順に要素を配置し、指定した作用を使う。   |
+| Constructor | `LazySegmentTree(LazySegmentTree<T> other)`                                                                                                      | —                    | 内部配列を複製し、関数・単位元・要素オブジェクトを共有する。     |
+| Method      | `size()`                                                                                                                                         | `int`                | 要素数 n を返す。                                                |
+| Method      | `isEmpty()`                                                                                                                                      | `boolean`            | 要素数が0かを返す。                                              |
+| Method      | `get(int i)`                                                                                                                                     | `T`                  | 位置 i の値を返す。                                              |
+| Method      | `set(int i, T v)`                                                                                                                                | `T`                  | 位置 i を v へ更新し、作用を反映した更新前の値を返す。           |
+| Method      | `apply(int i, T f)`                                                                                                                              | `T`                  | 位置 i を `mapping(f, 現在値)` へ更新し、更新後の値を返す。      |
+| Method      | `apply(int l, int r, T f)`                                                                                                                       | `void`               | 半開区間 `[l, r)` の各要素に f を作用させる。                    |
+| Method      | `fill(T v)`                                                                                                                                      | `LazySegmentTree<T>` | 全要素を v にして再構築する。                                    |
+| Method      | `setAll(IntFunction<T> init)`                                                                                                                    | `LazySegmentTree<T>` | 添字順に初期値関数を評価して再構築する。                         |
+| Method      | `query(int l, int r)`                                                                                                                            | `T`                  | 半開区間 `[l, r)` の集計結果を返す。                             |
+| Method      | `queryAll()`                                                                                                                                     | `T`                  | 全要素の集計結果を返す。                                         |
+| Method      | `maxRight(int l, Predicate<T> tester)`                                                                                                           | `int`                | `tester(query(l, r))` が真となる最大の r を返す。                |
+| Method      | `minLeft(int r, Predicate<T> tester)`                                                                                                            | `int`                | `tester(query(l, r))` が真となる最小の l を返す。                |
+| Method      | `iterator()`                                                                                                                                     | `Iterator<T>`        | 全作用素を伝播した後、添字順に要素を走査する。                   |
+| Method      | `toString()`                                                                                                                                     | `String`             | 要素を空白区切りで連結する。空の場合は空文字列を返す。           |
 
 `Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
 
 ### `IntLazySegmentTree`
 
 [ソース](../../../src/lib/ds/segmenttree/IntLazySegmentTree.java)
+
+公開フィールドは `final int size` と `final int identity` である。
 
 `IntCollection` を実装する。
 
@@ -99,6 +105,8 @@
 ### `LongLazySegmentTree`
 
 [ソース](../../../src/lib/ds/segmenttree/LongLazySegmentTree.java)
+
+公開フィールドは `final int size` と `final long identity` である。
 
 `LongCollection` を実装する。値・単位元・作用素が long になる以外は `IntLazySegmentTree` と同じである。
 
@@ -169,3 +177,4 @@
 | **バージョン 2.0** | 2026-10-27 | 3クラス: 単一点の `set` に更新前の値を返す機能を追加                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **バージョン 3.0** | 2026-10-28 | 3クラス: `fill`・`setAll` が自身を返すように変更。`minLeft` が処理済みノードではなく次のノードで終了判定していた誤りを修正。コピーからのコンストラクタを追加し、構築を `build` へ集約。`apply(i, f)` を経路の伝播と葉の直接更新へ変更し、更新後の値を返す仕様に変更。走査・文字列化を全ノードの伝播後に葉を読む O(n) の処理へ変更し、空の `toString` を空文字列に変更。作用素の配列長を size へ縮小。配列アクセスで検出できない範囲外の添字・区間の検査を追加。LazySegmentTree: `isEmpty` を追加。IntLazySegmentTree / LongLazySegmentTree: IntCollection / LongCollection を実装し、コレクションからのコンストラクタと `toArray` を追加 |
 | **バージョン 3.1** | 2026-10-29 | 3クラス: 省略時の mapping・composition を定数 DEFAULT_MAPPING・DEFAULT_COMPOSITION へ統一し、引数名を `(f, x)`・`(f, g)` に揃えた。`set` の更新前の値を保持するローカル変数名を old へ統一                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **バージョン 4.0** | 2026-10-29 | 3クラス: 要素数 `size` と単位元 `identity` を公開フィールドにし、内部の2のべき乗の葉数を `leafSize` へ改名。LazySegmentTree: Collection からのコンストラクタを追加                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |

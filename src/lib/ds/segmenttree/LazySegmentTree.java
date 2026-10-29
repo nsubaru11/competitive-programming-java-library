@@ -13,14 +13,15 @@ import java.util.function.*;
  * set は作用を反映した更新前の値、{@code apply(i, f)} は更新後の値を返す。
  * maxRight は {@code tester(query(l, r))} が真となる最大の r、minLeft は {@code tester(query(l, r))} が真となる最小の l を返す。
  * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
- * identity が null の場合、operator は null を受け付けること。配列とコピーからの構築は内部配列を共有せず、要素オブジェクトは共有する。
+ * identity が null の場合、operator は null を受け付けること。配列・コレクション・コピーからの構築は内部配列を共有せず、要素オブジェクトは共有する。
  */
 @SuppressWarnings("unchecked")
 public final class LazySegmentTree<T> implements Iterable<T> {
 	private static final BiFunction<?, ?, ?> DEFAULT_MAPPING = (f, x) -> f;
 	private static final BinaryOperator<?> DEFAULT_COMPOSITION = (f, g) -> f;
-	private final int n, size, log;
-	private final T identity;
+	public final int size;
+	public final T identity;
+	private final int leafSize, log;
 	private final BinaryOperator<T> operator, composition;
 	private final BiFunction<T, T, T> mapping;
 	private final T[] tree, lazy;
@@ -31,17 +32,17 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	public LazySegmentTree(final int n, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
-		this.n = n;
-		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-		log = Integer.numberOfTrailingZeros(size);
+		size = n;
+		leafSize = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
+		log = Integer.numberOfTrailingZeros(leafSize);
 		this.identity = identity;
 		this.operator = operator;
 		this.mapping = mapping;
 		this.composition = composition;
-		tree = (T[]) new Object[size << 1];
+		tree = (T[]) new Object[leafSize << 1];
 		if (identity != null) Arrays.fill(tree, identity);
-		lazy = (T[]) new Object[size];
-		hasLazy = new boolean[size];
+		lazy = (T[]) new Object[leafSize];
+		hasLazy = new boolean[leafSize];
 	}
 
 	public LazySegmentTree(final T[] a, final BinaryOperator<T> operator, final T identity) {
@@ -50,13 +51,24 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 
 	public LazySegmentTree(final T[] a, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
 		this(a.length, operator, identity, mapping, composition);
-		System.arraycopy(a, 0, tree, size, n);
+		System.arraycopy(a, 0, tree, leafSize, size);
+		build();
+	}
+
+	public LazySegmentTree(final Collection<? extends T> a, final BinaryOperator<T> operator, final T identity) {
+		this(a, operator, identity, (BiFunction<T, T, T>) DEFAULT_MAPPING, (BinaryOperator<T>) DEFAULT_COMPOSITION);
+	}
+
+	public LazySegmentTree(final Collection<? extends T> a, final BinaryOperator<T> operator, final T identity, final BiFunction<T, T, T> mapping, final BinaryOperator<T> composition) {
+		this(a.size(), operator, identity, mapping, composition);
+		final Iterator<? extends T> it = a.iterator();
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) tree[idx] = it.next();
 		build();
 	}
 
 	public LazySegmentTree(final LazySegmentTree<T> other) {
-		n = other.n;
 		size = other.size;
+		leafSize = other.leafSize;
 		log = other.log;
 		identity = other.identity;
 		operator = other.operator;
@@ -68,21 +80,21 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	public int size() {
-		return n;
+		return size;
 	}
 
 	public boolean isEmpty() {
-		return n == 0;
+		return size == 0;
 	}
 
 	public T get(final int i) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		return tree[idx];
 	}
 
 	public T set(final int i, final T v) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		final T old = tree[idx];
 		tree[idx] = v;
@@ -91,7 +103,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	public T apply(final int i, final T f) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		final T v = tree[idx] = mapping.apply(f, tree[idx]);
 		updatePath(idx);
@@ -100,9 +112,9 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 
 	public void apply(int l, int r, final T f) {
 		if (l >= r) return;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		final int l2 = l, r2 = r;
 		for (; l < r; l >>= 1, r >>= 1) {
@@ -113,22 +125,22 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	public LazySegmentTree<T> fill(final T v) {
-		Arrays.fill(tree, size, size + n, v);
+		Arrays.fill(tree, leafSize, leafSize + size, v);
 		build();
 		return this;
 	}
 
 	public LazySegmentTree<T> setAll(final IntFunction<T> init) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.apply(i);
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) tree[idx] = init.apply(i);
 		build();
 		return this;
 	}
 
 	public T query(int l, int r) {
 		if (l >= r) return identity;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		T sml = identity, smr = identity;
 		for (; l < r; l >>= 1, r >>= 1) {
@@ -143,16 +155,16 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	public int maxRight(final int l, final Predicate<T> tester) {
-		Objects.checkIndex(l, n + 1);
-		if (l == n) return n;
+		Objects.checkIndex(l, size + 1);
+		if (l == size) return size;
 		T ans = identity;
-		int cl = l + size;
+		int cl = l + leafSize;
 		pushPath(cl);
 		do {
 			cl >>= Integer.numberOfTrailingZeros(cl);
 			T combined = operator.apply(ans, tree[cl]);
 			if (!tester.test(combined)) {
-				while (cl < size) {
+				while (cl < leafSize) {
 					push(cl);
 					cl <<= 1;
 					combined = operator.apply(ans, tree[cl]);
@@ -161,26 +173,26 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 						cl++;
 					}
 				}
-				return cl - size;
+				return cl - leafSize;
 			}
 			ans = combined;
 			cl++;
 		} while ((cl & -cl) != cl);
-		return n;
+		return size;
 	}
 
 	public int minLeft(final int r, final Predicate<T> tester) {
-		Objects.checkIndex(r, n + 1);
+		Objects.checkIndex(r, size + 1);
 		if (r == 0) return 0;
 		T ans = identity;
-		int cr = r + size;
+		int cr = r + leafSize;
 		pushPath(cr - 1);
 		do {
 			cr--;
 			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
 			T combined = operator.apply(tree[cr], ans);
 			if (!tester.test(combined)) {
-				while (cr < size) {
+				while (cr < leafSize) {
 					push(cr);
 					cr = (cr << 1) | 1;
 					combined = operator.apply(tree[cr], ans);
@@ -189,7 +201,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 						cr--;
 					}
 				}
-				return cr - size + 1;
+				return cr - leafSize + 1;
 			}
 			ans = combined;
 		} while ((cr & -cr) != cr);
@@ -202,12 +214,12 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < n;
+				return i < size;
 			}
 
 			public T next() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + i++];
+				return tree[leafSize + i++];
 			}
 		};
 	}
@@ -216,13 +228,13 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 		if (isEmpty()) return "";
 		pushAll();
 		final StringBuilder sb = new StringBuilder();
-		sb.append(tree[size]);
-		for (int i = 1; i < n; i++) sb.append(' ').append(tree[size + i]);
+		sb.append(tree[leafSize]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(tree[leafSize + i]);
 		return sb.toString();
 	}
 
 	private void build() {
-		for (int i = size - 1; i > 0; i--) update(i);
+		for (int i = leafSize - 1; i > 0; i--) update(i);
 		Arrays.fill(hasLazy, false);
 	}
 
@@ -232,7 +244,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 
 	private void allApply(final int i, final T f) {
 		tree[i] = mapping.apply(f, tree[i]);
-		if (i >= size) return;
+		if (i >= leafSize) return;
 		lazy[i] = hasLazy[i] ? composition.apply(f, lazy[i]) : f;
 		hasLazy[i] = true;
 	}
@@ -246,7 +258,7 @@ public final class LazySegmentTree<T> implements Iterable<T> {
 	}
 
 	private void pushAll() {
-		for (int i = 1; i < size; i++) push(i);
+		for (int i = 1; i < leafSize; i++) push(i);
 	}
 
 	private void pushPath(final int idx) {

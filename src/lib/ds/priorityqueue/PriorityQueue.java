@@ -7,12 +7,12 @@ import java.util.*;
 /**
  * 可変容量の優先度キュー。Comparator の比較順で先頭となる要素を最優先とし、同順位の要素の取り出し順は規定しない。
  * Comparator を省略した場合は自然順序または逆順を使い、要素が相互に Comparable でなければ比較時に ClassCastException を投げる。
- * naturalOrder・reverseOrder ファクトリはこの前提を型で保証する。null は追加しない。
+ * null は追加しない。
  * 初期容量は1未満なら1とし、容量不足時は2倍へ拡張する。
  * add・addAll・配列や Collection からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
  * addAll は1件以上追加した場合に true を返す。clear は内部配列を再利用する。
  * 空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * 走査はヒープを復元せず、内部配列の順に行う。
+ * 走査と toString はヒープを復元せず、内部配列の順に行う。
  *
  * @param <T> 要素型
  */
@@ -85,30 +85,6 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		buf = other.buf.clone();
 		size = other.size;
 		unsortedCount = other.unsortedCount;
-	}
-
-	public static <T extends Comparable<? super T>> PriorityQueue<T> naturalOrder() {
-		return new PriorityQueue<>(Comparator.naturalOrder());
-	}
-
-	public static <T extends Comparable<? super T>> PriorityQueue<T> naturalOrder(final int initialCapacity) {
-		return new PriorityQueue<>(initialCapacity, Comparator.naturalOrder());
-	}
-
-	public static <T extends Comparable<? super T>> PriorityQueue<T> naturalOrder(final T[] values) {
-		return new PriorityQueue<>(values, Comparator.naturalOrder());
-	}
-
-	public static <T extends Comparable<? super T>> PriorityQueue<T> reverseOrder() {
-		return new PriorityQueue<>(Comparator.reverseOrder());
-	}
-
-	public static <T extends Comparable<? super T>> PriorityQueue<T> reverseOrder(final int initialCapacity) {
-		return new PriorityQueue<>(initialCapacity, Comparator.reverseOrder());
-	}
-
-	public static <T extends Comparable<? super T>> PriorityQueue<T> reverseOrder(final T[] values) {
-		return new PriorityQueue<>(values, Comparator.reverseOrder());
 	}
 
 	private static <T> Comparator<? super T> naturalComparator(final boolean isDescendingOrder) {
@@ -224,6 +200,14 @@ public final class PriorityQueue<T> implements Iterable<T> {
 				return buf[i++];
 			}
 		};
+	}
+
+	public String toString() {
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder();
+		sb.append(buf[0]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(buf[i]);
+		return sb.toString();
 	}
 
 	private void ensureCapacity(final int required) {

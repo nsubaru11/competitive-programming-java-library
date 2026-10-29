@@ -36,6 +36,7 @@
 - `java.util.PrimitiveIterator`
 - `java.util.function.IntUnaryOperator`
 - `java.util.function.IntToLongFunction`
+- [`lib.ds.IntCollection`](../../../src/lib/ds/IntCollection.java) / [`LongCollection`](../../../src/lib/ds/LongCollection.java)
 - [`lib.ds.arrays.IntMutableArray`](../../../src/lib/ds/arrays/IntMutableArray.java)
 - [`lib.ds.arrays.LongMutableArray`](../../../src/lib/ds/arrays/LongMutableArray.java)
 
@@ -48,7 +49,7 @@
 | Constructor | `IntCircularArray(int n)`                  | —                         | 長さ n の0初期化配列を構築する。                                                    |
 | Constructor | `IntCircularArray(int n, int v)`           | —                         | 長さ n の全要素を v で初期化する。                                                  |
 | Constructor | `IntCircularArray(int[] a)`                | —                         | 指定された配列の要素を同じ順序で保持する循環配列を構築する。                        |
-| Constructor | `IntCircularArray(IntArray a)`             | —                         | 指定された配列の論理順を保持する循環配列を構築する。                                |
+| Constructor | `IntCircularArray(IntCollection a)`        | —                         | コレクションの iterator 順に全要素をコピーして構築する。                            |
 | Constructor | `IntCircularArray(IntCircularArray other)` | —                         | 全要素・回転状態・総回転数を保持する独立したコピーを構築する。                      |
 | Method      | `size()`                                   | `int`                     | 要素数を返す。                                                                      |
 | Method      | `rotation()`                               | `long`                    | 左回転を正、右回転を負とする総回転数を返す。                                        |
@@ -77,7 +78,7 @@
 | Constructor | `LongCircularArray(int n)`                   | —                          | 長さ n の0初期化配列を構築する。                                                    |
 | Constructor | `LongCircularArray(int n, long v)`           | —                          | 長さ n の全要素を v で初期化する。                                                  |
 | Constructor | `LongCircularArray(long[] a)`                | —                          | 指定された配列の要素を同じ順序で保持する循環配列を構築する。                        |
-| Constructor | `LongCircularArray(LongArray a)`             | —                          | 指定された配列の論理順を保持する循環配列を構築する。                                |
+| Constructor | `LongCircularArray(LongCollection a)`        | —                          | コレクションの iterator 順に全要素をコピーして構築する。                            |
 | Constructor | `LongCircularArray(LongCircularArray other)` | —                          | 全要素・回転状態・総回転数を保持する独立したコピーを構築する。                      |
 | Method      | `size()`                                     | `int`                      | 要素数を返す。                                                                      |
 | Method      | `rotation()`                                 | `long`                     | 左回転を正、右回転を負とする総回転数を返す。                                        |
@@ -111,7 +112,7 @@
 - iterator / spliterator / Stream と、それらを使う一括処理の実行中は、`rotateLeft` / `rotateRight` / `resetRotation` / `fill` / `setAll` を呼び出さない。各要素の取得時に現在の `offset` を参照するため、途中で回転状態が変わると走査位置がずれる。変更検出は保証しない。
 - getOrDefault(int i, int defaultValue) / getOrDefault(int i, long defaultValue) は配列インターフェースの既定実装を使う。範囲外では指定値を返す。
 - contains はコレクションの既定実装を使い、論理順に線形探索する。
-- 同型のコピーコンストラクタは内部配列を複製し、offset と rotation も保持する。IntArray / LongArray 型の引数からの構築では論理順をコピーし、回転状態は0から開始する。
+- 同型のコピーコンストラクタは内部配列を複製し、offset と rotation も保持する。IntCollection / LongCollection 型の引数からの構築では iterator 順をコピーし、回転状態は0から開始する。
 - 現在の実装は `n >= 1` の問題制約を前提とする。
 - `get` / `set` は `0 <= i < size` の論理添字を受け付け、範囲外では `IndexOutOfBoundsException` を投げる。負の添字は使用できない。末尾の取得には `getLast()` を使う。
 - `fill` と `setAll` は物理配列を先頭から再構築し、`offset` と総回転数を0へ戻す。
@@ -129,7 +130,7 @@
 | 操作                                                                                        | 時間計算量 | 補足                                                                        |
 |---------------------------------------------------------------------------------------------|------------|-----------------------------------------------------------------------------|
 | `get`, `getOrDefault`, `getLast`, `getLastOrDefault`, `set`, `size`, `rotation`, 各回転操作 | `O(1)`     | 回転は `offset` の更新だけで行う                                            |
-| 各コンストラクタ                                                                            | `O(n)`     | `IntArray` / `LongArray` からの構築はコピー元の `toArray` を使う            |
+| 各コンストラクタ                                                                            | `O(n)`     | `IntCollection` / `LongCollection` からの構築はコピー元の `toArray` を使う  |
 | `fill`, `setAll`, `contains`, 全要素の走査                                                  | `O(n)`     | —                                                                           |
 | `toArray`, `toString`                                                                       | `O(n)`     | `toArray` は回転の折り返し位置で分け、2回の `System.arraycopy` でコピーする |
 | iterator の生成・1要素取得                                                                  | `O(1)`     | —                                                                           |
@@ -156,3 +157,4 @@
 | **バージョン 8.2**  | 2026-10-27 | IntCircularArray / LongCircularArray: 回転量の引数名を distance に統一し、初期値関数による構築を setAll へ委譲                                          |
 | **バージョン 9.0**  | 2026-10-28 | IntCircularArray / LongCircularArray: 添字関数を受け取るコンストラクタを削除し、関数による初期化を setAll に一本化。fill・setAll が自身を返すように変更 |
 | **バージョン 10.0** | 2026-10-29 | IntCircularArray / LongCircularArray: swap・reverse を自身の型を返すようにオーバーライド                                                                |
+| **バージョン 11.0** | 2026-10-29 | IntCircularArray / LongCircularArray: 配列インターフェースを受け取るコンストラクタの引数型を IntCollection / LongCollection へ拡張                      |

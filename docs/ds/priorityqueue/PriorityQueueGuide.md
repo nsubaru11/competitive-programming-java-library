@@ -20,7 +20,7 @@
 - ヒープ性の復元では、k に応じて Floyd の heapify と逐次 `siftUp` のうち推定コストが小さい方を選ぶ。
 - `peekSecond` は2番目に優先される要素を、`replaceTop` は先頭の置換を1回の `siftDown` で行う。
 - 空のキューで例外を避ける `peekOrDefault`・`pollOrDefault` を提供する。
-- 比較順は昇順（汎用版は自然順序）・降順（汎用版は逆順）・Comparator から選ぶ。汎用版の `naturalOrder`・`reverseOrder` ファクトリは要素型が Comparable であることを型で保証する。
+- 比較順は昇順（汎用版は自然順序）・降順（汎用版は逆順）・Comparator から選ぶ。
 - 初期容量・配列・コレクション・コピーから構築できる。コピーは比較順・要素・容量を引き継ぐ。
 - 初期容量は1未満なら1とし、容量不足時は2倍へ拡張する。`clear` は内部配列を再利用する。
 - int 版・long 版はボクシングせず、`IntCollection`・`LongCollection` を実装する。
@@ -47,41 +47,36 @@
 
 `Iterable<T>` を実装する。
 
-| 種別        | シグネチャ                                                                        | 戻り値             | 説明                                                                  |
-|-------------|-----------------------------------------------------------------------------------|--------------------|-----------------------------------------------------------------------|
-| Constructor | `PriorityQueue()`                                                                 | —                  | 初期容量1024、自然順序で構築する。                                    |
-| Constructor | `PriorityQueue(int initialCapacity)`                                              | —                  | 指定した初期容量、自然順序で構築する。                                |
-| Constructor | `PriorityQueue(boolean isDescendingOrder)`                                        | —                  | 初期容量1024、自然順序または逆順で構築する。                          |
-| Constructor | `PriorityQueue(int initialCapacity, boolean isDescendingOrder)`                   | —                  | 指定した初期容量、自然順序または逆順で構築する。                      |
-| Constructor | `PriorityQueue(Comparator<? super T> comparator)`                                 | —                  | 初期容量1024、Comparator の順で構築する。                             |
-| Constructor | `PriorityQueue(int initialCapacity, Comparator<? super T> comparator)`            | —                  | 指定した初期容量、Comparator の順で構築する。                         |
-| Constructor | `PriorityQueue(T[] values)`                                                       | —                  | 配列の全要素を自然順序で持つ。                                        |
-| Constructor | `PriorityQueue(T[] values, boolean isDescendingOrder)`                            | —                  | 配列の全要素を自然順序または逆順で持つ。                              |
-| Constructor | `PriorityQueue(T[] values, Comparator<? super T> comparator)`                     | —                  | 配列の全要素を Comparator の順で持つ。                                |
-| Constructor | `PriorityQueue(Collection<? extends T> values)`                                   | —                  | コレクションの全要素を自然順序で持つ。values の比較順は引き継がない。 |
-| Constructor | `PriorityQueue(Collection<? extends T> values, boolean isDescendingOrder)`        | —                  | コレクションの全要素を自然順序または逆順で持つ。                      |
-| Constructor | `PriorityQueue(Collection<? extends T> values, Comparator<? super T> comparator)` | —                  | コレクションの全要素を Comparator の順で持つ。                        |
-| Constructor | `PriorityQueue(PriorityQueue<T> other)`                                           | —                  | 比較順・要素・容量を引き継ぐ独立したコピー。要素自体は共有する。      |
-| Static      | `naturalOrder()`                                                                  | `PriorityQueue<T>` | Comparable 要素を自然順序で扱う空のキューを返す。                     |
-| Static      | `naturalOrder(int initialCapacity)`                                               | `PriorityQueue<T>` | 指定した初期容量で自然順序の空のキューを返す。                        |
-| Static      | `naturalOrder(T[] values)`                                                        | `PriorityQueue<T>` | 配列の全要素を自然順序で持つキューを返す。                            |
-| Static      | `reverseOrder()`                                                                  | `PriorityQueue<T>` | Comparable 要素を逆順で扱う空のキューを返す。                         |
-| Static      | `reverseOrder(int initialCapacity)`                                               | `PriorityQueue<T>` | 指定した初期容量で逆順の空のキューを返す。                            |
-| Static      | `reverseOrder(T[] values)`                                                        | `PriorityQueue<T>` | 配列の全要素を逆順で持つキューを返す。                                |
-| Method      | `size()`                                                                          | `int`              | 要素数を返す。                                                        |
-| Method      | `capacity()`                                                                      | `int`              | 内部配列の長さを返す。                                                |
-| Method      | `isEmpty()`                                                                       | `boolean`          | 要素数が0かを返す。                                                   |
-| Method      | `peek()`                                                                          | `T`                | 最優先の要素を返す。                                                  |
-| Method      | `peekOrDefault(T defaultValue)`                                                   | `T`                | 空なら defaultValue、そうでなければ最優先の要素を返す。               |
-| Method      | `peekSecond()`                                                                    | `T`                | 2番目に優先される要素を返す。要素数は2以上とする。                    |
-| Method      | `add(T v)`                                                                        | `boolean`          | 要素を追加する。常に true。                                           |
-| Method      | `addAll(T[] values)`                                                              | `boolean`          | 配列の全要素を追加する。1件以上追加した場合に true。                  |
-| Method      | `addAll(Iterable<? extends T> values)`                                            | `boolean`          | 全要素を追加する。1件以上追加した場合に true。                        |
-| Method      | `poll()`                                                                          | `T`                | 最優先の要素を削除して返す。                                          |
-| Method      | `pollOrDefault(T defaultValue)`                                                   | `T`                | 空なら defaultValue、そうでなければ最優先の要素を削除して返す。       |
-| Method      | `replaceTop(T v)`                                                                 | `T`                | 最優先の要素を v に置き換え、置き換え前の要素を返す。                 |
-| Method      | `clear()`                                                                         | `void`             | 内部配列を再利用して空にする。                                        |
-| Method      | `iterator()`                                                                      | `Iterator<T>`      | 内部配列の順に走査する。                                              |
+| 種別        | シグネチャ                                                                        | 戻り値        | 説明                                                                  |
+|-------------|-----------------------------------------------------------------------------------|---------------|-----------------------------------------------------------------------|
+| Constructor | `PriorityQueue()`                                                                 | —             | 初期容量1024、自然順序で構築する。                                    |
+| Constructor | `PriorityQueue(int initialCapacity)`                                              | —             | 指定した初期容量、自然順序で構築する。                                |
+| Constructor | `PriorityQueue(boolean isDescendingOrder)`                                        | —             | 初期容量1024、自然順序または逆順で構築する。                          |
+| Constructor | `PriorityQueue(int initialCapacity, boolean isDescendingOrder)`                   | —             | 指定した初期容量、自然順序または逆順で構築する。                      |
+| Constructor | `PriorityQueue(Comparator<? super T> comparator)`                                 | —             | 初期容量1024、Comparator の順で構築する。                             |
+| Constructor | `PriorityQueue(int initialCapacity, Comparator<? super T> comparator)`            | —             | 指定した初期容量、Comparator の順で構築する。                         |
+| Constructor | `PriorityQueue(T[] values)`                                                       | —             | 配列の全要素を自然順序で持つ。                                        |
+| Constructor | `PriorityQueue(T[] values, boolean isDescendingOrder)`                            | —             | 配列の全要素を自然順序または逆順で持つ。                              |
+| Constructor | `PriorityQueue(T[] values, Comparator<? super T> comparator)`                     | —             | 配列の全要素を Comparator の順で持つ。                                |
+| Constructor | `PriorityQueue(Collection<? extends T> values)`                                   | —             | コレクションの全要素を自然順序で持つ。values の比較順は引き継がない。 |
+| Constructor | `PriorityQueue(Collection<? extends T> values, boolean isDescendingOrder)`        | —             | コレクションの全要素を自然順序または逆順で持つ。                      |
+| Constructor | `PriorityQueue(Collection<? extends T> values, Comparator<? super T> comparator)` | —             | コレクションの全要素を Comparator の順で持つ。                        |
+| Constructor | `PriorityQueue(PriorityQueue<T> other)`                                           | —             | 比較順・要素・容量を引き継ぐ独立したコピー。要素自体は共有する。      |
+| Method      | `size()`                                                                          | `int`         | 要素数を返す。                                                        |
+| Method      | `capacity()`                                                                      | `int`         | 内部配列の長さを返す。                                                |
+| Method      | `isEmpty()`                                                                       | `boolean`     | 要素数が0かを返す。                                                   |
+| Method      | `peek()`                                                                          | `T`           | 最優先の要素を返す。                                                  |
+| Method      | `peekOrDefault(T defaultValue)`                                                   | `T`           | 空なら defaultValue、そうでなければ最優先の要素を返す。               |
+| Method      | `peekSecond()`                                                                    | `T`           | 2番目に優先される要素を返す。要素数は2以上とする。                    |
+| Method      | `add(T v)`                                                                        | `boolean`     | 要素を追加する。常に true。                                           |
+| Method      | `addAll(T[] values)`                                                              | `boolean`     | 配列の全要素を追加する。1件以上追加した場合に true。                  |
+| Method      | `addAll(Iterable<? extends T> values)`                                            | `boolean`     | 全要素を追加する。1件以上追加した場合に true。                        |
+| Method      | `poll()`                                                                          | `T`           | 最優先の要素を削除して返す。                                          |
+| Method      | `pollOrDefault(T defaultValue)`                                                   | `T`           | 空なら defaultValue、そうでなければ最優先の要素を削除して返す。       |
+| Method      | `replaceTop(T v)`                                                                 | `T`           | 最優先の要素を v に置き換え、置き換え前の要素を返す。                 |
+| Method      | `clear()`                                                                         | `void`        | 内部配列を再利用して空にする。                                        |
+| Method      | `iterator()`                                                                      | `Iterator<T>` | 内部配列の順に走査する。                                              |
+| Method      | `toString()`                                                                      | `String`      | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。  |
 
 `Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
 
@@ -120,6 +115,7 @@
 | Method      | `replaceTop(int v)`                                                 | `int`                     | 最優先の値を v に置き換え、置き換え前の値を返す。                           |
 | Method      | `clear()`                                                           | `void`                    | 内部配列を再利用して空にする。                                              |
 | Method      | `iterator()`                                                        | `PrimitiveIterator.OfInt` | 内部配列の順に走査する。                                                    |
+| Method      | `toString()`                                                        | `String`                  | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。        |
 
 ### `LongPriorityQueue`
 
@@ -156,6 +152,7 @@
 | Method      | `replaceTop(long v)`                                                  | `long`                     | 最優先の値を v に置き換え、置き換え前の値を返す。                             |
 | Method      | `clear()`                                                             | `void`                     | 内部配列を再利用して空にする。                                                |
 | Method      | `iterator()`                                                          | `PrimitiveIterator.OfLong` | 内部配列の順に走査する。                                                      |
+| Method      | `toString()`                                                          | `String`                   | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。          |
 
 ### 数値版の継承 API
 
@@ -169,12 +166,12 @@
 
 - `compare(a, b) < 0` となる a が b より先に取り出される。同順位の要素の取り出し順は規定しない。
 - 空のキューの `peek`・`poll`・`replaceTop` と、要素数2未満の `peekSecond` は `NoSuchElementException` を投げる。`peekOrDefault`・`pollOrDefault` は空のとき状態を変えずに defaultValue を返す。
-- Comparator を省略した汎用版は全要素が相互に Comparable であることを前提とする。そうでない型もコンパイルできるが、最初に比較した時点で `ClassCastException` を投げる。コンパイル時に確認する場合は `naturalOrder`・`reverseOrder` ファクトリを使う。
+- Comparator を省略した汎用版は全要素が相互に Comparable であることを前提とする。そうでない型もコンパイルできるが、最初に比較した時点で `ClassCastException` を投げる。
 - 汎用版に null を追加しない。
 - Comparator を受け取るコンストラクタは null を `NullPointerException` で拒否する。
 - コピーコンストラクタは比較順を引き継ぐ。数値版で比較順を変えて複製する場合は `IntPriorityQueue(IntCollection values, boolean isDescendingOrder)` などを使う。コピーコンストラクタとコレクションからのコンストラクタは、静的な引数型が `IntPriorityQueue` か `IntCollection` かで選ばれる。
 - 汎用版のコレクションからのコンストラクタは、`java.util.PriorityQueue` と異なり values の比較順を引き継がない。
-- 走査・`contains`・配列化・Stream はヒープを復元せず内部配列の順に行い、優先順ではない。走査中にキューを変更しない。
+- 走査・`contains`・配列化・Stream・`toString` はヒープを復元せず内部配列の順に行い、優先順ではない。走査中にキューを変更しない。
 - `java.util.PriorityQueue` と単純名が衝突するため、`java.util.*` と併用する場合は `import lib.ds.priorityqueue.PriorityQueue;` を明示する。
 
 ## 性能特性
@@ -189,7 +186,7 @@
 | `peek`・`peekSecond`                                 | O(1)               | 未整列要素があれば復元コストを加える。                      |
 | `poll`・`replaceTop`                                 | O(log n)           | 未整列要素があれば復元コストを加える。                      |
 | `size`・`capacity`・`isEmpty`・`clear`・iterator生成 | O(1)               | —                                                           |
-| 走査・`contains`・配列化                             | O(n)               | —                                                           |
+| 走査・`contains`・配列化・文字列化                   | O(n)               | —                                                           |
 
 ヒープ性の復元は、Floyd の heapify の推定比較回数 `2n - 2 log n` と逐次 `siftUp` の推定比較回数を比べて小さい方を選ぶ。逐次 `siftUp` の推定は k が100以下なら各挿入位置の深さの和、それより大きければ平均の深さと k の積で求める。
 数値版は Comparator を指定しない場合、昇順・降順を `Integer.compare`・`Long.compare` で直接比較する。
@@ -205,3 +202,4 @@
 | **バージョン 3.0** | 2026-07-18 | `lib.ds.priorityqueue`へ移動し、primitive版をCollection化、`addAll(Iterable)`を追加                                                                                                                                                                                                                                                                                                                      |
 | **バージョン 4.0** | 2026-07-20 | `add`へ統一し、Primitive Comparator、generic自然順序/Comparator構築、配列構築、default系、`peekSecond`、`capacity`を追加                                                                                                                                                                                                                                                                                 |
 | **バージョン 5.0** | 2026-10-28 | 全クラス: コレクション（`Collection` / `IntCollection` / `LongCollection`）とコピーからのコンストラクタを追加し、容量フィールドを廃止して `capacity` が内部配列の長さを返す形へ変更。数値版: `addAll(IntCollection)` / `addAll(LongCollection)` を追加し、`addAll(Iterable)` が数値コレクションを受け取った場合は委譲するよう変更（自身を渡した場合の無限ループを解消）。`replaceTop` の冗長な代入を除去 |
+| **バージョン 6.0** | 2026-10-29 | 全クラス: 内部配列の順に要素を連結する `toString` を追加。PriorityQueue: コンストラクタと機能が重複する `naturalOrder` / `reverseOrder` ファクトリを削除                                                                                                                                                                                                                                                 |

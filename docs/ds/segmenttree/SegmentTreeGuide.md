@@ -40,30 +40,35 @@
 
 [ソース](../../../src/lib/ds/segmenttree/SegmentTree.java)
 
-| 種別        | シグネチャ                                                   | 戻り値           | 説明                                                         |
-|-------------|--------------------------------------------------------------|------------------|--------------------------------------------------------------|
-| Constructor | `SegmentTree(int n, BinaryOperator<T> operator, T identity)` | —                | 全要素を単位元で初期化する。                                 |
-| Constructor | `SegmentTree(T[] a, BinaryOperator<T> operator, T identity)` | —                | 配列の要素を添字順に配置して構築する。                       |
-| Constructor | `SegmentTree(SegmentTree<T> other)`                          | —                | 内部配列を複製し、演算・単位元・要素オブジェクトを共有する。 |
-| Method      | `size()`                                                     | `int`            | 要素数 n を返す。                                            |
-| Method      | `isEmpty()`                                                  | `boolean`        | 要素数が0かを返す。                                          |
-| Method      | `get(int i)`                                                 | `T`              | 位置 i の値を返す。                                          |
-| Method      | `set(int i, T v)`                                            | `T`              | 位置 i を v へ更新し、更新前の値を返す。                     |
-| Method      | `apply(int i, T x, BinaryOperator<T> f)`                     | `T`              | 位置 i を `f(現在値, x)` へ更新し、更新後の値を返す。        |
-| Method      | `fill(T v)`                                                  | `SegmentTree<T>` | 全要素を v にして再構築する。                                |
-| Method      | `setAll(IntFunction<T> init)`                                | `SegmentTree<T>` | 添字順に初期値関数を評価して再構築する。                     |
-| Method      | `query(int l, int r)`                                        | `T`              | 半開区間 `[l, r)` の集計結果を返す。                         |
-| Method      | `queryAll()`                                                 | `T`              | 全要素の集計結果を返す。                                     |
-| Method      | `maxRight(int l, Predicate<T> tester)`                       | `int`            | `tester(query(l, r))` が真となる最大の r を返す。            |
-| Method      | `minLeft(int r, Predicate<T> tester)`                        | `int`            | `tester(query(l, r))` が真となる最小の l を返す。            |
-| Method      | `iterator()`                                                 | `Iterator<T>`    | 添字順に要素を走査する。                                     |
-| Method      | `toString()`                                                 | `String`         | 要素を空白区切りで連結する。空の場合は空文字列を返す。       |
+公開フィールドは `final int size` と `final T identity` である。
+
+| 種別        | シグネチャ                                                                       | 戻り値           | 説明                                                         |
+|-------------|----------------------------------------------------------------------------------|------------------|--------------------------------------------------------------|
+| Constructor | `SegmentTree(int n, BinaryOperator<T> operator, T identity)`                     | —                | 全要素を単位元で初期化する。                                 |
+| Constructor | `SegmentTree(T[] a, BinaryOperator<T> operator, T identity)`                     | —                | 配列の要素を添字順に配置して構築する。                       |
+| Constructor | `SegmentTree(Collection<? extends T> a, BinaryOperator<T> operator, T identity)` | —                | コレクションの iterator 順に要素を配置して構築する。         |
+| Constructor | `SegmentTree(SegmentTree<T> other)`                                              | —                | 内部配列を複製し、演算・単位元・要素オブジェクトを共有する。 |
+| Method      | `size()`                                                                         | `int`            | 要素数 n を返す。                                            |
+| Method      | `isEmpty()`                                                                      | `boolean`        | 要素数が0かを返す。                                          |
+| Method      | `get(int i)`                                                                     | `T`              | 位置 i の値を返す。                                          |
+| Method      | `set(int i, T v)`                                                                | `T`              | 位置 i を v へ更新し、更新前の値を返す。                     |
+| Method      | `apply(int i, T x, BinaryOperator<T> f)`                                         | `T`              | 位置 i を `f(現在値, x)` へ更新し、更新後の値を返す。        |
+| Method      | `fill(T v)`                                                                      | `SegmentTree<T>` | 全要素を v にして再構築する。                                |
+| Method      | `setAll(IntFunction<T> init)`                                                    | `SegmentTree<T>` | 添字順に初期値関数を評価して再構築する。                     |
+| Method      | `query(int l, int r)`                                                            | `T`              | 半開区間 `[l, r)` の集計結果を返す。                         |
+| Method      | `queryAll()`                                                                     | `T`              | 全要素の集計結果を返す。                                     |
+| Method      | `maxRight(int l, Predicate<T> tester)`                                           | `int`            | `tester(query(l, r))` が真となる最大の r を返す。            |
+| Method      | `minLeft(int r, Predicate<T> tester)`                                            | `int`            | `tester(query(l, r))` が真となる最小の l を返す。            |
+| Method      | `iterator()`                                                                     | `Iterator<T>`    | 添字順に要素を走査する。                                     |
+| Method      | `toString()`                                                                     | `String`         | 要素を空白区切りで連結する。空の場合は空文字列を返す。       |
 
 `Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
 
 ### `IntSegmentTree`
 
 [ソース](../../../src/lib/ds/segmenttree/IntSegmentTree.java)
+
+公開フィールドは `final int size` と `final int identity` である。
 
 `IntCollection` を実装する。
 
@@ -93,6 +98,8 @@
 ### `LongSegmentTree`
 
 [ソース](../../../src/lib/ds/segmenttree/LongSegmentTree.java)
+
+公開フィールドは `final int size` と `final long identity` である。
 
 `LongCollection` を実装する。値・単位元・更新引数が long になる以外は `IntSegmentTree` と同じである。
 
@@ -163,3 +170,4 @@
 | **バージョン 2.3** | 2026-10-27 | 3クラス: `set` を更新前の値を返す仕様に統一。SegmentTree: 同値判定による代入省略を削除                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | **バージョン 3.0** | 2026-10-28 | 3クラス: `fill`・`setAll` が自身を返すように変更。`minLeft` が処理済みノードではなく次のノードで終了判定していた誤りを修正。コピーからのコンストラクタを追加し、構築を `build`、点更新を `update` へ集約。空の `toString` を空文字列に変更。SegmentTree: `isEmpty` を追加。配列アクセスで検出できない範囲外の添字・区間の検査を3クラスで統一。IntSegmentTree / LongSegmentTree: 係数指定の `apply(i, m, d)` を `affine` へ改名し、IntCollection / LongCollection からのコンストラクタと `toArray` を追加。`add`・`multiply`・`affine`・`apply` を葉の直接更新へ変更 |
 | **バージョン 3.1** | 2026-10-29 | 3クラス: `set` の更新前の値を保持するローカル変数名を old へ統一                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **バージョン 4.0** | 2026-10-29 | 3クラス: 要素数 `size` と単位元 `identity` を公開フィールドにし、内部の2のべき乗の葉数を `leafSize` へ改名。SegmentTree: Collection からのコンストラクタを追加                                                                                                                                                                                                                                                                                                                                                                                                      |

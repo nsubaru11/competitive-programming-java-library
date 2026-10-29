@@ -45,6 +45,15 @@ public final class LongArrayDeque implements LongMutableArray {
 		for (int i = 0; i < size; i++) buf[i] = it.nextLong();
 	}
 
+	/**
+	 * 要素・容量・内部配置を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
+	 */
+	public LongArrayDeque(final LongArrayDeque other) {
+		buf = other.buf.clone();
+		head = other.head;
+		size = other.size;
+	}
+
 	public int size() {
 		return size;
 	}

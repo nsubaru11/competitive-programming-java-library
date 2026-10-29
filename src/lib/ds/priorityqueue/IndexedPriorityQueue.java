@@ -9,14 +9,15 @@ import java.util.function.*;
  * Comparator を省略した場合は自然順序または逆順を使い、コストが相互に Comparable でなければ比較時に ClassCastException を投げる。null はコストにしない。
  * 各添字は「未追加」「active（キュー内）」「削除済み（poll・remove で取り出し済み）」のいずれかの状態を持ち、active な添字は高々1個のコストを持つ。
  * get 系は active な添字のコスト、getCost 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
- * 登録と配列からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
+ * 登録と配列・コレクションからの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
  * 空の peek・poll 系と、該当する状態にない添字の get・getCost は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
- * 走査はヒープを復元せず、active な添字のコストを内部配列の順に返す。
+ * 走査と toString はヒープを復元せず、active な添字のコストを内部配列の順に返す。
  *
  * @param <T> コスト型
  */
 @SuppressWarnings("unchecked")
 public final class IndexedPriorityQueue<T> implements Iterable<T> {
+	public final int indexCount;
 	private final Comparator<? super T> comparator;
 	private final int[] heap, position;
 	private final T[] cost;
@@ -32,6 +33,7 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 
 	public IndexedPriorityQueue(final int n, final Comparator<? super T> comparator) {
 		this.comparator = Objects.requireNonNull(comparator);
+		indexCount = n;
 		heap = new int[n];
 		position = new int[n];
 		cost = (T[]) new Object[n];
@@ -56,10 +58,29 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 	}
 
 	/**
+	 * n = costs.size() とし、iterator の j 番目の値を添字 j のコストとして全添字を登録する。
+	 */
+	public IndexedPriorityQueue(final Collection<? extends T> costs) {
+		this(costs, false);
+	}
+
+	public IndexedPriorityQueue(final Collection<? extends T> costs, final boolean isDescendingOrder) {
+		this(costs, naturalComparator(isDescendingOrder));
+	}
+
+	public IndexedPriorityQueue(final Collection<? extends T> costs, final Comparator<? super T> comparator) {
+		this(costs.size(), comparator);
+		final Iterator<? extends T> it = costs.iterator();
+		for (int i = 0; i < indexCount; i++) cost[i] = it.next();
+		build();
+	}
+
+	/**
 	 * 比較順・状態・コストを引き継ぎ、内部配列を共有しない独立したコピーを構築する。コスト自体は共有する。
 	 */
 	public IndexedPriorityQueue(final IndexedPriorityQueue<T> other) {
 		comparator = other.comparator;
+		indexCount = other.indexCount;
 		heap = other.heap.clone();
 		position = other.position.clone();
 		cost = other.cost.clone();
@@ -83,7 +104,7 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 	 * 使用できる添字の数 n を返す。
 	 */
 	public int indexCount() {
-		return cost.length;
+		return indexCount;
 	}
 
 	public boolean isEmpty() {
@@ -249,7 +270,7 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 	 */
 	public IndexedPriorityQueue<T> setAll(final IntFunction<? extends T> init) {
 		clear();
-		for (int i = 0; i < cost.length; i++) cost[i] = init.apply(i);
+		for (int i = 0; i < indexCount; i++) cost[i] = init.apply(i);
 		build();
 		return this;
 	}
@@ -274,8 +295,16 @@ public final class IndexedPriorityQueue<T> implements Iterable<T> {
 		};
 	}
 
+	public String toString() {
+		if (isEmpty()) return "";
+		final StringBuilder sb = new StringBuilder();
+		sb.append(cost[heap[0]]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(cost[heap[i]]);
+		return sb.toString();
+	}
+
 	private void build() {
-		size = unsortedCount = cost.length;
+		size = unsortedCount = indexCount;
 		for (int i = 0; i < size; i++) heap[i] = position[i] = i;
 	}
 

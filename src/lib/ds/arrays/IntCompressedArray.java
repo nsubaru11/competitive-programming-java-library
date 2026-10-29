@@ -4,6 +4,7 @@ import static java.util.Arrays.*;
 
 import java.util.*;
 
+import lib.ds.*;
 import lib.search.*;
 
 /**
@@ -73,15 +74,15 @@ public final class IntCompressedArray implements IntArray {
 		for (int i = 0; i < size; i++) compressed[i] = ranks[binarySearch(sorted, a[i])];
 	}
 
-	public IntCompressedArray(final IntArray a) {
+	public IntCompressedArray(final IntCollection a) {
 		this(a.toArray(), RankType.DENSE, false);
 	}
 
-	public IntCompressedArray(final IntArray a, final RankType rankType) {
+	public IntCompressedArray(final IntCollection a, final RankType rankType) {
 		this(a.toArray(), rankType, false);
 	}
 
-	public IntCompressedArray(final IntArray a, final RankType rankType, final boolean oneBased) {
+	public IntCompressedArray(final IntCollection a, final RankType rankType, final boolean oneBased) {
 		this(a.toArray(), rankType, oneBased);
 	}
 

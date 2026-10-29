@@ -3,6 +3,8 @@ package lib.ds.arrays;
 import java.util.*;
 import java.util.function.*;
 
+import lib.ds.*;
+
 /**
  * 固定長の回転可能な int 配列。長さは正とし、論理添字 {@code 0 <= i < size} の範囲外では IndexOutOfBoundsException を投げる。
  * 回転はデータを移動しない。swap・reverse・rotateLeft・rotateRight・resetRotation はこのインスタンスを変更して自身を返す。
@@ -30,7 +32,7 @@ public final class IntCircularArray implements IntMutableArray {
 		arr = a.clone();
 	}
 
-	public IntCircularArray(final IntArray a) {
+	public IntCircularArray(final IntCollection a) {
 		size = a.size();
 		arr = a.toArray();
 	}

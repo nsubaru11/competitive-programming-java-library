@@ -14,92 +14,93 @@ import lib.ds.*;
  * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
  */
 public final class IntSegmentTree implements IntCollection {
-	private final int n, size, identity;
+	public final int size, identity;
+	private final int leafSize;
 	private final IntBinaryOperator operator;
 	private final int[] tree;
 
 	public IntSegmentTree(final int n, final IntBinaryOperator operator, final int identity) {
-		this.n = n;
-		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
+		size = n;
+		leafSize = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
 		this.identity = identity;
 		this.operator = operator;
-		tree = new int[size << 1];
+		tree = new int[leafSize << 1];
 		if (identity != 0) Arrays.fill(tree, identity);
 	}
 
 	public IntSegmentTree(final int[] a, final IntBinaryOperator operator, final int identity) {
 		this(a.length, operator, identity);
-		System.arraycopy(a, 0, tree, size, n);
+		System.arraycopy(a, 0, tree, leafSize, size);
 		build();
 	}
 
 	public IntSegmentTree(final IntCollection a, final IntBinaryOperator operator, final int identity) {
 		this(a.size(), operator, identity);
 		final PrimitiveIterator.OfInt it = a.iterator();
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = it.nextInt();
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) tree[idx] = it.nextInt();
 		build();
 	}
 
 	public IntSegmentTree(final IntSegmentTree other) {
-		n = other.n;
 		size = other.size;
+		leafSize = other.leafSize;
 		identity = other.identity;
 		operator = other.operator;
 		tree = other.tree.clone();
 	}
 
 	public int size() {
-		return n;
+		return size;
 	}
 
 	public int get(final int i) {
-		return tree[size + Objects.checkIndex(i, n)];
+		return tree[leafSize + Objects.checkIndex(i, size)];
 	}
 
 	public int set(final int i, final int v) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		final int old = tree[idx];
 		update(idx, v);
 		return old;
 	}
 
 	public int add(final int i, final int d) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		return update(idx, tree[idx] + d);
 	}
 
 	public int multiply(final int i, final int m) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		return update(idx, tree[idx] * m);
 	}
 
 	public int affine(final int i, final int m, final int d) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		return update(idx, tree[idx] * m + d);
 	}
 
 	public int apply(final int i, final int x, final IntBinaryOperator f) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		return update(idx, f.applyAsInt(tree[idx], x));
 	}
 
 	public IntSegmentTree fill(final int v) {
-		Arrays.fill(tree, size, size + n, v);
+		Arrays.fill(tree, leafSize, leafSize + size, v);
 		build();
 		return this;
 	}
 
 	public IntSegmentTree setAll(final IntUnaryOperator init) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.applyAsInt(i);
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) tree[idx] = init.applyAsInt(i);
 		build();
 		return this;
 	}
 
 	public int query(final int l, final int r) {
 		if (l >= r) return identity;
-		Objects.checkFromToIndex(l, r, n);
+		Objects.checkFromToIndex(l, r, size);
 		int sml = identity, smr = identity;
-		for (int cl = l + size, cr = r + size; cl < cr; cl >>= 1, cr >>= 1) {
+		for (int cl = l + leafSize, cr = r + leafSize; cl < cr; cl >>= 1, cr >>= 1) {
 			if ((cl & 1) == 1) sml = operator.applyAsInt(sml, tree[cl++]);
 			if ((cr & 1) == 1) smr = operator.applyAsInt(tree[--cr], smr);
 		}
@@ -111,15 +112,15 @@ public final class IntSegmentTree implements IntCollection {
 	}
 
 	public int maxRight(final int l, final IntPredicate tester) {
-		Objects.checkIndex(l, n + 1);
-		if (l == n) return n;
+		Objects.checkIndex(l, size + 1);
+		if (l == size) return size;
 		int ans = identity;
-		int cl = l + size;
+		int cl = l + leafSize;
 		do {
 			cl >>= Integer.numberOfTrailingZeros(cl);
 			int combined = operator.applyAsInt(ans, tree[cl]);
 			if (!tester.test(combined)) {
-				while (cl < size) {
+				while (cl < leafSize) {
 					cl <<= 1;
 					combined = operator.applyAsInt(ans, tree[cl]);
 					if (tester.test(combined)) {
@@ -127,25 +128,25 @@ public final class IntSegmentTree implements IntCollection {
 						cl++;
 					}
 				}
-				return cl - size;
+				return cl - leafSize;
 			}
 			ans = combined;
 			cl++;
 		} while ((cl & -cl) != cl);
-		return n;
+		return size;
 	}
 
 	public int minLeft(final int r, final IntPredicate tester) {
-		Objects.checkIndex(r, n + 1);
+		Objects.checkIndex(r, size + 1);
 		if (r == 0) return 0;
 		int ans = identity;
-		int cr = r + size;
+		int cr = r + leafSize;
 		do {
 			cr--;
 			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
 			int combined = operator.applyAsInt(tree[cr], ans);
 			if (!tester.test(combined)) {
-				while (cr < size) {
+				while (cr < leafSize) {
 					cr = (cr << 1) | 1;
 					combined = operator.applyAsInt(tree[cr], ans);
 					if (tester.test(combined)) {
@@ -153,7 +154,7 @@ public final class IntSegmentTree implements IntCollection {
 						cr--;
 					}
 				}
-				return cr - size + 1;
+				return cr - leafSize + 1;
 			}
 			ans = combined;
 		} while ((cr & -cr) != cr);
@@ -161,7 +162,7 @@ public final class IntSegmentTree implements IntCollection {
 	}
 
 	public int[] toArray() {
-		return Arrays.copyOfRange(tree, size, size + n);
+		return Arrays.copyOfRange(tree, leafSize, leafSize + size);
 	}
 
 	public PrimitiveIterator.OfInt iterator() {
@@ -169,26 +170,26 @@ public final class IntSegmentTree implements IntCollection {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < n;
+				return i < size;
 			}
 
 			public int nextInt() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + i++];
+				return tree[leafSize + i++];
 			}
 		};
 	}
 
 	public String toString() {
 		if (isEmpty()) return "";
-		final StringBuilder sb = new StringBuilder(12 * n - 1);
-		sb.append(tree[size]);
-		for (int i = 1; i < n; i++) sb.append(' ').append(tree[size + i]);
+		final StringBuilder sb = new StringBuilder(12 * size - 1);
+		sb.append(tree[leafSize]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(tree[leafSize + i]);
 		return sb.toString();
 	}
 
 	private void build() {
-		for (int i = size - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[(i << 1) | 1]);
+		for (int i = leafSize - 1; i > 0; i--) tree[i] = operator.applyAsInt(tree[i << 1], tree[(i << 1) | 1]);
 	}
 
 	private int update(final int idx, final int v) {

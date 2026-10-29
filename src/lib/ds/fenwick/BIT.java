@@ -7,8 +7,9 @@ import java.util.function.*;
  * 演算・逆演算・単位元を指定する汎用 Binary Indexed Tree (Fenwick Tree)。点更新と区間集計を O(log n) で行う。
  * 添字は0始まりとする。{@code query(r)} は半開区間 {@code [0, r)}、{@code query(l, r)} は半開区間 {@code [l, r)} の集計結果を返し、
  * {@code l >= r} は空区間として単位元を返す。範囲外の区間では IndexOutOfBoundsException を投げる。
- * operator は結合則・可換性を満たし、identity はその単位元とする。set と {@code query(l, r)} には operator の逆演算 inverse が必要である。
- * set は更新前の値、apply は operator を作用させた更新後の値を返す。配列とコピーからの構築は内部配列を共有せず、要素オブジェクトは共有する。
+ * operator は結合則・可換性を満たし、identity はその単位元とする。set・apply と {@code query(l, r)} には operator の逆演算 inverse が必要である。
+ * set は更新前の値、add は {@code operator(現在値, v)}、apply は {@code f(現在値, x)} へ更新した後の値を返す。
+ * 配列・コレクション・コピーからの構築は内部配列を共有せず、要素オブジェクトは共有する。
  */
 @SuppressWarnings("unchecked")
 public final class BIT<T> implements Iterable<T> {
@@ -41,6 +42,17 @@ public final class BIT<T> implements Iterable<T> {
 		build();
 	}
 
+	public BIT(final Collection<? extends T> a, final BinaryOperator<T> operator, final BinaryOperator<T> inverse, final T identity) {
+		size = a.size();
+		raw = (T[]) a.toArray();
+		tree = (T[]) new Object[size + 1];
+		System.arraycopy(raw, 0, tree, 1, size);
+		this.operator = operator;
+		this.inverse = inverse;
+		this.identity = identity;
+		build();
+	}
+
 	public BIT(final BIT<T> other) {
 		size = other.size;
 		raw = other.raw.clone();
@@ -64,14 +76,18 @@ public final class BIT<T> implements Iterable<T> {
 
 	public T set(final int i, final T v) {
 		final T old = raw[i];
-		apply(i, inverse.apply(v, old));
+		add(i, inverse.apply(v, old));
 		return old;
 	}
 
-	public T apply(final int i, final T v) {
+	public T add(final int i, final T v) {
 		raw[i] = operator.apply(raw[i], v);
 		for (int cur = i + 1; cur <= size; cur += cur & -cur) tree[cur] = operator.apply(tree[cur], v);
 		return raw[i];
+	}
+
+	public T apply(final int i, final T x, final BinaryOperator<T> f) {
+		return add(i, inverse.apply(f.apply(raw[i], x), raw[i]));
 	}
 
 	public BIT<T> fill(final T v) {

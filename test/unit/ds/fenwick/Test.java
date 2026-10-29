@@ -1,5 +1,7 @@
 package unit.ds.fenwick;
 
+import java.util.*;
+
 import lib.ds.fenwick.*;
 
 public final class Test {
@@ -7,6 +9,7 @@ public final class Test {
 	public static void main(final String[] args) {
 		testIntBITBounds();
 		testLongBITBounds();
+		testGenericBIT();
 	}
 
 	private static void testIntBITBounds() {
@@ -43,6 +46,20 @@ public final class Test {
 		final LongBIT zeroHead = new LongBIT(new long[]{0, 0, 1});
 		check(zeroHead.lowerBound(0L) == 0);
 		check(zeroHead.upperBound(0L) == 2);
+	}
+
+	private static void testGenericBIT() {
+		final BIT<Long> bit = new BIT<>(List.of(1L, 2L, 3L), Long::sum, (a, b) -> a - b, 0L);
+		check(bit.size == 3);
+		check(bit.identity == 0L);
+		check(bit.queryAll() == 6L);
+		check(bit.add(1, 5L) == 7L);
+		check(bit.query(0, 2) == 8L);
+		check(bit.apply(2, 4L, Math::max) == 4L);
+		check(bit.query(3) == 12L);
+		check(bit.set(0, 10L) == 1L);
+		check(bit.queryAll() == 21L);
+		check(new BIT<>(bit).query(1, 3) == 11L);
 	}
 
 	private static void check(final boolean condition) {

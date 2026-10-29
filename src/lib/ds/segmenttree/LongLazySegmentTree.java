@@ -19,8 +19,9 @@ import lib.ds.*;
 public final class LongLazySegmentTree implements LongCollection {
 	private static final LongBinaryOperator DEFAULT_MAPPING = (f, x) -> f;
 	private static final LongBinaryOperator DEFAULT_COMPOSITION = (f, g) -> f;
-	private final int n, size, log;
-	private final long identity;
+	public final int size;
+	public final long identity;
+	private final int leafSize, log;
 	private final LongBinaryOperator operator, mapping, composition;
 	private final long[] tree, lazy;
 	private final boolean[] hasLazy;
@@ -30,17 +31,17 @@ public final class LongLazySegmentTree implements LongCollection {
 	}
 
 	public LongLazySegmentTree(final int n, final LongBinaryOperator operator, final long identity, final LongBinaryOperator mapping, final LongBinaryOperator composition) {
-		this.n = n;
-		size = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
-		log = Integer.numberOfTrailingZeros(size);
+		size = n;
+		leafSize = n <= 1 ? 1 : Integer.highestOneBit(n - 1) << 1;
+		log = Integer.numberOfTrailingZeros(leafSize);
 		this.identity = identity;
 		this.operator = operator;
 		this.mapping = mapping;
 		this.composition = composition;
-		tree = new long[size << 1];
+		tree = new long[leafSize << 1];
 		if (identity != 0) Arrays.fill(tree, identity);
-		lazy = new long[size];
-		hasLazy = new boolean[size];
+		lazy = new long[leafSize];
+		hasLazy = new boolean[leafSize];
 	}
 
 	public LongLazySegmentTree(final long[] a, final LongBinaryOperator operator, final long identity) {
@@ -49,7 +50,7 @@ public final class LongLazySegmentTree implements LongCollection {
 
 	public LongLazySegmentTree(final long[] a, final LongBinaryOperator operator, final long identity, final LongBinaryOperator mapping, final LongBinaryOperator composition) {
 		this(a.length, operator, identity, mapping, composition);
-		System.arraycopy(a, 0, tree, size, n);
+		System.arraycopy(a, 0, tree, leafSize, size);
 		build();
 	}
 
@@ -60,13 +61,13 @@ public final class LongLazySegmentTree implements LongCollection {
 	public LongLazySegmentTree(final LongCollection a, final LongBinaryOperator operator, final long identity, final LongBinaryOperator mapping, final LongBinaryOperator composition) {
 		this(a.size(), operator, identity, mapping, composition);
 		final PrimitiveIterator.OfLong it = a.iterator();
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = it.nextLong();
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) tree[idx] = it.nextLong();
 		build();
 	}
 
 	public LongLazySegmentTree(final LongLazySegmentTree other) {
-		n = other.n;
 		size = other.size;
+		leafSize = other.leafSize;
 		log = other.log;
 		identity = other.identity;
 		operator = other.operator;
@@ -78,17 +79,17 @@ public final class LongLazySegmentTree implements LongCollection {
 	}
 
 	public int size() {
-		return n;
+		return size;
 	}
 
 	public long get(final int i) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		return tree[idx];
 	}
 
 	public long set(final int i, final long v) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		final long old = tree[idx];
 		tree[idx] = v;
@@ -97,7 +98,7 @@ public final class LongLazySegmentTree implements LongCollection {
 	}
 
 	public long apply(final int i, final long f) {
-		final int idx = size + Objects.checkIndex(i, n);
+		final int idx = leafSize + Objects.checkIndex(i, size);
 		pushPath(idx);
 		final long v = tree[idx] = mapping.applyAsLong(f, tree[idx]);
 		updatePath(idx);
@@ -106,9 +107,9 @@ public final class LongLazySegmentTree implements LongCollection {
 
 	public void apply(int l, int r, final long f) {
 		if (l >= r) return;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		final int l2 = l, r2 = r;
 		for (; l < r; l >>= 1, r >>= 1) {
@@ -119,22 +120,22 @@ public final class LongLazySegmentTree implements LongCollection {
 	}
 
 	public LongLazySegmentTree fill(final long v) {
-		Arrays.fill(tree, size, size + n, v);
+		Arrays.fill(tree, leafSize, leafSize + size, v);
 		build();
 		return this;
 	}
 
 	public LongLazySegmentTree setAll(final IntToLongFunction init) {
-		for (int i = 0, idx = size; i < n; i++, idx++) tree[idx] = init.applyAsLong(i);
+		for (int i = 0, idx = leafSize; i < size; i++, idx++) tree[idx] = init.applyAsLong(i);
 		build();
 		return this;
 	}
 
 	public long query(int l, int r) {
 		if (l >= r) return identity;
-		Objects.checkFromToIndex(l, r, n);
-		l += size;
-		r += size;
+		Objects.checkFromToIndex(l, r, size);
+		l += leafSize;
+		r += leafSize;
 		pushBoundaries(l, r);
 		long sml = identity, smr = identity;
 		for (; l < r; l >>= 1, r >>= 1) {
@@ -149,16 +150,16 @@ public final class LongLazySegmentTree implements LongCollection {
 	}
 
 	public int maxRight(final int l, final LongPredicate tester) {
-		Objects.checkIndex(l, n + 1);
-		if (l == n) return n;
+		Objects.checkIndex(l, size + 1);
+		if (l == size) return size;
 		long ans = identity;
-		int cl = l + size;
+		int cl = l + leafSize;
 		pushPath(cl);
 		do {
 			cl >>= Integer.numberOfTrailingZeros(cl);
 			long combined = operator.applyAsLong(ans, tree[cl]);
 			if (!tester.test(combined)) {
-				while (cl < size) {
+				while (cl < leafSize) {
 					push(cl);
 					cl <<= 1;
 					combined = operator.applyAsLong(ans, tree[cl]);
@@ -167,26 +168,26 @@ public final class LongLazySegmentTree implements LongCollection {
 						cl++;
 					}
 				}
-				return cl - size;
+				return cl - leafSize;
 			}
 			ans = combined;
 			cl++;
 		} while ((cl & -cl) != cl);
-		return n;
+		return size;
 	}
 
 	public int minLeft(final int r, final LongPredicate tester) {
-		Objects.checkIndex(r, n + 1);
+		Objects.checkIndex(r, size + 1);
 		if (r == 0) return 0;
 		long ans = identity;
-		int cr = r + size;
+		int cr = r + leafSize;
 		pushPath(cr - 1);
 		do {
 			cr--;
 			while (cr > 1 && (cr & 1) == 1) cr >>= 1;
 			long combined = operator.applyAsLong(tree[cr], ans);
 			if (!tester.test(combined)) {
-				while (cr < size) {
+				while (cr < leafSize) {
 					push(cr);
 					cr = (cr << 1) | 1;
 					combined = operator.applyAsLong(tree[cr], ans);
@@ -195,7 +196,7 @@ public final class LongLazySegmentTree implements LongCollection {
 						cr--;
 					}
 				}
-				return cr - size + 1;
+				return cr - leafSize + 1;
 			}
 			ans = combined;
 		} while ((cr & -cr) != cr);
@@ -204,7 +205,7 @@ public final class LongLazySegmentTree implements LongCollection {
 
 	public long[] toArray() {
 		pushAll();
-		return Arrays.copyOfRange(tree, size, size + n);
+		return Arrays.copyOfRange(tree, leafSize, leafSize + size);
 	}
 
 	public PrimitiveIterator.OfLong iterator() {
@@ -213,12 +214,12 @@ public final class LongLazySegmentTree implements LongCollection {
 			private int i = 0;
 
 			public boolean hasNext() {
-				return i < n;
+				return i < size;
 			}
 
 			public long nextLong() {
 				if (!hasNext()) throw new NoSuchElementException();
-				return tree[size + i++];
+				return tree[leafSize + i++];
 			}
 		};
 	}
@@ -226,14 +227,14 @@ public final class LongLazySegmentTree implements LongCollection {
 	public String toString() {
 		if (isEmpty()) return "";
 		pushAll();
-		final StringBuilder sb = new StringBuilder(21 * n - 1);
-		sb.append(tree[size]);
-		for (int i = 1; i < n; i++) sb.append(' ').append(tree[size + i]);
+		final StringBuilder sb = new StringBuilder(21 * size - 1);
+		sb.append(tree[leafSize]);
+		for (int i = 1; i < size; i++) sb.append(' ').append(tree[leafSize + i]);
 		return sb.toString();
 	}
 
 	private void build() {
-		for (int i = size - 1; i > 0; i--) update(i);
+		for (int i = leafSize - 1; i > 0; i--) update(i);
 		Arrays.fill(hasLazy, false);
 	}
 
@@ -243,7 +244,7 @@ public final class LongLazySegmentTree implements LongCollection {
 
 	private void allApply(final int i, final long f) {
 		tree[i] = mapping.applyAsLong(f, tree[i]);
-		if (i >= size) return;
+		if (i >= leafSize) return;
 		lazy[i] = hasLazy[i] ? composition.applyAsLong(f, lazy[i]) : f;
 		hasLazy[i] = true;
 	}
@@ -257,7 +258,7 @@ public final class LongLazySegmentTree implements LongCollection {
 	}
 
 	private void pushAll() {
-		for (int i = 1; i < size; i++) push(i);
+		for (int i = 1; i < leafSize; i++) push(i);
 	}
 
 	private void pushPath(final int idx) {
