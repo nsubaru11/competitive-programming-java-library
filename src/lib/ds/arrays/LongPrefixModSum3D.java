@@ -8,7 +8,8 @@ import lib.util.function.*;
 /**
  * long値の3次元累積和を法 mod で保持する。構築後は更新しない。法は正、入力値は {@code 0 <= v < mod} とし、get・sum の結果は {@code [0, mod)} とする。
  * 座標は0始まりの (i, j, k) とし、各次元の長さは正とする。{@code sum(i, j, k)} は閉直方体 {@code [0, i] x [0, j] x [0, k]}、
- * {@code sum(i1, j1, k1, i2, j2, k2)} は閉直方体 {@code [i1, i2] x [j1, j2] x [k1, k2]} の和を返し、範囲外の座標や始点が終点を超える区間では IndexOutOfBoundsException を投げる。
+ * {@code sum(i1, j1, k1, i2, j2, k2)} は閉直方体 {@code [i1, i2] x [j1, j2] x [k1, k2]} の和を返す。
+ * 始点が終点を超える軸がある区間は空領域として0を返す。座標が範囲外の場合は、空領域でも IndexOutOfBoundsException を投げる。
  * get は元の値を返し、getOrDefault は範囲外で defaultValue を返す。init は (i, j, k) の辞書順に各座標で1回ずつ呼び、走査も同じ順とする。
  * toString は最終軸の要素を空白区切りとし、(i, j) ごとの行を改行で区切る。
  */
@@ -83,12 +84,13 @@ public final class LongPrefixModSum3D implements LongCollection {
 	}
 
 	public long sum(final int i1, final int j1, final int k1, final int i2, final int j2, final int k2) {
+		Objects.checkIndex(i1, d);
+		Objects.checkIndex(j1, h);
+		Objects.checkIndex(k1, w);
 		Objects.checkIndex(i2, d);
-		Objects.checkIndex(i1, i2 + 1);
 		Objects.checkIndex(j2, h);
-		Objects.checkIndex(j1, j2 + 1);
 		Objects.checkIndex(k2, w);
-		Objects.checkIndex(k1, k2 + 1);
+		if (i1 > i2 || j1 > j2 || k1 > k2) return 0;
 		final int i = i2 + 1, j = j2 + 1, k = k2 + 1;
 		final long res = (pref[index(i, j, k)] - pref[index(i1, j, k)] - pref[index(i, j1, k)] - pref[index(i, j, k1)] + pref[index(i1, j1, k)] + pref[index(i1, j, k1)] + pref[index(i, j1, k1)] - pref[index(i1, j1, k1)]) % mod;
 		return res < 0 ? res + mod : res;

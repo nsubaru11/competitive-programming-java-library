@@ -8,7 +8,7 @@ import lib.ds.*;
 /**
  * long値の Binary Indexed Tree (Fenwick Tree)。点更新・区間和・累積和の境界探索を O(log n) で行う。
  * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} は閉区間 {@code [i, j]} の和を返し、
- * {@code i = -1}・{@code i > j} は空区間として0を返す。範囲外の添字・区間では IndexOutOfBoundsException を投げる。
+ * {@code i > j} は空区間として0を返す。端点が範囲外の場合は、{@code i > j} でも IndexOutOfBoundsException を投げる。
  * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。
  * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
  * 各要素と計算途中の値は long の範囲内とする。
@@ -97,12 +97,13 @@ public final class LongBIT implements LongCollection {
 	}
 
 	public long sum(final int i) {
-		return prefixSum(Objects.checkIndex(i + 1, size + 1));
+		return prefixSum(Objects.checkIndex(i, size) + 1);
 	}
 
 	public long sum(final int i, final int j) {
+		Objects.checkIndex(i, size);
+		Objects.checkIndex(j, size);
 		if (i > j) return 0;
-		Objects.checkFromToIndex(i, j + 1, size);
 		return prefixSum(j + 1) - prefixSum(i);
 	}
 

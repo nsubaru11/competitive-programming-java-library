@@ -90,7 +90,7 @@
 | Method      | `apply(int i, int x, IntBinaryOperator f)` | `int`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。                      |
 | Method      | `fill(int v)`                              | `IntBIT`                  | 全要素を指定値で再構築する。                                              |
 | Method      | `setAll(IntUnaryOperator init)`            | `IntBIT`                  | 添字順に初期値関数を評価して再構築する。                                  |
-| Method      | `sum(int i)`                               | `long`                    | [0, i] の和を返す。i = -1 は0。                                           |
+| Method      | `sum(int i)`                               | `long`                    | [0, i] の和を返す。                                                       |
 | Method      | `sum(int i, int j)`                        | `long`                    | [i, j] の和を返す。i > j は0。                                            |
 | Method      | `sumAll()`                                 | `long`                    | 全要素の和を返す。                                                        |
 | Method      | `lowerBound(long w)`                       | `int`                     | 累積和が w 以上となる最小の添字。w <= 0 は0、該当位置がなければ size。    |
@@ -121,7 +121,7 @@
 | Method      | `apply(int i, long x, LongBinaryOperator f)` | `long`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。                      |
 | Method      | `fill(long v)`                               | `LongBIT`                  | 全要素を指定値で再構築する。                                              |
 | Method      | `setAll(IntToLongFunction init)`             | `LongBIT`                  | 添字順に初期値関数を評価して再構築する。                                  |
-| Method      | `sum(int i)`                                 | `long`                     | [0, i] の和を返す。i = -1 は0。                                           |
+| Method      | `sum(int i)`                                 | `long`                     | [0, i] の和を返す。                                                       |
 | Method      | `sum(int i, int j)`                          | `long`                     | [i, j] の和を返す。i > j は0。                                            |
 | Method      | `sumAll()`                                   | `long`                     | 全要素の和を返す。                                                        |
 | Method      | `lowerBound(long w)`                         | `int`                      | 累積和が w 以上となる最小の添字。w <= 0 は0、該当位置がなければ size。    |
@@ -151,7 +151,7 @@
 | Method      | `apply(int i, int j, int x, IntBinaryOperator f)` | `int`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。                  |
 | Method      | `fill(int v)`                                     | `IntBIT2D`                | 全要素を指定値で再構築する。                                          |
 | Method      | `setAll(IntBinaryOperator init)`                  | `IntBIT2D`                | 行優先順に初期値関数を評価して再構築する。                            |
-| Method      | `sum(int i, int j)`                               | `long`                    | [0, i] × [0, j] の和を返す。いずれかの終端が -1 なら0。               |
+| Method      | `sum(int i, int j)`                               | `long`                    | [0, i] × [0, j] の和を返す。                                          |
 | Method      | `sum(int i1, int j1, int i2, int j2)`             | `long`                    | [i1, i2] × [j1, j2] の和を返す。いずれかの始点が終点を超える場合は0。 |
 | Method      | `sumAll()`                                        | `long`                    | 全要素の和を返す。                                                    |
 | Method      | `toArray()`                                       | `int[]`                   | iterator と同じ順序の独立した配列を返す。                             |
@@ -180,7 +180,7 @@
 | Method      | `apply(int i, int j, long x, LongBinaryOperator f)` | `long`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。                  |
 | Method      | `fill(long v)`                                      | `LongBIT2D`                | 全要素を指定値で再構築する。                                          |
 | Method      | `setAll(IntBinaryToLongFunction init)`              | `LongBIT2D`                | 行優先順に初期値関数を評価して再構築する。                            |
-| Method      | `sum(int i, int j)`                                 | `long`                     | [0, i] × [0, j] の和を返す。いずれかの終端が -1 なら0。               |
+| Method      | `sum(int i, int j)`                                 | `long`                     | [0, i] × [0, j] の和を返す。                                          |
 | Method      | `sum(int i1, int j1, int i2, int j2)`               | `long`                     | [i1, i2] × [j1, j2] の和を返す。いずれかの始点が終点を超える場合は0。 |
 | Method      | `sumAll()`                                          | `long`                     | 全要素の和を返す。                                                    |
 | Method      | `toArray()`                                         | `long[]`                   | iterator と同じ順序の独立した配列を返す。                             |
@@ -211,7 +211,7 @@
 | Method      | `apply(int i, int x, IntBinaryOperator f)` | `int`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。   |
 | Method      | `fill(int v)`                              | `IntRangeBIT`             | 全要素を指定値で再構築する。                           |
 | Method      | `setAll(IntUnaryOperator init)`            | `IntRangeBIT`             | 添字順に初期値関数を評価して再構築する。               |
-| Method      | `sum(int i)`                               | `long`                    | [0, i] の和を返す。i = -1 は0。                        |
+| Method      | `sum(int i)`                               | `long`                    | [0, i] の和を返す。                                    |
 | Method      | `sum(int i, int j)`                        | `long`                    | [i, j] の和を返す。i > j は0。                         |
 | Method      | `sumAll()`                                 | `long`                    | 全要素の和を返す。                                     |
 | Method      | `iterator()`                               | `PrimitiveIterator.OfInt` | 添字順に走査する。                                     |
@@ -239,7 +239,7 @@
 | Method      | `apply(int i, long x, LongBinaryOperator f)` | `long`                     | 指定位置を f(現在値, x) へ更新し、更新後の値を返す。   |
 | Method      | `fill(long v)`                               | `LongRangeBIT`             | 全要素を指定値で再構築する。                           |
 | Method      | `setAll(IntToLongFunction init)`             | `LongRangeBIT`             | 添字順に初期値関数を評価して再構築する。               |
-| Method      | `sum(int i)`                                 | `long`                     | [0, i] の和を返す。i = -1 は0。                        |
+| Method      | `sum(int i)`                                 | `long`                     | [0, i] の和を返す。                                    |
 | Method      | `sum(int i, int j)`                          | `long`                     | [i, j] の和を返す。i > j は0。                         |
 | Method      | `sumAll()`                                   | `long`                     | 全要素の和を返す。                                     |
 | Method      | `iterator()`                                 | `PrimitiveIterator.OfLong` | 添字順に走査する。                                     |
@@ -258,8 +258,8 @@ Range版の配列化は既定実装を使う。数値版の spliterator は既�
 ## 制約・注意事項
 
 - 点の添字は0始まりで、1次元は `[0, size)`、2次元は `[0, h) × [0, w)` とする。配列アクセスで検出できない添字は明示的に検査し、範囲外では `IndexOutOfBoundsException` を投げる。
-- 数値版の累積和の終端は1次元が `-1 <= i < size`、2次元が `-1 <= i < h` かつ `-1 <= j < w` とする。終端 -1 は空区間・空領域を表す。汎用 `BIT<T>.query(r)` の終端は `0 <= r <= size` とし、r = 0 は空区間を表す。
-- 数値版の区間取得と区間加算は始点が終点を超える場合、汎用 `BIT<T>.query(l, r)` は `l >= r` の場合に空区間として扱う。それ以外は区間全体が有効範囲内にあることを検査する。更新に必要な検査は状態変更前に行う。
+- 数値版の閉区間の端点は有効な添字とし、1次元は `0 <= i, j < size`、2次元は `0 <= i < h` かつ `0 <= j < w` とする。端点が範囲外の場合は、空区間でも `IndexOutOfBoundsException` を投げる。汎用 `BIT<T>.query(r)` の終端は `0 <= r <= size` とし、r = 0 は空区間を表す。
+- 数値版の区間取得と区間加算は端点が有効で始点が終点を超える場合、汎用 `BIT<T>.query(l, r)` は `l >= r` の場合に空区間として扱う。それ以外は区間全体が有効範囲内にあることを検査する。更新に必要な検査は状態変更前に行う。
 - 係数を指定するアフィン更新は `affine`、関数を指定する更新は `apply` とする。汎用 `BIT<T>.apply(i, v)` は operator を作用させる既存の操作である。
 - int版は、各操作後の各要素が int の範囲内に収まることを前提とする。要素の型を拡張するものではなく、更新差分・添字との積・集計値を long で計算する。要素値のオーバーフロー検査は行わない。
 - long版は各要素と計算途中の値が long の範囲内に収まることを前提とする。int版も内部の集計値と計算途中の値は long の範囲内とする。
@@ -308,3 +308,4 @@ Range版は差分と添字で重み付けした差分を2本のBITに保持す�
 | **バージョン 4.0** | 2026-10-28 | 全クラス: 初期値関数を受け取るコンストラクタを削除し、関数による初期化を setAll に一本化。fill・setAll が自身を返すように変更                                                                                                                                                                   |
 | **バージョン 4.1** | 2026-10-29 | BIT<T>: 演算と逆演算のフィールド名・コンストラクタ引数名を op・inv から operator・inverse へ変更。IntBIT2D / LongBIT2D: 内部のループ変数名を ci・cj へ変更                                                                                                                                      |
 | **バージョン 5.0** | 2026-10-29 | IntRangeBIT / LongRangeBIT: 単一点の add・multiply・affine・apply が更新後の値を返すように変更                                                                                                                                                                                                  |
+| **バージョン 5.1** | 2026-10-29 | 数値版: 閉区間の両端点を有効な添字として検査し、`sum(i)` の i = -1 を範囲外として扱うよう変更。端点が有効で始点が終点を超える区間は引き続き空区間とする                                                                                                                                         |

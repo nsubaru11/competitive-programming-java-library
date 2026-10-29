@@ -34,16 +34,14 @@ public final class Judge2 {
 		long[] res = new long[q];
 		MoAlgorithm.run(n, lr, i -> {
 			int ai = a.get(i);
-			ans[0] += bit.sum(ai - 1);
-			bit.add(ai, 1);
+			ans[0] += bit.sum(ai) - bit.add(ai, 1) + 1;
 		}, i -> {
 			int ai = a.get(i);
 			ans[0] += bit.sumAll() - bit.sum(ai);
 			bit.add(ai, 1);
 		}, i -> {
 			int ai = a.get(i);
-			ans[0] -= bit.sum(ai - 1);
-			bit.add(ai, -1);
+			ans[0] -= bit.sum(ai) - bit.add(ai, -1) - 1;
 		}, i -> {
 			int ai = a.get(i);
 			ans[0] -= bit.sumAll() - bit.sum(ai);

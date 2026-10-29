@@ -10,7 +10,7 @@ import lib.util.function.*;
  * long値の2次元 Binary Indexed Tree (Fenwick Tree)。点更新と矩形和を O(log h log w) で行う。
  * 座標は0始まりの行 i・列 j とする。{@code sum(i, j)} は閉矩形 {@code [0, i] x [0, j]}、
  * {@code sum(i1, j1, i2, j2)} は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返す。
- * 終端 -1 や始点が終点を超える区間は空領域として0を返す。範囲外の座標・区間では IndexOutOfBoundsException を投げる。
+ * 始点が終点を超える軸がある区間は空領域として0を返す。座標が範囲外の場合は、空領域でも IndexOutOfBoundsException を投げる。
  * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。
  * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
  * 各要素と計算途中の値は long の範囲内とする。走査は行優先順とする。
@@ -107,15 +107,17 @@ public final class LongBIT2D implements LongCollection {
 	}
 
 	public long sum(final int i, final int j) {
-		Objects.checkIndex(i + 1, h + 1);
-		Objects.checkIndex(j + 1, w + 1);
+		Objects.checkIndex(i, h);
+		Objects.checkIndex(j, w);
 		return prefixSum(i + 1, j + 1);
 	}
 
 	public long sum(final int i1, final int j1, final int i2, final int j2) {
+		Objects.checkIndex(i1, h);
+		Objects.checkIndex(j1, w);
+		Objects.checkIndex(i2, h);
+		Objects.checkIndex(j2, w);
 		if (i1 > i2 || j1 > j2) return 0;
-		Objects.checkFromToIndex(i1, i2 + 1, h);
-		Objects.checkFromToIndex(j1, j2 + 1, w);
 		return prefixSum(i2 + 1, j2 + 1) - prefixSum(i1, j2 + 1) - prefixSum(i2 + 1, j1) + prefixSum(i1, j1);
 	}
 

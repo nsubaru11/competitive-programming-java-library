@@ -8,7 +8,7 @@ import lib.ds.*;
 /**
  * long値の区間加算・区間和を O(log n) で行う Binary Indexed Tree。差分と添字で重み付けした差分を2本の BIT で保持する。
  * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} と {@code add(i, j, d)} は閉区間 {@code [i, j]} を対象とし、
- * {@code i = -1}・{@code i > j} は空区間として扱う。範囲外の添字・区間では IndexOutOfBoundsException を投げる。
+ * {@code i > j} は空区間として扱う。端点が範囲外の場合は、{@code i > j} でも IndexOutOfBoundsException を投げる。
  * set は更新前の値、単一点の add・multiply・affine・apply は更新後の値を返し、区間の add は値を返さない。
  * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。get は O(log n) である。
  * 各要素と計算途中の値は long の範囲内とする。
@@ -66,8 +66,9 @@ public final class LongRangeBIT implements LongCollection {
 	}
 
 	public void add(final int i, final int j, final long d) {
+		Objects.checkIndex(i, size);
+		Objects.checkIndex(j, size);
 		if (i > j) return;
-		Objects.checkFromToIndex(i, j + 1, size);
 		addRange(i, j, d);
 	}
 
@@ -104,12 +105,13 @@ public final class LongRangeBIT implements LongCollection {
 	}
 
 	public long sum(final int i) {
-		return prefixSum(Objects.checkIndex(i + 1, size + 1));
+		return prefixSum(Objects.checkIndex(i, size) + 1);
 	}
 
 	public long sum(final int i, final int j) {
+		Objects.checkIndex(i, size);
+		Objects.checkIndex(j, size);
 		if (i > j) return 0;
-		Objects.checkFromToIndex(i, j + 1, size);
 		return prefixSum(j + 1) - prefixSum(i);
 	}
 

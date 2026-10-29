@@ -6,7 +6,7 @@ import java.util.function.*;
 /**
  * int値の1次元累積和を法 mod で保持する。構築後は更新しない。法は正、入力値は {@code 0 <= v < mod} とし、get・sum の結果は {@code [0, mod)} とする。
  * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} は閉区間 {@code [i, j]} の和を返し、
- * 範囲外の添字や {@code i > j} では IndexOutOfBoundsException を投げる。get は元の値を返す。
+ * {@code i > j} は空区間として0を返す。端点が範囲外の場合は、{@code i > j} でも IndexOutOfBoundsException を投げる。get は元の値を返す。
  * init は添字の昇順に1回ずつ呼び、構築時に入力は変更しない。
  */
 public final class IntPrefixModSum implements IntArray {
@@ -56,7 +56,9 @@ public final class IntPrefixModSum implements IntArray {
 	}
 
 	public int sum(final int i, final int j) {
-		Objects.checkIndex(i, j + 1);
+		Objects.checkIndex(i, size);
+		Objects.checkIndex(j, size);
+		if (i > j) return 0;
 		final int res = pref[j + 1] - pref[i];
 		return res < 0 ? res + mod : res;
 	}

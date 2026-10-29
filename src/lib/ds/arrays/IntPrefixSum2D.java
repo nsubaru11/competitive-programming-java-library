@@ -8,7 +8,8 @@ import lib.ds.*;
 /**
  * int値の2次元累積和を保持する。構築後は更新しない。入力の int 値を long で累積する。
  * 座標は0始まりの行 i・列 j とし、各次元の長さは正とする。{@code sum(i, j)} は閉矩形 {@code [0, i] x [0, j]}、
- * {@code sum(i1, j1, i2, j2)} は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返し、範囲外の座標や始点が終点を超える区間では IndexOutOfBoundsException を投げる。
+ * {@code sum(i1, j1, i2, j2)} は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返す。
+ * 始点が終点を超える軸がある区間は空領域として0を返す。座標が範囲外の場合は、空領域でも IndexOutOfBoundsException を投げる。
  * get は元の値を返し、getOrDefault は範囲外で defaultValue を返す。init は行優先順に1回ずつ呼び、走査と toString は行優先順とする。
  */
 public final class IntPrefixSum2D implements IntCollection {
@@ -71,10 +72,11 @@ public final class IntPrefixSum2D implements IntCollection {
 	}
 
 	public long sum(final int i1, final int j1, final int i2, final int j2) {
+		Objects.checkIndex(i1, h);
+		Objects.checkIndex(j1, w);
 		Objects.checkIndex(i2, h);
-		Objects.checkIndex(i1, i2 + 1);
 		Objects.checkIndex(j2, w);
-		Objects.checkIndex(j1, j2 + 1);
+		if (i1 > i2 || j1 > j2) return 0;
 		final int p1 = i1 * stride;
 		final int p2 = (i2 + 1) * stride;
 		return pref[p2 + j2 + 1] - pref[p1 + j2 + 1] - pref[p2 + j1] + pref[p1 + j1];
