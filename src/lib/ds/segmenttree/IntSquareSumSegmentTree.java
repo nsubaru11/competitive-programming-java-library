@@ -6,12 +6,10 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * int値の一次和と二乗和を法 mod で管理するセグメント木。区間アフィン変換・区間和・区間二乗和を O(log n) で行う。
- * 添字は0始まりとする。区間を受け取る操作は半開区間 {@code [l, r)} を扱い、{@code l >= r} は空区間とする。
- * 空区間の query・query2 は0を返し、空区間の更新は何もしない。それ以外の範囲外の添字・区間では IndexOutOfBoundsException を投げる。
- * affine は {@code 現在値 * m + d}、add は {@code 現在値 + d}、multiply は {@code 現在値 * m}、区間の set は v へ更新する。
- * 取得値と戻り値は {@code [0, mod)} に正規化する。単一点の set は作用を反映した更新前の値、単一点の add・multiply・affine は更新後の値を返す。
- * mod の既定値は998244353とし、{@code 1 <= mod <= 2 * 10^9} とする。
+ * int値の区間アフィン変換と、区間和・区間二乗和を法 mod で求めるセグメント木。各操作を O(log n) で行う。
+ * 添字は0始まり、区間は半開区間 {@code [l, r)} とし、{@code l >= r} の空区間では取得は0を返し、更新は何もしない。範囲外では IndexOutOfBoundsException を投げる。
+ * mod の既定値は998244353とし、{@code 1 <= mod <= 2 * 10^9} とする。取得値と戻り値は {@code [0, mod)} に正規化する。
+ * 単一点の set は更新前の値、単一点の add・multiply・affine は更新後の値を返す。affine は {@code 現在値 * m + d} へ更新する。
  */
 public final class IntSquareSumSegmentTree implements IntCollection {
 	private static final long IDENTITY_LAZY = 1L << 32;
@@ -158,6 +156,9 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 		return normalize((int) (ans % mod));
 	}
 
+	/**
+	 * {@code [l, r)} の各要素の二乗の和を返す。
+	 */
 	public int query2(int l, int r) {
 		if (l >= r) return 0;
 		Objects.checkFromToIndex(l, r, size);
@@ -176,6 +177,9 @@ public final class IntSquareSumSegmentTree implements IntCollection {
 		return normalize(tree[1]);
 	}
 
+	/**
+	 * 全要素の二乗の和を返す。
+	 */
 	public int query2All() {
 		return normalize(tree2[1]);
 	}

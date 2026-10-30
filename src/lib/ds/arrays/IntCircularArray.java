@@ -6,10 +6,9 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * 固定長の回転可能な int 配列。長さは正とし、論理添字 {@code 0 <= i < size} の範囲外では IndexOutOfBoundsException を投げる。
- * 回転はデータを移動しない。swap・reverse・rotateLeft・rotateRight・resetRotation はこのインスタンスを変更して自身を返す。
- * distance が負の回転は逆方向として扱う。rotation は左回転を正、右回転を負とする総回転数を返す。
- * fill・setAll は回転状態と総回転数を0へ戻す。走査・配列化・toString は現在の論理順とする。
+ * 固定長で回転できる int 配列。回転は要素を移動せずに O(1) で行う。長さは1以上とする。
+ * 添字は現在の先頭を0とし、範囲外では IndexOutOfBoundsException を投げる。
+ * set は更新前の値を返し、配列全体を変更するメソッドは自身を返す。rotateLeft は要素を左へ、rotateRight は右へずらす。
  */
 public final class IntCircularArray implements IntMutableArray {
 	public final int size;
@@ -48,6 +47,9 @@ public final class IntCircularArray implements IntMutableArray {
 		return size;
 	}
 
+	/**
+	 * 左回転を正、右回転を負とした総回転数を返す。剰余は取らない。fill・setAll・resetRotation で0に戻る。
+	 */
 	public long rotation() {
 		return rotation;
 	}
@@ -124,6 +126,9 @@ public final class IntCircularArray implements IntMutableArray {
 		return this;
 	}
 
+	/**
+	 * 回転を取り消し、総回転数を0に戻す。
+	 */
 	public IntCircularArray resetRotation() {
 		rotation = 0;
 		offset = 0;

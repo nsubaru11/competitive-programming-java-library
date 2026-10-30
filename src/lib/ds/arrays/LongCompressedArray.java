@@ -8,10 +8,8 @@ import lib.ds.*;
 import lib.search.*;
 
 /**
- * long配列の座標圧縮結果を int の順位で保持する。空配列にも対応し、論理添字は {@code 0 <= i < size} とする。
- * 構築時に入力をコピーする。順位方式の既定は DENSE、順位は既定で0始まり、oneBased が true のとき1始まりとする。
- * get・走査・toArray は元配列順の圧縮後の順位を返し、restore は元の値を復元する。sorted・ranks は重複を含むソート済み値と対応する順位のコピーを返す。
- * rankOfValue は入力に存在する値、valueOfRank は実在する順位を前提とする。containsValue・count は圧縮前の値を対象とする。
+ * long配列を座標圧縮した順位の配列。get・走査・toArray は各要素の順位を返す。順位は int で表す。
+ * 構築時に入力をコピーする。順位の付け方は RankType で選び（既定は DENSE）、順位は既定で0始まりとする。
  */
 public final class LongCompressedArray implements IntArray {
 	public final int size, uniqueSize;
@@ -26,6 +24,9 @@ public final class LongCompressedArray implements IntArray {
 		this(a, rankType, false);
 	}
 
+	/**
+	 * oneBased が true なら順位を1始まりにする。
+	 */
 	public LongCompressedArray(final long[] a, final RankType rankType, final boolean oneBased) {
 		size = a.length;
 		compressed = new int[size];
@@ -83,6 +84,9 @@ public final class LongCompressedArray implements IntArray {
 		this(a.toArray(), rankType, false);
 	}
 
+	/**
+	 * oneBased が true なら順位を1始まりにする。
+	 */
 	public LongCompressedArray(final LongCollection a, final RankType rankType, final boolean oneBased) {
 		this(a.toArray(), rankType, oneBased);
 	}
@@ -103,10 +107,16 @@ public final class LongCompressedArray implements IntArray {
 		return compressed[i];
 	}
 
+	/**
+	 * 値 v の順位を返す。v は入力に含まれる値とする。
+	 */
 	public int rankOfValue(final long v) {
 		return ranks[binarySearch(sorted, v)];
 	}
 
+	/**
+	 * 順位 rank を持つ値を返す。rank は実在する順位とする。
+	 */
 	public long valueOfRank(final int rank) {
 		return sorted[binarySearch(ranks, rank)];
 	}
@@ -115,10 +125,16 @@ public final class LongCompressedArray implements IntArray {
 		return binarySearch(sorted, v) >= 0;
 	}
 
+	/**
+	 * 入力に含まれる値 v の個数を返す。
+	 */
 	public int count(final long v) {
 		return ArrayBinarySearch.count(sorted, v);
 	}
 
+	/**
+	 * 圧縮前の値の配列を返す。
+	 */
 	public long[] restore() {
 		final long[] res = new long[size];
 		for (int i = 0; i < size; i++) res[i] = sorted[binarySearch(ranks, compressed[i])];
@@ -129,10 +145,16 @@ public final class LongCompressedArray implements IntArray {
 		return compressed.clone();
 	}
 
+	/**
+	 * 入力を昇順に並べた配列を返す。重複は除かない。
+	 */
 	public long[] sorted() {
 		return sorted.clone();
 	}
 
+	/**
+	 * sorted() の各要素の順位を返す。
+	 */
 	public int[] ranks() {
 		return ranks.clone();
 	}

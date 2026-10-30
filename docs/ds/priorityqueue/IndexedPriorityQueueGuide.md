@@ -89,7 +89,9 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Method      | `iterator()`                                                                            | `Iterator<T>`             | active な添字のコストを内部配列の順に走査する。                                                  |
 | Method      | `toString()`                                                                            | `String`                  | active な添字のコストを内部配列の順に空白区切りで連結する。空の場合は空文字列を返す。            |
 
-`Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
+継承するメソッド：
+
+- `Iterable`：`forEach`、`spliterator`
 
 ### `IntIndexedPriorityQueue`
 
@@ -137,6 +139,11 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Method      | `iterator()`                                                              | `PrimitiveIterator.OfInt` | active な添字のコストを内部配列の順に走査する。                                                  |
 | Method      | `toString()`                                                              | `String`                  | active な添字のコストを内部配列の順に空白区切りで連結する。空の場合は空文字列を返す。            |
 
+継承するメソッド：
+
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`spliterator`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongIndexedPriorityQueue`
 
 [ソース](../../../src/lib/ds/priorityqueue/LongIndexedPriorityQueue.java)
@@ -183,9 +190,10 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Method      | `iterator()`                                                                | `PrimitiveIterator.OfLong` | active な添字のコストを内部配列の順に走査する。                                                  |
 | Method      | `toString()`                                                                | `String`                   | active な添字のコストを内部配列の順に空白区切りで連結する。空の場合は空文字列を返す。            |
 
-### 数値版の継承 API
+継承するメソッド：
 
-`IntIndexedPriorityQueue`・`LongIndexedPriorityQueue` は `IntCollection`・`LongCollection` の `isEmpty`、`contains`、`forEachInt` / `forEachLong`、`spliterator`、`intStream` / `longStream`、`toList`、`toArray`、`forEach` を既定実装のまま継承する。全シグネチャは [配列・コレクションの継承API](../arrays/ArrayGuide.md#継承元のコレクション-api) を参照する。対象は active な添字のコストであり、`contains` は添字ではなくコストを探索する。
+- [`LongCollection`](../arrays/ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`spliterator`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### 状態と操作の対応
 

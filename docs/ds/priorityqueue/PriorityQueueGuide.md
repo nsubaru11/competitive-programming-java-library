@@ -78,7 +78,9 @@
 | Method      | `iterator()`                                                                      | `Iterator<T>` | 内部配列の順に走査する。                                              |
 | Method      | `toString()`                                                                      | `String`      | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。  |
 
-`Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
+継承するメソッド：
+
+- `Iterable`：`forEach`、`spliterator`
 
 ### `IntPriorityQueue`
 
@@ -117,6 +119,11 @@
 | Method      | `iterator()`                                                        | `PrimitiveIterator.OfInt` | 内部配列の順に走査する。                                                    |
 | Method      | `toString()`                                                        | `String`                  | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。        |
 
+継承するメソッド：
+
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`spliterator`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPriorityQueue`
 
 [ソース](../../../src/lib/ds/priorityqueue/LongPriorityQueue.java)
@@ -154,9 +161,10 @@
 | Method      | `iterator()`                                                          | `PrimitiveIterator.OfLong` | 内部配列の順に走査する。                                                      |
 | Method      | `toString()`                                                          | `String`                   | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。          |
 
-### 数値版の継承 API
+継承するメソッド：
 
-`IntPriorityQueue`・`LongPriorityQueue` は `IntCollection`・`LongCollection` の `isEmpty`、`contains`、`forEachInt` / `forEachLong`、`spliterator`、`intStream` / `longStream`、`toList`、`toArray`、`forEach` を既定実装のまま継承する。全シグネチャは [配列・コレクションの継承API](../arrays/ArrayGuide.md#継承元のコレクション-api) を参照する。走査順は内部配列の順であり、優先順ではない。
+- [`LongCollection`](../arrays/ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`spliterator`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ## 利用例
 

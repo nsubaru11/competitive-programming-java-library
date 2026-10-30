@@ -7,11 +7,10 @@ import lib.ds.*;
 import lib.util.function.*;
 
 /**
- * long値の2次元配列。回転・転置・反転をデータ移動なしで行う。
- * 座標は現在の論理状態の0始まりの行 i・列 j とし、範囲外では IndexOutOfBoundsException を投げる。getOrDefault は範囲外で defaultValue を返す。
- * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
- * 回転・転置・反転はこのインスタンスを変更して自身を返す。rotateLeft は反時計回り、rotateRight は時計回りに90度回転し、distance が負の場合は逆方向とする。
- * fill・setAll は論理寸法と向きを維持する。init は行優先順に呼び、走査・配列化・toString は現在の論理状態の行優先順とする。
+ * long値の2次元配列。回転・転置・反転を要素の移動なしで行う。
+ * 座標は現在の向きでの0始まりの (行 i, 列 j) とし、範囲外では IndexOutOfBoundsException を投げる。
+ * set は更新前の値、add・multiply・affine・apply は更新後の値を返し、配列全体を変更するメソッドは自身を返す。
+ * rotateLeft は反時計回り、rotateRight は時計回りに90度ずつ回転する。走査は現在の向きの行優先順とする。
  */
 public final class LongArray2D implements LongCollection {
 	public final int size;
@@ -33,7 +32,7 @@ public final class LongArray2D implements LongCollection {
 	}
 
 	/**
-	 * 配列の先頭 {@code h * w} 要素を行優先順でコピーする。配列長は要素数以上とする。
+	 * 配列の先頭 {@code h * w} 要素を行優先順でコピーする。
 	 */
 	public LongArray2D(final int h, final int w, final long[] a) {
 		this(h, w);

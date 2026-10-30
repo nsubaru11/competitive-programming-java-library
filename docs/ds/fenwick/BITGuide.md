@@ -69,7 +69,9 @@
 | Method      | `iterator()`                                                                                        | `Iterator<T>` | 添字順に走査する。                                                 |
 | Method      | `toString()`                                                                                        | `String`      | 要素を空白区切りで返す。空の場合は空文字列。                       |
 
-`Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
+継承するメソッド：
+
+- `Iterable`：`forEach`、`spliterator`
 
 ### `IntBIT`
 
@@ -102,6 +104,11 @@
 | Method      | `iterator()`                               | `PrimitiveIterator.OfInt` | 添字順に走査する。                                                        |
 | Method      | `toString()`                               | `String`                  | 要素を空白区切りで返す。空の場合は空文字列。                              |
 
+継承するメソッド：
+
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`intStream`、`isEmpty`、`spliterator`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongBIT`
 
 [ソース](../../../src/lib/ds/fenwick/LongBIT.java)
@@ -133,6 +140,11 @@
 | Method      | `iterator()`                                 | `PrimitiveIterator.OfLong` | 添字順に走査する。                                                        |
 | Method      | `toString()`                                 | `String`                   | 要素を空白区切りで返す。空の場合は空文字列。                              |
 
+継承するメソッド：
+
+- [`LongCollection`](../arrays/ArrayGuide.md#longcollection)：`contains`、`isEmpty`、`longStream`、`spliterator`、`toList`
+- `Iterable`：`forEach`
+
 ### `IntBIT2D`
 
 [ソース](../../../src/lib/ds/fenwick/IntBIT2D.java)
@@ -161,6 +173,11 @@
 | Method      | `forEachInt(IntConsumer action)`                  | `void`                    | iterator と同じ順序で各要素に action を適用する。                     |
 | Method      | `iterator()`                                      | `PrimitiveIterator.OfInt` | 行優先順に走査する。                                                  |
 | Method      | `toString()`                                      | `String`                  | 各行を空白区切りとし、行間を改行で区切る。空の場合は空文字列。        |
+
+継承するメソッド：
+
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`intStream`、`isEmpty`、`spliterator`、`toList`
+- `Iterable`：`forEach`
 
 ### `LongBIT2D`
 
@@ -191,6 +208,11 @@
 | Method      | `iterator()`                                        | `PrimitiveIterator.OfLong` | 行優先順に走査する。                                                  |
 | Method      | `toString()`                                        | `String`                   | 各行を空白区切りとし、行間を改行で区切る。空の場合は空文字列。        |
 
+継承するメソッド：
+
+- [`LongCollection`](../arrays/ArrayGuide.md#longcollection)：`contains`、`isEmpty`、`longStream`、`spliterator`、`toList`
+- `Iterable`：`forEach`
+
 ### `IntRangeBIT`
 
 [ソース](../../../src/lib/ds/fenwick/IntRangeBIT.java)
@@ -218,6 +240,11 @@
 | Method      | `sumAll()`                                 | `long`                    | 全要素の和を返す。                                     |
 | Method      | `iterator()`                               | `PrimitiveIterator.OfInt` | 添字順に走査する。                                     |
 | Method      | `toString()`                               | `String`                  | 要素を空白区切りで返す。空の場合は空文字列。           |
+
+継承するメソッド：
+
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`spliterator`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `LongRangeBIT`
 
@@ -247,11 +274,10 @@
 | Method      | `iterator()`                                 | `PrimitiveIterator.OfLong` | 添字順に走査する。                                     |
 | Method      | `toString()`                                 | `String`                   | 要素を空白区切りで返す。空の場合は空文字列。           |
 
-### 数値版の継承 API
+継承するメソッド：
 
-各数値版は型に応じた `IntCollection` / `LongCollection` を実装する。
-`isEmpty`、`contains`、`forEachInt` / `forEachLong`、`spliterator`、`intStream` / `longStream`、`toList`、`toArray`、`forEach` の全シグネチャと既定実装は [配列・コレクションの継承API](../arrays/ArrayGuide.md#継承元のコレクション-api) を参照する。
-Range版の配列化は既定実装を使う。数値版の spliterator は既定実装であり、ORDERED は指定しない。
+- [`LongCollection`](../arrays/ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`spliterator`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ## 利用例
 

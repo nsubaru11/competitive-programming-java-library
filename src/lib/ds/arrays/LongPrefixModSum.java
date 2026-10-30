@@ -6,10 +6,10 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * long値の1次元累積和を法 mod で保持する。構築後は更新しない。法は正、入力値は {@code 0 <= v < mod} とし、get・sum の結果は {@code [0, mod)} とする。
- * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} は閉区間 {@code [i, j]} の和を返し、
- * {@code i > j} は空区間として0を返す。端点が範囲外の場合は、{@code i > j} でも IndexOutOfBoundsException を投げる。get は元の値を返す。
- * init は添字の昇順に1回ずつ呼び、構築時に入力は変更しない。
+ * long値の1次元累積和を法 mod で保持する。構築後は変更できない。添字は0始まりとし、get は元の値を返す。
+ * sum(i) は {@code [0, i]}、sum(i, j) は閉区間 {@code [i, j]} の和を返す。
+ * 端点が範囲外なら IndexOutOfBoundsException を投げ、{@code i > j} の空区間は0を返す。
+ * mod は正、入力値は {@code [0, mod)} とし、結果も {@code [0, mod)} で返す。
  */
 public final class LongPrefixModSum implements LongArray {
 	public final int size;

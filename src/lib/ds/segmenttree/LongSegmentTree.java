@@ -7,11 +7,8 @@ import lib.ds.*;
 
 /**
  * long値のセグメント木。結合則を満たす演算と単位元を指定し、点更新・区間集計・二分探索を O(log n) で行う。
- * 添字は0始まりとする。{@code query(l, r)} は半開区間 {@code [l, r)} の集計結果を返し、{@code l >= r} は空区間として単位元を返す。
- * 範囲外の添字・区間では IndexOutOfBoundsException を投げる。set は更新前の値、add・multiply・affine・apply は更新後の値を返す。
- * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
- * maxRight は {@code tester(query(l, r))} が真となる最大の r、minLeft は {@code tester(query(l, r))} が真となる最小の l を返す。
- * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
+ * 添字は0始まり、query は半開区間 {@code [l, r)} の集計結果を返し、{@code l >= r} なら単位元を返す。範囲外では IndexOutOfBoundsException を投げる。
+ * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
  */
 public final class LongSegmentTree implements LongCollection {
 	public final int size;
@@ -112,6 +109,10 @@ public final class LongSegmentTree implements LongCollection {
 		return tree[1];
 	}
 
+	/**
+	 * {@code tester(query(l, r))} が真となる最大の r を返す。
+	 * tester は単位元に対して真となり、r を大きくすると真から偽へ一度だけ変わるものとする。
+	 */
 	public int maxRight(final int l, final LongPredicate tester) {
 		Objects.checkIndex(l, size + 1);
 		if (l == size) return size;
@@ -137,6 +138,10 @@ public final class LongSegmentTree implements LongCollection {
 		return size;
 	}
 
+	/**
+	 * {@code tester(query(l, r))} が真となる最小の l を返す。
+	 * tester は単位元に対して真となり、l を小さくすると真から偽へ一度だけ変わるものとする。
+	 */
 	public int minLeft(final int r, final LongPredicate tester) {
 		Objects.checkIndex(r, size + 1);
 		if (r == 0) return 0;

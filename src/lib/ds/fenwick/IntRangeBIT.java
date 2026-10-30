@@ -6,12 +6,11 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * int値の区間加算・区間和を O(log n) で行う Binary Indexed Tree。差分と添字で重み付けした差分を2本の BIT で保持する。
- * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} と {@code add(i, j, d)} は閉区間 {@code [i, j]} を対象とし、
- * {@code i > j} は空区間として扱う。端点が範囲外の場合は、{@code i > j} でも IndexOutOfBoundsException を投げる。
- * set は更新前の値、単一点の add・multiply・affine・apply は更新後の値を返し、区間の add は値を返さない。
- * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。get は O(log n) である。
- * 各操作後の要素は int の範囲内とし、更新差分と和は long で扱う。
+ * int値の区間加算と区間和を O(log n) で行う Binary Indexed Tree。get も O(log n) かかる。
+ * 添字は0始まり、sum(i) は {@code [0, i]}、sum(i, j) と区間の add は閉区間 {@code [i, j]} を対象とする。
+ * 端点が範囲外なら IndexOutOfBoundsException を投げ、{@code i > j} の空区間では sum は0を返し、add は何もしない。
+ * set は更新前の値、単一点の add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
+ * 要素は int の範囲に収まるものとし、和は long で返す。
  */
 public final class IntRangeBIT implements IntCollection {
 	public final int size;

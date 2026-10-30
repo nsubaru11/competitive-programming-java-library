@@ -8,11 +8,9 @@ import lib.ds.*;
 import lib.search.*;
 
 /**
- * int値の2次元配列の全要素を共通の順位空間へ座標圧縮する。各次元の長さが正の長方形配列を前提とする。
- * 座標は0始まりの行 i・列 j とし、get は範囲外で IndexOutOfBoundsException を投げ、getOrDefault は defaultValue を返す。
- * 構築時に入力をコピーする。順位方式の既定は DENSE、順位は既定で0始まり、oneBased が true のとき1始まりとする。
- * 走査・toString は行優先順、toArray2D は元の形状で圧縮後の順位を返し、restore は元の値を復元する。sorted・ranks は重複を含むソート済み値と対応する順位のコピーを返す。
- * rankOfValue は入力に存在する値、valueOfRank は実在する順位を前提とする。containsValue・count は圧縮前の値を対象とする。
+ * int値の2次元配列の全要素をまとめて座標圧縮した順位の配列。get・走査は各要素の順位を返す。順位は int で表す。
+ * 座標は0始まりの (行 i, 列 j) とし、範囲外では IndexOutOfBoundsException を投げる。入力は1行以上の長方形配列とする。
+ * 構築時に入力をコピーする。順位の付け方は RankType で選び（既定は DENSE）、順位は既定で0始まりとする。
  */
 public final class IntCompressedArray2D implements IntCollection {
 	public final int h, w, size, uniqueSize;
@@ -26,6 +24,9 @@ public final class IntCompressedArray2D implements IntCollection {
 		this(a, rankType, false);
 	}
 
+	/**
+	 * oneBased が true なら順位を1始まりにする。
+	 */
 	public IntCompressedArray2D(final int[][] a, final RankType rankType, final boolean oneBased) {
 		h = a.length;
 		w = a[0].length;
@@ -104,10 +105,16 @@ public final class IntCompressedArray2D implements IntCollection {
 		return inRange(i, j) ? compressed[i * w + j] : defaultValue;
 	}
 
+	/**
+	 * 値 v の順位を返す。v は入力に含まれる値とする。
+	 */
 	public int rankOfValue(final int v) {
 		return ranks[binarySearch(sorted, v)];
 	}
 
+	/**
+	 * 順位 rank を持つ値を返す。rank は実在する順位とする。
+	 */
 	public int valueOfRank(final int rank) {
 		return sorted[binarySearch(ranks, rank)];
 	}
@@ -116,10 +123,16 @@ public final class IntCompressedArray2D implements IntCollection {
 		return binarySearch(sorted, v) >= 0;
 	}
 
+	/**
+	 * 入力に含まれる値 v の個数を返す。
+	 */
 	public int count(final int v) {
 		return ArrayBinarySearch.count(sorted, v);
 	}
 
+	/**
+	 * 圧縮前の値の2次元配列を返す。
+	 */
 	public int[][] restore() {
 		final int[][] res = new int[h][w];
 		for (int i = 0, p = 0; i < h; i++) {
@@ -130,16 +143,25 @@ public final class IntCompressedArray2D implements IntCollection {
 		return res;
 	}
 
+	/**
+	 * 各要素の順位を元の形の2次元配列で返す。
+	 */
 	public int[][] toArray2D() {
 		final int[][] res = new int[h][w];
 		for (int i = 0; i < h; i++) System.arraycopy(compressed, i * w, res[i], 0, w);
 		return res;
 	}
 
+	/**
+	 * 全要素を昇順に並べた配列を返す。重複は除かない。
+	 */
 	public int[] sorted() {
 		return sorted.clone();
 	}
 
+	/**
+	 * sorted() の各要素の順位を返す。
+	 */
 	public int[] ranks() {
 		return ranks.clone();
 	}

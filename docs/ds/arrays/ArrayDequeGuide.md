@@ -63,22 +63,12 @@
 | Method      | `iterator()`                             | `PrimitiveIterator.OfInt` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。                         |
 | Method      | `toString()`                             | `String`                  | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                                             |
 
-継承する API：
+継承するメソッド：
 
-| 種別   | シグネチャ                                  | 戻り値              | 説明                                                                   |
-|--------|---------------------------------------------|---------------------|------------------------------------------------------------------------|
-| Method | `isEmpty()`                                 | `boolean`           | 要素数が0か判定                                                        |
-| Method | `getOrDefault(int i, int defaultValue)`     | `int`               | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。       |
-| Method | `getFirst()`                                | `int`               | 先頭の要素を削除せず返す。空の場合は NoSuchElementException を投げる。 |
-| Method | `getFirstOrDefault(int defaultValue)`       | `int`               | 先頭の要素を削除せず返す。空の場合は defaultValue を返す。             |
-| Method | `getLast()`                                 | `int`               | 末尾の要素を削除せず返す。空の場合は NoSuchElementException を投げる。 |
-| Method | `getLastOrDefault(int defaultValue)`        | `int`               | 末尾の要素を削除せず返す。空の場合は defaultValue を返す。             |
-| Method | `contains(int v)`                           | `boolean`           | iterator による線形探索                                                |
-| Method | `forEachInt(IntConsumer action)`            | `void`              | 論理順で各要素に適用                                                   |
-| Method | `intStream()`                               | `IntStream`         | 論理順の逐次 Stream を生成                                             |
-| Method | `toList()`                                  | `List<Integer>`     | 論理順の不変リストを生成                                               |
-| Method | `forEach(Consumer<? super Integer> action)` | `void`              | Iterable の既定実装。ボクシングして論理順に適用                        |
-| Method | `spliterator()`                             | `Spliterator.OfInt` | ORDERED・SIZED・SUBSIZED を持つ                                        |
+- [`IntMutableArray`](./MutableArrayGuide.md#intmutablearray)：`add`、`affine`、`apply`、`multiply`
+- [`IntArray`](./ArrayGuide.md#intarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toList`
+- `Iterable`：`forEach`
 
 ### `LongArrayDeque`
 
@@ -108,24 +98,12 @@
 | Method      | `iterator()`                              | `PrimitiveIterator.OfLong` | 先頭から末尾の論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。                         |
 | Method      | `toString()`                              | `String`                   | 先頭から末尾の要素を半角スペース区切りで返す。要素がなければ空文字列を返す。                                             |
 
-継承する API：
+継承するメソッド：
 
-| 種別   | シグネチャ                               | 戻り値               | 説明                                                                   |
-|--------|------------------------------------------|----------------------|------------------------------------------------------------------------|
-| Method | `isEmpty()`                              | `boolean`            | 要素数が0か判定                                                        |
-| Method | `getOrDefault(int i, long defaultValue)` | `long`               | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。       |
-| Method | `getFirst()`                             | `long`               | 先頭の要素を削除せず返す。空の場合は NoSuchElementException を投げる。 |
-| Method | `getFirstOrDefault(long defaultValue)`   | `long`               | 先頭の要素を削除せず返す。空の場合は defaultValue を返す。             |
-| Method | `getLast()`                              | `long`               | 末尾の要素を削除せず返す。空の場合は NoSuchElementException を投げる。 |
-| Method | `getLastOrDefault(long defaultValue)`    | `long`               | 末尾の要素を削除せず返す。空の場合は defaultValue を返す。             |
-| Method | `contains(long v)`                       | `boolean`            | iterator による線形探索                                                |
-| Method | `forEachLong(LongConsumer action)`       | `void`               | 論理順で各要素に適用                                                   |
-| Method | `longStream()`                           | `LongStream`         | 論理順の逐次 Stream を生成                                             |
-| Method | `toList()`                               | `List<Long>`         | 論理順の不変リストを生成                                               |
-| Method | `forEach(Consumer<? super Long> action)` | `void`               | Iterable の既定実装。ボクシングして論理順に適用                        |
-| Method | `spliterator()`                          | `Spliterator.OfLong` | ORDERED・SIZED・SUBSIZED を持つ                                        |
-
-探索の `indexOf` / `lastIndexOf` は [ArrayGuide](./ArrayGuide.md)、要素演算・交換・反転の継承 API は [MutableArrayGuide](./MutableArrayGuide.md) を参照する。
+- [`LongMutableArray`](./MutableArrayGuide.md#longmutablearray)：`add`、`affine`、`apply`、`multiply`
+- [`LongArray`](./ArrayGuide.md#longarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toList`
+- `Iterable`：`forEach`
 
 ## 利用例
 
@@ -136,7 +114,6 @@
 - 初期容量は非負で、2のべき乗への切り上げ後および拡張後の配列を確保可能な範囲とする。容量0は内部容量1になる。
 - 添字は0始まりで、有効範囲は `[0, size())`。`get` / `set` は範囲外で `IndexOutOfBoundsException` を投げる。`getOrDefault` は指定値を返す。
 - `removeFirst` / `removeLast` / `getFirst` / `getLast` は空の場合に `NoSuchElementException` を投げる。対応する `OrDefault` 系は指定値を返し、状態を変えない。
-- 先頭・末尾取得は配列インターフェースの `getFirst` / `getLast` と対応する `OrDefault` 系を継承する。
 - `set` は更新前の値を返す。`fill` は要素数と容量を維持する。更新関数の共通条件は [MutableArrayGuide](./MutableArrayGuide.md#制約注意事項) を参照する。
 - コレクションからは iterator 順にコピーする。元と内部配列を共有しない。コピー元が同じ deque 型でも独立した複製になる。
 - `equals` / `hashCode` は `Object` の実装を継承する。`equals` は同一インスタンスかを判定し、要素列による比較は行わない。

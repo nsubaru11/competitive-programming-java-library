@@ -6,12 +6,10 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * char値の2次元配列。回転・転置・反転をデータ移動なしで行う。
- * 座標は現在の論理状態の0始まりの行 i・列 j とし、範囲外では IndexOutOfBoundsException を投げる。getOrDefault は範囲外で defaultValue を返す。
- * set は更新前の値を返し、apply は {@code (char) f(現在値, x)} へ更新して更新後の値を返す。init の結果も char に変換する。
- * 回転・転置・反転はこのインスタンスを変更して自身を返す。rotateLeft は反時計回り、rotateRight は時計回りに90度回転し、distance が負の場合は逆方向とする。
- * fill・setAll は論理寸法と向きを維持する。init は行優先順に呼び、走査・配列化は現在の論理状態の行優先順とする。
- * toString は各行の文字を区切りなしで連結し、行間を改行で区切る。
+ * char値の2次元配列。回転・転置・反転を要素の移動なしで行う。
+ * 座標は現在の向きでの0始まりの (行 i, 列 j) とし、範囲外では IndexOutOfBoundsException を投げる。
+ * set は更新前の値、apply は更新後の値を返し、配列全体を変更するメソッドは自身を返す。
+ * rotateLeft は反時計回り、rotateRight は時計回りに90度ずつ回転する。toString は各行の文字を区切らずに連結し、行を改行で区切る。
  */
 public final class CharArray2D implements IntCollection {
 	public final int size;
@@ -33,7 +31,7 @@ public final class CharArray2D implements IntCollection {
 	}
 
 	/**
-	 * 配列の先頭 {@code h * w} 文字を行優先順でコピーする。配列長は要素数以上とする。
+	 * 配列の先頭 {@code h * w} 文字を行優先順でコピーする。
 	 */
 	public CharArray2D(final int h, final int w, final char[] a) {
 		this(h, w);
@@ -46,7 +44,7 @@ public final class CharArray2D implements IntCollection {
 	}
 
 	/**
-	 * 各文字列を1行として行優先順でコピーする。各文字列の長さは先頭行の長さ以上とする。
+	 * 各文字列を1行としてコピーする。各文字列の長さは先頭の文字列の長さ以上とする。
 	 */
 	public CharArray2D(final String[] s) {
 		this(s.length, s[0].length());
@@ -94,6 +92,9 @@ public final class CharArray2D implements IntCollection {
 		return old;
 	}
 
+	/**
+	 * {@code f(現在値, x)} を char に変換して格納し、更新後の値を返す。
+	 */
 	public char apply(final int i, final int j, final char x, final IntBinaryOperator f) {
 		final int p = checkedIndex(i, j);
 		return arr[p] = (char) f.applyAsInt(arr[p], x);
@@ -104,6 +105,9 @@ public final class CharArray2D implements IntCollection {
 		return this;
 	}
 
+	/**
+	 * 各座標を {@code init(i, j)} を char に変換した値にする。
+	 */
 	public CharArray2D setAll(final IntBinaryOperator init) {
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {

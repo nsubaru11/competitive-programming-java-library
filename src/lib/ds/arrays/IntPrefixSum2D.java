@@ -6,11 +6,9 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * int値の2次元累積和を保持する。構築後は更新しない。入力の int 値を long で累積する。
- * 座標は0始まりの行 i・列 j とし、各次元の長さは正とする。{@code sum(i, j)} は閉矩形 {@code [0, i] x [0, j]}、
- * {@code sum(i1, j1, i2, j2)} は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返す。
- * 始点が終点を超える軸がある区間は空領域として0を返す。座標が範囲外の場合は、空領域でも IndexOutOfBoundsException を投げる。
- * get は元の値を返し、getOrDefault は範囲外で defaultValue を返す。init は行優先順に1回ずつ呼び、走査と toString は行優先順とする。
+ * int値の2次元累積和。構築後は変更できない。座標は0始まりの (行 i, 列 j) とし、各次元の長さは1以上とする。
+ * sum(i, j) は {@code [0, i] x [0, j]}、sum(i1, j1, i2, j2) は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返す。
+ * 座標が範囲外なら IndexOutOfBoundsException を投げ、始点が終点を超える軸があれば0を返す。和は long で計算する。
  */
 public final class IntPrefixSum2D implements IntCollection {
 	public final int h, w, size;

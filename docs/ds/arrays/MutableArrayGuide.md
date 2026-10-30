@@ -54,6 +54,12 @@
 | Method | `reverse()`                                | `IntMutableArray` | 全要素の順序を反転し、自身を返す。                                               |
 | Method | `reverse(int l, int r)`                    | `IntMutableArray` | 半開区間 [l, r) 内の順序を反転し、自身を返す。                                   |
 
+継承するメソッド：
+
+- [`IntArray`](./ArrayGuide.md#intarray)：`get`、`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`iterator`、`size`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongMutableArray`
 
 | 種別   | シグネチャ                                   | 戻り値             | 説明                                                                             |
@@ -69,7 +75,11 @@
 | Method | `reverse()`                                  | `LongMutableArray` | 全要素の順序を反転し、自身を返す。                                               |
 | Method | `reverse(int l, int r)`                      | `LongMutableArray` | 半開区間 [l, r) 内の順序を反転し、自身を返す。                                   |
 
-読み取り・走査・変換の継承 API は [IntArray / LongArray 利用ガイド](./ArrayGuide.md) を参照する。
+継承するメソッド：
+
+- [`LongArray`](./ArrayGuide.md#longarray)：`get`、`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`iterator`、`longStream`、`size`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ## 利用例
 

@@ -5,14 +5,10 @@ import static java.lang.Math.*;
 import java.util.*;
 
 /**
- * 可変容量の優先度キュー。Comparator の比較順で先頭となる要素を最優先とし、同順位の要素の取り出し順は規定しない。
- * Comparator を省略した場合は自然順序または逆順を使い、要素が相互に Comparable でなければ比較時に ClassCastException を投げる。
- * null は追加しない。
- * 初期容量は1未満なら1とし、容量不足時は2倍へ拡張する。
- * add・addAll・配列や Collection からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
- * addAll は1件以上追加した場合に true を返す。clear は内部配列を再利用する。
- * 空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * 走査と toString はヒープを復元せず、内部配列の順に行う。
+ * 可変長の優先度キュー（二分ヒープ）。比較順で先頭となる要素を優先し、同順位の要素の取り出し順は規定しない。
+ * Comparator を省略すると自然順序（降順を指定した場合は逆順）で比較する。null は追加しない。
+ * 追加時のヒープ化は遅延し、peek・poll などの直前にまとめて行う。空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は指定した既定値を返す。
+ * 走査と toString は優先順ではなく内部配列の順に行う。
  *
  * @param <T> 要素型
  */
@@ -62,7 +58,7 @@ public final class PriorityQueue<T> implements Iterable<T> {
 	}
 
 	/**
-	 * values の全要素を自然順序で持つキューを構築する。values が比較順を持っていても引き継がない。
+	 * values の全要素を自然順序で持つキューを構築する。values が持つ比較順は引き継がない。
 	 */
 	public PriorityQueue(final Collection<? extends T> values) {
 		this(values, false);
@@ -77,9 +73,6 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		addAll(values);
 	}
 
-	/**
-	 * 比較順・要素・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。要素自体は共有する。
-	 */
 	public PriorityQueue(final PriorityQueue<T> other) {
 		comparator = other.comparator;
 		buf = other.buf.clone();
@@ -95,9 +88,6 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return size;
 	}
 
-	/**
-	 * 内部配列の長さを返す。
-	 */
 	public int capacity() {
 		return buf.length;
 	}
@@ -173,7 +163,7 @@ public final class PriorityQueue<T> implements Iterable<T> {
 	}
 
 	/**
-	 * 最優先の要素を v に置き換え、置き換え前の要素を返す。poll と add を続けて行うより速い。
+	 * 先頭の要素を v に置き換え、置き換え前の要素を返す。poll と add を続けて呼ぶより速い。
 	 */
 	public T replaceTop(final T v) {
 		if (isEmpty()) throw new NoSuchElementException();

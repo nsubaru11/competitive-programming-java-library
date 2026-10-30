@@ -54,8 +54,6 @@
 | Method      | `size()`                                   | `int`                     | 要素数を返す。                                                                      |
 | Method      | `rotation()`                               | `long`                    | 左回転を正、右回転を負とする総回転数を返す。                                        |
 | Method      | `get(int i)`                               | `int`                     | 指定した有効な論理添字の値を返す。                                                  |
-| Method      | `getLast()`                                | `int`                     | IntArray から継承。現在の論理順の末尾の値を返す。                                   |
-| Method      | `getLastOrDefault(int defaultValue)`       | `int`                     | IntArray から継承。長さが正のため、現在の論理順の末尾の値を返す。                   |
 | Method      | `set(int i, int v)`                        | `int`                     | 指定した有効な論理添字を更新し、更新前の値を返す。                                  |
 | Method      | `fill(int v)`                              | `IntCircularArray`        | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
 | Method      | `setAll(IntUnaryOperator init)`            | `IntCircularArray`        | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
@@ -71,6 +69,13 @@
 | Method      | `iterator()`                               | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。  |
 | Method      | `toString()`                               | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                              |
 
+継承するメソッド：
+
+- [`IntMutableArray`](./MutableArrayGuide.md#intmutablearray)：`add`、`affine`、`apply`、`multiply`
+- [`IntArray`](./ArrayGuide.md#intarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongCircularArray`
 
 | 種別        | シグネチャ                                   | 戻り値                     | 説明                                                                                |
@@ -83,8 +88,6 @@
 | Method      | `size()`                                     | `int`                      | 要素数を返す。                                                                      |
 | Method      | `rotation()`                                 | `long`                     | 左回転を正、右回転を負とする総回転数を返す。                                        |
 | Method      | `get(int i)`                                 | `long`                     | 指定した有効な論理添字の値を返す。                                                  |
-| Method      | `getLast()`                                  | `long`                     | LongArray から継承。現在の論理順の末尾の値を返す。                                  |
-| Method      | `getLastOrDefault(long defaultValue)`        | `long`                     | LongArray から継承。長さが正のため、現在の論理順の末尾の値を返す。                  |
 | Method      | `set(int i, long v)`                         | `long`                     | 指定した有効な論理添字を更新し、更新前の値を返す。                                  |
 | Method      | `fill(long v)`                               | `LongCircularArray`        | 全要素を指定値で更新し、回転状態と総回転数を0へ戻す。                               |
 | Method      | `setAll(IntToLongFunction init)`             | `LongCircularArray`        | init(i) で全要素を再構築し、回転状態と総回転数を0へ戻す。 init は添字の昇順に呼ぶ。 |
@@ -100,7 +103,14 @@
 | Method      | `iterator()`                                 | `PrimitiveIterator.OfLong` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。  |
 | Method      | `toString()`                                 | `String`                   | 論理順の要素を半角スペースで区切った文字列として返す。                              |
 
-両クラスの `public final int size` は固定の要素数を表す。先頭・末尾取得と探索は [ArrayGuide](./ArrayGuide.md)、要素演算・交換・反転は [MutableArrayGuide](./MutableArrayGuide.md) の継承 API を参照する。
+継承するメソッド：
+
+- [`LongMutableArray`](./MutableArrayGuide.md#longmutablearray)：`add`、`affine`、`apply`、`multiply`
+- [`LongArray`](./ArrayGuide.md#longarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toList`
+- `Iterable`：`forEach`
+
+両クラスの `public final int size` は固定の要素数を表す。
 
 ## 利用例
 

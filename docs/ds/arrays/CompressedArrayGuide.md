@@ -73,6 +73,12 @@ dense ranking に加え、competition ranking と modified competition ranking �
 | Method      | `spliterator()`                                                            | `Spliterator.OfInt`       | 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。                      |
 | Method      | `toString()`                                                               | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                                      |
 
+継承するメソッド：
+
+- [`IntArray`](./ArrayGuide.md#intarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongCompressedArray`
 
 | 種別        | シグネチャ                                                                   | 戻り値                    | 説明                                                                                        |
@@ -98,6 +104,12 @@ dense ranking に加え、competition ranking と modified competition ranking �
 | Method      | `spliterator()`                                                              | `Spliterator.OfInt`       | 元配列順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。                      |
 | Method      | `toString()`                                                                 | `String`                  | 論理順の要素を半角スペースで区切った文字列として返す。                                      |
 
+継承するメソッド：
+
+- [`IntArray`](./ArrayGuide.md#intarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toList`
+- `Iterable`：`forEach`
+
 ### `IntCompressedArray2D`
 
 | 種別        | シグネチャ                                                             | 戻り値                    | 説明                                                                               |
@@ -121,6 +133,11 @@ dense ranking に加え、competition ranking と modified competition ranking �
 | Method      | `iterator()`                                                           | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
 | Method      | `spliterator()`                                                        | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
 | Method      | `toString()`                                                           | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                         |
+
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `LongCompressedArray2D`
 
@@ -146,6 +163,11 @@ dense ranking に加え、competition ranking と modified competition ranking �
 | Method      | `spliterator()`                                                          | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED・IMMUTABLE の spliterator を返す。             |
 | Method      | `toString()`                                                             | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                         |
 
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `RankType`
 
 ソート済み値 `[10, 20, 20, 30]` に対する順位は次の通りである。
@@ -156,10 +178,13 @@ dense ranking に加え、competition ranking と modified competition ranking �
 | `COMPETITION`          | `[0, 1, 1, 3]` | `[1, 2, 2, 4]` | 同順位の個数だけ次順位を飛ばす       |
 | `MODIFIED_COMPETITION` | `[0, 2, 2, 3]` | `[1, 3, 3, 4]` | 同順位グループの末尾位置を順位にする |
 
+継承するメソッド：
+
+
 
 1D版は `public final int size, uniqueSize`、2D版は `public final int h, w, size, uniqueSize` を公開する。
 
-1D版は両クラスとも `IntArray` の `getOrDefault(int i, int defaultValue)`、`getLast()`、`getLastOrDefault(int defaultValue)` を継承する。取得対象は圧縮後の順位であり、戻り値はいずれも `int` となる。その他の継承 API は [ArrayGuide](./ArrayGuide.md) を参照する。`contains(int v)` は圧縮後の順位、`containsValue` は圧縮前の値を探索する。2D版も両クラスとも `IntCollection` を実装し、`contains(int v)`、`toArray()`、`toList()`、`intStream()` などを継承する。`toArray()` は行優先順の `int[]`、`toArray2D()` は `int[][]` を返す。
+`contains(int v)` は圧縮後の順位、`containsValue` は圧縮前の値を探索する。2D版の `toArray()` は行優先順の一次元配列を返す。
 
 ## 利用例
 

@@ -62,7 +62,9 @@
 | Method      | `iterator()`                                                                     | `Iterator<T>`    | 添字順に要素を走査する。                                     |
 | Method      | `toString()`                                                                     | `String`         | 要素を空白区切りで連結する。空の場合は空文字列を返す。       |
 
-`Iterable<T>` の `forEach(Consumer<? super T> action)` と `spliterator()` も継承する。
+継承するメソッド：
+
+- `Iterable`：`forEach`、`spliterator`
 
 ### `IntSegmentTree`
 
@@ -95,6 +97,11 @@
 | Method      | `iterator()`                                                                | `PrimitiveIterator.OfInt` | 添字順に要素を走査する。                                |
 | Method      | `toString()`                                                                | `String`                  | 要素を空白区切りで連結する。空の場合は空文字列を返す。  |
 
+継承するメソッド：
+
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`spliterator`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongSegmentTree`
 
 [ソース](../../../src/lib/ds/segmenttree/LongSegmentTree.java)
@@ -126,9 +133,10 @@
 | Method      | `iterator()`                                                                    | `PrimitiveIterator.OfLong` | 添字順に要素を走査する。                                |
 | Method      | `toString()`                                                                    | `String`                   | 要素を空白区切りで連結する。空の場合は空文字列を返す。  |
 
-### 数値版の継承 API
+継承するメソッド：
 
-`IntSegmentTree` / `LongSegmentTree` は `IntCollection` / `LongCollection` の既定メソッド `isEmpty`、`contains`、`forEachInt` / `forEachLong`、`spliterator`、`intStream` / `longStream`、`toList`、`forEach` を継承する。全シグネチャと既定実装は [配列・コレクションの継承API](../arrays/ArrayGuide.md#継承元のコレクション-api) を参照する。
+- [`LongCollection`](../arrays/ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`spliterator`、`toList`
+- `Iterable`：`forEach`
 
 ## 利用例
 

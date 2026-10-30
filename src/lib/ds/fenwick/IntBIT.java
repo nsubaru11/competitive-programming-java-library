@@ -6,12 +6,11 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * int値の Binary Indexed Tree (Fenwick Tree)。点更新・区間和・累積和の境界探索を O(log n) で行う。
- * 添字は0始まりとする。{@code sum(i)} は閉区間 {@code [0, i]}、{@code sum(i, j)} は閉区間 {@code [i, j]} の和を返し、
- * {@code i > j} は空区間として0を返す。端点が範囲外の場合は、{@code i > j} でも IndexOutOfBoundsException を投げる。
- * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。
- * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
- * 各操作後の要素は int の範囲内とし、更新差分と和は long で扱う。
+ * int値の Binary Indexed Tree (Fenwick Tree)。点更新・区間和・累積和の二分探索を O(log n) で行う。
+ * 添字は0始まり、sum(i) は {@code [0, i]}、sum(i, j) は閉区間 {@code [i, j]} の和を返す。
+ * 端点が範囲外なら IndexOutOfBoundsException を投げ、{@code i > j} の空区間は0を返す。
+ * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
+ * 要素は int の範囲に収まるものとし、和は long で返す。
  */
 public final class IntBIT implements IntCollection {
 	public final int size;
@@ -109,7 +108,7 @@ public final class IntBIT implements IntCollection {
 
 	/**
 	 * 累積和が w 以上となる最小の添字を返す。全要素が非負であることを前提とする。
-	 * {@code w <= 0} は0、該当する添字がなければ size を返す。
+	 * {@code w <= 0} なら0、該当する添字がなければ size を返す。
 	 */
 	public int lowerBound(long w) {
 		if (w <= 0) return 0;
@@ -124,8 +123,8 @@ public final class IntBIT implements IntCollection {
 	}
 
 	/**
-	 * 累積和が w より大きくなる最小の添字を返す。全要素が非負であることを前提とする。
-	 * {@code w < 0} は0、該当する添字がなければ size を返す。
+	 * 累積和が w を超える最小の添字を返す。全要素が非負であることを前提とする。
+	 * {@code w < 0} なら0、該当する添字がなければ size を返す。
 	 */
 	public int upperBound(long w) {
 		if (w < 0) return 0;

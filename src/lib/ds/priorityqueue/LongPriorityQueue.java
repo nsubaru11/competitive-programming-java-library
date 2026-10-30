@@ -8,12 +8,10 @@ import lib.ds.*;
 import lib.util.function.*;
 
 /**
- * long値の可変容量の優先度キュー。比較順で先頭となる値を最優先とし、同順位の値の取り出し順は規定しない。
- * 比較順は昇順・降順・LongComparator から選ぶ。初期容量は1未満なら1とし、容量不足時は2倍へ拡張する。
- * add・addAll・配列や LongCollection からの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
- * addAll は1件以上追加した場合に true を返す。clear は内部配列を再利用する。
- * 空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * 走査と toString はヒープを復元せず、内部配列の順に行う。
+ * long値の可変長の優先度キュー（二分ヒープ）。比較順で先頭となる値を優先し、同順位の値の取り出し順は規定しない。
+ * 比較順は昇順・降順・LongComparator から選ぶ。
+ * 追加時のヒープ化は遅延し、peek・poll などの直前にまとめて行う。空の peek・poll・replaceTop は NoSuchElementException を投げ、OrDefault 系は指定した既定値を返す。
+ * 走査と toString は優先順ではなく内部配列の順に行う。
  */
 public final class LongPriorityQueue implements LongCollection {
 	private static final int DEFAULT_INITIAL_CAPACITY = 1024;
@@ -74,9 +72,6 @@ public final class LongPriorityQueue implements LongCollection {
 		addAll(values);
 	}
 
-	/**
-	 * 比較順・要素・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
-	 */
 	public LongPriorityQueue(final LongPriorityQueue other) {
 		isDescendingOrder = other.isDescendingOrder;
 		comparator = other.comparator;
@@ -95,9 +90,6 @@ public final class LongPriorityQueue implements LongCollection {
 		return size;
 	}
 
-	/**
-	 * 内部配列の長さを返す。
-	 */
 	public int capacity() {
 		return buf.length;
 	}
@@ -180,7 +172,7 @@ public final class LongPriorityQueue implements LongCollection {
 	}
 
 	/**
-	 * 最優先の値を v に置き換え、置き換え前の値を返す。poll と add を続けて行うより速い。
+	 * 先頭の値を v に置き換え、置き換え前の値を返す。poll と add を続けて呼ぶより速い。
 	 */
 	public long replaceTop(final long v) {
 		if (isEmpty()) throw new NoSuchElementException();

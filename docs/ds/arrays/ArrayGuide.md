@@ -56,6 +56,11 @@
 | Method | `lastIndexOf(int v)`                    | `int`               | 指定値の最後の論理添字を返す。存在しなければ -1。                          |
 | Method | `spliterator()`                         | `Spliterator.OfInt` | 論理添字の昇順に走査する ORDERED・SIZED・SUBSIZED の spliterator を返す。  |
 
+継承するメソッド：
+
+- [`IntCollection`](#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`iterator`、`size`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongArray`
 
 | 種別   | シグネチャ                               | 戻り値               | 説明                                                                       |
@@ -69,6 +74,11 @@
 | Method | `indexOf(long v)`                        | `int`                | 指定値の最初の論理添字を返す。存在しなければ -1。                          |
 | Method | `lastIndexOf(long v)`                    | `int`                | 指定値の最後の論理添字を返す。存在しなければ -1。                          |
 | Method | `spliterator()`                          | `Spliterator.OfLong` | 論理添字の昇順に走査する ORDERED・SIZED・SUBSIZED の spliterator を返す。  |
+
+継承するメソッド：
+
+- [`LongCollection`](#longcollection)：`contains`、`forEachLong`、`isEmpty`、`iterator`、`longStream`、`size`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### 継承元のコレクション API
 
@@ -88,6 +98,10 @@
 | Method | `toList()`                       | `List<Integer>`           | iterator の走査順にボックス化した、変更不可の List を返す。              |
 | Method | `toArray()`                      | `int[]`                   | iterator の走査順で独立したプリミティブ配列へコピーする。                |
 
+継承するメソッド：
+
+- `Iterable`：`forEach`
+
 ### `LongCollection`
 
 | 種別   | シグネチャ                         | 戻り値                     | 説明                                                                     |
@@ -102,7 +116,11 @@
 | Method | `toList()`                         | `List<Long>`               | iterator の走査順にボックス化した、変更不可の List を返す。              |
 | Method | `toArray()`                        | `long[]`                   | iterator の走査順で独立したプリミティブ配列へコピーする。                |
 
-両コレクションは `Iterable` の `forEach(Consumer<? super Integer> action)` / `forEach(Consumer<? super Long> action)` も継承する。これはボックス化を伴う。
+継承するメソッド：
+
+- `Iterable`：`forEach`
+
+`Iterable` から継承する `forEach` はボックス化を伴う。
 
 ## 利用例
 

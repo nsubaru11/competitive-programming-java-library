@@ -5,10 +5,9 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * int の3つ組 (a, b, c) をキー、long を値とするハッシュマップ。
- * 各成分に 2^20 を加えた下位21bitを a, b, c の順に上位から並べた long へパックし、LongLongMap へ委譲する。
- * 各成分は -2^20 以上 2^20 - 1 以下とする。範囲外の成分は下位21bitだけが残り、別のキーと衝突する。
- * 戻り値・既定値・走査順の仕様は LongLongMap と同じである。
+ * int の3つ組 (a, b, c) をキー、long を値とするハッシュマップ。キーを1つの long にまとめて LongLongMap へ委譲する。
+ * 各成分は {@code -2^20} 以上 {@code 2^20} 未満とする。範囲外の成分を渡すと別のキーと衝突する。
+ * 既定値と戻り値の規約は LongLongMap と同じである。
  */
 public final class IntTripleLongMap {
 	private static final int KEY_OFFSET = 1 << 20;
@@ -27,9 +26,6 @@ public final class IntTripleLongMap {
 		baseMap = new LongLongMap(expectedSize, defaultValue);
 	}
 
-	/**
-	 * 既定値・エントリ・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
-	 */
 	public IntTripleLongMap(final IntTripleLongMap other) {
 		baseMap = new LongLongMap(other.baseMap);
 	}
@@ -118,6 +114,9 @@ public final class IntTripleLongMap {
 		baseMap.clear();
 	}
 
+	/**
+	 * {@code [0]} に a、{@code [1]} に b、{@code [2]} に c を並べた配列を返す。
+	 */
 	public int[][] keys() {
 		final int[][] res = new int[3][baseMap.size()];
 		final int stamp = baseMap.currentStamp();
@@ -136,6 +135,9 @@ public final class IntTripleLongMap {
 		return baseMap.values();
 	}
 
+	/**
+	 * {@code [0]} に a、{@code [1]} に b、{@code [2]} に c、{@code [3]} に値を並べた配列を返す。
+	 */
 	public long[][] entries() {
 		final long[][] res = new long[4][baseMap.size()];
 		final int stamp = baseMap.currentStamp();

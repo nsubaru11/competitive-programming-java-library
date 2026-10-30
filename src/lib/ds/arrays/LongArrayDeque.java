@@ -8,25 +8,21 @@ import java.util.function.*;
 import lib.ds.*;
 
 /**
- * long値の可変容量の循環 deque。内部容量は2のべき乗とし、満杯での追加時に2倍へ拡張する。
- * 論理添字は先頭を0とし、{@code 0 <= i < size()} の範囲外では IndexOutOfBoundsException を投げる。
- * 空の removeFirst・removeLast は NoSuchElementException を投げ、OrDefault 系は状態を変えずに defaultValue を返す。
- * fill・setAll・swap・reverse は要素数と容量を維持して自身を返し、clear は内部配列を再利用する。走査と toString は先頭から末尾の順とする。
- * equals・hashCode は Object の実装を継承する。
+ * long値の可変長の両端キュー。容量が不足すると内部配列を2倍に拡張する。
+ * 添字は先頭を0とし、範囲外では IndexOutOfBoundsException を投げる。
+ * 空の removeFirst・removeLast は NoSuchElementException を投げ、OrDefault 系は指定した既定値を返す。
+ * set は更新前の値を返し、配列全体を変更するメソッドは自身を返す。
  */
 public final class LongArrayDeque implements LongMutableArray {
 	private long[] buf;
 	private int head, size;
 
-	/**
-	 * 初期容量16の空の deque を構築する。
-	 */
 	public LongArrayDeque() {
 		this(16);
 	}
 
 	/**
-	 * 空の deque を構築する。初期容量は非負とし、1以上の2のべき乗へ切り上げる。
+	 * 空の deque を構築する。初期容量は1以上の2のべき乗へ切り上げる。
 	 */
 	public LongArrayDeque(final int capacity) {
 		buf = new long[1 << (32 - Integer.numberOfLeadingZeros(capacity - 1))];
@@ -45,9 +41,6 @@ public final class LongArrayDeque implements LongMutableArray {
 		for (int i = 0; i < size; i++) buf[i] = it.nextLong();
 	}
 
-	/**
-	 * 要素・容量・内部配置を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
-	 */
 	public LongArrayDeque(final LongArrayDeque other) {
 		buf = other.buf.clone();
 		head = other.head;

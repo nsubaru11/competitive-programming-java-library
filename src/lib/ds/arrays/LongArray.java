@@ -5,10 +5,9 @@ import java.util.*;
 import lib.ds.*;
 
 /**
- * long値を格納する配列の読み取り用インターフェースである。実装の不変性は保証しない。
- * 論理添字は {@code 0 <= i < size()} とし、iterator と spliterator は論理添字の昇順に走査する。
- * get の範囲外の動作は実装に依存する。getOrDefault・getFirstOrDefault・getLastOrDefault は範囲外または空の場合に defaultValue を返し、
- * getFirst・getLast は空の場合に NoSuchElementException を投げる。indexOf・lastIndexOf は該当がなければ -1 を返す。
+ * long値の配列を読み取る共通インターフェース。添字は0始まりとする。
+ * 範囲外の添字に対する get の動作は実装による。getFirst・getLast は空のとき NoSuchElementException を投げ、
+ * OrDefault 系は範囲外または空のとき指定した既定値を返す。
  */
 public interface LongArray extends LongCollection {
 

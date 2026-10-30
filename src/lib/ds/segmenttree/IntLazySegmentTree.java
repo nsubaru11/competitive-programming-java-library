@@ -7,14 +7,9 @@ import lib.ds.*;
 
 /**
  * int値の作用素を遅延伝播するセグメント木。区間作用・区間集計・二分探索を O(log n) で行う。
- * 添字は0始まりとする。{@code apply(l, r, f)} と {@code query(l, r)} は半開区間 {@code [l, r)} を扱い、{@code l >= r} は空区間とする。
- * 空区間の query は単位元を返し、空区間の apply は何もしない。それ以外の範囲外の添字・区間では IndexOutOfBoundsException を投げる。
- * operator は結合則を満たし identity はその単位元、{@code mapping(f, x)} は値 x に作用素 f を作用させた値、
- * {@code composition(f, g)} は g の後に f を作用させる作用素を返すものとする。作用素は区間長を受け取らない。
- * mapping と composition を省略した場合は区間代入として扱う。
- * set は作用を反映した更新前の値、{@code apply(i, f)} は更新後の値を返す。
- * maxRight は {@code tester(query(l, r))} が真となる最大の r、minLeft は {@code tester(query(l, r))} が真となる最小の l を返す。
- * tester は単位元に対して真となり、区間を広げると真から偽へ一度だけ変わるものとする。
+ * 添字は0始まり、区間は半開区間 {@code [l, r)} とし、{@code l >= r} では query は単位元を返し、apply は何もしない。範囲外では IndexOutOfBoundsException を投げる。
+ * {@code mapping(f, x)} は値 x に作用素 f を作用させた値、{@code composition(f, g)} は g の後に f を作用させる作用素を返す。
+ * 作用素は区間長を受け取らない。mapping と composition を省略すると区間代入になる。set は更新前の値、単一点の apply は更新後の値を返す。
  */
 public final class IntLazySegmentTree implements IntCollection {
 	private static final IntBinaryOperator DEFAULT_MAPPING = (f, x) -> f;
@@ -148,6 +143,10 @@ public final class IntLazySegmentTree implements IntCollection {
 		return tree[1];
 	}
 
+	/**
+	 * {@code tester(query(l, r))} が真となる最大の r を返す。
+	 * tester は単位元に対して真となり、r を大きくすると真から偽へ一度だけ変わるものとする。
+	 */
 	public int maxRight(final int l, final IntPredicate tester) {
 		Objects.checkIndex(l, size + 1);
 		if (l == size) return size;
@@ -175,6 +174,10 @@ public final class IntLazySegmentTree implements IntCollection {
 		return size;
 	}
 
+	/**
+	 * {@code tester(query(l, r))} が真となる最小の l を返す。
+	 * tester は単位元に対して真となり、l を小さくすると真から偽へ一度だけ変わるものとする。
+	 */
 	public int minLeft(final int r, final IntPredicate tester) {
 		Objects.checkIndex(r, size + 1);
 		if (r == 0) return 0;

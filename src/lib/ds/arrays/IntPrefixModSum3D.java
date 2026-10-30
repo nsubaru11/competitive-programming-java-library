@@ -6,12 +6,10 @@ import lib.ds.*;
 import lib.util.function.*;
 
 /**
- * int値の3次元累積和を法 mod で保持する。構築後は更新しない。法は正、入力値は {@code 0 <= v < mod} とし、get・sum の結果は {@code [0, mod)} とする。
- * 座標は0始まりの (i, j, k) とし、各次元の長さは正とする。{@code sum(i, j, k)} は閉直方体 {@code [0, i] x [0, j] x [0, k]}、
- * {@code sum(i1, j1, k1, i2, j2, k2)} は閉直方体 {@code [i1, i2] x [j1, j2] x [k1, k2]} の和を返す。
- * 始点が終点を超える軸がある区間は空領域として0を返す。座標が範囲外の場合は、空領域でも IndexOutOfBoundsException を投げる。
- * get は元の値を返し、getOrDefault は範囲外で defaultValue を返す。init は (i, j, k) の辞書順に各座標で1回ずつ呼び、走査も同じ順とする。
- * toString は最終軸の要素を空白区切りとし、(i, j) ごとの行を改行で区切る。
+ * int値の3次元累積和を法 mod で保持する。構築後は変更できない。座標は0始まりの (i, j, k) とし、各次元の長さは1以上とする。
+ * sum(i, j, k) は {@code [0, i] x [0, j] x [0, k]}、sum(i1, j1, k1, i2, j2, k2) は閉直方体 {@code [i1, i2] x [j1, j2] x [k1, k2]} の和を返す。
+ * 座標が範囲外なら IndexOutOfBoundsException を投げ、始点が終点を超える軸があれば0を返す。
+ * mod は正、入力値は {@code [0, mod)} とし、結果も {@code [0, mod)} で返す。
  */
 public final class IntPrefixModSum3D implements IntCollection {
 	public final int d, h, w, size, mod;

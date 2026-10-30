@@ -7,13 +7,10 @@ import lib.ds.*;
 import lib.util.function.*;
 
 /**
- * 添字 {@code 0 <= i < n} に int のコストを対応付ける優先度キュー。n は構築時に固定し、添字の範囲は検査しない。
- * 比較順は昇順・降順・IntComparator から選び、同順位のコストを持つ添字の取り出し順は規定しない。
- * 各添字は「未追加」「active（キュー内）」「削除済み（poll・remove で取り出し済み）」のいずれかの状態を持ち、active な添字は高々1個のコストを持つ。
- * get 系は active な添字のコスト、getCost 系は active または削除済みの添字が最後に持ったコストを返す。clear は全添字を未追加に戻す。
- * 登録と配列・コレクションからの構築はヒープ化を遅延し、peek・poll など優先順が必要な操作の直前にまとめて復元する。
- * 空の peek・poll 系と、該当する状態にない添字の get・getCost は NoSuchElementException を投げ、OrDefault 系は状態を変えずに既定値を返す。
- * 走査と toString はヒープを復元せず、active な添字のコストを内部配列の順に返す。
+ * 添字 {@code 0 <= i < n} に int のコストを対応付ける優先度キュー。Dijkstra 法などで、添字ごとのコストを更新しながら優先されるものから取り出す用途に使う。
+ * n は構築時に決め、添字の範囲は検査しない。比較順は昇順・降順・IntComparator から選ぶ。同順位のコストを持つ添字の取り出し順は規定しない。
+ * 各添字は「未追加」「キュー内」「取り出し済み」のいずれかの状態を持つ。poll 系と remove で取り出した添字は取り出し済みになり、clear で全添字が未追加に戻る。
+ * 空の peek・poll 系は NoSuchElementException を投げ、OrDefault 系は指定した既定値を返す。走査と toString はキュー内のコストを内部配列の順に返す。
  */
 public final class IntIndexedPriorityQueue implements IntCollection {
 	public final int indexCount;
@@ -35,7 +32,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * n = costs.length とし、costs[i] を添字 i のコストとして全添字を登録する。
+	 * costs[i] を添字 i のコストとして、全添字をキューに入れる。
 	 */
 	public IntIndexedPriorityQueue(final int[] costs) {
 		this(costs, false);
@@ -54,7 +51,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * n = costs.size() とし、iterator の j 番目の値を添字 j のコストとして全添字を登録する。
+	 * iterator の j 番目の値を添字 j のコストとして、全添字をキューに入れる。
 	 */
 	public IntIndexedPriorityQueue(final IntCollection costs) {
 		this(costs, false);
@@ -70,9 +67,6 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		copyCosts(costs);
 	}
 
-	/**
-	 * 比較順・状態・コストを引き継ぎ、内部配列を共有しない独立したコピーを構築する。
-	 */
 	public IntIndexedPriorityQueue(final IntIndexedPriorityQueue other) {
 		isDescendingOrder = other.isDescendingOrder;
 		comparator = other.comparator;
@@ -96,7 +90,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * active な添字の数を返す。
+	 * キュー内にある添字の数を返す。
 	 */
 	public int size() {
 		return size;
@@ -110,19 +104,22 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * 添字が active か判定する。コストを探索する contains とは異なる。
+	 * 添字 i がキュー内にあるか判定する。コストを探す contains とは異なる。
 	 */
 	public boolean containsIndex(final int i) {
 		return isActive(i);
 	}
 
 	/**
-	 * 添字が active または削除済みか判定する。
+	 * 添字 i がキュー内にあるか、取り出し済みか判定する。true なら getCost でコストを取得できる。
 	 */
 	public boolean hasCost(final int i) {
 		return !isUnseen(i);
 	}
 
+	/**
+	 * キュー内にある添字 i のコストを返す。キュー内になければ NoSuchElementException を投げる。
+	 */
 	public int get(final int i) {
 		if (!isActive(i)) throw new NoSuchElementException();
 		return cost[i];
@@ -132,6 +129,10 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		return isActive(i) ? cost[i] : defaultValue;
 	}
 
+	/**
+	 * 添字 i が最後に持っていたコストを返す。取り出し済みの添字にも使え、Dijkstra 法の確定距離の取得に使える。
+	 * 未追加の添字では NoSuchElementException を投げる。
+	 */
 	public int getCost(final int i) {
 		if (isUnseen(i)) throw new NoSuchElementException();
 		return cost[i];
@@ -172,7 +173,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * active なら c へ更新して false、そうでなければ c で登録して true を返す。
+	 * 添字 i のコストを c にする。キュー内になければ c でキューに入れる。キューに入れた場合に true を返す。
 	 */
 	public boolean set(final int i, final int c) {
 		if (!isActive(i)) {
@@ -191,7 +192,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * active でなければ c で登録して true、active なら何もせず false を返す。削除済みの添字も再登録する。
+	 * 添字 i がキュー内になければ c でキューに入れて true を返す。キュー内なら何もせず false を返す。取り出し済みの添字も入れ直す。
 	 */
 	public boolean add(final int i, final int c) {
 		if (isActive(i)) return false;
@@ -200,8 +201,8 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * 未追加なら登録し、active で c が現在のコストより優先されるなら更新する。登録・更新した場合に true を返す。
-	 * 削除済みの添字は再登録せず false を返す。
+	 * c が添字 i の現在のコストより優先される場合だけ更新し、未追加の添字はキューに入れる。更新した場合に true を返す。
+	 * 取り出し済みの添字は入れ直さずに false を返す。
 	 */
 	public boolean relax(final int i, final int c) {
 		if (isRemoved(i)) return false;
@@ -244,7 +245,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * active なら削除済みにして true、そうでなければ false を返す。未整列領域の添字はヒープを復元せずに外す。
+	 * 添字 i がキュー内にあれば取り出し済みにして true、なければ false を返す。
 	 */
 	public boolean remove(final int i) {
 		if (!isActive(i)) return false;
@@ -264,7 +265,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	/**
-	 * 全添字の記録を消去し、init(i) を添字 i のコストとして全添字を登録して自身を返す。
+	 * 全添字の状態を消去し、{@code init(i)} を添字 i のコストとして全添字をキューに入れる。
 	 */
 	public IntIndexedPriorityQueue setAll(final IntUnaryOperator init) {
 		clear();

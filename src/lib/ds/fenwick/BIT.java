@@ -4,12 +4,10 @@ import java.util.*;
 import java.util.function.*;
 
 /**
- * 演算・逆演算・単位元を指定する汎用 Binary Indexed Tree (Fenwick Tree)。点更新と区間集計を O(log n) で行う。
- * 添字は0始まりとする。{@code query(r)} は半開区間 {@code [0, r)}、{@code query(l, r)} は半開区間 {@code [l, r)} の集計結果を返し、
- * {@code l >= r} は空区間として単位元を返す。範囲外の区間では IndexOutOfBoundsException を投げる。
- * operator は結合則・可換性を満たし、identity はその単位元とする。set・apply と {@code query(l, r)} には operator の逆演算 inverse が必要である。
- * set は更新前の値、add は {@code operator(現在値, v)}、apply は {@code f(現在値, x)} へ更新した後の値を返す。
- * 配列・コレクション・コピーからの構築は内部配列を共有せず、要素オブジェクトは共有する。
+ * 演算・逆演算・単位元を指定する汎用の Binary Indexed Tree (Fenwick Tree)。点更新と区間集計を O(log n) で行う。
+ * 添字は0始まり、query は半開区間 {@code [l, r)} の集計結果を返し、{@code l >= r} なら単位元を返す。範囲外では IndexOutOfBoundsException を投げる。
+ * operator は結合則と可換性を満たし、inverse はその逆演算とする。
+ * set は更新前の値、add・apply は更新後の値を返す。add は operator で合成し、apply は {@code f(現在値, x)} へ更新する。
  */
 @SuppressWarnings("unchecked")
 public final class BIT<T> implements Iterable<T> {

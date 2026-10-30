@@ -5,9 +5,8 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * int の組 (a, b) をキー、int を値とするハッシュマップ。
- * キーを a を上位32bit、b を下位32bitとする long へ可逆にパックし、LongIntMap へ委譲する。
- * 戻り値・既定値・走査順の仕様は LongIntMap と同じである。
+ * int の組 (a, b) をキー、int を値とするハッシュマップ。キーを1つの long にまとめて LongIntMap へ委譲する。
+ * 既定値と戻り値の規約は LongIntMap と同じである。
  */
 public final class IntPairIntMap {
 	private static final long KEY_MASK = (1L << 32) - 1;
@@ -25,9 +24,6 @@ public final class IntPairIntMap {
 		baseMap = new LongIntMap(expectedSize, defaultValue);
 	}
 
-	/**
-	 * 既定値・エントリ・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
-	 */
 	public IntPairIntMap(final IntPairIntMap other) {
 		baseMap = new LongIntMap(other.baseMap);
 	}
@@ -112,6 +108,9 @@ public final class IntPairIntMap {
 		baseMap.clear();
 	}
 
+	/**
+	 * {@code [0]} に a、{@code [1]} に b を並べた配列を返す。
+	 */
 	public int[][] keys() {
 		final int[][] res = new int[2][baseMap.size()];
 		final int stamp = baseMap.currentStamp();
@@ -129,6 +128,9 @@ public final class IntPairIntMap {
 		return baseMap.values();
 	}
 
+	/**
+	 * {@code [0]} に a、{@code [1]} に b、{@code [2]} に値を並べた配列を返す。
+	 */
 	public int[][] entries() {
 		final int[][] res = new int[3][baseMap.size()];
 		final int stamp = baseMap.currentStamp();

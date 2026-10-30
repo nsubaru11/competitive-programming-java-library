@@ -74,6 +74,12 @@
 | Method      | `iterator()`                                 | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
 | Method      | `toString()`                                 | `String`                  | 元の要素を半角スペースで区切った文字列として返す。                                 |
 
+継承するメソッド：
+
+- [`IntArray`](./ArrayGuide.md#intarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPrefixSum`
 
 | 種別        | シグネチャ                                     | 戻り値                     | 説明                                                                               |
@@ -88,6 +94,12 @@
 | Method      | `sum(int i, int j)`                            | `long`                     | 閉区間 [i, j] の和を返す。i > j は0。                                              |
 | Method      | `iterator()`                                   | `PrimitiveIterator.OfLong` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
 | Method      | `toString()`                                   | `String`                   | 元の要素を半角スペースで区切った文字列として返す。                                 |
+
+継承するメソッド：
+
+- [`LongArray`](./ArrayGuide.md#longarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `IntPrefixSum2D`
 
@@ -106,6 +118,11 @@
 | Method      | `spliterator()`                                        | `Spliterator.OfInt`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                           | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                   |
 
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPrefixSum2D`
 
 | 種別        | シグネチャ                                                    | 戻り値                     | 説明                                                                         |
@@ -122,6 +139,11 @@
 | Method      | `iterator()`                                                  | `PrimitiveIterator.OfLong` | 元の値を行優先順に走査する。                                                 |
 | Method      | `spliterator()`                                               | `Spliterator.OfLong`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                  | `String`                   | 各行を半角スペース区切り、行間を改行した文字列として返す。                   |
+
+継承するメソッド：
+
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `IntPrefixSum3D`
 
@@ -140,6 +162,11 @@
 | Method      | `spliterator()`                                                | `Spliterator.OfInt`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                   | `String`                  | 最終軸の要素を半角スペースで区切り、各行を改行した文字列として返す。         |
 
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPrefixSum3D`
 
 | 種別        | シグネチャ                                                            | 戻り値                     | 説明                                                                         |
@@ -157,6 +184,11 @@
 | Method      | `spliterator()`                                                       | `Spliterator.OfLong`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                          | `String`                   | 最終軸の要素を半角スペースで区切り、各行を改行した文字列として返す。         |
 
+継承するメソッド：
+
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `IntPrefixModSum`
 
 | 種別        | シグネチャ                                               | 戻り値                    | 説明                                                                               |
@@ -172,6 +204,12 @@
 | Method      | `iterator()`                                             | `PrimitiveIterator.OfInt` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
 | Method      | `toString()`                                             | `String`                  | 元の要素を半角スペースで区切った文字列として返す。                                 |
 
+継承するメソッド：
+
+- [`IntArray`](./ArrayGuide.md#intarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPrefixModSum`
 
 | 種別        | シグネチャ                                                  | 戻り値                     | 説明                                                                               |
@@ -186,6 +224,12 @@
 | Method      | `sum(int i, int j)`                                         | `long`                     | 閉区間 [i, j] の和を法modで返す。i > j は0。                                       |
 | Method      | `iterator()`                                                | `PrimitiveIterator.OfLong` | 論理順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
 | Method      | `toString()`                                                | `String`                   | 元の要素を半角スペースで区切った文字列として返す。                                 |
+
+継承するメソッド：
+
+- [`LongArray`](./ArrayGuide.md#longarray)：`getFirst`、`getFirstOrDefault`、`getLast`、`getLastOrDefault`、`getOrDefault`、`indexOf`、`lastIndexOf`、`spliterator`
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `IntPrefixModSum2D`
 
@@ -204,6 +248,11 @@
 | Method      | `spliterator()`                                                    | `Spliterator.OfInt`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                       | `String`                  | 各行を半角スペース区切り、行間を改行した文字列として返す。                   |
 
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPrefixModSum2D`
 
 | 種別        | シグネチャ                                                                 | 戻り値                     | 説明                                                                         |
@@ -220,6 +269,11 @@
 | Method      | `iterator()`                                                               | `PrimitiveIterator.OfLong` | 元の値を行優先順に走査する。                                                 |
 | Method      | `spliterator()`                                                            | `Spliterator.OfLong`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                               | `String`                   | 各行を半角スペース区切り、行間を改行した文字列として返す。                   |
+
+継承するメソッド：
+
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `IntPrefixModSum3D`
 
@@ -238,6 +292,11 @@
 | Method      | `spliterator()`                                                            | `Spliterator.OfInt`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                               | `String`                  | 最終軸の要素を半角スペースで区切り、各行を改行した文字列として返す。         |
 
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 ### `LongPrefixModSum3D`
 
 | 種別        | シグネチャ                                                                         | 戻り値                     | 説明                                                                         |
@@ -255,11 +314,14 @@
 | Method      | `spliterator()`                                                                    | `Spliterator.OfLong`       | iterator と同じ順の ORDERED・SIZED・SUBSIZED を持つ。                        |
 | Method      | `toString()`                                                                       | `String`                   | 最終軸の要素を半角スペースで区切り、各行を改行した文字列として返す。         |
 
+継承するメソッド：
+
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
 1D版は `public final int size`、2D版は `public final int h, w, size`、3D版は `public final int d, h, w, size` を公開する。MOD版は型に応じた `public final int mod` / `public final long mod` も公開する。
 
-1D版は `getLast()` と型に応じた `getLastOrDefault(int defaultValue)` / `getLastOrDefault(long defaultValue)` を継承し、末尾の元の値を返す。空の場合の動作と、検索・配列化・Stream を含む継承 API は [ArrayGuide](./ArrayGuide.md) を参照する。
-
-2D・3D版は型に応じた `IntCollection` / `LongCollection` を実装する。`isEmpty`、`contains`、`toArray`、`toList`、プリミティブ Stream などの継承 API は [ArrayGuide](./ArrayGuide.md#継承元のコレクション-api) を参照する。配列化は全次元とも一次元配列を返す。
+配列化は全次元とも一次元配列を返す。
 
 ## 利用例
 

@@ -7,12 +7,10 @@ import lib.ds.*;
 
 /**
  * int値の2次元 Binary Indexed Tree (Fenwick Tree)。点更新と矩形和を O(log h log w) で行う。
- * 座標は0始まりの行 i・列 j とする。{@code sum(i, j)} は閉矩形 {@code [0, i] x [0, j]}、
- * {@code sum(i1, j1, i2, j2)} は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返す。
- * 始点が終点を超える軸がある区間は空領域として0を返す。座標が範囲外の場合は、空領域でも IndexOutOfBoundsException を投げる。
- * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。
- * affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
- * 各操作後の要素は int の範囲内とし、更新差分と和は long で扱う。走査は行優先順とする。
+ * 座標は0始まりの (行 i, 列 j) とし、sum(i, j) は {@code [0, i] x [0, j]}、sum(i1, j1, i2, j2) は閉矩形 {@code [i1, i2] x [j1, j2]} の和を返す。
+ * 座標が範囲外なら IndexOutOfBoundsException を投げ、始点が終点を超える軸があれば0を返す。
+ * set は更新前の値、add・multiply・affine・apply は更新後の値を返す。affine は {@code 現在値 * m + d}、apply は {@code f(現在値, x)} へ更新する。
+ * 要素は int の範囲に収まるものとし、和は long で返す。
  */
 public final class IntBIT2D implements IntCollection {
 	public final int h, w, size;

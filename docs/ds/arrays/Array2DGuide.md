@@ -75,17 +75,10 @@
 | Method      | `spliterator()`                                    | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                      |
 | Method      | `toString()`                                       | `String`                  | 論理状態の各行を半角スペース区切り、行間を改行した文字列として返す。要素がなければ空文字列を返す。   |
 
-継承する API：
+継承するメソッド：
 
-| 種別   | シグネチャ                                  | 戻り値          | 説明                                            |
-|--------|---------------------------------------------|-----------------|-------------------------------------------------|
-| Method | `isEmpty()`                                 | `boolean`       | 要素数が0か判定                                 |
-| Method | `contains(int v)`                           | `boolean`       | iterator による線形探索                         |
-| Method | `forEachInt(IntConsumer action)`            | `void`          | 論理順で各要素に適用                            |
-| Method | `intStream()`                               | `IntStream`     | 論理順の逐次 Stream を生成                      |
-| Method | `toList()`                                  | `List<Integer>` | 論理順の不変リストを生成                        |
-| Method | `forEach(Consumer<? super Integer> action)` | `void`          | Iterable の既定実装。ボクシングして論理順に適用 |
-| Method | `toArray()`                                 | `int[]`         | 行優先順の独立した一次元配列を生成              |
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `LongArray2D`
 
@@ -121,17 +114,10 @@
 | Method      | `spliterator()`                                           | `Spliterator.OfLong`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                      |
 | Method      | `toString()`                                              | `String`                   | 論理状態の各行を半角スペース区切り、行間を改行した文字列として返す。要素がなければ空文字列を返す。   |
 
-継承する API：
+継承するメソッド：
 
-| 種別   | シグネチャ                               | 戻り値       | 説明                                            |
-|--------|------------------------------------------|--------------|-------------------------------------------------|
-| Method | `isEmpty()`                              | `boolean`    | 要素数が0か判定                                 |
-| Method | `contains(long v)`                       | `boolean`    | iterator による線形探索                         |
-| Method | `forEachLong(LongConsumer action)`       | `void`       | 論理順で各要素に適用                            |
-| Method | `longStream()`                           | `LongStream` | 論理順の逐次 Stream を生成                      |
-| Method | `toList()`                               | `List<Long>` | 論理順の不変リストを生成                        |
-| Method | `forEach(Consumer<? super Long> action)` | `void`       | Iterable の既定実装。ボクシングして論理順に適用 |
-| Method | `toArray()`                              | `long[]`     | 行優先順の独立した一次元配列を生成              |
+- [`LongCollection`](./ArrayGuide.md#longcollection)：`contains`、`forEachLong`、`isEmpty`、`longStream`、`toArray`、`toList`
+- `Iterable`：`forEach`
 
 ### `CharArray2D`
 
@@ -165,7 +151,12 @@
 | Method      | `spliterator()`                                     | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                            |
 | Method      | `toString()`                                        | `String`                  | 各行の文字を区切りなしで連結し、行間を改行した文字列を返す。                                               |
 
-`CharArray2D` は `IntCollection` の全 API を継承する。`toArray()` は文字を int に拡張した一次元配列、`toArray2D()` は `char[][]` を返す。継承メソッドのシグネチャは [ArrayGuide](./ArrayGuide.md) を参照する。
+継承するメソッド：
+
+- [`IntCollection`](./ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`toArray`、`toList`
+- `Iterable`：`forEach`
+
+`CharArray2D` の `toArray()` は文字を int に拡張した一次元配列を返す。
 
 ## 利用例
 

@@ -67,9 +67,10 @@
 | Method      | `iterator()`                                             | `PrimitiveIterator.OfInt` | 全作用素を伝播した後、添字順に正規化した要素を走査する。         |
 | Method      | `toString()`                                             | `String`                  | 正規化した要素を空白区切りで連結する。空の場合は空文字列を返す。 |
 
-### 継承 API
+継承するメソッド：
 
-`IntCollection` の既定メソッド `isEmpty`、`contains`、`forEachInt`、`spliterator`、`intStream`、`toList`、`forEach` を継承する。いずれも `iterator()` を使うため、走査開始時に全作用素を伝播する。全シグネチャと既定実装は [配列・コレクションの継承API](../arrays/ArrayGuide.md#継承元のコレクション-api) を参照する。
+- [`IntCollection`](../arrays/ArrayGuide.md#intcollection)：`contains`、`forEachInt`、`intStream`、`isEmpty`、`spliterator`、`toList`
+- `Iterable`：`forEach`
 
 ## 利用例
 

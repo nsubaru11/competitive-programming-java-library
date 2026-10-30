@@ -8,15 +8,10 @@ import java.util.function.*;
 import lib.util.function.*;
 
 /**
- * int キー・long 値のオープンアドレス法（線形探索）によるハッシュマップ。
- * 削除は backward-shift deletion で行い、clear は世代番号の更新により O(1) で行う。
- * expectedSize はリサイズせずに保持できる要素数の目安であり、要素数が容量の 3/4 に達した状態で新しいキーを挿入すると容量を2倍へ拡張する。
- * put・putIfAbsent・remove は操作前の値を返し、キーが存在しなかった場合は defaultValue を返す。存在の区別には containsKey を使う。
- * その他の更新系メソッドは操作後にキーへ対応する値を返し、computeIfAbsent はキーが存在すれば既存の値を返す。
- * 未存在キーの get は defaultValue を返し、キーを挿入しない。add・increment・decrement は未存在キーを defaultValue に増分を加えた値で挿入し、
- * merge・mergeMin・mergeMax は value で、addOrDefault は absentValue で挿入する。
- * computeIfAbsent の関数が同じマップを構造変更した場合は、関数の適用後にキーを再探索する。
- * 走査はハッシュ配置順に行い、挿入順ではない。走査中にマップを変更しない。
+ * int キー・long 値のハッシュマップ（オープンアドレス法・線形探索）。clear は O(1) で行う。
+ * 存在しないキーの get は既定値 defaultValue を返し、キーを挿入しない。add・increment・decrement は、キーがなければ defaultValue に加算した値で挿入する。
+ * put・putIfAbsent・remove は操作前の値（キーがなければ defaultValue）を返し、それ以外の更新は操作後の値を返す。
+ * 走査はハッシュの配置順であり、挿入順ではない。
  */
 public final class IntLongMap {
 	private static final int DEFAULT_EXPECTED_SIZE = 1024;
@@ -30,6 +25,9 @@ public final class IntLongMap {
 		this(DEFAULT_EXPECTED_SIZE, 0);
 	}
 
+	/**
+	 * expectedSize 個の要素をリサイズせずに保持できる容量で構築する。
+	 */
 	public IntLongMap(final int expectedSize) {
 		this(expectedSize, 0);
 	}
@@ -45,9 +43,6 @@ public final class IntLongMap {
 		stamps = new int[capacity];
 	}
 
-	/**
-	 * 既定値・エントリ・容量を引き継ぎ、内部配列を共有しない独立したコピーを構築する。
-	 */
 	public IntLongMap(final IntLongMap other) {
 		defaultValue = other.defaultValue;
 		stamp = other.stamp;
@@ -147,6 +142,9 @@ public final class IntLongMap {
 		return defaultValue;
 	}
 
+	/**
+	 * キーがなければ {@code f(key)} を挿入し、キーの値を返す。f の中で同じマップを変更した場合は、適用後にキーを探し直す。
+	 */
 	public long computeIfAbsent(final int key, final IntToLongFunction f) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
@@ -203,6 +201,9 @@ public final class IntLongMap {
 		return addOrDefault(key, delta, defaultValue + delta);
 	}
 
+	/**
+	 * キーがあれば値に delta を加え、なければ absentValue を挿入する。操作後の値を返す。
+	 */
 	public long addOrDefault(final int key, final long delta, final long absentValue) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
@@ -254,6 +255,9 @@ public final class IntLongMap {
 		return values[hash] = value;
 	}
 
+	/**
+	 * キーがあれば {@code f(現在値, value)}、なければ value を格納し、操作後の値を返す。
+	 */
 	public long merge(final int key, final long value, final LongBinaryOperator f) {
 		int hash = hash(key);
 		for (; stamps[hash] == stamp; hash = (hash + 1) & mask) {
@@ -295,6 +299,9 @@ public final class IntLongMap {
 		return res;
 	}
 
+	/**
+	 * {@code [0]} にキー、{@code [1]} に値を並べた配列を返す。
+	 */
 	public long[][] entries() {
 		final long[][] res = new long[2][size];
 		for (int i = 0, idx = 0; i < capacity; i++) {
