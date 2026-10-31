@@ -68,3 +68,12 @@ qodana.yml
 # ベンチマーク生成物（FastIO Benchmark の作業ディレクトリ）
 **/benchmark/work/
 **/Benchmark/work/
+
+# サイトごとの秘密情報
+.atcoder/
+.aoj/
+.codeforces/
+.icpc/
+.env
+.env.*
+session.txt
