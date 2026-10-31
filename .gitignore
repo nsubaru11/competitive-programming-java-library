@@ -1,11 +1,11 @@
 # OSごとの不要なファイル
-**/.DS_Store           # macOSの不要なファイル
-**/Thumbs.db           # Windowsの不要なファイル
-._*                 # macOSの隠しファイル
-**/desktop.ini         # Windowsの設定ファイル
+**/.DS_Store
+**/Thumbs.db
+._*
+**/desktop.ini
 
 # Java関連のファイル
-**/*.class             # コンパイル後のJavaクラスファイル
+**/*.class
 
 # IntelliJ の設定ファイル
 .idea/
@@ -21,50 +21,50 @@ logs/
 **/TestCases/
 
 # Eclipse & IntelliJ project files
-**/.idea/           # IntelliJ の設定ディレクトリ（全てのディレクトリに適用）
-**/*.iml               # IntelliJ のプロジェクト設定ファイル
-**/*.ipr               # IntelliJ のプロジェクト設定ファイル
-**/*.iws               # IntelliJ のワークスペース設定ファイル
-**/.classpath          # Eclipse のプロジェクト設定ファイル
-**/.project            # Eclipse のプロジェクト設定ファイル
-**/.settings/          # Eclipse の設定ディレクトリ
+**/.idea/
+**/*.iml
+**/*.ipr
+**/*.iws
+**/.classpath
+**/.project
+**/.settings/
 
 # VS Code & Cursor エディタの設定ファイル
-**/.vscode/            # VS Code の設定ディレクトリ
-**/.cursor/            # Cursor エディタの設定ディレクトリ
-**/*.code-workspace    # VS Code のワークスペースファイル
+**/.vscode/
+**/.cursor/
+**/*.code-workspace
 
 # その他のエディタ設定ファイル
-**/.vscode-test/       # VS Code テスト設定
-**/qodana.yml          # JetBrains Qodana 設定ファイル
-qodana.yml             # JetBrains Qodana 設定ファイル
+**/.vscode-test/
+**/qodana.yml
+qodana.yml
 
 # ビルドディレクトリ
-**/bin/                # Eclipse のビルドディレクトリ
-**/out/                # IntelliJ のビルドディレクトリ
-**/target/             # Maven のビルドディレクトリ
-**/build/              # Gradle のビルドディレクトリ
-**/.gradle/            # Gradle の設定ディレクトリ
-**/.mvn/               # Maven の設定ディレクトリ
+**/bin/
+**/out/
+**/target/
+**/build/
+**/.gradle/
+**/.mvn/
 
 # ログファイル
-**/*.log               # ログファイル
+**/*.log
 **/history.txt
 
 # 仮想環境や依存関係管理ファイル
-**/node_modules/       # Node.js の依存関係
-**/venv/               # Python の仮想環境
-**/*.jar               # ローカルで生成したJARファイル
-**/*.war               # Webアーカイブファイル
-**/*.ear               # エンタープライズアーカイブファイル
+**/node_modules/
+**/venv/
+**/*.jar
+**/*.war
+**/*.ear
 
 # エディタの一時ファイル
-**/*.swp               # Vim のスワップファイル
-**/*.swo               # Vim のオープンファイル
-**/*.bak               # エディタでバックアップされたファイル
+**/*.swp
+**/*.swo
+**/*.bak
 
 # その他の一時ファイル
-**/*.tmp               # 一時ファイル
+**/*.tmp
 # ベンチマーク生成物（FastIO Benchmark の作業ディレクトリ）
 **/benchmark/work/
 **/Benchmark/work/
