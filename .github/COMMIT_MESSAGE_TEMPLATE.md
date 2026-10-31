@@ -1,5 +1,5 @@
 <日本語で記述してください。>
-prefix(feat, refactor, docs, style, test, perf, fix): 概要 <変更の概要を簡潔に記述>
+prefix(feat, refactor, docs, style, test, perf, fix, chore): 概要 <変更の概要を簡潔に記述>
 
 詳細:
 <!-- 必要に応じて詳細な説明や背景を以下に箇条書きで記述してください。以下に例を示します。 -->

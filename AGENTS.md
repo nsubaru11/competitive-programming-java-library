@@ -57,7 +57,7 @@
 
 - After completing work, remove temporary build outputs and editing scripts created for the task. Do not leave them in `out/` or include them in deliverables. Prefer an OS temporary directory for one-off editing scripts, and remove those scripts after use. Preserve pre-existing files unless cleanup is requested.
 - There is no Maven or Gradle build. Compile the source roots directly with `javac`.
-- Before creating a commit, read `.github/COMMIT_MESSAGE_TEMPLATE.md` and follow it. Commit messages must be written in Japanese using one of the documented prefixes (`feat`, `refactor`, `docs`, `style`, `test`, `perf`, `fix`) in the form `prefix: 概要`; add the `詳細:` section with bullet points when useful.
+- Before creating a commit, read `.github/COMMIT_MESSAGE_TEMPLATE.md` and follow it. Commit messages must be written in Japanese using one of the documented prefixes (`feat`, `refactor`, `docs`, `style`, `test`, `perf`, `fix`, `chore`) in the form `prefix: 概要`; add the `詳細:` section with bullet points when useful.
 - Full Java 24 smoke compile in PowerShell:
 
   `javac --release 24 -encoding UTF-8 -d out (rg --files src -g '*.java')`
@@ -75,7 +75,7 @@
 - Contest solutions should use ordinary imports such as `import lib.ds.UnionFind;` while editing locally.
 - Raw import-based solutions cannot be submitted to AtCoder. The runner's `run`, `localtest`, `test`, `tomain`, and `submit` paths must all operate on the bundled source.
 - Keep a manual fallback available: every bundled FQCN maps back to its source under `src/`, and bundler output reports the inlined class list.
-- The AtCoder repository may mount this repository as `library/` or set `ATCODER_LIB_SRC` to this repository's `src` directory.
+- The parent `competitive-programming` repository mounts this repository at `library/java/`. Other layouts can set `ATCODER_LIB_SRC` to this repository's `src` directory.
 
 ## Documentation Conventions
 
