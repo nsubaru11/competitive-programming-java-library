@@ -1,0 +1,10 @@
+version: 2
+updates:
+  # SHA で固定した Action の更新を PR で知らせる
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
