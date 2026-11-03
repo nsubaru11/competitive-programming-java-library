@@ -78,28 +78,7 @@ AVL木に基づいているため、要素の追加、削除、検索が対数�
 
 ## 利用例
 
-```java
-// 自然順序での使用
-AVLSet<Integer> set = new AVLSet<>();
-set.add(10);
-set.add(20);
-set.add(5);
-set.add(10); // 重複は追加されない
-
-System.out.println(set); // [5, 10, 20]
-System.out.println(set.contains(10)); // true
-System.out.println(set.getByIndex(1)); // 10
-
-// カスタムコンパレータでの使用
-AVLSet<String> strSet = new AVLSet<>(Comparator.reverseOrder());
-strSet.add("apple");
-strSet.add("banana");
-strSet.add("cherry");
-System.out.println(strSet); // [cherry, banana, apple]
-
-set.remove(10);
-System.out.println(set.higher(5)); // 20
-```
+[Example.java](../../../test/example/ds/set/Example.java)
 
 ## 注意事項
 

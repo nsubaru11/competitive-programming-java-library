@@ -34,22 +34,7 @@
 
 ## 使用例
 
-```java
-int[][] lr = sc.nextIntMatInv(q, 2); // lr[0][i] = l, lr[1][i] = r
-int[] freq = new int[valueCount];
-int[] answer = new int[q];
-int[] distinct = {0};
-
-MoAlgorithm.run(n, lr,
-		i -> {
-			if (++freq[a[i]] == 1) distinct[0]++;
-		},
-		i -> {
-			if (--freq[a[i]] == 0) distinct[0]--;
-		},
-		id -> answer[id] = distinct[0]
-);
-```
+[Example.java](../../../test/example/util/mo/Example.java)
 
 1-indexed 閉区間 `[L, R]` を読む場合は、`l = L - 1`, `r = R` としてから渡すこと。MoAlgorithm 自体は常に `[l, r)` を受け取る。
 

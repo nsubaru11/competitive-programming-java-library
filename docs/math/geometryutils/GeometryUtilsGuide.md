@@ -46,21 +46,11 @@
 
 ## 利用例
 
-```java
-import lib.math.GeometryUtils;
-
-double distance = GeometryUtils.euclidDist(0, 0, 3, 4); // 5.0
-int intersection = GeometryUtils.crossLine(0, 0, 4, 4, 0, 4, 4, 0);
-```
-
-
 - [Example.java](../../../test/example/math/geometryutils/Example.java)
-
-
 
 ## 制約・注意事項
 
-- 交差・包含メソッドは単純なbooleanではなく、位置関係を表す整数コードを返す。詳細は各メソッドのJavaDocを参照すること。
+- 交差・包含メソッドは単純なbooleanではなく、位置関係を表す整数コードを返す。詳細は各メソッドのJavadocを参照すること。
 - N次元距離では配列長が`n`以上であることを前提とする。
 - 浮動小数点誤差と座標規模に応じ、必要なら問題側で整数幾何を選択すること。
 

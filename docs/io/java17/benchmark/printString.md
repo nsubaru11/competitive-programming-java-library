@@ -78,15 +78,4 @@
 
 **推奨実装 (`FastPrinter1`の主要部分)**:
 
-```java
-public FastPrinter1 println(final String s) {
-    // Unsafe APIでStringの内部バイト配列を直接取得
-    final byte[] src = (byte[]) UNSAFE.getObject(s, STRING_VALUE_OFFSET);
-    // 内部バッファにバイト配列をコピー
-    fillBuffer(src, s.length());
-    ensureBufferSpace(1);
-    buffer[pos++] = '\n';
-    if (autoFlush) flush();
-    return this;
-}
-```
+[TestOutputStrings.java](../../../../test/benchmark/io/bench17/TestOutputStrings.java) の `FastPrinter1` を参照してください。

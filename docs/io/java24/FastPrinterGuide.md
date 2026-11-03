@@ -71,23 +71,7 @@
 
 ## 利用例
 
-```java
-try (FastPrinter fp = new FastPrinter()) {
-	int[] a = {1, 2, 3};
-	fp.println("Result:").print(a).println();
-	fp.print(10).print(' ').println(20);
-	fp.println(true);
-	fp.printRepeat('-', 10).println();
-
-	List<Integer> list = List.of(4, 5, 6);
-	fp.print(list, x -> x * 2).println();
-}
-```
-
-
 - [Example.java](../../../test/example/io/Example.java)
-
-
 
 ## 制約・注意事項
 

@@ -112,24 +112,7 @@
 
 ## 利用例
 
-```java
-LongAVLMultiset multiSet = new LongAVLMultiset();
-multiSet.add(1L << 40);
-multiSet.add(2L << 40);
-multiSet.add(1L << 40, 2); // (1L << 40)を2つ追加
-
-System.out.println(multiSet.count(1L << 40)); // 3
-System.out.println(multiSet.size()); // 4
-System.out.println(multiSet.uniqueSize()); // 2
-System.out.println(multiSet.sum()); // 計算された総和
-
-// 区間和の取得
-System.out.println(multiSet.prefixSum(2)); // インデックス0-2の累積和
-System.out.println(multiSet.sumRange(1, 3)); // インデックス1-3の区間和
-
-multiSet.remove(1L << 40);
-System.out.println(multiSet.count(1L << 40)); // 2
-```
+準備中
 
 ## 注意事項
 

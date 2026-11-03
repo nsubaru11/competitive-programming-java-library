@@ -57,4 +57,4 @@
 - グラフ本体と内部配列へ直接アクセスするアルゴリズムのパッケージは`lib.graph`である。
 - 辺配列の容量はコンストラクタで固定され、自動拡張されない。
 - `Tree`と`RootedTree`は`lib.graph.tree`にあり、一般グラフとは独立した木専用の内部表現を持つ。
-- [グラフの利用例](../../../test/example/graph)、[ローカル検証](../../../test/unit/graph)、[オンラインジャッジ用コード](../../../test/judge/graph)を参照すること。
+- 利用例は[Example.java](../../../test/example/graph/Example.java)、ローカル検証は[Test1.java](../../../test/unit/graph/connectivity/Test1.java)、`GraphUtils`のオンラインジャッジ用コードは[Judge1.java](../../../test/judge/graph/graphutils/Judge1.java)・[Judge2.java](../../../test/judge/graph/graphutils/Judge2.java)・[Judge3.java](../../../test/judge/graph/graphutils/Judge3.java)を参照すること。各アルゴリズムの検証コードは分野別READMEに記載する。

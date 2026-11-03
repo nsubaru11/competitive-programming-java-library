@@ -10,13 +10,13 @@
 
 ## 内部パッケージ
 
-| パッケージ               | ソース                                  | ドキュメント                           |
-|--------------------------|-----------------------------------------|----------------------------------------|
-| `lib.string.approximate` | [src](../../src/lib/string/approximate) | [編集距離](./levenshtein/README.md)    |
-| `lib.string.matching`    | [src](../../src/lib/string/matching)    | [文字列探索](./stringsearch/README.md) |
-| `lib.string.palindrome`  | [src](../../src/lib/string/palindrome)  | [回文](./palindrome/README.md)         |
-| `lib.string.sequence`    | [src](../../src/lib/string/sequence)    | —                                      |
-| `lib.string.suffix`      | [src](../../src/lib/string/suffix)      | —                                      |
+| パッケージ               | ドキュメント                           |
+|--------------------------|----------------------------------------|
+| `lib.string.approximate` | [編集距離](./levenshtein/README.md)    |
+| `lib.string.matching`    | [文字列探索](./stringsearch/README.md) |
+| `lib.string.palindrome`  | [回文](./palindrome/README.md)         |
+| `lib.string.sequence`    | —                                      |
+| `lib.string.suffix`      | —                                      |
 
 ## sequence / suffix の実装
 

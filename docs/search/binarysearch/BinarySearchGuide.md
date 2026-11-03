@@ -52,9 +52,7 @@
 
 #### 通常の二分探索
 
-``` java
-public static int normalSearch(int l, int r, CompareFunction comparator)
-```
+`public static int normalSearch(int l, int r, CompareFunction comparator)`
 
 - **引数**：
 	- `l` - 探索範囲の下限値（この値を含む）
@@ -65,9 +63,7 @@ public static int normalSearch(int l, int r, CompareFunction comparator)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
 - **使用例**：特定の条件を満たす値を探索する場合に使用する。
 
-``` java
-public static long normalSearch(long l, long r, CompareFunction comparator)
-```
+`public static long normalSearch(long l, long r, CompareFunction comparator)`
 
 - **引数**：
 	- `l` - 探索範囲の下限値（この値を含む）
@@ -80,9 +76,7 @@ public static long normalSearch(long l, long r, CompareFunction comparator)
 
 #### 上限探索（Upper Bound）
 
-``` java
-public static int upperBoundSearch(int l, int r, CompareFunction comparator)
-```
+`public static int upperBoundSearch(int l, int r, CompareFunction comparator)`
 
 - **引数**：
 	- `l` - 探索範囲の下限値（この値を含む）
@@ -93,9 +87,7 @@ public static int upperBoundSearch(int l, int r, CompareFunction comparator)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
 - **使用例**：条件を満たす最大の値を探索する場合に使用する。
 
-``` java
-public static long upperBoundSearch(long l, long r, CompareFunction comparator)
-```
+`public static long upperBoundSearch(long l, long r, CompareFunction comparator)`
 
 - **引数**：
 	- `l` - 探索範囲の下限値（この値を含む）
@@ -108,9 +100,7 @@ public static long upperBoundSearch(long l, long r, CompareFunction comparator)
 
 #### 下限探索（Lower Bound）
 
-``` java
-public static int lowerBoundSearch(int l, int r, CompareFunction comparator)
-```
+`public static int lowerBoundSearch(int l, int r, CompareFunction comparator)`
 
 - **引数**：
 	- `l` - 探索範囲の下限値（この値を含む）
@@ -121,9 +111,7 @@ public static int lowerBoundSearch(int l, int r, CompareFunction comparator)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
 - **使用例**：条件を満たす最小の値を探索する場合に使用する。
 
-``` java
-public static long lowerBoundSearch(long l, long r, CompareFunction comparator)
-```
+`public static long lowerBoundSearch(long l, long r, CompareFunction comparator)`
 
 - **引数**：
 	- `l` - 探索範囲の下限値（この値を含む）

@@ -49,35 +49,9 @@ cost-only版でも辺のソートとUnion-Findは必要であるが、採用辺I
 
 ## 利用例
 
-```java
-import lib.graph.Kruskal;
-import lib.graph.SpanningForestResult;
-import lib.graph.UndirectedGraph;
-
-UndirectedGraph graph = new UndirectedGraph(4, 5);
-graph.add(0, 1, 1); // edge 0
-graph.add(0, 2, 4); // edge 1
-graph.add(1, 2, 2); // edge 2
-graph.add(1, 3, 5); // edge 3
-graph.add(2, 3, 3); // edge 4
-
-SpanningForestResult result = Kruskal.minimum(graph);
-System.out.println(result.cost);            // 6
-System.out.println(result.edgeCount());     // 3
-System.out.println(result.isSpanningTree()); // true
-```
-
-総コストだけが必要な場合はcost-only版を使用します。
-
-```java
-long minimum = Kruskal.minimumCost(graph); // 6
-long maximum = Kruskal.maximumCost(graph); // 12
-```
-
+総コストだけが必要な場合はcost-only版の`minimumCost`・`maximumCost`を使用します。
 
 - [Example.java](../../../test/example/graph/Example.java)
-
-
 
 ## 制約・注意事項
 

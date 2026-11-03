@@ -86,10 +86,4 @@
 
 競技プログラミングなど、平均的な速さが求められる場面では、この実装が最良の選択となります。
 
-```java
-public long[] nextLong0(int n) {
-    long[] arr = new long[n];
-    for (int i = 0; i < n; i++) arr[i] = nextLong();
-    return arr;
-}
-```
+`nextLong0` の実装は [TestInputLongArray.java](../../../../test/benchmark/io/bench17/TestInputLongArray.java) にあります。

@@ -82,28 +82,4 @@
 
 **推奨実装 (`FastPrinter2`のカスタムフォーマット出力)**:
 
-```java
-public FastPrinter2 print(double d, int n) {
-    if (n <= 0) return print(round(d));
-    if (d >= 0) {
-    } else {
-        ensureBufferSpace(1);
-        buffer[pos++] = '-';
-        d = -d;
-    }
-    if (n > 18) n = 18;
-    long scale = POW10[n];
-    long scaled = (long) floor(d * scale);
-    long intPart = scaled / scale;
-    long fracPart = scaled - intPart * scale;
-    print(intPart);
-    ensureBufferSpace(n + 1);
-    buffer[pos++] = '.';
-    int digits = 1;
-    for (long t = fracPart; t >= 10; t /= 10) digits++;
-    for (int pad = n - digits; pad > 0; pad--) buffer[pos++] = '0';
-    fillBuffer(fracPart);
-    if (autoFlush) flush();
-    return this;
-}
-```
+[TestOutputDoubleNumbers.java](../../../../test/benchmark/io/bench17/TestOutputDoubleNumbers.java) の `FastPrinter2` を参照してください。

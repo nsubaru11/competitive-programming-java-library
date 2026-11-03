@@ -47,30 +47,7 @@
 
 ## 利用例
 
-```java
-UndirectedGraph graph = new UndirectedGraph(4, 5);
-graph.add(0, 1, 1);
-graph.add(0, 2, 4);
-graph.add(1, 2, 2);
-graph.add(1, 3, 5);
-graph.add(2, 3, 3);
-
-SpanningForestResult result = Kruskal.minimum(graph);
-
-System.out.println(result.cost);             // 6
-System.out.println(result.edgeCount());      // 3
-System.out.println(result.componentCount);   // 1
-System.out.println(result.isSpanningTree()); // true
-
-for (int edgeId : result.edgeIds) {
-	System.out.println(edgeId);
-}
-```
-
-
 - [Example.java](../../../test/example/graph/Example.java)
-
-
 
 ## 制約・注意事項
 

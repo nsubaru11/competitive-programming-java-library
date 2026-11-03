@@ -111,25 +111,7 @@
 
 ## 利用例
 
-```java
-IntAVLMultiset multiSet = new IntAVLMultiset();
-multiSet.add(10);
-multiSet.add(20);
-multiSet.add(10, 2); // 10を2つ追加
-
-System.out.println(multiSet); // [10, 10, 10, 20]
-System.out.println(multiSet.count(10)); // 3
-System.out.println(multiSet.size()); // 4
-System.out.println(multiSet.uniqueSize()); // 2
-System.out.println(multiSet.sum()); // 50
-
-// 区間和の取得
-System.out.println(multiSet.prefixSum(2)); // 30 (10+10+10)
-System.out.println(multiSet.sumRange(1, 3)); // 30 (10+20)
-
-multiSet.remove(10);
-System.out.println(multiSet.count(10)); // 2
-```
+準備中
 
 ## 注意事項
 

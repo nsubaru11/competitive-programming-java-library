@@ -39,22 +39,7 @@
 
 ## 利用例
 
-```java
- import lib.ds.trie.Trie;
-
- Trie trie = new Trie();
- trie.insert("apple").insert("app").insert("apricot");
- 
- boolean hasApp = trie.search("app");           // true
- boolean hasApply = trie.search("apply");       // false
- int cntAp = trie.countPrefix("ap");            // 3 ("app", "apple", "apricot")
- int cntApp = trie.countPrefix("app");          // 2 ("app", "apple")
- ```
-
-
 - [Example.java](../../../test/example/ds/trie/Example.java)
-
-
 
 ## 制約・注意事項
 

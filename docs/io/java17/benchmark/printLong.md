@@ -105,25 +105,4 @@
 
 **推奨実装 (`FastPrinter5`の`fillBuffer`メソッド)**:
 
-```java
-private void fillBuffer(long l) {
-    if (l < 0) buffer[pos++] = '-';
-    else l = -l;
-    long quotient;
-    int remainder;
-    final int numOfDigits = countDigits(l);
-    int writePos = pos + numOfDigits;
-    while (l <= -100) {
-        quotient = l / 100;
-        remainder = (int) ((quotient << 6) + (quotient << 5) + (quotient << 2) - l);
-        buffer[--writePos] = DigitOnes[remainder];
-        buffer[--writePos] = DigitTens[remainder];
-        l = quotient;
-    }
-    quotient = l / 10;
-    remainder = (int) ((quotient << 3) + (quotient << 1) - l);
-    buffer[--writePos] = (byte) ('0' + remainder);
-    if (quotient < 0) buffer[--writePos] = (byte) ('0' - quotient);
-    pos += numOfDigits;
-}
-```
+[TestOutputLongNumbers.java](../../../../test/benchmark/io/bench17/TestOutputLongNumbers.java) の `FastPrinter5` を参照してください。

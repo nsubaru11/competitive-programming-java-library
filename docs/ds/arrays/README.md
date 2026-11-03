@@ -76,13 +76,10 @@
 
 deque の Judge は `removeFirst` / `removeLast`、MoAlgorithm の Judge1・Judge2 は `uniqueSize` フィールドへ追従済みである。arrays の `Test.java` の添字アクセスは要素数に合わせて修正済みである。配置整理後のコンパイル・実行による動作確認は行っていない。
 
-`IntCompressedArray` は [MoAlgorithm の検証コード](../../../test/judge/util/mo/) でも利用する。CharArray2D、2次元の圧縮配列2クラス、2次元・3次元の累積和8クラスには専用の Example・検証コードがない。`getLast` / `OrDefault` 系、範囲外例外、コピー後の独立性、spliterator の特性を自動照合するテストも未実装である。
+`IntCompressedArray` は [MoAlgorithm](../../util/moalgorithm/README.md) の検証コード（`test/judge/util/mo` の `Judge1.java` から `Judge4.java`）でも利用する。CharArray2D、2次元の圧縮配列2クラス、2次元・3次元の累積和8クラスには専用の Example・検証コードがない。`getLast` / `OrDefault` 系、範囲外例外、コピー後の独立性、spliterator の特性を自動照合するテストも未実装である。
 
 ## import
 
-```java
-import lib.ds.arrays.*;
-import lib.util.*;
-```
+`import lib.ds.arrays.*;` と `import lib.util.*;` を使う。
 
 提出用ソースでは通常の `lib.*` import を使用し、AtCoder 側のバンドラで展開する。

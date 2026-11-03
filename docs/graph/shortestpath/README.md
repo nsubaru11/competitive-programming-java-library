@@ -103,4 +103,4 @@
 - `UndirectedGraph`では負辺を往復できるため、負辺が1本でもその連結範囲は負閉路の影響を受ける。
 - 各呼び出しは新しい結果を計算し、以前の始点に対するキャッシュは保持しない。
 - パッケージは`lib.graph`で、`Graph`、`DirectedGraph`、`UndirectedGraph`に依存する。
-- 検証コードは[Dijkstra](../../../test/judge/graph/dijkstra)、[Bellman-Ford](../../../test/judge/graph/bellmanford)、[Warshall-Floyd](../../../test/judge/graph/warshallfloyd)を参照すること。
+- 検証コードはDijkstraの[Judge1.java](../../../test/judge/graph/dijkstra/Judge1.java)・[Judge2.java](../../../test/judge/graph/dijkstra/Judge2.java)、Bellman-Fordの[Judge1.java](../../../test/judge/graph/bellmanford/Judge1.java)、Warshall-Floydの[Judge1.java](../../../test/judge/graph/warshallfloyd/Judge1.java)を参照すること。

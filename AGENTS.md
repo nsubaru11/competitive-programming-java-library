@@ -13,7 +13,7 @@
 
 - Follow `.github/copilot-instructions.md` as project-local policy.
 - Use wildcard imports such as `import java.util.*;` and `import lib.math.*;` throughout the repository to keep source code short. Do not replace them with explicit imports merely for import-list cleanliness.
-- Write JavaDoc for non-compressed public classes and methods; keep constants in `UPPER_SNAKE_CASE`.
+- Write Javadoc for non-compressed public classes and methods; keep constants in `UPPER_SNAKE_CASE`.
 - Use tabs for Java indentation and keep a trailing newline at end-of-file.
 - Prefer bit operations and low-level optimizations where they measurably help performance.
 - For reusable APIs, add overloads and primitive-specialized variants when appropriate.

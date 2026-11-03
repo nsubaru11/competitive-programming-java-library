@@ -66,18 +66,6 @@
 
 - 対話型問題で入力を段階的に読み取るスキャナである。詳細なAPIはソースを参照すること。
 
-## 使い方
-
-```java
-try (FastScanner fs = new FastScanner(); FastPrinter fp = new FastPrinter()) {
-	int n = fs.nextInt();
-	int[] a = fs.nextInt(n);
-	int u = fs.nextInt0();
-	int v = fs.nextInt0();
-	fp.println(a).println(u, v);
-}
-```
-
 ## 注意事項
 
 - すべてのクラスは `AutoCloseable` を実装しているため、`try-with-resources` の利用を推奨する。

@@ -51,27 +51,7 @@
 
 ## 利用例
 
-```java
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import lib.math.FactorUtils;
-
-long[] factors = FactorUtils.primeFactors(360L); // 2,2,2,3,3,5
-long[] divisors = FactorUtils.divisors(360L);
-var map = FactorUtils.primeFactorsMap(360L, LinkedHashMap::new);
-var list = FactorUtils.divisors(360L, ArrayList::new);
-int[][] factorization = FactorUtils.primeFactors2D(360);
-// factorization[0] = [2, 3, 5], factorization[1] = [3, 2, 1]
-long[][] longFactorization = FactorUtils.primeFactors2D(360L);
-
-ArrayList<Integer> intDivisors =
-	FactorUtils.<ArrayList<Integer>>divisors(360, ArrayList::new);
-```
-
-
 - [Example.java](../../../test/example/math/factorutils/Example.java)
-
-
 
 ## 制約・注意事項
 

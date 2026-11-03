@@ -79,18 +79,7 @@
 
 ## 利用例
 
-```java
-import lib.math.MathUtils;
-
-long power = MathUtils.pow(3, 10);
-long combination = MathUtils.nCr(20, 5);
-int gcd = MathUtils.gcd(84, 30);
-```
-
-
-- [Example.java](../../../test/example/math/mathutils/Example.java)
-
-
+- [Example.java](../../../test/example/math/mathutils/Example.java) · [CombinatoricsExample.java](../../../test/example/math/mathutils/CombinatoricsExample.java) · [GcdExample.java](../../../test/example/math/mathutils/GcdExample.java)
 
 ## 制約・注意事項
 

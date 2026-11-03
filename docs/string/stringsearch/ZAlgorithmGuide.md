@@ -31,17 +31,7 @@ Java標準ライブラリ以外への依存はない。
 
 ## 利用例
 
-```java
-import lib.string.matching.ZAlgorithm;
-
-int[] z = ZAlgorithm.getZArray("ababa");
-// [5, 0, 3, 0, 1]
-```
-
-
 - [Example.java](../../../test/example/string/matching/zalgorithm/Example.java)
-
-
 
 ## 制約・注意事項
 

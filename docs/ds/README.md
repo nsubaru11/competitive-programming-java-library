@@ -41,15 +41,15 @@
 
 ## 内部パッケージ
 
-| パッケージ             | ソース                                | 関連ドキュメント                                                                                                          |
-|------------------------|---------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| `lib.ds.arrays`        | [src](../../src/lib/ds/arrays)        | [Arrays](./arrays/README.md)                                                                                              |
-| `lib.ds.fenwick`       | [src](../../src/lib/ds/fenwick)       | [Fenwick Tree](./fenwick/README.md)                                                                                       |
-| `lib.ds.map`           | [src](../../src/lib/ds/map)           | [HashMap](./map/README.md)                                                                                                |
-| `lib.ds.priorityqueue` | [src](../../src/lib/ds/priorityqueue) | [Priority Queue](./priorityqueue/README.md)                                                                               |
-| `lib.ds.segmenttree`   | [src](../../src/lib/ds/segmenttree)   | [Segment Tree](./segmenttree/README.md)、[2D](./segmenttree2d/README.md)、[Persistent](./persistentsegmenttree/README.md) |
-| `lib.ds.set`           | [src](../../src/lib/ds/set)           | [AVL Tree](./avltree/README.md)、[Binary Search Tree](./binarysearchtree/README.md)、[Skip List](./skiplist/README.md)    |
-| `lib.ds.sparsetable`   | [src](../../src/lib/ds/sparsetable)   | [Sparse Table](./sparsetable/README.md)                                                                                   |
-| `lib.ds.tree`          | [src](../../src/lib/ds/tree)          | [`LinkCutTree`](../../src/lib/ds/tree/LinkCutTree.java)（実装予定）                                                       |
-| `lib.ds.trie`          | [src](../../src/lib/ds/trie)          | [Trie](./trie/README.md)                                                                                                  |
-| `lib.ds.unionfind`     | [src](../../src/lib/ds/unionfind)     | [Union-Find](./unionfind/README.md)、[Persistent](./persistentunionfind/README.md)                                        |
+| パッケージ             | 関連ドキュメント                                                                                                          |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| `lib.ds.arrays`        | [Arrays](./arrays/README.md)                                                                                              |
+| `lib.ds.fenwick`       | [Fenwick Tree](./fenwick/README.md)                                                                                       |
+| `lib.ds.map`           | [HashMap](./map/README.md)                                                                                                |
+| `lib.ds.priorityqueue` | [Priority Queue](./priorityqueue/README.md)                                                                               |
+| `lib.ds.segmenttree`   | [Segment Tree](./segmenttree/README.md)、[2D](./segmenttree2d/README.md)、[Persistent](./persistentsegmenttree/README.md) |
+| `lib.ds.set`           | [AVL Tree](./avltree/README.md)、[Binary Search Tree](./binarysearchtree/README.md)、[Skip List](./skiplist/README.md)    |
+| `lib.ds.sparsetable`   | [Sparse Table](./sparsetable/README.md)                                                                                   |
+| `lib.ds.tree`          | [`LinkCutTree`](../../src/lib/ds/tree/LinkCutTree.java)（実装予定）                                                       |
+| `lib.ds.trie`          | [Trie](./trie/README.md)                                                                                                  |
+| `lib.ds.unionfind`     | [Union-Find](./unionfind/README.md)、[Persistent](./persistentunionfind/README.md)                                        |

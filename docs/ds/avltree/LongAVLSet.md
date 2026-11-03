@@ -76,19 +76,7 @@ AVL木に基づいているため、要素の追加、削除、検索が対数�
 
 ## 利用例
 
-```java
-LongAVLSet set = new LongAVLSet();
-set.add(1L << 40);
-set.add(2L << 40);
-set.add(5L << 35);
-
-System.out.println(set.contains(1L << 40)); // true
-System.out.println(set.last()); // 2199023255552
-System.out.println(set.rank(1L << 40)); // 1
-
-set.remove(1L << 40);
-System.out.println(set.size()); // 2
-```
+準備中
 
 ## 注意事項
 

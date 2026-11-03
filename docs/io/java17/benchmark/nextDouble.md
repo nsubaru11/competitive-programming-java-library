@@ -80,38 +80,6 @@
 `nextDouble1`と平均性能は統計的に同等ですが、`nextDouble2`は**実行時間のばらつきが極めて小さく、パフォーマンスが非常に安定
 **しています。この安定性は、どのような入力が来ても一貫した高速性を保証する上で重要な要素です。
 
-したがって、最速かつ最も信頼性の高い実装として、以下の`nextDouble2`を最適解として推奨します。
+したがって、最速かつ最も信頼性の高い実装として、`nextDouble2`を最適解として推奨します。
 
-```java
-public double nextDouble2() {
-    int b = skipSpaces();
-    boolean negative = false;
-
-    if (b != '-') {
-        // Positive numbers
-    } else {
-        negative = true;
-        b = read();
-    }
-
-    double result = 0;
-    // ビットシフトによる高速な整数部計算
-    while ('0' <= b && b <= '9') {
-        result = ((long) result << 3) + ((long) result << 1) + (b & 15);
-        b = read();
-    }
-
-    // スケール変数による高速な小数部計算
-    if (b == '.') {
-        b = read();
-        double scale = 0.1;
-        while ('0' <= b && b <= '9') {
-            result += (b & 15) * scale;
-            scale *= 0.1;
-            b = read();
-        }
-    }
-
-    return negative ? -result : result;
-}
-```
+`nextDouble2` の実装は [TestInputDoubleNumbers.java](../../../../test/benchmark/io/bench17/TestInputDoubleNumbers.java) にあります。

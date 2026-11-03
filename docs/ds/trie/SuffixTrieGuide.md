@@ -39,23 +39,7 @@
 
 ## 利用例
 
-```java
- import lib.ds.trie.SuffixTrie;
-
- SuffixTrie strie = new SuffixTrie();
- strie.insert("banana").insert("cabana").insert("band");
- 
- // "ana" で終わる語は "banana", "cabana" の 2 つ
- int cntAna = strie.countPrefix("ana");  // 2
- 
- boolean hasExact = strie.search("banana"); // true（完全一致）
- boolean notExact = strie.search("ana");    // false（部分一致は不可）
- ```
-
-
 - [Example.java](../../../test/example/ds/trie/Example.java)
-
-
 
 ## 制約・注意事項
 

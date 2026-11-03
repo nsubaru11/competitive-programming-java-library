@@ -161,33 +161,7 @@
 
 ## 利用例
 
-```java
-try (FastScanner sc = new FastScanner()) {
-  int n = sc.nextInt();
-  int m = sc.nextInt();
-  int[] a = sc.nextInt(n);
-  int s = sc.nextInt0();
-  int t = sc.nextInt0();
-  String line = sc.nextLine();
-
-  if (sc.hasNext()) {
-    char head = sc.peek();
-    String token = sc.next();
-  }
-
-  // 単一値一致で true 判定
-  boolean isYes = sc.nextBoolean('Y');
-
-  // 配列・行列を述語で判定
-  boolean[] nonNegative = sc.nextBoolean(n, x -> x >= 0);
-  boolean[][] isWall = sc.nextBooleanMat(n, m, '#');
-}
-```
-
-
 - [Example.java](../../../test/example/io/Example.java)
-
-
 
 ## 制約・注意事項
 

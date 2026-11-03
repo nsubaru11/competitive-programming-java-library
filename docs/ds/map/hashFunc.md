@@ -4,7 +4,6 @@
 
 現行のMap実装はミキサー適用前に `ThreadLocalRandom` で生成したsaltをキーへXORする。
 `TestHash` は方式間の比較を再現可能にするため、全方式へ同じ固定saltを適用する。
-以下のコード例は、比較対象となるミキサー本体だけを示す。
 
 | 方式名                        | 全体時間 (1回目 / 2回目) | 平均時間 (1回目 / 2回目) | 評価・特徴                                                   |
 |-------------------------------|--------------------------|--------------------------|--------------------------------------------------------------|
@@ -14,53 +13,9 @@
 | **MurmurHash3 64-bit**        | 198ms / 179ms            | 122.0ms / 110.1ms        | 重厚なミキサー。競技プログラミングのパック済みキーには過剰。 |
 | **修正版フィボナッチ**        | 170ms / 217ms            | 100.8ms / 124.8ms        | 最速値は出るが、衝突（クラスタリング）によるブレが発生。     |
 
-#### 実装コード群 (64-bit)
+#### 実装 (64-bit)
 
-```java
-// MurmurHash3系軽量ミキサー (乗算1回)
-private int hash(long key) {
-    key ^= key >>> 33;
-    key *= 0xff51afd7ed558ccdL;
-    key ^= key >>> 33;
-    return (int) key & mask;
-}
-
-// Thomas Wang's 64-bit (乗算排除・シフト/XORのみ)
-private int hash(long key) {
-    key ^= key >>> 21;
-    key ^= key << 37;
-    key ^= key >>> 28;
-    key ^= key << 15;
-    key ^= key >>> 32;
-    return (int) key & mask;
-}
-
-// SplitMix64 (元実装・乗算2回)
-private int hash(long key) {
-    key ^= key >>> 30;
-    key *= 0xbf58476d1ce4e5b9L;
-    key ^= key >>> 27;
-    key *= 0x94d049bb133111ebL;
-    key ^= key >>> 31;
-    return (int) key & mask;
-}
-
-// MurmurHash3 64-bit Finalizer
-private int hash(long key) {
-    key ^= key >>> 33;
-    key *= 0xff51afd7ed558ccdL;
-    key ^= key >>> 33;
-    key *= 0xc4ceb9fe1a85ec53L;
-    key ^= key >>> 33;
-    return (int) key & mask;
-}
-
-// 修正版フィボナッチ (乗算1回・シフト1回)
-private int hash(long key) {
-    key *= 0x9E3779B97F4A7C15L;
-    return (int) (key >>> 32) & mask;
-}
-```
+各方式のミキサーは [TestHash.java](../../../test/benchmark/ds/map/TestHash.java) の `long` キー用ベンチマーク Map の `hash(long)` に、`LONG_HASH_NAMES` の順で実装している。
 
 ---
 
@@ -69,7 +24,6 @@ private int hash(long key) {
 1変数の `int` キーに対するミキサー関数の比較。
 
 64ビット版と同様に、現行のMap実装はランダムsalt、`TestHash` は固定saltをミキサー適用前に使用する。
-以下のコード例では共通のsalt処理を省略する。
 
 | 方式名                     | 全体時間 (1回目 / 2回目) | 平均時間 (1回目 / 2回目)  | 評価・特徴                                                   |
 |----------------------------|--------------------------|---------------------------|--------------------------------------------------------------|
@@ -79,49 +33,6 @@ private int hash(long key) {
 | **MurmurHash3 32-bit**     | 213ms / 229ms            | 118.0ms / 122.5ms         | 32bit用としてはややオーバースペックで計算コストが響く。      |
 | **Thomas Wang 32-bit**     | 208ms / 221ms            | 118.8ms / 121.7ms         | 乗算ゼロだが、シフトと加減算のチェーンが逆にボトルネックに。 |
 
-#### 実装コード群 (32-bit)
+#### 実装 (32-bit)
 
-```java
-// SplitMix32 Variant (非対称定数)
-private int hash(int key) {
-    key ^= key >>> 16;
-    key *= 0x7feb352d;
-    key ^= key >>> 15;
-    key *= 0x846ca68b;
-    key ^= key >>> 16;
-    return key & mask;
-}
-
-// Identity Hash (無変換)
-private int hash(int key) {
-    return key & mask;
-}
-
-// Golden Ratio Mixer (軽量版フィボナッチ系)
-private int hash(int key) {
-    key ^= key >>> 16;
-    key *= 0x9E3779B9;
-    key ^= key >>> 16;
-    return key & mask;
-}
-
-// MurmurHash3 32-bit Finalizer
-private int hash(int key) {
-    key ^= key >>> 16;
-    key *= 0x85ebca6b;
-    key ^= key >>> 13;
-    key *= 0xc2b2ae35;
-    key ^= key >>> 16;
-    return key & mask;
-}
-
-// Thomas Wang's 32-bit Hash (乗算排除型)
-private int hash(int key) {
-    key = (key ^ 61) ^ (key >>> 16);
-    key = key + (key << 3);
-    key = key ^ (key >>> 4);
-    key = key * 0x27d4eb2d;
-    key = key ^ (key >>> 15);
-    return key & mask;
-}
-```
+各方式のミキサーは [TestHash.java](../../../test/benchmark/ds/map/TestHash.java) の `int` キー用ベンチマーク Map の `hash(int)` に、`INT_HASH_NAMES` の順で実装している。

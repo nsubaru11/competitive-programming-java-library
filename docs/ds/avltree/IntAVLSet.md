@@ -76,22 +76,7 @@ AVL木に基づいているため、要素の追加、削除、検索が対数�
 
 ## 利用例
 
-```java
-IntAVLSet set = new IntAVLSet();
-set.add(10);
-set.add(20);
-set.add(5);
-set.add(10); // 重複は追加されない
-
-System.out.println(set); // [5, 10, 20]
-System.out.println(set.contains(10)); // true
-System.out.println(set.getByIndex(1)); // 10
-System.out.println(set.rank(15)); // 2 (15未満の要素数)
-
-set.remove(10);
-System.out.println(set); // [5, 20]
-System.out.println(set.higher(5)); // 20
-```
+準備中
 
 ## 注意事項
 

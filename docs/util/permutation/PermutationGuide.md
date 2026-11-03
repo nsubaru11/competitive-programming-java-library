@@ -46,20 +46,7 @@
 
 ## 利用例
 
-```java
-import java.util.Arrays;
-import lib.util.Permutation;
-
-int[] a = {1, 2, 3};
-do {
-	System.out.println(Arrays.toString(a));
-} while (Permutation.next(a));
-```
-
-
 - [Example.java](../../../test/example/util/permutation/Example.java)
-
-
 
 ## 制約・注意事項
 

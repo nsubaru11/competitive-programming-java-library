@@ -100,28 +100,7 @@
 
 ## 利用例
 
-```java
-// 自然順序での使用
-AVLMultiset<String> multiSet = new AVLMultiset<>();
-multiSet.add("apple");
-multiSet.add("orange");
-multiSet.add("apple", 2); // appleを2つ追加
-
-System.out.println(multiSet); // [apple, apple, apple, orange]
-System.out.println(multiSet.count("apple")); // 3
-System.out.println(multiSet.size()); // 4
-System.out.println(multiSet.uniqueSize()); // 2
-
-// カスタムコンパレータでの使用
-AVLMultiset<String> reverseSet = new AVLMultiset<>(Comparator.reverseOrder());
-reverseSet.add("a");
-reverseSet.add("c");
-reverseSet.add("b");
-System.out.println(reverseSet); // [c, b, a]
-
-multiSet.remove("apple");
-System.out.println(multiSet.count("apple")); // 2
-```
+[Example.java](../../../test/example/ds/set/Example.java)
 
 ## 注意事項
 

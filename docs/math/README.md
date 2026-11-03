@@ -2,18 +2,18 @@
 
 `src/lib/math` の公開APIに対応するドキュメントである。ルートパッケージのクラスはクラス名ごと、サブパッケージはパッケージ名ごとに整理している。
 
-| ドキュメント                           | 対象                        | 用途                                       | ソース                                           |
-|----------------------------------------|-----------------------------|--------------------------------------------|--------------------------------------------------|
-| [MathUtils](./mathutils)               | `lib.math.MathUtils`        | 整数演算・組み合わせ・数論の主要な静的入口 | [Java](../../src/lib/math/MathUtils.java)        |
-| [FactorialTable](./factorialtable)     | `lib.math.FactorialTable`   | 素数mod上の動的な階乗・逆元テーブル        | [Java](../../src/lib/math/FactorialTable.java)   |
-| [FactorUtils](./factorutils)           | `lib.math.FactorUtils`      | 素因数分解、素因数個数、約数列挙           | [Java](../../src/lib/math/FactorUtils.java)      |
-| [PrimeUtils](./primeutils)             | `lib.math.PrimeUtils`       | 一回限りの素数判定・篩                     | [Java](../../src/lib/math/PrimeUtils.java)       |
-| [PrimeTable](./primetable)             | `lib.math.PrimeTable`       | 再利用可能な素数テーブル                   | [Java](../../src/lib/math/PrimeTable.java)       |
-| [NumberPredicates](./numberpredicates) | `lib.math.NumberPredicates` | 完全数・回文数などの判定                   | [Java](../../src/lib/math/NumberPredicates.java) |
-| [GeometryUtils](./geometryutils)       | `lib.math.GeometryUtils`    | 交差・包含・距離計算                       | [Java](../../src/lib/math/GeometryUtils.java)    |
-| [number](./number)                     | `lib.math.number`           | `Fraction`、`Int128`、`ModInt`、`ModLong`  | [src](../../src/lib/math/number)                 |
-| [LinearAlgebra](./linearalgebra)       | `lib.math.linearalgebra`    | 行列演算と未実装の線形代数API              | [src](../../src/lib/math/linearalgebra)          |
-| [Polynomial](./polynomial)             | `lib.math.polynomial`       | 多項式と畳み込み                           | [src](../../src/lib/math/polynomial)             |
+| ドキュメント                                     | 対象                        | 用途                                       | ソース                                           |
+|--------------------------------------------------|-----------------------------|--------------------------------------------|--------------------------------------------------|
+| [MathUtils](./mathutils/README.md)               | `lib.math.MathUtils`        | 整数演算・組み合わせ・数論の主要な静的入口 | [Java](../../src/lib/math/MathUtils.java)        |
+| [FactorialTable](./factorialtable/README.md)     | `lib.math.FactorialTable`   | 素数mod上の動的な階乗・逆元テーブル        | [Java](../../src/lib/math/FactorialTable.java)   |
+| [FactorUtils](./factorutils/README.md)           | `lib.math.FactorUtils`      | 素因数分解、素因数個数、約数列挙           | [Java](../../src/lib/math/FactorUtils.java)      |
+| [PrimeUtils](./primeutils/README.md)             | `lib.math.PrimeUtils`       | 一回限りの素数判定・篩                     | [Java](../../src/lib/math/PrimeUtils.java)       |
+| [PrimeTable](./primetable/README.md)             | `lib.math.PrimeTable`       | 再利用可能な素数テーブル                   | [Java](../../src/lib/math/PrimeTable.java)       |
+| [NumberPredicates](./numberpredicates/README.md) | `lib.math.NumberPredicates` | 完全数・回文数などの判定                   | [Java](../../src/lib/math/NumberPredicates.java) |
+| [GeometryUtils](./geometryutils/README.md)       | `lib.math.GeometryUtils`    | 交差・包含・距離計算                       | [Java](../../src/lib/math/GeometryUtils.java)    |
+| [number](./number/README.md)                     | `lib.math.number`           | `Fraction`、`Int128`、`ModInt`、`ModLong`  | —                                                |
+| [LinearAlgebra](./linearalgebra/README.md)       | `lib.math.linearalgebra`    | 行列演算と未実装の線形代数API              | —                                                |
+| [Polynomial](./polynomial/README.md)             | `lib.math.polynomial`       | 多項式と畳み込み                           | —                                                |
 
 ## 個別クラス
 
@@ -34,9 +34,9 @@
 
 ## 内部パッケージ
 
-| パッケージ               | ソース                                  | ドキュメント                                |
-|--------------------------|-----------------------------------------|---------------------------------------------|
-| `lib.math.geometry`      | [src](../../src/lib/math/geometry)      | [GeometryUtils](./geometryutils/README.md)  |
-| `lib.math.linearalgebra` | [src](../../src/lib/math/linearalgebra) | [Linear Algebra](./linearalgebra/README.md) |
-| `lib.math.number`        | [src](../../src/lib/math/number)        | [Number types](./number/README.md)          |
-| `lib.math.polynomial`    | [src](../../src/lib/math/polynomial)    | [Polynomial](./polynomial/README.md)        |
+| パッケージ               | ドキュメント                                |
+|--------------------------|---------------------------------------------|
+| `lib.math.geometry`      | [GeometryUtils](./geometryutils/README.md)  |
+| `lib.math.linearalgebra` | [Linear Algebra](./linearalgebra/README.md) |
+| `lib.math.number`        | [Number types](./number/README.md)          |
+| `lib.math.polynomial`    | [Polynomial](./polynomial/README.md)        |
