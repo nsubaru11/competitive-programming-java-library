@@ -15,13 +15,13 @@
 ### [PersistentSegmentTree](../../../src/lib/ds/segmenttree/PersistentSegmentTree.java)
 
 - **用途**：
-	- 永続的な区間クエリ・更新
+    - 永続的な区間クエリ・更新
 - **特徴**：
-	- （TODO）
+    - （TODO）
 - **時間計算量**：
-	- （TODO）
+    - （TODO）
 - **空間計算量**：
-	- （TODO）
+    - （TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

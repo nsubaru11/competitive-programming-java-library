@@ -15,13 +15,13 @@
 ### [MinCostFlow](../../../src/lib/graph/MinCostFlow.java)
 
 - **用途**：
-	- 最小費用流の計算
+    - 最小費用流の計算
 - **特徴**：
-	- （TODO）
+    - （TODO）
 - **時間計算量**：
-	- （TODO）
+    - （TODO）
 - **空間計算量**：
-	- （TODO）
+    - （TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

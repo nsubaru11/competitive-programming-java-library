@@ -43,37 +43,37 @@
 
 ### `IntArray2D`
 
-| 種別        | シグネチャ                                         | 戻り値                    | 説明                                                                                                 |
-|-------------|----------------------------------------------------|---------------------------|------------------------------------------------------------------------------------------------------|
-| Constructor | `IntArray2D(int h, int w)`                         | —                         | 高さ h、幅 w の0初期化配列を構築する。                                                               |
-| Constructor | `IntArray2D(int h, int w, int v)`                  | —                         | 全要素を v で初期化する。                                                                            |
-| Constructor | `IntArray2D(int h, int w, int[] a)`                | —                         | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
-| Constructor | `IntArray2D(int[][] a)`                            | —                         | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                        |
-| Constructor | `IntArray2D(IntArray2D other)`                     | —                         | 論理寸法・向き・全要素を保持する独立したコピーを構築する。                                           |
-| Method      | `size()`                                           | `int`                     | 現在の要素数を返す。                                                                                 |
-| Method      | `h()`                                              | `int`                     | 現在の論理状態の高さを返す。                                                                         |
-| Method      | `w()`                                              | `int`                     | 現在の論理状態の幅を返す。                                                                           |
-| Method      | `inRange(int i, int j)`                            | `boolean`                 | 0 <= i < h() かつ 0 <= j < w() かを返す。                                                            |
-| Method      | `get(int i, int j)`                                | `int`                     | 指定した論理位置の値を返す。                                                                         |
-| Method      | `getOrDefault(int i, int j, int defaultValue)`     | `int`                     | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。                                     |
-| Method      | `set(int i, int j, int v)`                         | `int`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                    |
-| Method      | `add(int i, int j, int d)`                         | `int`                     | 指定した論理位置に d を加算し、更新後の値を返す。                                                    |
-| Method      | `multiply(int i, int j, int m)`                    | `int`                     | 指定した論理位置を m 倍し、更新後の値を返す。                                                        |
-| Method      | `affine(int i, int j, int m, int d)`               | `int`                     | 指定した論理位置を 現在値 * m + d に更新し、更新後の値を返す。                                       |
-| Method      | `apply(int i, int j, int x, IntBinaryOperator f)`  | `int`                     | 指定した論理位置を f(現在値, x) に更新し、更新後の値を返す。                                         |
-| Method      | `fill(int v)`                                      | `IntArray2D`              | 全要素を v に更新する。論理寸法と向きは維持する。                                                    |
-| Method      | `setAll(IntBinaryOperator init)`                   | `IntArray2D`              | 現在の論理座標に init を行優先順で適用して全要素を更新する。向きは維持する。                         |
-| Method      | `rotateLeft()`                                     | `IntArray2D`              | 反時計回りに90度論理回転する。                                                                       |
-| Method      | `rotateLeft(int distance)`                         | `IntArray2D`              | 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                 |
-| Method      | `rotateRight()`                                    | `IntArray2D`              | 時計回りに90度論理回転する。                                                                         |
-| Method      | `rotateRight(int distance)`                        | `IntArray2D`              | 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                   |
-| Method      | `transpose()`                                      | `IntArray2D`              | 論理状態を転置し、高さと幅を入れ替える。                                                             |
-| Method      | `flipHorizontal()`                                 | `IntArray2D`              | 論理状態を左右反転する。                                                                             |
-| Method      | `flipVertical()`                                   | `IntArray2D`              | 論理状態を上下反転する。                                                                             |
-| Method      | `toArray2D()`                                      | `int[][]`                 | 現在の論理状態を行優先順で独立した2次元配列へコピーする。                                            |
-| Method      | `iterator()`                                       | `PrimitiveIterator.OfInt` | 現在の論理状態の行優先順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
-| Method      | `spliterator()`                                    | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                      |
-| Method      | `toString()`                                       | `String`                  | 論理状態の各行を半角スペース区切り、行間を改行した文字列として返す。要素がなければ空文字列を返す。   |
+| 種別        | シグネチャ                                        | 戻り値                    | 説明                                                                                                 |
+|-------------|---------------------------------------------------|---------------------------|------------------------------------------------------------------------------------------------------|
+| Constructor | `IntArray2D(int h, int w)`                        | —                         | 高さ h、幅 w の0初期化配列を構築する。                                                               |
+| Constructor | `IntArray2D(int h, int w, int v)`                 | —                         | 全要素を v で初期化する。                                                                            |
+| Constructor | `IntArray2D(int h, int w, int[] a)`               | —                         | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
+| Constructor | `IntArray2D(int[][] a)`                           | —                         | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                        |
+| Constructor | `IntArray2D(IntArray2D other)`                    | —                         | 論理寸法・向き・全要素を保持する独立したコピーを構築する。                                           |
+| Method      | `size()`                                          | `int`                     | 現在の要素数を返す。                                                                                 |
+| Method      | `h()`                                             | `int`                     | 現在の論理状態の高さを返す。                                                                         |
+| Method      | `w()`                                             | `int`                     | 現在の論理状態の幅を返す。                                                                           |
+| Method      | `inRange(int i, int j)`                           | `boolean`                 | 0 <= i < h() かつ 0 <= j < w() かを返す。                                                            |
+| Method      | `get(int i, int j)`                               | `int`                     | 指定した論理位置の値を返す。                                                                         |
+| Method      | `getOrDefault(int i, int j, int defaultValue)`    | `int`                     | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。                                     |
+| Method      | `set(int i, int j, int v)`                        | `int`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                    |
+| Method      | `add(int i, int j, int d)`                        | `int`                     | 指定した論理位置に d を加算し、更新後の値を返す。                                                    |
+| Method      | `multiply(int i, int j, int m)`                   | `int`                     | 指定した論理位置を m 倍し、更新後の値を返す。                                                        |
+| Method      | `affine(int i, int j, int m, int d)`              | `int`                     | 指定した論理位置を 現在値 * m + d に更新し、更新後の値を返す。                                       |
+| Method      | `apply(int i, int j, int x, IntBinaryOperator f)` | `int`                     | 指定した論理位置を f(現在値, x) に更新し、更新後の値を返す。                                         |
+| Method      | `fill(int v)`                                     | `IntArray2D`              | 全要素を v に更新する。論理寸法と向きは維持する。                                                    |
+| Method      | `setAll(IntBinaryOperator init)`                  | `IntArray2D`              | 現在の論理座標に init を行優先順で適用して全要素を更新する。向きは維持する。                         |
+| Method      | `rotateLeft()`                                    | `IntArray2D`              | 反時計回りに90度論理回転する。                                                                       |
+| Method      | `rotateLeft(int distance)`                        | `IntArray2D`              | 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                 |
+| Method      | `rotateRight()`                                   | `IntArray2D`              | 時計回りに90度論理回転する。                                                                         |
+| Method      | `rotateRight(int distance)`                       | `IntArray2D`              | 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                   |
+| Method      | `transpose()`                                     | `IntArray2D`              | 論理状態を転置し、高さと幅を入れ替える。                                                             |
+| Method      | `flipHorizontal()`                                | `IntArray2D`              | 論理状態を左右反転する。                                                                             |
+| Method      | `flipVertical()`                                  | `IntArray2D`              | 論理状態を上下反転する。                                                                             |
+| Method      | `toArray2D()`                                     | `int[][]`                 | 現在の論理状態を行優先順で独立した2次元配列へコピーする。                                            |
+| Method      | `iterator()`                                      | `PrimitiveIterator.OfInt` | 現在の論理状態の行優先順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
+| Method      | `spliterator()`                                   | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                      |
+| Method      | `toString()`                                      | `String`                  | 論理状態の各行を半角スペース区切り、行間を改行した文字列として返す。要素がなければ空文字列を返す。   |
 
 継承するメソッド：
 
@@ -82,37 +82,37 @@
 
 ### `LongArray2D`
 
-| 種別        | シグネチャ                                                | 戻り値                     | 説明                                                                                                 |
-|-------------|-----------------------------------------------------------|----------------------------|------------------------------------------------------------------------------------------------------|
-| Constructor | `LongArray2D(int h, int w)`                               | —                          | 高さ h、幅 w の0初期化配列を構築する。                                                               |
-| Constructor | `LongArray2D(int h, int w, long v)`                       | —                          | 全要素を v で初期化する。                                                                            |
-| Constructor | `LongArray2D(int h, int w, long[] a)`                     | —                          | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
-| Constructor | `LongArray2D(long[][] a)`                                 | —                          | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                        |
-| Constructor | `LongArray2D(LongArray2D other)`                          | —                          | 論理寸法・向き・全要素を保持する独立したコピーを構築する。                                           |
-| Method      | `size()`                                                  | `int`                      | 現在の要素数を返す。                                                                                 |
-| Method      | `h()`                                                     | `int`                      | 現在の論理状態の高さを返す。                                                                         |
-| Method      | `w()`                                                     | `int`                      | 現在の論理状態の幅を返す。                                                                           |
-| Method      | `inRange(int i, int j)`                                   | `boolean`                  | 0 <= i < h() かつ 0 <= j < w() かを返す。                                                            |
-| Method      | `get(int i, int j)`                                       | `long`                     | 指定した論理位置の値を返す。                                                                         |
-| Method      | `getOrDefault(int i, int j, long defaultValue)`           | `long`                     | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。                                     |
-| Method      | `set(int i, int j, long v)`                               | `long`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                    |
-| Method      | `add(int i, int j, long d)`                               | `long`                     | 指定した論理位置に d を加算し、更新後の値を返す。                                                    |
-| Method      | `multiply(int i, int j, long m)`                          | `long`                     | 指定した論理位置を m 倍し、更新後の値を返す。                                                        |
-| Method      | `affine(int i, int j, long m, long d)`                    | `long`                     | 指定した論理位置を 現在値 * m + d に更新し、更新後の値を返す。                                       |
-| Method      | `apply(int i, int j, long x, LongBinaryOperator f)`       | `long`                     | 指定した論理位置を f(現在値, x) に更新し、更新後の値を返す。                                         |
-| Method      | `fill(long v)`                                            | `LongArray2D`              | 全要素を v に更新する。論理寸法と向きは維持する。                                                    |
-| Method      | `setAll(IntBinaryToLongFunction init)`                    | `LongArray2D`              | 現在の論理座標に init を行優先順で適用して全要素を更新する。向きは維持する。                         |
-| Method      | `rotateLeft()`                                            | `LongArray2D`              | 反時計回りに90度論理回転する。                                                                       |
-| Method      | `rotateLeft(int distance)`                                | `LongArray2D`              | 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                 |
-| Method      | `rotateRight()`                                           | `LongArray2D`              | 時計回りに90度論理回転する。                                                                         |
-| Method      | `rotateRight(int distance)`                               | `LongArray2D`              | 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                   |
-| Method      | `transpose()`                                             | `LongArray2D`              | 論理状態を転置し、高さと幅を入れ替える。                                                             |
-| Method      | `flipHorizontal()`                                        | `LongArray2D`              | 論理状態を左右反転する。                                                                             |
-| Method      | `flipVertical()`                                          | `LongArray2D`              | 論理状態を上下反転する。                                                                             |
-| Method      | `toArray2D()`                                             | `long[][]`                 | 現在の論理状態を行優先順で独立した2次元配列へコピーする。                                            |
-| Method      | `iterator()`                                              | `PrimitiveIterator.OfLong` | 現在の論理状態の行優先順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
-| Method      | `spliterator()`                                           | `Spliterator.OfLong`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                      |
-| Method      | `toString()`                                              | `String`                   | 論理状態の各行を半角スペース区切り、行間を改行した文字列として返す。要素がなければ空文字列を返す。   |
+| 種別        | シグネチャ                                          | 戻り値                     | 説明                                                                                                 |
+|-------------|-----------------------------------------------------|----------------------------|------------------------------------------------------------------------------------------------------|
+| Constructor | `LongArray2D(int h, int w)`                         | —                          | 高さ h、幅 w の0初期化配列を構築する。                                                               |
+| Constructor | `LongArray2D(int h, int w, long v)`                 | —                          | 全要素を v で初期化する。                                                                            |
+| Constructor | `LongArray2D(int h, int w, long[] a)`               | —                          | 配列の先頭 h * w 要素を行優先順でコピーする。配列長は要素数以上とする。                              |
+| Constructor | `LongArray2D(long[][] a)`                           | —                          | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                        |
+| Constructor | `LongArray2D(LongArray2D other)`                    | —                          | 論理寸法・向き・全要素を保持する独立したコピーを構築する。                                           |
+| Method      | `size()`                                            | `int`                      | 現在の要素数を返す。                                                                                 |
+| Method      | `h()`                                               | `int`                      | 現在の論理状態の高さを返す。                                                                         |
+| Method      | `w()`                                               | `int`                      | 現在の論理状態の幅を返す。                                                                           |
+| Method      | `inRange(int i, int j)`                             | `boolean`                  | 0 <= i < h() かつ 0 <= j < w() かを返す。                                                            |
+| Method      | `get(int i, int j)`                                 | `long`                     | 指定した論理位置の値を返す。                                                                         |
+| Method      | `getOrDefault(int i, int j, long defaultValue)`     | `long`                     | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。                                     |
+| Method      | `set(int i, int j, long v)`                         | `long`                     | 指定した論理位置を v に更新し、更新前の値を返す。                                                    |
+| Method      | `add(int i, int j, long d)`                         | `long`                     | 指定した論理位置に d を加算し、更新後の値を返す。                                                    |
+| Method      | `multiply(int i, int j, long m)`                    | `long`                     | 指定した論理位置を m 倍し、更新後の値を返す。                                                        |
+| Method      | `affine(int i, int j, long m, long d)`              | `long`                     | 指定した論理位置を 現在値 * m + d に更新し、更新後の値を返す。                                       |
+| Method      | `apply(int i, int j, long x, LongBinaryOperator f)` | `long`                     | 指定した論理位置を f(現在値, x) に更新し、更新後の値を返す。                                         |
+| Method      | `fill(long v)`                                      | `LongArray2D`              | 全要素を v に更新する。論理寸法と向きは維持する。                                                    |
+| Method      | `setAll(IntBinaryToLongFunction init)`              | `LongArray2D`              | 現在の論理座標に init を行優先順で適用して全要素を更新する。向きは維持する。                         |
+| Method      | `rotateLeft()`                                      | `LongArray2D`              | 反時計回りに90度論理回転する。                                                                       |
+| Method      | `rotateLeft(int distance)`                          | `LongArray2D`              | 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                 |
+| Method      | `rotateRight()`                                     | `LongArray2D`              | 時計回りに90度論理回転する。                                                                         |
+| Method      | `rotateRight(int distance)`                         | `LongArray2D`              | 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                   |
+| Method      | `transpose()`                                       | `LongArray2D`              | 論理状態を転置し、高さと幅を入れ替える。                                                             |
+| Method      | `flipHorizontal()`                                  | `LongArray2D`              | 論理状態を左右反転する。                                                                             |
+| Method      | `flipVertical()`                                    | `LongArray2D`              | 論理状態を上下反転する。                                                                             |
+| Method      | `toArray2D()`                                       | `long[][]`                 | 現在の論理状態を行優先順で独立した2次元配列へコピーする。                                            |
+| Method      | `iterator()`                                        | `PrimitiveIterator.OfLong` | 現在の論理状態の行優先順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。 |
+| Method      | `spliterator()`                                     | `Spliterator.OfLong`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                      |
+| Method      | `toString()`                                        | `String`                   | 論理状態の各行を半角スペース区切り、行間を改行した文字列として返す。要素がなければ空文字列を返す。   |
 
 継承するメソッド：
 
@@ -121,35 +121,35 @@
 
 ### `CharArray2D`
 
-| 種別        | シグネチャ                                          | 戻り値                    | 説明                                                                                                       |
-|-------------|-----------------------------------------------------|---------------------------|------------------------------------------------------------------------------------------------------------|
-| Constructor | `CharArray2D(int h, int w)`                         | —                         | 高さ h、幅 w の0初期化配列を構築する。                                                                     |
-| Constructor | `CharArray2D(int h, int w, char v)`                 | —                         | 高さ h、幅 w の全要素を v で初期化する。                                                                   |
-| Constructor | `CharArray2D(int h, int w, char[] a)`               | —                         | 配列の先頭 h * w 文字を行優先順でコピーする。配列長は要素数以上とする。                                    |
-| Constructor | `CharArray2D(char[][] a)`                           | —                         | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                              |
-| Constructor | `CharArray2D(String[] s)`                           | —                         | 各文字列を1行として行優先順でコピーする。幅は先頭行の長さとし、各文字列の長さはそれ以上とする。            |
-| Constructor | `CharArray2D(CharArray2D other)`                    | —                         | 論理寸法・向き・全要素を保持する独立したコピーを構築する。                                                 |
-| Method      | `size()`                                            | `int`                     | 現在の要素数を返す。                                                                                       |
-| Method      | `h()`                                               | `int`                     | 現在の論理状態の高さを返す。                                                                               |
-| Method      | `w()`                                               | `int`                     | 現在の論理状態の幅を返す。                                                                                 |
-| Method      | `inRange(int i, int j)`                             | `boolean`                 | 0 <= i < h() かつ 0 <= j < w() かを返す。                                                                  |
-| Method      | `get(int i, int j)`                                 | `char`                    | 指定した論理位置の値を返す。                                                                               |
-| Method      | `getOrDefault(int i, int j, char defaultValue)`     | `char`                    | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。                                           |
-| Method      | `set(int i, int j, char v)`                         | `char`                    | 指定した論理位置を v に更新し、更新前の値を返す。                                                          |
-| Method      | `apply(int i, int j, char x, IntBinaryOperator f)`  | `char`                    | 指定した論理位置を (char) f(現在値, x) に更新し、更新後の値を返す。                                        |
-| Method      | `fill(char v)`                                      | `CharArray2D`             | 全要素を v に更新する。論理寸法と向きは維持する。                                                          |
-| Method      | `setAll(IntBinaryOperator init)`                    | `CharArray2D`             | 現在の論理座標に init を行優先順で適用して全要素を更新する。関数の結果は char に変換する。向きは維持する。 |
-| Method      | `rotateLeft()`                                      | `CharArray2D`             | 反時計回りに90度論理回転する。                                                                             |
-| Method      | `rotateLeft(int distance)`                          | `CharArray2D`             | 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                       |
-| Method      | `rotateRight()`                                     | `CharArray2D`             | 時計回りに90度論理回転する。                                                                               |
-| Method      | `rotateRight(int distance)`                         | `CharArray2D`             | 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                         |
-| Method      | `transpose()`                                       | `CharArray2D`             | 論理状態を転置し、高さと幅を入れ替える。                                                                   |
-| Method      | `flipHorizontal()`                                  | `CharArray2D`             | 論理状態を左右反転する。                                                                                   |
-| Method      | `flipVertical()`                                    | `CharArray2D`             | 論理状態を上下反転する。                                                                                   |
-| Method      | `toArray2D()`                                       | `char[][]`                | 現在の論理状態を行優先順で独立した2次元配列へコピーする。                                                  |
-| Method      | `iterator()`                                        | `PrimitiveIterator.OfInt` | 現在の論理状態の行優先順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。       |
-| Method      | `spliterator()`                                     | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                            |
-| Method      | `toString()`                                        | `String`                  | 各行の文字を区切りなしで連結し、行間を改行した文字列を返す。                                               |
+| 種別        | シグネチャ                                         | 戻り値                    | 説明                                                                                                       |
+|-------------|----------------------------------------------------|---------------------------|------------------------------------------------------------------------------------------------------------|
+| Constructor | `CharArray2D(int h, int w)`                        | —                         | 高さ h、幅 w の0初期化配列を構築する。                                                                     |
+| Constructor | `CharArray2D(int h, int w, char v)`                | —                         | 高さ h、幅 w の全要素を v で初期化する。                                                                   |
+| Constructor | `CharArray2D(int h, int w, char[] a)`              | —                         | 配列の先頭 h * w 文字を行優先順でコピーする。配列長は要素数以上とする。                                    |
+| Constructor | `CharArray2D(char[][] a)`                          | —                         | 少なくとも1行を持つ長方形配列を行優先順でコピーする。各行の長さは等しいこと。                              |
+| Constructor | `CharArray2D(String[] s)`                          | —                         | 各文字列を1行として行優先順でコピーする。幅は先頭行の長さとし、各文字列の長さはそれ以上とする。            |
+| Constructor | `CharArray2D(CharArray2D other)`                   | —                         | 論理寸法・向き・全要素を保持する独立したコピーを構築する。                                                 |
+| Method      | `size()`                                           | `int`                     | 現在の要素数を返す。                                                                                       |
+| Method      | `h()`                                              | `int`                     | 現在の論理状態の高さを返す。                                                                               |
+| Method      | `w()`                                              | `int`                     | 現在の論理状態の幅を返す。                                                                                 |
+| Method      | `inRange(int i, int j)`                            | `boolean`                 | 0 <= i < h() かつ 0 <= j < w() かを返す。                                                                  |
+| Method      | `get(int i, int j)`                                | `char`                    | 指定した論理位置の値を返す。                                                                               |
+| Method      | `getOrDefault(int i, int j, char defaultValue)`    | `char`                    | 指定した論理位置の値を返す。範囲外の場合は defaultValue を返す。                                           |
+| Method      | `set(int i, int j, char v)`                        | `char`                    | 指定した論理位置を v に更新し、更新前の値を返す。                                                          |
+| Method      | `apply(int i, int j, char x, IntBinaryOperator f)` | `char`                    | 指定した論理位置を (char) f(現在値, x) に更新し、更新後の値を返す。                                        |
+| Method      | `fill(char v)`                                     | `CharArray2D`             | 全要素を v に更新する。論理寸法と向きは維持する。                                                          |
+| Method      | `setAll(IntBinaryOperator init)`                   | `CharArray2D`             | 現在の論理座標に init を行優先順で適用して全要素を更新する。関数の結果は char に変換する。向きは維持する。 |
+| Method      | `rotateLeft()`                                     | `CharArray2D`             | 反時計回りに90度論理回転する。                                                                             |
+| Method      | `rotateLeft(int distance)`                         | `CharArray2D`             | 反時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                       |
+| Method      | `rotateRight()`                                    | `CharArray2D`             | 時計回りに90度論理回転する。                                                                               |
+| Method      | `rotateRight(int distance)`                        | `CharArray2D`             | 時計回りに90度単位で distance 回論理回転する。負数は逆方向を表す。                                         |
+| Method      | `transpose()`                                      | `CharArray2D`             | 論理状態を転置し、高さと幅を入れ替える。                                                                   |
+| Method      | `flipHorizontal()`                                 | `CharArray2D`             | 論理状態を左右反転する。                                                                                   |
+| Method      | `flipVertical()`                                   | `CharArray2D`             | 論理状態を上下反転する。                                                                                   |
+| Method      | `toArray2D()`                                      | `char[][]`                | 現在の論理状態を行優先順で独立した2次元配列へコピーする。                                                  |
+| Method      | `iterator()`                                       | `PrimitiveIterator.OfInt` | 現在の論理状態の行優先順に走査する iterator を返す。終端後の取得は NoSuchElementException を投げる。       |
+| Method      | `spliterator()`                                    | `Spliterator.OfInt`       | 行優先順の ORDERED・SIZED・SUBSIZED を持つ spliterator を返す。                                            |
+| Method      | `toString()`                                       | `String`                  | 各行の文字を区切りなしで連結し、行間を改行した文字列を返す。                                               |
 
 継承するメソッド：
 

@@ -25,41 +25,41 @@
 
 - **用途**: 標準入力からの高速な読み込みを提供するクラス。
 - **特徴**:
-	- 既定コンストラクタ `new FastScanner()` で `FileDescriptor.in` を通じて標準入力へ接続。
-	- 配列、行列、3 次元配列、各種コレクション、マルチセットなどをまとめて読み込み可能。
-	- `hasNext()` / `peek()` により EOF と次トークンを安全に確認可能。
-	- `nextInt0()` / `nextLong0()` とその配列版により、1-indexed 入力を 0-indexed に即変換可能。
-	- `nextLine()` は `LF` / `CRLF` の両方を処理。
+    - 既定コンストラクタ `new FastScanner()` で `FileDescriptor.in` を通じて標準入力へ接続。
+    - 配列、行列、3 次元配列、各種コレクション、マルチセットなどをまとめて読み込み可能。
+    - `hasNext()` / `peek()` により EOF と次トークンを安全に確認可能。
+    - `nextInt0()` / `nextLong0()` とその配列版により、1-indexed 入力を 0-indexed に即変換可能。
+    - `nextLine()` は `LF` / `CRLF` の両方を処理。
 - **主な操作**:
-	- `nextInt()`, `nextLong()`, `nextDouble()`, `nextChar()`, `next()`
-	- `nextInt0()`, `nextLong0()`, `nextInt0(n)`, `nextLong0(n)`
-	- `nextInt(n)`, `nextLong(n)`, `nextDouble(n)`
-	- `nextIntMat(h, w)`, `nextLongMat(h, w)`, `nextCharMat(h, w)`
-	- `nextCollection(n, element, collection)`
+    - `nextInt()`, `nextLong()`, `nextDouble()`, `nextChar()`, `next()`
+    - `nextInt0()`, `nextLong0()`, `nextInt0(n)`, `nextLong0(n)`
+    - `nextInt(n)`, `nextLong(n)`, `nextDouble(n)`
+    - `nextIntMat(h, w)`, `nextLongMat(h, w)`, `nextCharMat(h, w)`
+    - `nextCollection(n, element, collection)`
 - **時間計算量**：
-	- 単一の読み込み操作: 平均 $\mathcal{O}(1)$
-	- 配列・行列・コレクション読み込み: $\mathcal{O}(n)$
+    - 単一の読み込み操作: 平均 $\mathcal{O}(1)$
+    - 配列・行列・コレクション読み込み: $\mathcal{O}(n)$
 - **空間計算量**：$\mathcal{O}(B + n)$
 
 ### [FastPrinter](../../../src/lib/io/compat17/FastPrinter.java)
 
 - **用途**: 標準出力への高速な書き込みを提供するクラス。
 - **特徴**:
-	- 既定コンストラクタ `new FastPrinter()` で `FileDescriptor.out` を通じて標準出力へ接続。
-	- **メソッドチェーン** に対応し、`fp.print(a).println(b)` のように記述可能。
-	- `boolean` は `true/false` ではなく `Yes/No` として出力。
-	- 配列、行列、`Iterable`、変換関数付き出力、反転出力、繰り返し出力をサポート。
-	- 既定バッファは 1 MiB。容量不足時は一度フラッシュし、1 回の書き込みが現バッファより大きい場合のみ拡張。
-	- Java 17 版では `sun.misc.Unsafe` を用いた低レベル最適化を採用。
+    - 既定コンストラクタ `new FastPrinter()` で `FileDescriptor.out` を通じて標準出力へ接続。
+    - **メソッドチェーン** に対応し、`fp.print(a).println(b)` のように記述可能。
+    - `boolean` は `true/false` ではなく `Yes/No` として出力。
+    - 配列、行列、`Iterable`、変換関数付き出力、反転出力、繰り返し出力をサポート。
+    - 既定バッファは 1 MiB。容量不足時は一度フラッシュし、1 回の書き込みが現バッファより大きい場合のみ拡張。
+    - Java 17 版では `sun.misc.Unsafe` を用いた低レベル最適化を採用。
 - **主な操作**:
-	- `print()/println()`: 各種データ型、配列、行列、イテラブルの出力。
-	- `print(arr, delimiter)`: 区切り文字付き出力。
-	- `print(iter, function)`: 変換関数を適用した出力。
-	- `printRepeat(...)`, `printlnRepeat(...)`, `printReverse(...)`, `printlnReverse(...)`
-	- `printf()`, `flush()`
+    - `print()/println()`: 各種データ型、配列、行列、イテラブルの出力。
+    - `print(arr, delimiter)`: 区切り文字付き出力。
+    - `print(iter, function)`: 変換関数を適用した出力。
+    - `printRepeat(...)`, `printlnRepeat(...)`, `printReverse(...)`, `printlnReverse(...)`
+    - `printf()`, `flush()`
 - **時間計算量**：
-	- 単一の出力操作: 平均 $\mathcal{O}(1)$
-	- 配列・行列・イテラブル出力: $\mathcal{O}(n)$
+    - 単一の出力操作: 平均 $\mathcal{O}(1)$
+    - 配列・行列・イテラブル出力: $\mathcal{O}(n)$
 - **空間計算量**：$\mathcal{O}(B + n)$
 
 ### [InteractiveScanner](../../../src/lib/io/compat17/InteractiveScanner.java)

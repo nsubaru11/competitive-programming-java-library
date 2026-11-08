@@ -85,10 +85,10 @@
 ## 性能特性
 
 - **時間計算量**:
-	- `add`, `remove`, `contains` および近傍探索メソッド:
-		- 平均ケース: $\mathcal{O}(\log N)$
-		- 最悪ケース: $\mathcal{O}(N)$
-	- `size`, `isEmpty`: $\mathcal{O}(1)$
+    - `add`, `remove`, `contains` および近傍探索メソッド:
+        - 平均ケース: $\mathcal{O}(\log N)$
+        - 最悪ケース: $\mathcal{O}(N)$
+    - `size`, `isEmpty`: $\mathcal{O}(1)$
 - **空間計算量**: $\mathcal{O}(N)$ (Nは要素数)
 
 ## 実装履歴

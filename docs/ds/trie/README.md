@@ -25,28 +25,28 @@
 ### [Trie](../../../src/lib/ds/trie/Trie.java)
 
 - **用途**：
-	- 文字列集合に対する前方一致（プレフィックス）検索、完全一致検索、挿入
+    - 文字列集合に対する前方一致（プレフィックス）検索、完全一致検索、挿入
 - **特徴**：
-	- `HashMap<Character, TrieNode>` による素直な子ノード管理
-	- ノードに `frequency`（そのノード以下の通過回数）を保持 → プレフィックス件数取得に利用
-	- `insert` は自身を返すためメソッドチェーン可能
+    - `HashMap<Character, TrieNode>` による素直な子ノード管理
+    - ノードに `frequency`（そのノード以下の通過回数）を保持 → プレフィックス件数取得に利用
+    - `insert` は自身を返すためメソッドチェーン可能
 - **時間計算量**：
-	- `insert`, `search`, `countPrefix` いずれも平均 $\mathcal{O}(L)$（L は文字列長）
+    - `insert`, `search`, `countPrefix` いずれも平均 $\mathcal{O}(L)$（L は文字列長）
 - **空間計算量**：
-	- $\mathcal{O}(N)$（N は挿入した全単語長の総和に比例）
+    - $\mathcal{O}(N)$（N は挿入した全単語長の総和に比例）
 
 ### [SuffixTrie](../../../src/lib/ds/trie/SuffixTrie.java)
 
 - **用途**：
-	- 語尾一致（サフィックス）条件での件数取得や完全一致検索（逆向き格納）
+    - 語尾一致（サフィックス）条件での件数取得や完全一致検索（逆向き格納）
 - **特徴**：
-	- 文字列を末尾→先頭の順に格納し、`countPrefix(suffix)` で「suffix に一致する語の件数」を返す
-	- 内部は `HashMap<Character, TrieNode>` を用いた素直な実装
-	- `insert` は自身を返し、チェーン可能
+    - 文字列を末尾→先頭の順に格納し、`countPrefix(suffix)` で「suffix に一致する語の件数」を返す
+    - 内部は `HashMap<Character, TrieNode>` を用いた素直な実装
+    - `insert` は自身を返し、チェーン可能
 - **時間計算量**：
-	- `insert`, `search`, `countPrefix` いずれも平均 $\mathcal{O}(L)$（L は文字列長）
+    - `insert`, `search`, `countPrefix` いずれも平均 $\mathcal{O}(L)$（L は文字列長）
 - **空間計算量**：
-	- $\mathcal{O}(N)$（N は挿入した全単語長の総和に比例）
+    - $\mathcal{O}(N)$（N は挿入した全単語長の総和に比例）
 
 ### その他の実装クラス
 

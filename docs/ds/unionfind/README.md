@@ -18,26 +18,26 @@ Union-Find（または素集合データ構造）は、素集合を効率的に�
 
 - **用途**：素集合を効率的に管理し、要素のグループ化と検索を行うためのデータ構造
 - **特徴**：
-	- パス圧縮による`find`操作の最適化
-	- ランク付けによる`union`操作の最適化
-	- 各グループのサイズ（要素数）の追跡
-	- 各グループの辺数（パス数）の追跡
-	- 全グループの列挙機能
+    - パス圧縮による`find`操作の最適化
+    - ランク付けによる`union`操作の最適化
+    - 各グループのサイズ（要素数）の追跡
+    - 各グループの辺数（パス数）の追跡
+    - 全グループの列挙機能
 - **主な操作**:
-	- `find(int i)`: 要素iの代表元（ルート）を取得
-	- `isConnected(int x, int y)`: 要素xとyが同じグループに属するかを判定
-	- `union(int x, int y)`: 要素xとyが属するグループを結合
-	- `groupCount()`: 現在のグループ数を取得
-	- `size(int i)`: 要素iが属するグループのサイズを取得
-	- `pathCount(int i)`: 要素iが属するグループの辺数を取得
-	- `groups()`: 全てのグループを取得
+    - `find(int i)`: 要素iの代表元（ルート）を取得
+    - `isConnected(int x, int y)`: 要素xとyが同じグループに属するかを判定
+    - `union(int x, int y)`: 要素xとyが属するグループを結合
+    - `groupCount()`: 現在のグループ数を取得
+    - `size(int i)`: 要素iが属するグループのサイズを取得
+    - `pathCount(int i)`: 要素iが属するグループの辺数を取得
+    - `groups()`: 全てのグループを取得
 - **時間計算量**：
-	- 初期化: $\mathcal{O}(n)$
-	- find操作: 償却$\mathcal{O}(\alpha(n))$、ここでα (n)はアッカーマン関数の逆関数（実用上はほぼ$\mathcal{O}(1)$）
-	- union操作: 償却$\mathcal{O}(\alpha(n))$
-	- isConnected操作: 償却$\mathcal{O}(\alpha(n))$
-	- groupCount/size/pathCount操作: $\mathcal{O}(\alpha(n))$
-	- groups操作: $\mathcal{O}(n)$
+    - 初期化: $\mathcal{O}(n)$
+    - find操作: 償却$\mathcal{O}(\alpha(n))$、ここでα (n)はアッカーマン関数の逆関数（実用上はほぼ$\mathcal{O}(1)$）
+    - union操作: 償却$\mathcal{O}(\alpha(n))$
+    - isConnected操作: 償却$\mathcal{O}(\alpha(n))$
+    - groupCount/size/pathCount操作: $\mathcal{O}(\alpha(n))$
+    - groups操作: $\mathcal{O}(n)$
 - **空間計算量**：$\mathcal{O}(n)$、ここでnは要素数
 
 ## アルゴリズム（データ構造）選択ガイド

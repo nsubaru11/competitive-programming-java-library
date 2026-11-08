@@ -16,14 +16,14 @@
 ### [Connectivity](../../../src/lib/graph/Connectivity.java)
 
 - **用途**：
-	- 橋・関節点の検出
+    - 橋・関節点の検出
 - **特徴**：
-	- 再帰を使わない反復DFS
-	- `UndirectedGraph`の論理辺IDで橋を参照
+    - 再帰を使わない反復DFS
+    - `UndirectedGraph`の論理辺IDで橋を参照
 - **時間計算量**：
-	- `lowLink`: $\mathcal{O}(V + E)$
+    - `lowLink`: $\mathcal{O}(V + E)$
 - **空間計算量**：
-	- `lowLink`: $\mathcal{O}(V + E)$
+    - `lowLink`: $\mathcal{O}(V + E)$
 - **詳細**: [ConnectivityGuide.md](./ConnectivityGuide.md)
 
 ## アルゴリズム（データ構造）選択ガイド

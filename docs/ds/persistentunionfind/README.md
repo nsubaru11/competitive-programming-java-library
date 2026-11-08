@@ -15,13 +15,13 @@
 ### [PersistentUnionFind](../../../src/lib/ds/unionfind/PersistentUnionFind.java)
 
 - **用途**：
-	- 永続的な連結判定・グループ管理
+    - 永続的な連結判定・グループ管理
 - **特徴**：
-	- （TODO）
+    - （TODO）
 - **時間計算量**：
-	- （TODO）
+    - （TODO）
 - **空間計算量**：
-	- （TODO）
+    - （TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

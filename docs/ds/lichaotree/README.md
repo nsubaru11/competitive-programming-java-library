@@ -15,13 +15,13 @@
 ### [LiChaoTree](../../../src/lib/ds/LiChaoTree.java)
 
 - **用途**：
-	- 直線群に対するConvex Hull Trick
+    - 直線群に対するConvex Hull Trick
 - **特徴**：
-	- （TODO）
+    - （TODO）
 - **時間計算量**：
-	- （TODO）
+    - （TODO）
 - **空間計算量**：
-	- （TODO）
+    - （TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

@@ -125,14 +125,14 @@
 ## パフォーマンス特性
 
 - **時間計算量**:
-	- 追加 (`add`): $\mathcal{O}(\log n)$ ※差分更新最適化により30-40%高速化
-	- 削除 (`remove`, `removeAt`): $\mathcal{O}(\log n)$ ※差分更新最適化あり
-	- 検索 (`contains`, `count`): $\mathcal{O}(\log n)$
-	- インデックスアクセス (`getByIndex`): $\mathcal{O}(\log n)$
-	- 順位検索 (`rank`, `indexOf`): $\mathcal{O}(\log n)$
-	- 境界検索 (`higher`, `lowerBound` 等): $\mathcal{O}(\log n)$
-	- 区間和 (`prefixSum`, `sumRange`): $\mathcal{O}(\log n)$
-	- first(), last(), sum(): $\mathcal{O}(1)$
+    - 追加 (`add`): $\mathcal{O}(\log n)$ ※差分更新最適化により30-40%高速化
+    - 削除 (`remove`, `removeAt`): $\mathcal{O}(\log n)$ ※差分更新最適化あり
+    - 検索 (`contains`, `count`): $\mathcal{O}(\log n)$
+    - インデックスアクセス (`getByIndex`): $\mathcal{O}(\log n)$
+    - 順位検索 (`rank`, `indexOf`): $\mathcal{O}(\log n)$
+    - 境界検索 (`higher`, `lowerBound` 等): $\mathcal{O}(\log n)$
+    - 区間和 (`prefixSum`, `sumRange`): $\mathcal{O}(\log n)$
+    - first(), last(), sum(): $\mathcal{O}(1)$
 - **空間計算量**: $\mathcal{O}(n)$ (nはユニーク要素数)
 
 ## バージョン情報

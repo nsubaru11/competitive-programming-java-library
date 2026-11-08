@@ -64,13 +64,13 @@ cost-only版は各連結成分の開始頂点をコスト0でキューへ追加�
 ## 性能特性
 
 - Result版
-	- 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
-	- 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
-	- 優先度キュー、親辺、採用辺IDを保持
+    - 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
+    - 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
+    - 優先度キュー、親辺、採用辺IDを保持
 - cost-only版
-	- 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
-	- 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
-	- 親辺配列、採用辺ID配列、Result生成を省略
+    - 時間計算量: $\mathcal{O}((\lvert V\rvert + \lvert E\rvert) \log \lvert V\rvert)$
+    - 追加メモリ: $\mathcal{O}(\lvert V\rvert)$
+    - 親辺配列、採用辺ID配列、Result生成を省略
 - `LongIndexedPriorityQueue`のコスト履歴を訪問済み判定にも再利用し、別の`boolean[]`を確保しない。
 
 ## 実装履歴

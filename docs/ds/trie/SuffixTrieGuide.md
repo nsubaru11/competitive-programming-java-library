@@ -45,16 +45,16 @@
 
 - 全メソッドの引数に `null` は渡さないこと（未チェック、未定義動作）。
 - 空文字列は未対応である：
-	- `insert("")` は内部実装上 `NullPointerException` を引き起こす。
-	- `search("")` は常に `false`、`countPrefix("")` は `0` を返す。
+    - `insert("")` は内部実装上 `NullPointerException` を引き起こす。
+    - `search("")` は常に `false`、`countPrefix("")` は `0` を返す。
 - 文字単位は Java の `char`（UTF-16 コードユニット）。サロゲートペア等の取り扱いに注意。
 - 大文字小文字の区別や正規化は行わない。必要なら呼び出し側で前処理すること。
 
 ## 性能特性
 
 - 時間計算量（平均）：
-	- `insert`, `search`, `countPrefix` いずれも $\mathcal{O}(L)$（L は文字列長）。
-	- 子探索は `HashMap` による平均 $\mathcal{O}(1)$ を仮定。
+    - `insert`, `search`, `countPrefix` いずれも $\mathcal{O}(L)$（L は文字列長）。
+    - 子探索は `HashMap` による平均 $\mathcal{O}(1)$ を仮定。
 - 空間計算量：$\mathcal{O}(N)$（N は全ノード数、挿入した全単語長の総和に比例）。
 
 ## 実装履歴

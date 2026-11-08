@@ -15,14 +15,14 @@
 ### [CentroidDecomposition](../../../src/lib/graph/tree/CentroidDecomposition.java)
 
 - **用途**：
-	- 重心分解木の構築
+    - 重心分解木の構築
 - **パッケージ**：`lib.graph.tree`
 - **特徴**：
-	- （TODO）
+    - （TODO）
 - **時間計算量**：
-	- （TODO）
+    - （TODO）
 - **空間計算量**：
-	- （TODO）
+    - （TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

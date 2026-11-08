@@ -55,9 +55,9 @@
 `public static int normalSearch(int l, int r, CompareFunction comparator)`
 
 - **引数**：
-	- `l` - 探索範囲の下限値（この値を含む）
-	- `r` - 探索範囲の上限値（この値を含まない）
-	- `comparator` - 比較ロジックを提供する関数インターフェース
+    - `l` - 探索範囲の下限値（この値を含む）
+    - `r` - 探索範囲の上限値（この値を含まない）
+    - `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件にちょうど一致する整数。見つからない場合は- (挿入位置 + 1)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
@@ -66,9 +66,9 @@
 `public static long normalSearch(long l, long r, CompareFunction comparator)`
 
 - **引数**：
-	- `l` - 探索範囲の下限値（この値を含む）
-	- `r` - 探索範囲の上限値（この値を含まない）
-	- `comparator` - 比較ロジックを提供する関数インターフェース
+    - `l` - 探索範囲の下限値（この値を含む）
+    - `r` - 探索範囲の上限値（この値を含まない）
+    - `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件にちょうど一致する長整数。見つからない場合は- (挿入位置 + 1)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
@@ -79,9 +79,9 @@
 `public static int upperBoundSearch(int l, int r, CompareFunction comparator)`
 
 - **引数**：
-	- `l` - 探索範囲の下限値（この値を含む）
-	- `r` - 探索範囲の上限値（この値を含まない）
-	- `comparator` - 比較ロジックを提供する関数インターフェース
+    - `l` - 探索範囲の下限値（この値を含む）
+    - `r` - 探索範囲の上限値（この値を含まない）
+    - `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最大の整数。見つからない場合は- (挿入位置 + 1)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
@@ -90,9 +90,9 @@
 `public static long upperBoundSearch(long l, long r, CompareFunction comparator)`
 
 - **引数**：
-	- `l` - 探索範囲の下限値（この値を含む）
-	- `r` - 探索範囲の上限値（この値を含まない）
-	- `comparator` - 比較ロジックを提供する関数インターフェース
+    - `l` - 探索範囲の下限値（この値を含む）
+    - `r` - 探索範囲の上限値（この値を含まない）
+    - `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最大の長整数。見つからない場合は- (挿入位置 + 1)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
@@ -103,9 +103,9 @@
 `public static int lowerBoundSearch(int l, int r, CompareFunction comparator)`
 
 - **引数**：
-	- `l` - 探索範囲の下限値（この値を含む）
-	- `r` - 探索範囲の上限値（この値を含まない）
-	- `comparator` - 比較ロジックを提供する関数インターフェース
+    - `l` - 探索範囲の下限値（この値を含む）
+    - `r` - 探索範囲の上限値（この値を含まない）
+    - `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最小の整数。見つからない場合は- (挿入位置 + 1)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
@@ -114,9 +114,9 @@
 `public static long lowerBoundSearch(long l, long r, CompareFunction comparator)`
 
 - **引数**：
-	- `l` - 探索範囲の下限値（この値を含む）
-	- `r` - 探索範囲の上限値（この値を含まない）
-	- `comparator` - 比較ロジックを提供する関数インターフェース
+    - `l` - 探索範囲の下限値（この値を含む）
+    - `r` - 探索範囲の上限値（この値を含まない）
+    - `comparator` - 比較ロジックを提供する関数インターフェース
 
 - **戻り値**：条件を満たす最小の長整数。見つからない場合は- (挿入位置 + 1)
 - **例外**：明示的な専用例外はない（`comparator == null` の場合は実行時に `NullPointerException` が発生する）
@@ -130,9 +130,9 @@
 
 - `CompareFunction`が適切に実装されていないと、正しい結果が得られない場合がある
 - 比較関数は以下のルールに従うこと：
-	- 正の値: 対象の値が条件を超過する場合
-	- 0: 対象の値が条件にちょうど一致する場合
-	- 負の値: 対象の値が条件より小さい場合
+    - 正の値: 対象の値が条件を超過する場合
+    - 0: 対象の値が条件にちょうど一致する場合
+    - 負の値: 対象の値が条件より小さい場合
 
 - 範囲の指定は左閉右開区間（`[l, r)`）で行われる
 - `l == r` の空区間は有効である（結果は探索失敗として `-(挿入位置 + 1)` になる）

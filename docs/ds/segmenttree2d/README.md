@@ -15,13 +15,13 @@
 ### [SegmentTree2D](../../../src/lib/ds/segmenttree/SegmentTree2D.java)
 
 - **用途**：
-	- 2次元の点更新・矩形クエリ
+    - 2次元の点更新・矩形クエリ
 - **特徴**：
-	- （TODO）
+    - （TODO）
 - **時間計算量**：
-	- （TODO）
+    - （TODO）
 - **空間計算量**：
-	- （TODO）
+    - （TODO）
 
 ## アルゴリズム（データ構造）選択ガイド
 

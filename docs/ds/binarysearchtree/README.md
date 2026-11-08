@@ -22,28 +22,28 @@
 
 - **用途**：汎用的な二分探索木の実装で、要素の追加、検索、削除などの基本操作を提供
 - **特徴**：
-	- ジェネリック型をサポート（Comparable<T>を実装する任意の型）
-	- カスタムComparatorによる比較をサポート
-	- 境界検索機能（higher, ceiling, lower, floor）を提供
-	- イテレータによる要素の走査をサポート
+    - ジェネリック型をサポート（Comparable<T>を実装する任意の型）
+    - カスタムComparatorによる比較をサポート
+    - 境界検索機能（higher, ceiling, lower, floor）を提供
+    - イテレータによる要素の走査をサポート
 - **主な操作**:
-	- `add(T n)`: 要素を追加
-	- `remove(T n)`: 要素を削除
-	- `indexOf(T n)`: 要素のインデックスを取得
-	- `get(int idx)`: インデックスから要素を取得
-	- `higher(T n)`, `ceiling(T n)`, `lower(T n)`, `floor(T n)`: 境界検索
+    - `add(T n)`: 要素を追加
+    - `remove(T n)`: 要素を削除
+    - `indexOf(T n)`: 要素のインデックスを取得
+    - `get(int idx)`: インデックスから要素を取得
+    - `higher(T n)`, `ceiling(T n)`, `lower(T n)`, `floor(T n)`: 境界検索
 - **時間計算量**：
-	- 検索/挿入/削除: 平均 $\mathcal{O}(\log n)$、最悪 $\mathcal{O}(n)$
-	- 走査: $\mathcal{O}(n)$
+    - 検索/挿入/削除: 平均 $\mathcal{O}(\log n)$、最悪 $\mathcal{O}(n)$
+    - 走査: $\mathcal{O}(n)$
 - **空間計算量**：$\mathcal{O}(n)$、ここでnは要素数
 
 ### [Treap](../../../src/lib/ds/set/Treap.java)
 
 - **用途**：乱択優先度による平衡二分探索木。順序統計（インデックスアクセス・rank）付きの順序付き集合
 - **特徴**：
-	- ジェネリック型とカスタムComparatorをサポート
-	- 順位検索（`getByIndex`, `indexOf`, `rank`）と境界検索（higher, ceiling, lower, floor）を提供
-	- xorshiftによる軽量な乱数で優先度を割り当て
+    - ジェネリック型とカスタムComparatorをサポート
+    - 順位検索（`getByIndex`, `indexOf`, `rank`）と境界検索（higher, ceiling, lower, floor）を提供
+    - xorshiftによる軽量な乱数で優先度を割り当て
 - **時間計算量**：検索/挿入/削除/順位検索 期待 $\mathcal{O}(\log n)$
 - **空間計算量**：$\mathcal{O}(n)$
 
@@ -61,10 +61,10 @@
 
 - **用途**：自己平衡二分探索木の一種で、赤黒規則に従って平衡を維持
 - **特徴**：
-	- 各ノードに色（赤または黒）を付与
-	- 特定の規則に従って平衡を維持
+    - 各ノードに色（赤または黒）を付与
+    - 特定の規則に従って平衡を維持
 - **時間計算量**：
-	- 検索/挿入/削除: $\mathcal{O}(\log n)$
+    - 検索/挿入/削除: $\mathcal{O}(\log n)$
 - **空間計算量**：$\mathcal{O}(n)$
 
 ### [BTree](../../../src/lib/ds/set/BTree.java)（未実装）
