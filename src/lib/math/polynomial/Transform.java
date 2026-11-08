@@ -1,10 +1,10 @@
 package lib.math.polynomial;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 
 import lib.math.*;
+
+import static java.lang.Math.*;
 
 public final class Transform {
 	private static PrimeTable primeTable;

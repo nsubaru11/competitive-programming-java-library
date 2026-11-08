@@ -1,7 +1,6 @@
 package patterns.search;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
+import java.util.*;
 
 public class ExhaustiveSearch {
 
@@ -121,8 +120,8 @@ public class ExhaustiveSearch {
 
 	private static final void stackSearch(int[] arr, int n, int k) {
 		ArrayDeque<int[]> stack = new ArrayDeque<>();
-		stack.push(new int[] { 0, 1, arr[0] });
-		stack.push(new int[] { 0, 0, 0 });
+		stack.push(new int[]{0, 1, arr[0]});
+		stack.push(new int[]{0, 0, 0});
 		while (!stack.isEmpty()) {
 			int[] current = stack.pop();
 			int index = current[0];
@@ -134,8 +133,8 @@ public class ExhaustiveSearch {
 			}
 			if (index == n - 1)
 				continue;
-			stack.push(new int[] { index + 1, flag | (1 << (index + 1)), sum + arr[index + 1] });
-			stack.push(new int[] { index + 1, flag, sum });
+			stack.push(new int[]{index + 1, flag | (1 << (index + 1)), sum + arr[index + 1]});
+			stack.push(new int[]{index + 1, flag, sum});
 		}
 	}
 

@@ -1,12 +1,12 @@
 package judge.ds.unionfind.unionfind;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.unionfind.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/unionfind
 public final class Judge1 {

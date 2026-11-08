@@ -8,8 +8,7 @@ import java.util.function.*;
  * 配列版と順序を保持するコレクション版では、素因数を昇順で返します。
  */
 public final class FactorUtils {
-	private FactorUtils() {
-	}
+	private FactorUtils() {}
 
 	// region <prime factorize>
 

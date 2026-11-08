@@ -1,7 +1,5 @@
 package judge.math.number.int128;
 
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.math.*;
 import java.util.*;
@@ -9,6 +7,8 @@ import java.util.function.*;
 
 import lib.io.*;
 import lib.math.number.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/many_aplusb_128bit
 public final class Judge1 {

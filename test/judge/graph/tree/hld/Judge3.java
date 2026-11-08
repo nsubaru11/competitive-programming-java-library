@@ -1,13 +1,13 @@
 package judge.graph.tree.hld;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.segmenttree.*;
 import lib.graph.tree.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/vertex_add_path_sum
 public final class Judge3 {

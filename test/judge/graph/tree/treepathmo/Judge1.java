@@ -1,12 +1,12 @@
 package judge.graph.tree.treepathmo;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.graph.tree.*;
 import lib.io.*;
+
+import static java.util.Arrays.*;
 
 // https://atcoder.jp/contests/abc477/tasks/abc477_g
 public final class Judge1 {

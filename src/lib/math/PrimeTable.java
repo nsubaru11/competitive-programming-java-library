@@ -1,10 +1,10 @@
 package lib.math;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static java.util.Arrays.*;
 
 /**
  * エラトステネスの篩で構築した素数テーブルです。

@@ -1,8 +1,8 @@
 package lib.search;
 
-import static java.util.Arrays.*;
-
 import lib.ds.arrays.*;
+
+import static java.util.Arrays.*;
 
 /**
  * 昇順ソート済み配列向けの二分探索ユーティリティです。
@@ -13,8 +13,7 @@ import lib.ds.arrays.*;
 @SuppressWarnings("unused")
 public final class ArrayBinarySearch {
 
-	private ArrayBinarySearch() {
-	}
+	private ArrayBinarySearch() {}
 
 	// region int[]
 	public static int lowerBoundSearch(final int[] arr, final int target) {

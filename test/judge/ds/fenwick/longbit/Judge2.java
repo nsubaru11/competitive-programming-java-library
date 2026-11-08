@@ -1,12 +1,12 @@
 package judge.ds.fenwick.longbit;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.fenwick.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/point_add_range_sum
 public final class Judge2 {

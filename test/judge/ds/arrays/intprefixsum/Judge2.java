@@ -5,13 +5,13 @@
 
 package judge.ds.arrays.intprefixsum;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.arrays.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://atcoder.jp/contests/abc037/tasks/abc037_c
 public final class Judge2 {

@@ -1,12 +1,12 @@
 package judge.ds.set.intavlset;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.set.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/ordered_set
 public final class Judge2 {

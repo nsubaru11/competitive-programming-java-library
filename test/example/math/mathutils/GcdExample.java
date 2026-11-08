@@ -1,8 +1,8 @@
 package example.math.mathutils;
 
-import static java.lang.System.*;
-
 import lib.math.*;
+
+import static java.lang.System.*;
 
 public final class GcdExample {
 

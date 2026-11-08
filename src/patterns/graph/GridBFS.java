@@ -1,9 +1,7 @@
 package patterns.graph;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * BFSの基本フォーマットです。 gridのBFSを行います。
@@ -35,8 +33,8 @@ public class GridBFS {
 		ArrayDeque<Integer> dq = new ArrayDeque<>(h * w);
 		int[] dist = new int[h * w];
 		Arrays.fill(dist, -1);
-		int[] directions = { -w, -1, 1, w };
-		for (int s: start) {
+		int[] directions = {-w, -1, 1, w};
+		for (int s : start) {
 			if (isValid.test(s) && predicate.test(grid[s])) {
 				dq.add(s);
 				dist[s] = 0;

@@ -11,8 +11,7 @@ import static java.util.Arrays.*;
 public final class TopologicalShortestPath {
 	private static final long INF = Long.MAX_VALUE;
 
-	private TopologicalShortestPath() {
-	}
+	private TopologicalShortestPath() {}
 
 	/**
 	 * 始点 {@code s} から全頂点への最短距離と経路復元情報を計算します。

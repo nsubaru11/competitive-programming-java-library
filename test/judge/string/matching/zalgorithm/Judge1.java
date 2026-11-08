@@ -1,9 +1,9 @@
 package judge.string.matching.zalgorithm;
 
-import static java.util.Arrays.*;
-
 import lib.io.*;
 import lib.string.matching.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/zalgorithm
 public final class Judge1 {

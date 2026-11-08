@@ -1,12 +1,12 @@
 package judge.math.polynomial.convolution;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.io.compat17.*;
 import lib.math.polynomial.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/convolution_mod
 public final class Judge5 {

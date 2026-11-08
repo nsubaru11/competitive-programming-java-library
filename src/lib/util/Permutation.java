@@ -7,8 +7,7 @@ import lib.math.*;
  */
 @SuppressWarnings("unused")
 public final class Permutation {
-	private Permutation() {
-	}
+	private Permutation() {}
 
 	/**
 	 * 重複を除いた辞書順における0始まりの位置を返します。

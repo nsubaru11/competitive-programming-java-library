@@ -6,13 +6,13 @@
 
 package judge.graph.tree.hld;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.graph.tree.*;
 import lib.io.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/jump_on_tree
 public final class Judge2 {

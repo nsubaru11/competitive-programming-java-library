@@ -1,7 +1,5 @@
 package judge.util.mo;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
@@ -9,6 +7,8 @@ import lib.ds.arrays.*;
 import lib.ds.priorityqueue.*;
 import lib.io.compat17.*;
 import lib.util.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/static_range_mode_query
 public final class Judge3 {

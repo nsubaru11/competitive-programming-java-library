@@ -1,12 +1,12 @@
 package judge.graph.graphutils;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.graph.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/cycle_detection_undirected
 public final class Judge3 {

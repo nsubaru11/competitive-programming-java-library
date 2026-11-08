@@ -16,8 +16,7 @@ public final class GeometryUtils {
 
 	private static final double EPSILON = 1e-10;
 
-	private GeometryUtils() {
-	}
+	private GeometryUtils() {}
 
 	/**
 	 * 2次元空間での2つの直線（線分）の交差判定を行います。

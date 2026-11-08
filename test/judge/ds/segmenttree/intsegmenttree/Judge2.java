@@ -1,12 +1,12 @@
 package judge.ds.segmenttree.intsegmenttree;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.segmenttree.*;
 import lib.io.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/staticrmq
 public final class Judge2 {

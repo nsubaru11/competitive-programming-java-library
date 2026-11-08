@@ -1,11 +1,11 @@
 package lib.ds.map;
 
-import static java.lang.Math.*;
-
 import java.util.concurrent.*;
 import java.util.function.*;
 
 import lib.util.function.*;
+
+import static java.lang.Math.*;
 
 /**
  * int キー・int 値のハッシュマップ（オープンアドレス法・線形探索）。clear は O(1) で行う。

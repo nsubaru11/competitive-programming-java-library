@@ -1,14 +1,14 @@
 package judge.ds.priorityqueue.intindexedpriorityqueue;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import lib.ds.priorityqueue.*;
 import lib.io.compat17.*;
+
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/double_ended_priority_queue
 public final class Judge1 {

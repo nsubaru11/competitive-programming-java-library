@@ -1,8 +1,8 @@
 package example.string.approximate.levenshteindp;
 
-import static java.lang.System.*;
-
 import lib.string.approximate.*;
+
+import static java.lang.System.*;
 
 /**
  * Levenshteinクラスの使用例を示すサンプルコードです。

@@ -1,8 +1,8 @@
 package example.math.geometryutils;
 
-import static java.lang.System.*;
-
 import lib.math.*;
+
+import static java.lang.System.*;
 
 public final class Example {
 

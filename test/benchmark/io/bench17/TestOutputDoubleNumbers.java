@@ -1,13 +1,14 @@
 package benchmark.io.bench17;
 
-import static java.lang.Math.*;
-
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import lib.io.compat17.*;
 import sun.misc.*;
+
+import lib.io.compat17.*;
+
+import static java.lang.Math.*;
 
 public class TestOutputDoubleNumbers {
 

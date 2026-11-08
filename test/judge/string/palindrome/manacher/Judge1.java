@@ -1,9 +1,9 @@
 package judge.string.palindrome.manacher;
 
-import static java.util.Arrays.*;
-
 import lib.io.*;
 import lib.string.palindrome.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/enumerate_palindromes
 public final class Judge1 {

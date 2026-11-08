@@ -1,11 +1,11 @@
 package lib.ds.arrays;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 import java.util.function.*;
 
 import lib.ds.*;
+
+import static java.lang.Math.*;
 
 /**
  * long値の可変長の両端キュー。容量が不足すると内部配列を2倍に拡張する。

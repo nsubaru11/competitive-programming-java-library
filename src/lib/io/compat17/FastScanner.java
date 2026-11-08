@@ -1,7 +1,5 @@
 package lib.io.compat17;
 
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.math.*;
 import java.nio.charset.*;
@@ -9,6 +7,8 @@ import java.util.*;
 import java.util.function.*;
 
 import sun.misc.*;
+
+import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class FastScanner {

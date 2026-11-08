@@ -1,8 +1,8 @@
 package lib.graph;
 
-import static java.util.Arrays.*;
-
 import lib.ds.arrays.*;
+
+import static java.util.Arrays.*;
 
 /**
  * 0-1 BFS。辺重みが0または1のグラフの単一始点・複数始点最短路を O(V + E) で求める。
@@ -10,8 +10,7 @@ import lib.ds.arrays.*;
 public final class ZeroOneBFS {
 	private static final long INF = Long.MAX_VALUE;
 
-	private ZeroOneBFS() {
-	}
+	private ZeroOneBFS() {}
 
 	/**
 	 * 始点 {@code s} から全頂点への最短距離と経路復元情報を計算します。

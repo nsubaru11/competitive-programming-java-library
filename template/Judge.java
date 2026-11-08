@@ -6,12 +6,12 @@
 // Library: https://github.com/nsubaru11/competitive-programming-java-library
 // ====================================================================================================
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // public final class ${NAME} {
 public final class Judge {

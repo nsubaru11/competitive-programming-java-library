@@ -1,8 +1,8 @@
 package lib.string.palindrome;
 
-import static java.lang.Math.*;
-
 import java.nio.*;
+
+import static java.lang.Math.*;
 
 /**
  * Manacher'sアルゴリズムに基づいて文字列内の回文情報を計算するクラス。

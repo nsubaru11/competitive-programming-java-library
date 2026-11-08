@@ -7,8 +7,7 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public final class NumberPredicates {
-	private NumberPredicates() {
-	}
+	private NumberPredicates() {}
 
 	/**
 	 * 完全数かどうかの判定

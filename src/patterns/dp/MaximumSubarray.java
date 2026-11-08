@@ -1,9 +1,9 @@
 package patterns.dp;
 
-import static java.lang.Math.*;
-
 import java.io.*;
 import java.util.*;
+
+import static java.lang.Math.*;
 
 /**
  * 連続部分列を 1 つ選んで c 倍したときの総和の最大値を、Kadane 法で求める。

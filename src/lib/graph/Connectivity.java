@@ -7,8 +7,7 @@ package lib.graph;
 public final class Connectivity {
 	// TODO: 二重辺連結成分分解（2-edge-connected components）の実装を行う
 	// TODO: 二重頂点連結成分分解（2-vertex-connected components）の実装を行う
-	private Connectivity() {
-	}
+	private Connectivity() {}
 
 	/**
 	 * 無向グラフのlow-link値を計算し、橋と関節点を検出します。

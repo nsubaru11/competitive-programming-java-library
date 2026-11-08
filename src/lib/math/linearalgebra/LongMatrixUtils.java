@@ -4,8 +4,7 @@ import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class LongMatrixUtils {
-	private LongMatrixUtils() {
-	}
+	private LongMatrixUtils() {}
 
 	public static long[][] copy(final long[][] a) {
 		final int n = a.length, m = a[0].length;

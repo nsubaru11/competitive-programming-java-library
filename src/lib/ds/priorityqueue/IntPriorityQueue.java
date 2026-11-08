@@ -1,11 +1,11 @@
 package lib.ds.priorityqueue;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 
 import lib.ds.*;
 import lib.util.function.*;
+
+import static java.lang.Math.*;
 
 /**
  * int値の可変長の優先度キュー（二分ヒープ）。比較順で先頭となる値を優先し、同順位の値の取り出し順は規定しない。

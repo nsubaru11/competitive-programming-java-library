@@ -1,8 +1,8 @@
 package benchmark.ds.map;
 
-import static java.lang.Math.*;
-
 import java.util.*;
+
+import static java.lang.Math.*;
 
 /**
  * 整数型Mapのハッシュ関数を、追加・取得・削除を含む同一ワークロードで比較します。
@@ -37,8 +37,7 @@ public final class TestHash {
 	private static final long[] TRIPLE_KEYS = createTripleKeys();
 	private static long blackhole;
 
-	private TestHash() {
-	}
+	private TestHash() {}
 
 	public static void main(final String[] args) {
 		System.out.printf(Locale.ROOT, "queries=%,d, expectedSize=%,d, warmup=%d, measure=%d%n", QUERY_COUNT, EXPECTED_SIZE, WARMUP_ROUNDS, MEASURE_ROUNDS);

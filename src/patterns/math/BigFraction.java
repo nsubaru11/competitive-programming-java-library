@@ -1,31 +1,28 @@
 package patterns.math;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.Objects;
+import java.math.*;
+import java.util.*;
 
 /**
  * 分数を表すクラス。 四則演算、比較、変換などの操作を提供します。
  */
 public class BigFraction extends Number implements Comparable<BigFraction> {
-	private static final long serialVersionUID = -7805459192748824132L;
-
-	private BigInteger numer;
-	private BigInteger denom;
-
-	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	public static final BigFraction ZERO = new BigFraction(0);
 	public static final BigFraction ONE = new BigFraction(1);
 	public static final BigFraction TWO = new BigFraction(2);
 	public static final BigFraction THREE = new BigFraction(3);
 	public static final BigFraction ONEHALF = new BigFraction(1, 2);
 	public static final BigFraction ONETHIRD = new BigFraction(1, 3);
+	private static final long serialVersionUID = -7805459192748824132L;
+	private static final BigDecimal HUNDRED = new BigDecimal(100);
+	private BigInteger numer;
+	private BigInteger denom;
 
 	// 1. コンストラクタ, valueOf
+
 	/**
 	 * 分子と分母を指定して分数を作成します。 分母に0を指定すると例外が発生します。
-	 * 
+	 *
 	 * @param n 分子
 	 * @param d 分母 (0不可)
 	 * @throws ArithmeticException 分母が0の場合
@@ -36,7 +33,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を分子とし、分母を1とする分数を作成します。
-	 * 
+	 *
 	 * @param l 整数
 	 */
 	public BigFraction(long l) {
@@ -45,7 +42,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数の分子と分母から分数を作成します。
-	 * 
+	 *
 	 * @param n 分子（double）
 	 * @param d 分母（double）
 	 */
@@ -55,7 +52,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を最も近い分数に変換して作成します。
-	 * 
+	 *
 	 * @param d 実数
 	 */
 	public BigFraction(double d) {
@@ -64,7 +61,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分子と分母を指定して分数を作成します。 分母に0を指定すると例外が発生します。
-	 * 
+	 *
 	 * @param n 分子
 	 * @param d 分母 (0不可)
 	 * @throws ArithmeticException 分母が0の場合
@@ -79,7 +76,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を分子とし、分母を1とする分数を作成します。
-	 * 
+	 *
 	 * @param bi 整数(BigInteger)
 	 */
 	public BigFraction(BigInteger bi) {
@@ -88,7 +85,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数の分子と分母から分数を作成します。
-	 * 
+	 *
 	 * @param n 分子（BigDecimal）
 	 * @param d 分母（BigDecimal）
 	 */
@@ -103,7 +100,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を最も近い分数に変換して作成します。
-	 * 
+	 *
 	 * @param bd 実数
 	 */
 	public BigFraction(BigDecimal bd) {
@@ -115,7 +112,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 既存の分数オブジェクトをコピーして新しい分数を作成します。
-	 * 
+	 *
 	 * @param f コピー元の分数
 	 */
 	public BigFraction(BigFraction f) {
@@ -124,7 +121,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分子と分母を指定して新しいFractionを作成します。
-	 * 
+	 *
 	 * @param n 分子
 	 * @param d 分母（0不可）
 	 * @return 作成されたFraction
@@ -135,7 +132,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を分子とし、分母を1とするFractionを作成します。
-	 * 
+	 *
 	 * @param l 整数
 	 * @return 作成されたFraction
 	 */
@@ -145,7 +142,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数の分子と分母から分数を作成します。
-	 * 
+	 *
 	 * @param n 分子（double）
 	 * @param d 分母（double）
 	 * @return 作成されたFraction
@@ -156,7 +153,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を最も近いFractionに変換します。
-	 * 
+	 *
 	 * @param d 実数
 	 * @return 作成されたFraction
 	 */
@@ -166,7 +163,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分子と分母を指定して新しいFractionを作成します。
-	 * 
+	 *
 	 * @param n 分子
 	 * @param d 分母（0不可）
 	 * @return 作成されたFraction
@@ -177,7 +174,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を分子とし、分母を1とするFractionを作成します。
-	 * 
+	 *
 	 * @param bi 整数
 	 * @return 作成されたFraction
 	 */
@@ -187,7 +184,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数の分子と分母から分数を作成します。
-	 * 
+	 *
 	 * @param n 分子（BigDecimal）
 	 * @param d 分母（BigDecimal）
 	 * @return 作成されたFraction
@@ -198,7 +195,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を最も近いFractionに変換します。
-	 * 
+	 *
 	 * @param bd 実数
 	 * @return 作成されたFraction
 	 */
@@ -207,28 +204,49 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 	}
 
 	// 2. 値の取得
+
+	/**
+	 * 指定した文字列を分数に変換します。 文字列は"実数 / 実数"で表せることを望みます。
+	 *
+	 * @param s パースする文字列
+	 * @return パース後のFraction
+	 */
+	public static BigFraction parseFraction(String s) {
+		s = s.replaceAll(" ", "");
+		if (s.isEmpty() || s.equals("/") || s.startsWith("/") || s.endsWith("/"))
+			throw new IllegalArgumentException("無効な分数表記: '" + s + "' (例: '3/4' の形式で入力してください)");
+		int pos = s.indexOf("/");
+		if (pos == -1) {
+			return new BigFraction(new BigDecimal(s));
+		}
+		BigDecimal numer = new BigDecimal(s.substring(0, pos));
+		BigDecimal denom = new BigDecimal(s.substring(pos + 1));
+		return new BigFraction(numer, denom);
+	}
+
 	/**
 	 * 分子を取得します。
-	 * 
+	 *
 	 * @return 分子
 	 */
 	public BigInteger numerator() {
 		return numer;
 	}
 
+	// 3. 四則演算, 累乗
+
 	/**
 	 * 分母を取得します。
-	 * 
+	 *
 	 * @return 分母
 	 */
 	public BigInteger denominator() {
 		return denom;
 	}
 
-	// 3. 四則演算, 累乗
 	/**
 	 * 整数を加算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param l 加算する整数
 	 * @return 計算後のFraction
 	 */
@@ -238,7 +256,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を加算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param d 加算する実数
 	 * @return 計算後のFraction
 	 */
@@ -248,7 +266,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を加算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bi 加算する整数
 	 * @return 計算後のFraction
 	 */
@@ -258,7 +276,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を加算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bd 加算する実数
 	 * @return 計算後のFraction
 	 */
@@ -268,7 +286,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を加算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param f 加算する分数
 	 * @return 計算後のFraction
 	 */
@@ -280,7 +298,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を減算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param l 減算する整数
 	 * @return 計算後のFraction
 	 */
@@ -290,7 +308,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を減算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param d 減算する実数
 	 * @return 計算後のFraction
 	 */
@@ -300,7 +318,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を減算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bi 減算する整数
 	 * @return 計算後のFraction
 	 */
@@ -310,7 +328,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を減算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bd 減算する実数
 	 * @return 計算後のFraction
 	 */
@@ -320,7 +338,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を減算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param f 減算する分数
 	 * @return 計算後のFraction
 	 */
@@ -332,7 +350,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を乗算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param l 乗算する整数
 	 * @return 計算後のFraction
 	 */
@@ -342,7 +360,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を乗算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param d 乗算する実数
 	 * @return 計算後のFraction
 	 */
@@ -352,7 +370,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を乗算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bi 乗算する整数
 	 * @return 計算後のFraction
 	 */
@@ -362,7 +380,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を乗算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bd 乗算する実数
 	 * @return 計算後のFraction
 	 */
@@ -372,7 +390,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を乗算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param f 乗算する分数
 	 * @return 計算後のFraction
 	 */
@@ -384,7 +402,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を除算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param l 除算する整数
 	 * @return 計算後のFraction
 	 */
@@ -394,7 +412,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を除算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param d 除算する実数
 	 * @return 計算後のFraction
 	 */
@@ -404,7 +422,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数を除算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bi 除算する整数
 	 * @return 計算後のFraction
 	 */
@@ -414,7 +432,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 実数を除算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param bd 除算する実数
 	 * @return 計算後のFraction
 	 */
@@ -424,7 +442,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を除算した新しいFractionを返します。
-	 * 
+	 *
 	 * @param f 除算する分数
 	 * @return 計算後のFraction
 	 */
@@ -434,9 +452,11 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 		return new BigFraction(n, d);
 	}
 
+	// 4. 比較, 判定
+
 	/**
 	 * 分数をi乗した値を返します。
-	 * 
+	 *
 	 * @param i 指数部分
 	 * @return 分数
 	 */
@@ -446,10 +466,9 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 		return new BigFraction(n, d);
 	}
 
-	// 4. 比較, 判定
 	/**
 	 * この分数と指定された分数を比較します。
-	 * 
+	 *
 	 * @param f 比較対象の分数
 	 * @return この分数が f より小さい場合は負、等しい場合は 0、大きい場合は正を返す
 	 */
@@ -472,7 +491,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 0かどうか返します。
-	 * 
+	 *
 	 * @return 0ならtrue、そうでなければfalse
 	 */
 	public boolean isZero() {
@@ -481,7 +500,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 1かどうか返します。
-	 * 
+	 *
 	 * @return 1ならtrue、そうでなければfalse
 	 */
 	public boolean isOne() {
@@ -490,7 +509,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 整数かどうか返します。
-	 * 
+	 *
 	 * @return 整数ならtrue、そうでなければfalse
 	 */
 	public boolean isInteger() {
@@ -499,26 +518,27 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 真分数をかどうか判定します。
-	 * 
+	 *
 	 * @return 真分数ならtrue、そうでなければfalse
 	 */
 	public boolean isProper() {
 		return numer.abs().compareTo(denom) < 0;
 	}
 
+	// 6. 整数, 小数変換
+
 	/**
 	 * 仮分数をかどうか判定します。
-	 * 
+	 *
 	 * @return 仮分数ならtrue、そうでなければfalse
 	 */
 	public boolean isImproper() {
 		return numer.abs().compareTo(denom) >= 0;
 	}
 
-	// 6. 整数, 小数変換
 	/**
 	 * 指定した分数の逆数を取得します。
-	 * 
+	 *
 	 * @return 逆数のFraction
 	 */
 	public BigFraction inverse() {
@@ -527,7 +547,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 符号を反転したFractionを返します。
-	 * 
+	 *
 	 * @return 反転後のFraction
 	 */
 	public BigFraction negate() {
@@ -536,7 +556,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数の小数部分（真分数部分）を取得します。
-	 * 
+	 *
 	 * @return 真分数部分のFraction
 	 */
 	public BigFraction fractionPart() {
@@ -545,7 +565,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数の整数部分を取得します。
-	 * 
+	 *
 	 * @return 整数部分
 	 */
 	public BigInteger integerPart() {
@@ -572,7 +592,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を小数第一位で四捨五入した整数を取得します。
-	 * 
+	 *
 	 * @return 整数
 	 */
 	public BigDecimal round(int n) {
@@ -581,7 +601,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を小数にして返します。
-	 * 
+	 *
 	 * @return 小数
 	 */
 	public BigDecimal getDecimal() {
@@ -595,7 +615,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 帯分数表記で返します。
-	 * 
+	 *
 	 * @return 帯分数の文字列
 	 */
 	public String toMixedString() {
@@ -604,7 +624,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * 分数を小数表記にして返します。
-	 * 
+	 *
 	 * @param precision 小数点下位桁数
 	 * @return 小数表記
 	 */
@@ -612,9 +632,11 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 		return String.format("%." + precision + "f", getDecimal());
 	}
 
+	// 8. staticユーティリティ
+
 	/**
 	 * パーセンテージ表記で返します。
-	 * 
+	 *
 	 * @param precision 小数点下位桁数
 	 * @return パーセンテージ表記文字列
 	 */
@@ -622,10 +644,9 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 		return String.format("%." + precision + "f%%", getDecimal().multiply(HUNDRED));
 	}
 
-	// 8. staticユーティリティ
 	/**
 	 * この分数と指定された分数のうち小さい方を返します。
-	 * 
+	 *
 	 * @param f 比較対象の分数
 	 * @return 小さい方の分数
 	 */
@@ -635,7 +656,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 
 	/**
 	 * この分数と指定された分数のうち大きい方を返します。
-	 * 
+	 *
 	 * @param f 比較対象の分数
 	 * @return 大きい方の分数
 	 */
@@ -644,27 +665,8 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 	}
 
 	/**
-	 * 指定した文字列を分数に変換します。 文字列は"実数 / 実数"で表せることを望みます。
-	 * 
-	 * @param s パースする文字列
-	 * @return パース後のFraction
-	 */
-	public static BigFraction parseFraction(String s) {
-		s = s.replaceAll(" ", "");
-		if (s.isEmpty() || s.equals("/") || s.startsWith("/") || s.endsWith("/"))
-			throw new IllegalArgumentException("無効な分数表記: '" + s + "' (例: '3/4' の形式で入力してください)");
-		int pos = s.indexOf("/");
-		if (pos == -1) {
-			return new BigFraction(new BigDecimal(s));
-		}
-		BigDecimal numer = new BigDecimal(s.substring(0, pos));
-		BigDecimal denom = new BigDecimal(s.substring(pos + 1));
-		return new BigFraction(numer, denom);
-	}
-
-	/**
 	 * 指定した分数の絶対値を返します。
-	 * 
+	 *
 	 * @param f 分数
 	 * @return 指定した分数の絶対値
 	 */
@@ -677,6 +679,7 @@ public class BigFraction extends Number implements Comparable<BigFraction> {
 	}
 
 	// 9. 内部処理
+
 	/**
 	 * 分数を既約分数にします。
 	 */

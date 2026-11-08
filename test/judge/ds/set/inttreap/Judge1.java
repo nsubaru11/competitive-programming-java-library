@@ -1,12 +1,12 @@
 package judge.ds.set.inttreap;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.set.*;
 import lib.io.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/predecessor_problem
 public final class Judge1 {

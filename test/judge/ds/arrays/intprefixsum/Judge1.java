@@ -5,13 +5,13 @@
 
 package judge.ds.arrays.intprefixsum;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.arrays.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/static_range_sum
 public final class Judge1 {

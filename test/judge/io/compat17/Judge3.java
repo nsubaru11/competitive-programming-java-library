@@ -1,11 +1,11 @@
 package judge.io.compat17;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/many_aplusb_128bit
 public final class Judge3 {

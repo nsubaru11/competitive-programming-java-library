@@ -1,8 +1,8 @@
 package benchmark.io.bench17;
 
-import static java.util.Arrays.*;
-
 import java.io.*;
+
+import static java.util.Arrays.*;
 
 public class TestInputLongArray {
 

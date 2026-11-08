@@ -1,10 +1,10 @@
 package example.util.format;
 
-import static java.lang.System.*;
-
 import java.math.*;
 
 import lib.util.*;
+
+import static java.lang.System.*;
 
 public final class Example {
 

@@ -4,8 +4,7 @@ import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class IntMatrixUtils {
-	private IntMatrixUtils() {
-	}
+	private IntMatrixUtils() {}
 
 	public static int[][] copy(final int[][] a) {
 		final int n = a.length, m = a[0].length;

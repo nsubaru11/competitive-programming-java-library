@@ -1,12 +1,12 @@
 package judge.graph.kruskal;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.graph.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/minimum_spanning_tree
 public final class Judge2 {

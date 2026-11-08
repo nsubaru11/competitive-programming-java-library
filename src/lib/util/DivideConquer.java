@@ -4,8 +4,7 @@ import static java.lang.Math.*;
 
 public final class DivideConquer {
 
-	private DivideConquer() {
-	}
+	private DivideConquer() {}
 
 	/**
 	 * {@code i < j && a_i > a_j} を満たす転倒数を数える予定のメソッドです。

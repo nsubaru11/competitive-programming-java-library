@@ -1,10 +1,10 @@
 package example.util.mo;
 
-import static java.lang.System.*;
-
 import java.util.*;
 
 import lib.util.*;
+
+import static java.lang.System.*;
 
 public final class Example {
 

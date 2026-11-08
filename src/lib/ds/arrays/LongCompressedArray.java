@@ -1,11 +1,11 @@
 package lib.ds.arrays;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 
 import lib.ds.*;
 import lib.search.*;
+
+import static java.util.Arrays.*;
 
 /**
  * long配列を座標圧縮した順位の配列。get・走査・toArray は各要素の順位を返す。順位は int で表す。

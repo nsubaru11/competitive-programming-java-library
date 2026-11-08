@@ -8,8 +8,7 @@ public final class Convolution {
 	private static final int NTT_MOD1 = 167772161, NTT_MOD2 = 469762049, NTT_MOD3 = 1224736769;
 	private static final long NTT_MOD1_MOD2 = 78812994116517889L, NTT_MOD1_INVERSE_MOD2 = 104391568, NTT_MOD1_MOD2_INVERSE_MOD3 = 721017874;
 
-	private Convolution() {
-	}
+	private Convolution() {}
 
 	public static int[] convolveNtt(final int[] a, final int[] b, final int mod) {
 		final int len = a.length + b.length - 1;

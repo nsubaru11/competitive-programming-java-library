@@ -1,12 +1,12 @@
 package judge.math.polynomial.convolution;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.io.compat17.*;
 import lib.math.polynomial.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/bitwise_xor_convolution
 public final class Judge2 {

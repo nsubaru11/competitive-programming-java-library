@@ -1,8 +1,8 @@
 package lib.graph;
 
-import static java.util.Arrays.*;
-
 import lib.ds.priorityqueue.*;
+
+import static java.util.Arrays.*;
 
 /**
  * Prim法により無向グラフの最小または最大全域森を求めるユーティリティクラス。
@@ -16,8 +16,7 @@ import lib.ds.priorityqueue.*;
  */
 public final class Prim {
 
-	private Prim() {
-	}
+	private Prim() {}
 
 	/**
 	 * 最小全域森を求めます。

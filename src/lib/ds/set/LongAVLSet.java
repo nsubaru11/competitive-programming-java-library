@@ -1,9 +1,9 @@
 package lib.ds.set;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import static java.lang.Math.*;
 
 @SuppressWarnings("unused")
 public final class LongAVLSet implements Iterable<Long> {

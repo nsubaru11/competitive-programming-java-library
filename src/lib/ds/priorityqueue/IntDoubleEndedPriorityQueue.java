@@ -1,11 +1,11 @@
 package lib.ds.priorityqueue;
 
-import static java.lang.Math.*;
-
 import java.util.*;
 
 import lib.ds.*;
 import lib.util.function.*;
+
+import static java.lang.Math.*;
 
 /**
  * int値の両端優先度キュー（interval heap）。最小値と最大値の両方を取り出す。

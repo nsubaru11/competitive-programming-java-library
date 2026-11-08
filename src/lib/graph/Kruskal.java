@@ -1,9 +1,9 @@
 package lib.graph;
 
+import lib.ds.unionfind.*;
+
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
-
-import lib.ds.unionfind.*;
 
 /**
  * Kruskal法により無向グラフの最小または最大全域森を求めるユーティリティクラス。
@@ -15,8 +15,7 @@ import lib.ds.unionfind.*;
  * 計算量は {@code O(|E| log |E|)}、追加メモリは {@code O(|V| + |E|)} です。
  */
 public final class Kruskal {
-	private Kruskal() {
-	}
+	private Kruskal() {}
 
 	/**
 	 * Kruskal法の辺インデックスを、対応するコストに基づいてソートします。

@@ -1,13 +1,13 @@
 package judge.ds.set;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import lib.io.compat17.*;
+
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/predecessor_problem
 public final class Judge1 {

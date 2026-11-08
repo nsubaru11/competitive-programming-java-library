@@ -1,13 +1,13 @@
 package judge.graph.tree.core;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.fenwick.*;
 import lib.graph.tree.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/vertex_add_subtree_sum
 public final class Judge1 {

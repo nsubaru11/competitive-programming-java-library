@@ -1,9 +1,9 @@
 package lib.util;
 
+import java.util.function.*;
+
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
-
-import java.util.function.*;
 
 /**
  * Mo's Algorithm。静的な区間クエリをオフラインで処理します。

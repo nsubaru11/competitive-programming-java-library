@@ -1,10 +1,10 @@
 package lib.ds.set;
 
-import static java.lang.Math.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
+
+import static java.lang.Math.*;
 
 @SuppressWarnings({"unused", "unchecked"})
 public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {

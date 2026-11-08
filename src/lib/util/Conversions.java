@@ -7,8 +7,7 @@ package lib.util;
  * メソッドはビッグエンディアンとして扱います。
  */
 public final class Conversions {
-	private Conversions() {
-	}
+	private Conversions() {}
 
 	/**
 	 * {@code char[]} を {@code int} に変換します。

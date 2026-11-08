@@ -1,8 +1,8 @@
 package example.math.polynomial.polynomialutils;
 
-import static java.lang.System.*;
-
 import lib.math.polynomial.*;
+
+import static java.lang.System.*;
 
 public final class Example {
 

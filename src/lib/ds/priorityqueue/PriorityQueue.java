@@ -1,8 +1,8 @@
 package lib.ds.priorityqueue;
 
-import static java.lang.Math.*;
-
 import java.util.*;
+
+import static java.lang.Math.*;
 
 /**
  * 可変長の優先度キュー（二分ヒープ）。比較順で先頭となる要素を優先し、同順位の要素の取り出し順は規定しない。

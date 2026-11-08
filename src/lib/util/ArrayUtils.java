@@ -1,20 +1,19 @@
 package lib.util;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.function.*;
 
 import lib.ds.arrays.*;
 import lib.search.*;
 
+import static java.util.Arrays.*;
+
 /**
  * 配列に対する代表的なアルゴリズムを提供します。
  */
 @SuppressWarnings("unused")
 public final class ArrayUtils {
-	private ArrayUtils() {
-	}
+	private ArrayUtils() {}
 
 	// region < statistics >
 

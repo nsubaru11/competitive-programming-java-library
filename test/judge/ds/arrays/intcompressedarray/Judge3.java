@@ -1,12 +1,12 @@
 package judge.ds.arrays.intcompressedarray;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.arrays.*;
 import lib.io.*;
+
+import static java.util.Arrays.*;
 
 // https://atcoder.jp/contests/abc036/tasks/abc036_c
 public final class Judge3 {

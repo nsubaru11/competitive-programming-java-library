@@ -13,8 +13,7 @@ public final class WarshallFloyd {
 	private static final long INF = Long.MAX_VALUE;
 	private static final long NINF = Long.MIN_VALUE;
 
-	private WarshallFloyd() {
-	}
+	private WarshallFloyd() {}
 
 	/**
 	 * 全頂点対間の最短距離を計算します。

@@ -5,8 +5,7 @@ package lib.math.polynomial;
  */
 @SuppressWarnings("unused")
 public final class PolynomialUtils {
-	private PolynomialUtils() {
-	}
+	private PolynomialUtils() {}
 
 	/**
 	 * 多項式の加算を行います。

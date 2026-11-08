@@ -1,9 +1,9 @@
 package patterns.dp;
 
-import static java.lang.Math.*;
-
 import java.io.*;
 import java.util.*;
+
+import static java.lang.Math.*;
 
 public class Knapsack {
 

@@ -1,11 +1,11 @@
 package judge.io.compat17;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/aplusb
 public final class Judge0 {

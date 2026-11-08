@@ -1,8 +1,8 @@
 package lib.graph;
 
-import static java.util.Arrays.*;
-
 import lib.ds.priorityqueue.*;
+
+import static java.util.Arrays.*;
 
 /**
  * Dijkstra法により、非負重み付きグラフの単一始点・複数始点最短経路を求めるユーティリティクラス。
@@ -13,8 +13,7 @@ import lib.ds.priorityqueue.*;
 public final class Dijkstra {
 	private static final long INF = Long.MAX_VALUE;
 
-	private Dijkstra() {
-	}
+	private Dijkstra() {}
 
 	/**
 	 * 始点 {@code s} から全頂点への最短距離と経路復元情報を計算します。

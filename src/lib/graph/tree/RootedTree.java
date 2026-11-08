@@ -1,8 +1,8 @@
 package lib.graph.tree;
 
-import static java.util.Arrays.*;
-
 import lib.util.function.*;
+
+import static java.util.Arrays.*;
 
 /**
  * 根を固定した木のDFS情報（親頂点・親辺ID・深さ・部分木情報など）を保持する。

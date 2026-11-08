@@ -1,13 +1,13 @@
 package benchmark.io.bench24;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.math.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
+
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class FastPrinter2 implements AutoCloseable {

@@ -1,12 +1,12 @@
 package judge.ds.map.longlongmap;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.map.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/associative_array
 public final class Judge1 {

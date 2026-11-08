@@ -1,11 +1,11 @@
 package unit.ds.segmenttree;
 
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.util.*;
 
 import lib.ds.segmenttree.*;
+
+import static java.util.Arrays.*;
 
 public final class Test {
 

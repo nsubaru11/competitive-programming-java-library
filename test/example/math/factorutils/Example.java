@@ -1,10 +1,10 @@
 package example.math.factorutils;
 
-import static java.lang.System.*;
-
 import java.util.*;
 
 import lib.math.*;
+
+import static java.lang.System.*;
 
 public final class Example {
 

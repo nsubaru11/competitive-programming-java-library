@@ -1,9 +1,9 @@
 package lib.graph.tree;
 
+import java.util.function.*;
+
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
-
-import java.util.function.*;
 
 /**
  * Euler Tour 上の区間に変換した木上の静的パスクエリを Mo's Algorithm でオフライン処理する。

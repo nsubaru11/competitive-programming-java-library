@@ -1,8 +1,5 @@
 package lib.io.compat17;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
@@ -10,6 +7,9 @@ import java.util.*;
 import java.util.function.*;
 
 import sun.misc.*;
+
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 @SuppressWarnings("unused")
 public final class FastPrinter implements AutoCloseable {

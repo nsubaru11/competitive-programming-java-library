@@ -8,8 +8,7 @@ import java.util.*;
  * <p>数値を受け取るメソッドは非負整数を前提とします。
  */
 public final class DigitUtils {
-	private DigitUtils() {
-	}
+	private DigitUtils() {}
 
 	/**
 	 * {@code n} の二進表現の桁数を返します。{@code 0} の桁数は 1 とします。

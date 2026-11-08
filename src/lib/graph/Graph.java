@@ -1,8 +1,8 @@
 package lib.graph;
 
-import static java.util.Arrays.*;
-
 import java.util.function.*;
+
+import static java.util.Arrays.*;
 
 /**
  * 前方スター形式の隣接リストを保持するグラフの基底クラス。

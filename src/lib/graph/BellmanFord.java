@@ -13,8 +13,7 @@ public final class BellmanFord {
 	private static final long INF = Long.MAX_VALUE;
 	private static final long NINF = Long.MIN_VALUE;
 
-	private BellmanFord() {
-	}
+	private BellmanFord() {}
 
 	/**
 	 * 始点 {@code s} から全頂点への最短距離を計算します。

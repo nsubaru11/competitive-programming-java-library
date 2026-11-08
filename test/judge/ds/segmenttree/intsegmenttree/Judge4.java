@@ -1,8 +1,5 @@
 package judge.ds.segmenttree.intsegmenttree;
 
-import static java.lang.Math.*;
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.lang.invoke.*;
 import java.math.*;
@@ -10,6 +7,9 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
+
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
 
 // https://atcoder.jp/contests/practice2/tasks/practice2_j
 public final class Judge4 {

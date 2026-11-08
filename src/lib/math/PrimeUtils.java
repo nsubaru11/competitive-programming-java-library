@@ -10,8 +10,7 @@ import java.util.function.*;
  */
 @SuppressWarnings("unused")
 public final class PrimeUtils {
-	private PrimeUtils() {
-	}
+	private PrimeUtils() {}
 
 	/**
 	 * 試し割りにより素数判定を行います。

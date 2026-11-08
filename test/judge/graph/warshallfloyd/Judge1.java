@@ -1,12 +1,12 @@
 package judge.graph.warshallfloyd;
 
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
 import lib.graph.*;
+
+import static java.util.Arrays.*;
 
 // https://onlinejudge.u-aizu.ac.jp/courses/library/5/GRL/1/GRL_1_C
 public final class Judge1 {

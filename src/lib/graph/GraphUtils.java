@@ -7,8 +7,7 @@ import static java.util.Arrays.*;
  */
 public final class GraphUtils {
 
-	private GraphUtils() {
-	}
+	private GraphUtils() {}
 
 	/**
 	 * 無向グラフが二部グラフかを判定します。

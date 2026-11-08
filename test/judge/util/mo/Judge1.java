@@ -1,13 +1,13 @@
 package judge.util.mo;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.ds.arrays.*;
 import lib.io.compat17.*;
 import lib.util.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/static_range_count_distinct
 public final class Judge1 {

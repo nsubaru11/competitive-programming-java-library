@@ -1,12 +1,12 @@
 package judge.graph.tree.core;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 import lib.graph.tree.*;
 import lib.io.compat17.*;
+
+import static java.util.Arrays.*;
 
 // https://judge.yosupo.jp/problem/tree_path_composite_sum
 public final class Judge3 {

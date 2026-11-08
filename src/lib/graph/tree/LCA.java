@@ -1,9 +1,9 @@
 package lib.graph.tree;
 
+import lib.math.*;
+
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
-
-import lib.math.*;
 
 /**
  * ±1 RMQ（Farach-Colton and Bender のアルゴリズム）を用いた最小共通祖先（LCA）クエリ。
