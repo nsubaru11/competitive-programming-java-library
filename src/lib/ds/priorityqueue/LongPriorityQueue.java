@@ -114,6 +114,10 @@ public final class LongPriorityQueue implements LongCollection {
 		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
 	}
 
+	public long peekSecondOrDefault(final long defaultValue) {
+		return size < 2 ? defaultValue : peekSecond();
+	}
+
 	public boolean add(final long v) {
 		ensureCapacity(size + 1);
 		buf[size++] = v;

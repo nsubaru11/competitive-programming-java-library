@@ -114,6 +114,10 @@ public final class IntPriorityQueue implements IntCollection {
 		return compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
 	}
 
+	public int peekSecondOrDefault(final int defaultValue) {
+		return size < 2 ? defaultValue : peekSecond();
+	}
+
 	public boolean add(final int v) {
 		ensureCapacity(size + 1);
 		buf[size++] = v;

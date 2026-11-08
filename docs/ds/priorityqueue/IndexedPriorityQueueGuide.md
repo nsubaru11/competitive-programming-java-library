@@ -19,7 +19,8 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 - 各添字は「未追加」「active（キュー内）」「削除済み（`poll` 系・`remove` で取り出し済み）」の3状態を持つ。
 - `add` は active でない添字を登録し、`set` は無条件に更新・登録し、`relax` はより優先されるコストだけを反映する。`relax` は削除済みの添字を再登録しない。
 - `get` 系は active な添字のコスト、`getCost` 系は削除済みを含めて最後に持ったコストを返す。Dijkstra 法の確定距離を `getCostOrDefault` で取得できる。
-- コストと添字の両方について `peek`・`poll` と `OrDefault` 系を提供する。
+- コストと添字の両方について `peek`・`peekSecond`・`poll` と `OrDefault` 系を提供する。
+- コストが同順位の添字は添字の小さい方を先に取り出すため、取り出し順は追加や更新の順序によらず一意に決まる。
 - `clear` は世代番号 stamp を1減らすだけで全添字を未追加に戻し、O(1) で動作する。
 - 登録・配列からの構築・`setAll` はヒープ化を遅延する。ヒープ領域内の `set`・`relax` は即座に `siftUp`・`siftDown` し、未整列領域内では値の更新だけを行う。未整列領域の添字の `remove` は末尾の添字と入れ替えて O(1) で外す。
 - 比較順は昇順（汎用版は自然順序）・降順（汎用版は逆順）・Comparator から選ぶ。
@@ -76,6 +77,9 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Method      | `peekIndex()`                                                                           | `int`                     | 最優先の添字を返す。                                                                             |
 | Method      | `peekIndexOrDefault(int defaultIndex)`                                                  | `int`                     | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
 | Method      | `peekSecond()`                                                                          | `T`                       | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `peekSecondOrDefault(T defaultValue)`                                                   | `T`                       | 要素数2未満なら defaultValue、そうでなければ2番目に優先されるコストを返す。                      |
+| Method      | `peekSecondIndex()`                                                                     | `int`                     | 2番目に優先される添字を返す。要素数は2以上とする。                                               |
+| Method      | `peekSecondIndexOrDefault(int defaultIndex)`                                            | `int`                     | 要素数2未満なら defaultIndex、そうでなければ2番目に優先される添字を返す。                        |
 | Method      | `set(int i, T c)`                                                                       | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
 | Method      | `add(int i, T c)`                                                                       | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
 | Method      | `relax(int i, T c)`                                                                     | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
@@ -126,6 +130,9 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Method      | `peekIndex()`                                                             | `int`                     | 最優先の添字を返す。                                                                             |
 | Method      | `peekIndexOrDefault(int defaultIndex)`                                    | `int`                     | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
 | Method      | `peekSecond()`                                                            | `int`                     | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `peekSecondOrDefault(int defaultValue)`                                   | `int`                     | 要素数2未満なら defaultValue、そうでなければ2番目に優先されるコストを返す。                      |
+| Method      | `peekSecondIndex()`                                                       | `int`                     | 2番目に優先される添字を返す。要素数は2以上とする。                                               |
+| Method      | `peekSecondIndexOrDefault(int defaultIndex)`                              | `int`                     | 要素数2未満なら defaultIndex、そうでなければ2番目に優先される添字を返す。                        |
 | Method      | `set(int i, int c)`                                                       | `boolean`                 | active なら c へ更新して false、そうでなければ c で登録して true。                               |
 | Method      | `add(int i, int c)`                                                       | `boolean`                 | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
 | Method      | `relax(int i, int c)`                                                     | `boolean`                 | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
@@ -177,6 +184,9 @@ active な添字の数を s、未整列領域の添字の数を k とする。
 | Method      | `peekIndex()`                                                               | `int`                      | 最優先の添字を返す。                                                                             |
 | Method      | `peekIndexOrDefault(int defaultIndex)`                                      | `int`                      | 空なら defaultIndex、そうでなければ最優先の添字を返す。                                          |
 | Method      | `peekSecond()`                                                              | `long`                     | 2番目に優先されるコストを返す。要素数は2以上とする。                                             |
+| Method      | `peekSecondOrDefault(long defaultValue)`                                    | `long`                     | 要素数2未満なら defaultValue、そうでなければ2番目に優先されるコストを返す。                      |
+| Method      | `peekSecondIndex()`                                                         | `int`                      | 2番目に優先される添字を返す。要素数は2以上とする。                                               |
+| Method      | `peekSecondIndexOrDefault(int defaultIndex)`                                | `int`                      | 要素数2未満なら defaultIndex、そうでなければ2番目に優先される添字を返す。                        |
 | Method      | `set(int i, long c)`                                                        | `boolean`                  | active なら c へ更新して false、そうでなければ c で登録して true。                               |
 | Method      | `add(int i, long c)`                                                        | `boolean`                  | active でなければ登録して true、active なら false。削除済みの添字も再登録する。                  |
 | Method      | `relax(int i, long c)`                                                      | `boolean`                  | 未追加なら登録、active で c がより優先されるなら更新して true。削除済みは false。                |
@@ -214,8 +224,8 @@ active の判定は `position[i]` が `[0, size)` にあり、かつ `heap[posit
 ## 制約・注意事項
 
 - 添字は `0 <= i < indexCount()` とする。範囲は検査せず、範囲外では配列アクセスの `ArrayIndexOutOfBoundsException` を投げる。
-- `compare(a, b) < 0` となるコスト a を持つ添字が先に取り出される。同順位のコストを持つ添字の取り出し順は規定しない。
-- 空のキューの `peek`・`peekIndex`・`poll`・`pollIndex` と、要素数2未満の `peekSecond` は `NoSuchElementException` を投げる。
+- `compare(a, b) < 0` となるコスト a を持つ添字が先に取り出される。コストが同順位の添字は、添字の小さい方を先に取り出す。
+- 空のキューの `peek`・`peekIndex`・`poll`・`pollIndex` と、要素数2未満の `peekSecond`・`peekSecondIndex` は `NoSuchElementException` を投げる。
 - `get` は active でない添字、`getCost` は未追加の添字で `NoSuchElementException` を投げる。
 - `relax` は削除済みの添字を再登録しない。確定済みの頂点を再び開く場合は `add` または `set` を使う。
 - `setAll` と配列からの構築は全添字を active にする。`setAll` は直前までの削除済みの記録も消去する。
@@ -233,7 +243,7 @@ active の判定は `position[i]` が `[0, size)` にあり、かつ `heap[posit
 | `add`                                                                                     | O(1)               | 未整列領域へ置く。                                                                        |
 | `set`・`relax`                                                                            | O(log s)           | 対象が未整列領域にあれば O(1)。                                                           |
 | ヒープ性の復元                                                                            | O(min(s, k log s)) | 未整列要素がある場合に `peek`・`poll` や、ヒープ領域内の添字の `remove` の直前で1回行う。 |
-| `peek`・`peekIndex`・`peekSecond`                                                         | O(1)               | 未整列要素があれば復元コストを加える。                                                    |
+| `peek`・`peekIndex`・`peekSecond`・`peekSecondIndex`                                      | O(1)               | 未整列要素があれば復元コストを加える。                                                    |
 | `poll`・`pollIndex`                                                                       | O(log s)           | 未整列要素があれば復元コストを加える。                                                    |
 | `remove`                                                                                  | O(log s)           | 未整列領域の添字は O(1)。ヒープ領域の添字で未整列要素があれば復元コストを加える。         |
 | `get`・`getCost`・`containsIndex`・`hasCost`・`size`・`indexCount`・`clear`・iterator生成 | O(1)               | —                                                                                         |
@@ -254,3 +264,4 @@ active の判定は `position[i]` が `[0, size)` にあり、かつ `heap[posit
 | **バージョン 5.0** | 2026-10-28 | 全クラス: コピーコンストラクタを追加し、`setAll` が自身を返すよう、`set` が新規登録したかを boolean で返すよう変更。`remove` が未整列領域の添字をヒープを復元せず O(1) で外すよう改善。登録処理を `append`、配列からの構築を `build` へ集約し、`siftDown` の2引数版を廃止。LongIndexedPriorityQueue: private コンストラクタの位置を Int 版へ揃えた |
 | **バージョン 6.0** | 2026-10-29 | 全クラス: 使われていない `addAll(int[], T[])` 系を削除。`getLast`・`getLastOrDefault` を、判定の `hasCost` と対になる `getCost`・`getCostOrDefault` へ改名                                                                                                                                                                                         |
 | **バージョン 7.0** | 2026-10-29 | 全クラス: 添字数を公開フィールド `indexCount` として追加し、コレクションからのコンストラクタと内部配列の順に連結する `toString` を追加                                                                                                                                                                                                             |
+| **バージョン 8.0** | 2026-11-09 | 全クラス: コストが同順位の添字を、添字の小さい方から取り出すよう変更し、添字どうしの比較を `precedes` へ集約。`peekSecondOrDefault`・`peekSecondIndex`・`peekSecondIndexOrDefault` を追加                                                                                                                                                          |

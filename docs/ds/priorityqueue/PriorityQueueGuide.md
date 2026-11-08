@@ -19,7 +19,7 @@
 - `add`・`addAll`・配列やコレクションからの構築はヒープ化を遅延する。
 - ヒープ性の復元では、k に応じて Floyd の heapify と逐次 `siftUp` のうち推定コストが小さい方を選ぶ。
 - `peekSecond` は2番目に優先される要素を、`replaceTop` は先頭の置換を1回の `siftDown` で行う。
-- 空のキューで例外を避ける `peekOrDefault`・`pollOrDefault` を提供する。
+- 例外を避ける `peekOrDefault`・`peekSecondOrDefault`・`pollOrDefault` を提供する。
 - 比較順は昇順（汎用版は自然順序）・降順（汎用版は逆順）・Comparator から選ぶ。
 - 初期容量・配列・コレクション・コピーから構築できる。コピーは比較順・要素・容量を引き継ぐ。
 - 初期容量は1未満なら1とし、容量不足時は2倍へ拡張する。`clear` は内部配列を再利用する。
@@ -47,36 +47,37 @@
 
 `Iterable<T>` を実装する。
 
-| 種別        | シグネチャ                                                                        | 戻り値        | 説明                                                                  |
-|-------------|-----------------------------------------------------------------------------------|---------------|-----------------------------------------------------------------------|
-| Constructor | `PriorityQueue()`                                                                 | —             | 初期容量1024、自然順序で構築する。                                    |
-| Constructor | `PriorityQueue(int initialCapacity)`                                              | —             | 指定した初期容量、自然順序で構築する。                                |
-| Constructor | `PriorityQueue(boolean isDescendingOrder)`                                        | —             | 初期容量1024、自然順序または逆順で構築する。                          |
-| Constructor | `PriorityQueue(int initialCapacity, boolean isDescendingOrder)`                   | —             | 指定した初期容量、自然順序または逆順で構築する。                      |
-| Constructor | `PriorityQueue(Comparator<? super T> comparator)`                                 | —             | 初期容量1024、Comparator の順で構築する。                             |
-| Constructor | `PriorityQueue(int initialCapacity, Comparator<? super T> comparator)`            | —             | 指定した初期容量、Comparator の順で構築する。                         |
-| Constructor | `PriorityQueue(T[] values)`                                                       | —             | 配列の全要素を自然順序で持つ。                                        |
-| Constructor | `PriorityQueue(T[] values, boolean isDescendingOrder)`                            | —             | 配列の全要素を自然順序または逆順で持つ。                              |
-| Constructor | `PriorityQueue(T[] values, Comparator<? super T> comparator)`                     | —             | 配列の全要素を Comparator の順で持つ。                                |
-| Constructor | `PriorityQueue(Collection<? extends T> values)`                                   | —             | コレクションの全要素を自然順序で持つ。values の比較順は引き継がない。 |
-| Constructor | `PriorityQueue(Collection<? extends T> values, boolean isDescendingOrder)`        | —             | コレクションの全要素を自然順序または逆順で持つ。                      |
-| Constructor | `PriorityQueue(Collection<? extends T> values, Comparator<? super T> comparator)` | —             | コレクションの全要素を Comparator の順で持つ。                        |
-| Constructor | `PriorityQueue(PriorityQueue<T> other)`                                           | —             | 比較順・要素・容量を引き継ぐ独立したコピー。要素自体は共有する。      |
-| Method      | `size()`                                                                          | `int`         | 要素数を返す。                                                        |
-| Method      | `capacity()`                                                                      | `int`         | 内部配列の長さを返す。                                                |
-| Method      | `isEmpty()`                                                                       | `boolean`     | 要素数が0かを返す。                                                   |
-| Method      | `peek()`                                                                          | `T`           | 最優先の要素を返す。                                                  |
-| Method      | `peekOrDefault(T defaultValue)`                                                   | `T`           | 空なら defaultValue、そうでなければ最優先の要素を返す。               |
-| Method      | `peekSecond()`                                                                    | `T`           | 2番目に優先される要素を返す。要素数は2以上とする。                    |
-| Method      | `add(T v)`                                                                        | `boolean`     | 要素を追加する。常に true。                                           |
-| Method      | `addAll(T[] values)`                                                              | `boolean`     | 配列の全要素を追加する。1件以上追加した場合に true。                  |
-| Method      | `addAll(Iterable<? extends T> values)`                                            | `boolean`     | 全要素を追加する。1件以上追加した場合に true。                        |
-| Method      | `poll()`                                                                          | `T`           | 最優先の要素を削除して返す。                                          |
-| Method      | `pollOrDefault(T defaultValue)`                                                   | `T`           | 空なら defaultValue、そうでなければ最優先の要素を削除して返す。       |
-| Method      | `replaceTop(T v)`                                                                 | `T`           | 最優先の要素を v に置き換え、置き換え前の要素を返す。                 |
-| Method      | `clear()`                                                                         | `void`        | 内部配列を再利用して空にする。                                        |
-| Method      | `iterator()`                                                                      | `Iterator<T>` | 内部配列の順に走査する。                                              |
-| Method      | `toString()`                                                                      | `String`      | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。  |
+| 種別        | シグネチャ                                                                        | 戻り値        | 説明                                                                      |
+|-------------|-----------------------------------------------------------------------------------|---------------|---------------------------------------------------------------------------|
+| Constructor | `PriorityQueue()`                                                                 | —             | 初期容量1024、自然順序で構築する。                                        |
+| Constructor | `PriorityQueue(int initialCapacity)`                                              | —             | 指定した初期容量、自然順序で構築する。                                    |
+| Constructor | `PriorityQueue(boolean isDescendingOrder)`                                        | —             | 初期容量1024、自然順序または逆順で構築する。                              |
+| Constructor | `PriorityQueue(int initialCapacity, boolean isDescendingOrder)`                   | —             | 指定した初期容量、自然順序または逆順で構築する。                          |
+| Constructor | `PriorityQueue(Comparator<? super T> comparator)`                                 | —             | 初期容量1024、Comparator の順で構築する。                                 |
+| Constructor | `PriorityQueue(int initialCapacity, Comparator<? super T> comparator)`            | —             | 指定した初期容量、Comparator の順で構築する。                             |
+| Constructor | `PriorityQueue(T[] values)`                                                       | —             | 配列の全要素を自然順序で持つ。                                            |
+| Constructor | `PriorityQueue(T[] values, boolean isDescendingOrder)`                            | —             | 配列の全要素を自然順序または逆順で持つ。                                  |
+| Constructor | `PriorityQueue(T[] values, Comparator<? super T> comparator)`                     | —             | 配列の全要素を Comparator の順で持つ。                                    |
+| Constructor | `PriorityQueue(Collection<? extends T> values)`                                   | —             | コレクションの全要素を自然順序で持つ。values の比較順は引き継がない。     |
+| Constructor | `PriorityQueue(Collection<? extends T> values, boolean isDescendingOrder)`        | —             | コレクションの全要素を自然順序または逆順で持つ。                          |
+| Constructor | `PriorityQueue(Collection<? extends T> values, Comparator<? super T> comparator)` | —             | コレクションの全要素を Comparator の順で持つ。                            |
+| Constructor | `PriorityQueue(PriorityQueue<T> other)`                                           | —             | 比較順・要素・容量を引き継ぐ独立したコピー。要素自体は共有する。          |
+| Method      | `size()`                                                                          | `int`         | 要素数を返す。                                                            |
+| Method      | `capacity()`                                                                      | `int`         | 内部配列の長さを返す。                                                    |
+| Method      | `isEmpty()`                                                                       | `boolean`     | 要素数が0かを返す。                                                       |
+| Method      | `peek()`                                                                          | `T`           | 最優先の要素を返す。                                                      |
+| Method      | `peekOrDefault(T defaultValue)`                                                   | `T`           | 空なら defaultValue、そうでなければ最優先の要素を返す。                   |
+| Method      | `peekSecond()`                                                                    | `T`           | 2番目に優先される要素を返す。要素数は2以上とする。                        |
+| Method      | `peekSecondOrDefault(T defaultValue)`                                             | `T`           | 要素数2未満なら defaultValue、そうでなければ2番目に優先される要素を返す。 |
+| Method      | `add(T v)`                                                                        | `boolean`     | 要素を追加する。常に true。                                               |
+| Method      | `addAll(T[] values)`                                                              | `boolean`     | 配列の全要素を追加する。1件以上追加した場合に true。                      |
+| Method      | `addAll(Iterable<? extends T> values)`                                            | `boolean`     | 全要素を追加する。1件以上追加した場合に true。                            |
+| Method      | `poll()`                                                                          | `T`           | 最優先の要素を削除して返す。                                              |
+| Method      | `pollOrDefault(T defaultValue)`                                                   | `T`           | 空なら defaultValue、そうでなければ最優先の要素を削除して返す。           |
+| Method      | `replaceTop(T v)`                                                                 | `T`           | 最優先の要素を v に置き換え、置き換え前の要素を返す。                     |
+| Method      | `clear()`                                                                         | `void`        | 内部配列を再利用して空にする。                                            |
+| Method      | `iterator()`                                                                      | `Iterator<T>` | 内部配列の順に走査する。                                                  |
+| Method      | `toString()`                                                                      | `String`      | 内部配列の順に要素を空白区切りで連結する。空の場合は空文字列を返す。      |
 
 継承するメソッド：
 
@@ -108,6 +109,7 @@
 | Method      | `peek()`                                                            | `int`                     | 最優先の値を返す。                                                          |
 | Method      | `peekOrDefault(int defaultValue)`                                   | `int`                     | 空なら defaultValue、そうでなければ最優先の値を返す。                       |
 | Method      | `peekSecond()`                                                      | `int`                     | 2番目に優先される値を返す。要素数は2以上とする。                            |
+| Method      | `peekSecondOrDefault(int defaultValue)`                             | `int`                     | 要素数2未満なら defaultValue、そうでなければ2番目に優先される値を返す。     |
 | Method      | `add(int v)`                                                        | `boolean`                 | 値を追加する。常に true。                                                   |
 | Method      | `addAll(int[] values)`                                              | `boolean`                 | 配列の全要素を追加する。1件以上追加した場合に true。                        |
 | Method      | `addAll(IntCollection values)`                                      | `boolean`                 | 全要素をボクシングせずに追加する。1件以上追加した場合に true。              |
@@ -150,6 +152,7 @@
 | Method      | `peek()`                                                              | `long`                     | 最優先の値を返す。                                                            |
 | Method      | `peekOrDefault(long defaultValue)`                                    | `long`                     | 空なら defaultValue、そうでなければ最優先の値を返す。                         |
 | Method      | `peekSecond()`                                                        | `long`                     | 2番目に優先される値を返す。要素数は2以上とする。                              |
+| Method      | `peekSecondOrDefault(long defaultValue)`                              | `long`                     | 要素数2未満なら defaultValue、そうでなければ2番目に優先される値を返す。       |
 | Method      | `add(long v)`                                                         | `boolean`                  | 値を追加する。常に true。                                                     |
 | Method      | `addAll(long[] values)`                                               | `boolean`                  | 配列の全要素を追加する。1件以上追加した場合に true。                          |
 | Method      | `addAll(LongCollection values)`                                       | `boolean`                  | 全要素をボクシングせずに追加する。1件以上追加した場合に true。                |
@@ -173,7 +176,7 @@
 ## 制約・注意事項
 
 - `compare(a, b) < 0` となる a が b より先に取り出される。同順位の要素の取り出し順は規定しない。
-- 空のキューの `peek`・`poll`・`replaceTop` と、要素数2未満の `peekSecond` は `NoSuchElementException` を投げる。`peekOrDefault`・`pollOrDefault` は空のとき状態を変えずに defaultValue を返す。
+- 空のキューの `peek`・`poll`・`replaceTop` と、要素数2未満の `peekSecond` は `NoSuchElementException` を投げる。`peekOrDefault`・`pollOrDefault` は空のとき、`peekSecondOrDefault` は要素数2未満のとき、状態を変えずに defaultValue を返す。
 - Comparator を省略した汎用版は全要素が相互に Comparable であることを前提とする。そうでない型もコンパイルできるが、最初に比較した時点で `ClassCastException` を投げる。
 - 汎用版に null を追加しない。
 - Comparator を受け取るコンストラクタは null を `NullPointerException` で拒否する。
@@ -211,3 +214,4 @@
 | **バージョン 4.0** | 2026-07-20 | `add`へ統一し、Primitive Comparator、generic自然順序/Comparator構築、配列構築、default系、`peekSecond`、`capacity`を追加                                                                                                                                                                                                                                                                                 |
 | **バージョン 5.0** | 2026-10-28 | 全クラス: コレクション（`Collection` / `IntCollection` / `LongCollection`）とコピーからのコンストラクタを追加し、容量フィールドを廃止して `capacity` が内部配列の長さを返す形へ変更。数値版: `addAll(IntCollection)` / `addAll(LongCollection)` を追加し、`addAll(Iterable)` が数値コレクションを受け取った場合は委譲するよう変更（自身を渡した場合の無限ループを解消）。`replaceTop` の冗長な代入を除去 |
 | **バージョン 6.0** | 2026-10-29 | 全クラス: 内部配列の順に要素を連結する `toString` を追加。PriorityQueue: コンストラクタと機能が重複する `naturalOrder` / `reverseOrder` ファクトリを削除                                                                                                                                                                                                                                                 |
+| **バージョン 7.0** | 2026-11-09 | 全クラス: `peekSecondOrDefault` を追加                                                                                                                                                                                                                                                                                                                                                                   |

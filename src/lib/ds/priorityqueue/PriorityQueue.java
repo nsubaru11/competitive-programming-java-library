@@ -116,6 +116,10 @@ public final class PriorityQueue<T> implements Iterable<T> {
 		return comparator.compare(buf[1], buf[2]) <= 0 ? buf[1] : buf[2];
 	}
 
+	public T peekSecondOrDefault(final T defaultValue) {
+		return size < 2 ? defaultValue : peekSecond();
+	}
+
 	public boolean add(final T v) {
 		ensureCapacity(size + 1);
 		buf[size++] = v;

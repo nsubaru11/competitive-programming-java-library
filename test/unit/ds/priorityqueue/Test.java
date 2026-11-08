@@ -21,8 +21,12 @@ public final class Test {
 		checkCollections();
 		checkCopiesAndCollectionConstructors();
 		checkToStringAndFactories();
+		checkPeekSecondDefaults();
+		checkIndexedTies();
 		checkRandom(false);
 		checkRandom(true);
+		checkRandomTies(false);
+		checkRandomTies(true);
 	}
 
 	private static void checkPriorityQueues() {
@@ -205,6 +209,118 @@ public final class Test {
 		final var it = fromArray.iterator();
 		while (it.hasNext()) it.nextInt();
 		expectNoSuchElement(it::nextInt);
+	}
+
+	private static void checkPeekSecondDefaults() {
+		final IntPriorityQueue iq = new IntPriorityQueue(new int[]{4});
+		check(iq.peekSecondOrDefault(-1) == -1);
+		iq.add(6);
+		check(iq.peekSecondOrDefault(-1) == 6);
+		final LongPriorityQueue lq = new LongPriorityQueue(new long[]{4});
+		check(lq.peekSecondOrDefault(-1) == -1);
+		final PriorityQueue<String> gq = new PriorityQueue<>(new String[]{"a"});
+		check(gq.peekSecondOrDefault("z").equals("z"));
+
+		final IntIndexedPriorityQueue ii = new IntIndexedPriorityQueue(3);
+		ii.add(2, 5);
+		check(ii.peekSecondOrDefault(-1) == -1);
+		check(ii.peekSecondIndexOrDefault(-1) == -1);
+		expectNoSuchElement(ii::peekSecondIndex);
+		ii.add(0, 7);
+		check(ii.peekSecondIndex() == 0);
+		check(ii.peekSecondOrDefault(-1) == 7);
+		final LongIndexedPriorityQueue li = new LongIndexedPriorityQueue(3);
+		check(li.peekSecondIndexOrDefault(-1) == -1);
+		final IndexedPriorityQueue<String> gi = new IndexedPriorityQueue<>(new String[]{"b", "a"});
+		check(gi.peekSecondIndex() == 0);
+		check(gi.peekSecondIndexOrDefault(-1) == 0);
+		gi.pollIndex();
+		check(gi.peekSecondOrDefault("z").equals("z"));
+	}
+
+	private static void checkIndexedTies() {
+		final IntIndexedPriorityQueue built = new IntIndexedPriorityQueue(new int[]{3, 3, 3, 3, 3, 3, 3});
+		for (int i = 0; i < 7; i++) check(built.pollIndex() == i);
+
+		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(6);
+		for (int i = 5; i >= 0; i--) q.add(i, 1);
+		check(q.peekIndex() == 0);
+		check(q.peekSecondIndex() == 1);
+		check(q.pollIndex() == 0);
+		q.set(1, 2);
+		check(q.pollIndex() == 2);
+		check(q.relax(1, 1));
+		check(q.pollIndex() == 1);
+		check(q.remove(3));
+		check(q.pollIndex() == 4);
+		check(q.pollIndex() == 5);
+
+		final LongIndexedPriorityQueue max = new LongIndexedPriorityQueue(new long[]{5, 9, 9, 5, 9}, true);
+		check(max.pollIndex() == 1);
+		check(max.peekSecondIndex() == 4);
+		check(max.pollIndex() == 2);
+		check(max.pollIndex() == 4);
+		check(max.pollIndex() == 0);
+		check(max.pollIndex() == 3);
+
+		final IndexedPriorityQueue<Job> jobs = new IndexedPriorityQueue<>(4, Comparator.comparingInt(Job::priority));
+		for (int i = 3; i >= 0; i--) jobs.add(i, new Job(1, "j" + i));
+		check(jobs.peekSecondIndex() == 1);
+		for (int i = 0; i < 4; i++) check(jobs.pollIndex() == i);
+	}
+
+	private static void checkRandomTies(final boolean descending) {
+		final Random random = new Random(descending ? 20261109L : 1109L);
+		final int n = 40;
+		final int[] cost = new int[n];
+		final int[] state = new int[n];
+		final IntIndexedPriorityQueue q = new IntIndexedPriorityQueue(n, descending);
+		for (int step = 0; step < 200_000; step++) {
+			final int op = random.nextInt(6), i = random.nextInt(n), c = random.nextInt(4);
+			if (op == 0) {
+				check(q.add(i, c) == (state[i] != 1));
+				if (state[i] != 1) {
+					cost[i] = c;
+					state[i] = 1;
+				}
+			} else if (op == 1) {
+				check(q.set(i, c) == (state[i] != 1));
+				cost[i] = c;
+				state[i] = 1;
+			} else if (op == 2) {
+				final boolean better = state[i] == 1 && (descending ? c > cost[i] : c < cost[i]);
+				final boolean expected = state[i] == 0 || better;
+				check(q.relax(i, c) == expected);
+				if (expected) {
+					cost[i] = c;
+					state[i] = 1;
+				}
+			} else if (op == 3) {
+				check(q.remove(i) == (state[i] == 1));
+				if (state[i] == 1) state[i] = 2;
+			} else if (op == 4) {
+				final int first = best(cost, state, descending, -1);
+				check(q.peekIndexOrDefault(-1) == first);
+				check(q.peekSecondIndexOrDefault(-1) == (first < 0 ? -1 : best(cost, state, descending, first)));
+			} else {
+				final int first = best(cost, state, descending, -1);
+				check(q.pollIndexOrDefault(-1) == first);
+				if (first >= 0) state[first] = 2;
+			}
+			if (random.nextInt(5000) == 0) {
+				q.clear();
+				Arrays.fill(state, 0);
+			}
+		}
+	}
+
+	private static int best(final int[] cost, final int[] state, final boolean descending, final int skip) {
+		int result = -1;
+		for (int i = 0; i < cost.length; i++) {
+			if (state[i] != 1 || i == skip) continue;
+			if (result < 0 || (descending ? cost[i] > cost[result] : cost[i] < cost[result])) result = i;
+		}
+		return result;
 	}
 
 	private static void checkLazyUpdateBoundary() {

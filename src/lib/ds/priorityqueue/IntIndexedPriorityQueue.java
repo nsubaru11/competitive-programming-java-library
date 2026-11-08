@@ -8,7 +8,7 @@ import lib.util.function.*;
 
 /**
  * 添字 {@code 0 <= i < n} に int のコストを対応付ける優先度キュー。Dijkstra 法などで、添字ごとのコストを更新しながら優先されるものから取り出す用途に使う。
- * n は構築時に決め、添字の範囲は検査しない。比較順は昇順・降順・IntComparator から選ぶ。同順位のコストを持つ添字の取り出し順は規定しない。
+ * n は構築時に決め、添字の範囲は検査しない。比較順は昇順・降順・IntComparator から選ぶ。コストが同順位の添字は、添字の小さい方を先に取り出す。
  * 各添字は「未追加」「キュー内」「取り出し済み」のいずれかの状態を持つ。poll 系と remove で取り出した添字は取り出し済みになり、clear で全添字が未追加に戻る。
  * 空の peek・poll 系は NoSuchElementException を投げ、OrDefault 系は指定した既定値を返す。走査と toString はキュー内のコストを内部配列の順に返す。
  */
@@ -166,10 +166,24 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	 * 2番目に優先されるコストを返す。要素数は2以上とする。
 	 */
 	public int peekSecond() {
+		return cost[peekSecondIndex()];
+	}
+
+	public int peekSecondOrDefault(final int defaultValue) {
+		return size < 2 ? defaultValue : peekSecond();
+	}
+
+	/**
+	 * 2番目に優先される添字を返す。要素数は2以上とする。
+	 */
+	public int peekSecondIndex() {
 		if (size < 2) throw new NoSuchElementException();
 		if (unsortedCount > 0) ensureHeapProperty();
-		if (size == 2) return cost[heap[1]];
-		return compare(cost[heap[1]], cost[heap[2]]) <= 0 ? cost[heap[1]] : cost[heap[2]];
+		return size == 2 || precedes(heap[1], heap[2]) ? heap[1] : heap[2];
+	}
+
+	public int peekSecondIndexOrDefault(final int defaultIndex) {
+		return size < 2 ? defaultIndex : peekSecondIndex();
 	}
 
 	/**
@@ -183,8 +197,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		final int order = compare(c, cost[i]);
 		cost[i] = c;
 		if (order == 0) return false;
-		final int p = position[i];
-		final int sortedSize = size - unsortedCount;
+		final int p = position[i], sortedSize = size - unsortedCount;
 		if (p >= sortedSize) return false;
 		if (order < 0) siftUp(i, p);
 		else siftDown(i, p, sortedSize);
@@ -258,7 +271,7 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		position[i] = stamp;
 		if (--size != p) {
 			final int j = heap[size];
-			if (compare(cost[j], cost[i]) < 0) siftUp(j, p);
+			if (precedes(j, i)) siftUp(j, p);
 			else siftDown(j, p, size);
 		}
 		return true;
@@ -311,6 +324,11 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 		final PrimitiveIterator.OfInt it = costs.iterator();
 		for (int i = 0; i < indexCount; i++) cost[i] = it.nextInt();
 		build();
+	}
+
+	private boolean precedes(final int i, final int j) {
+		final int order = compare(cost[i], cost[j]);
+		return order < 0 || order == 0 && i < j;
 	}
 
 	private int compare(final int a, final int b) {
@@ -376,11 +394,9 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	private void siftUp(final int i, int p) {
-		final int c = cost[i];
 		while (p > 0) {
-			final int q = (p - 1) >> 1;
-			final int j = heap[q];
-			if (compare(c, cost[j]) >= 0) break;
+			final int q = (p - 1) >> 1, j = heap[q];
+			if (!precedes(i, j)) break;
 			heap[p] = j;
 			position[j] = p;
 			p = q;
@@ -390,13 +406,12 @@ public final class IntIndexedPriorityQueue implements IntCollection {
 	}
 
 	private void siftDown(final int i, int p, final int n) {
-		final int c = cost[i];
 		final int half = n >> 1;
 		while (p < half) {
 			int q = (p << 1) + 1;
-			if (q + 1 < n && compare(cost[heap[q]], cost[heap[q + 1]]) > 0) q++;
+			if (q + 1 < n && precedes(heap[q + 1], heap[q])) q++;
 			final int j = heap[q];
-			if (compare(c, cost[j]) <= 0) break;
+			if (precedes(i, j)) break;
 			heap[p] = j;
 			position[j] = p;
 			p = q;
