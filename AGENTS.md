@@ -56,18 +56,16 @@
 ## Developer Workflows
 
 - After completing work, remove temporary build outputs and editing scripts created for the task. Do not leave them in `out/` or include them in deliverables. Prefer an OS temporary directory for one-off editing scripts, and remove those scripts after use. Preserve pre-existing files unless cleanup is requested.
-- There is no Maven or Gradle build. Compile the source roots directly with `javac`.
+- The build uses the Gradle Wrapper (`build.gradle.kts`, versions in `gradle/libs.versions.toml`). The `main` sourceSet is `src/` and the `test` sourceSet is all of `test/`. External dependencies are allowed only in test and benchmark sourceSets; `src/` must stay dependency-free and compilable with plain `javac`.
+- Run JUnit tests with `./gradlew test`, and `./gradlew check` to also verify `lib.io.compat17` with `--release 17`. The command-line Gradle runs on the JDK in `JAVA_HOME` (24.0.2 locally) and compiles with `--release 24`.
+- In IntelliJ IDEA, the parent repository's `.ide/idea` project links this Gradle build. The IDE generates the modules `library`, `library.main` (`src/`), and `library.test` (`test/`); contest modules depend on `library.main`. The IDE stores these modules and the Gradle libraries outside `.idea`. Link or relink only from the IDE's Gradle tool window; do not hand-write `gradle.xml`, module files, or a `library.iml`, because hand-written setups have left the JUnit libraries unsaved.
+- Unit tests live at `test/unit/<area>/<Target>Test.java` and use JUnit Jupiter. Never name a test class `Test`, because `@Test` would then resolve to that class. Tests may use `import static org.junit.jupiter.api.Assertions.*;`; the static-import ban applies only to bundled `src/` code. Test only behavior stated in the Guide and Javadoc; do not test invalid inputs the library does not check.
 - Before creating a commit, read `.github/COMMIT_MESSAGE_TEMPLATE.md` and follow it. Commit messages must be written in Japanese using one of the documented prefixes (`feat`, `refactor`, `docs`, `style`, `test`, `perf`, `fix`, `chore`) in the form `prefix: 概要`; add the `詳細:` section with bullet points when useful.
 - Full Java 24 smoke compile in PowerShell:
 
   `javac --release 24 -encoding UTF-8 -d out (rg --files src -g '*.java')`
 
-- Compile verification sources after the library:
-
-  `javac --release 24 -encoding UTF-8 -cp out -d out/test (rg --files test -g '*.java')`
-
-- Check Java 17 compatibility separately for `src/lib/io/compat17/*.java` using `--release 17`.
-- Run executable examples by fully qualified name, for example `java -cp "out;out/test" example.graph.Example` on Windows. Existing local checks use `main` methods; enable Java assertions with `-ea` when running `unit.*` classes. See `test/README.md` for the layout and naming rules.
+- Run executable examples by fully qualified name, for example `java -cp "out;out/test" example.graph.Example` on Windows, after compiling the test sources other than `test/unit/` against `out`. See `test/README.md` for the layout and commands, and `test/unit/README.md` for unit-test conventions.
 - The Java 24 benchmark entrypoints are `docs/io/java24/benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
 
 ## Submission Integration

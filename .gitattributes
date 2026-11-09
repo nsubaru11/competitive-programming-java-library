@@ -35,6 +35,8 @@
 .gitignore text eol=lf
 .gitattributes text eol=lf
 Makefile text eol=lf
+gradlew text eol=lf
+gradlew.bat text eol=crlf
 LICENSE text eol=lf
 README.md text eol=lf
 

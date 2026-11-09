@@ -62,8 +62,7 @@ library/java/
 │       └── gradle-wrapper.properties
 ├── src/                       # main sourceSet
 ├── test/                      # test sourceSet（example / unit / judge / benchmark）
-├── jmh/                       # jmh sourceSet（配置は「9. 要決定事項」を参照）
-└── template/                  # IntelliJ のファイルテンプレート。ビルド対象外
+└── jmh/                       # jmh sourceSet（配置は「9. 要決定事項」を参照）
 ```
 
 ### sourceSet
@@ -74,11 +73,9 @@ library/java/
 | `test`    | `test/`      | 4用途すべてをコンパイルする。JUnit が検出するのは `@Test` などの注釈を持つクラスだけであり、`main` 形式の example / judge / benchmark はテストとして実行されない |
 | `jmh`     | `jmh/`       | JMH ベンチマーク。`main` と `test` を参照できる                                                                                                                  |
 
-`template/` は Velocity 構文をコメントに含むテンプレートであり、sourceSet に入れない。
-
 ### JDK
 
-- Gradle とテストはローカルの JDK 25 で実行し、コンパイルは `options.release = 24` で行う。toolchain は使わない。
+- Gradle とテストは `JAVA_HOME` の JDK（手元では 24.0.2）で実行し、コンパイルは `options.release = 24` で行う。toolchain は使わない。
 - `src/lib/io/compat17/` は別タスク `compileCompat17` で `--release 17` のコンパイルだけを確認する。
 - ジャッジと同じ JDK 24 で測定したくなった場合は、toolchain と foojay-resolver プラグインで JDK 24 を指定する（「9. 要決定事項」を参照）。
 
@@ -166,8 +163,9 @@ jmh {
 
 ### IntelliJ IDEA
 
-- `library/java` を Gradle プロジェクトとして開く。親リポジトリを開いている場合は `library/java/build.gradle.kts` を Link Gradle Project で追加する。
-- Settings → Build, Execution, Deployment → Build Tools → Gradle で Gradle JVM を JDK 25 にする。テスト実行を Gradle と IntelliJ のどちらで行うかを選ぶ。
+- 親リポジトリの `.ide/idea` から、Gradle ツールウィンドウの Link Gradle Project で `library/java` をリンクした（2026-11-09）。コンテストのモジュールは、Gradle から生成された `library.main` に依存する。
+- 生成されたモジュールとライブラリは、IDE が `.idea` の外（IDE のキャッシュ）に保存する。`gradle.xml` を手で書いてリンクしたときは JUnit のライブラリ定義が保存されず、IDE のビルドが失敗したため、画面からリンクし直した。
+- Gradle JVM は Project SDK（jdk24.0.2）とし、ビルドとテストの実行は IntelliJ IDEA で行う。
 - example / judge の `main` は従来通りガターから個別に実行できる。
 
 ## 4. テストの規約
@@ -235,7 +233,6 @@ JUnit へ移行したファイルから削除する。移行完了までは `mai
 | [test/README.md](../test/README.md)                                   | IntelliJ の設定、コマンドライン手順、「JUnit を導入していない」の記述                                                    |
 | [test/unit/README.md](../test/unit/README.md)                         | 「準備中」を、配置・命名・テストの種類の説明に置き換える                                                                 |
 | [docs/STATUS.md](./STATUS.md)                                         | 「ビルドツールと自動テストランナーはなく」の記述                                                                         |
-| [template/Test.java](../template/Test.java)                           | JUnit 形式のテンプレートにするか、Judge 用と分けて残すかを決める                                                         |
 | `.gitignore`                                                          | Wrapper の jar の除外解除                                                                                                |
 | `.github/dependabot.yml`                                              | Gradle の依存更新                                                                                                        |
 
@@ -274,7 +271,7 @@ JUnit へ移行したファイルから削除する。移行完了までは `mai
 | `test/unit/util/format/Test.java`                  | `lib.util`             |
 | `test/unit/util/mo/Test.java`                      | `lib.util`             |
 
-`test/unit/util/conversions/Test.java` は出力デモを兼ねるため、照合部分だけを JUnit に移し、デモ部分は `test/example/` へ移すか判断する。
+`test/unit/util/conversions/Test.java` の出力デモ部分は、同じ値を照合するテストに置き換えて削除した。
 
 完了条件: `test/unit/` に `main` 形式のファイルが残らず、`build/reports/jacoco/test/html/index.html` が生成される。
 
@@ -311,5 +308,4 @@ JMH プラグインを有効にし、比較したい実装からベンチマー�
 | JMH ソースの配置          | (a) トップレベルの `jmh/`。(b) `test/benchmark/jmh/` に置き、test sourceSet から除外して jmh sourceSet に含める | (a)。(b) は `test/` を両 sourceSet が共有するため、IntelliJ でソースルートの重複が起きやすい。(a) を採る場合は AGENTS.md の `test/benchmark/` の説明に JMH の場所を追記する |
 | 実行 JDK                  | (a) JDK 25 で実行し `--release 24` でコンパイル。(b) toolchain で JDK 24 を指定                                 | (a)。ジャッジと同じ JDK での性能測定が必要になった時点で (b) を検討する                                                                                                     |
 | IntelliJ のテスト実行方式 | Gradle / IntelliJ IDEA                                                                                          | 好みで選ぶ。IntelliJ の方が起動は速い                                                                                                                                       |
-| `template/Test.java`      | JUnit 形式に置き換える / 現状維持                                                                               | JUnit 形式のテンプレートを別に追加する                                                                                                                                      |
 | 既存 FastIO ベンチマーク  | Gradle タスク化する / 現状維持                                                                                  | 当面は現状維持                                                                                                                                                              |

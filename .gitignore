@@ -57,6 +57,7 @@ qodana.yml
 **/*.jar
 **/*.war
 **/*.ear
+!gradle/wrapper/gradle-wrapper.jar
 
 # エディタの一時ファイル
 **/*.swp
