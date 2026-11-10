@@ -38,7 +38,8 @@
 
 generic・`int`・`long` 版に共通する振る舞いは、`<種類>Contract` の抽象クラスに1回だけ書く。
 
-- 契約テストは、値を `long` で受け渡す `Target` インターフェースと、`create` などの抽象メソッドを持つ。各版のテストは、`Target` を実装する private な record と `create` を書く。
+- 契約テストは、値を `long` で受け渡す `Target` インターフェースと、`create` などの抽象メソッドを持つ。各版のテストは `create` で対象を作り、`unit.support.Adapter.of(Target.class, 対象)` で `Target` につなぐ。`Adapter` は同じ名前のメソッドへ委譲し、`long` と `int`・`char`、配列、関数型インターフェースを相互に変換する。
+- 次元やキーの成分数で引数の個数が変わる API（累積和・マップ・行列など）は、`Adapter.call`・`Adapter.callStatic` で名前を指定して呼び出す。
 - `@Nested` クラスも契約テストに書く。継承した各版のテストで、それぞれ実行される。
 - `int` 版は `Math.toIntExact` で変換し、範囲外の値を渡したら例外で気づけるようにする。
 - 型に固有の性質（`int` 版の和が `long` になる、`long` 版が `int` の範囲を超える値を扱えるなど）は、各版のテストクラスの直下に書く。

@@ -1,62 +1,59 @@
 package unit.ds.segmenttree;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.jupiter.api.*;
 
 import lib.ds.segmenttree.*;
 
+import unit.support.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-final class SegmentTreeTest {
+final class SegmentTreeTest extends SegmentTreeContract {
 
-	private static final int N = 100;
+	Target create(final int n, final Op op) {
+		return Adapter.of(Target.class, new SegmentTree<>(n, operator(op), identity(op)));
+	}
 
-	// 汎用・int・long の3実装と愚直解を、全区間で照合する
-	@Test
-	void sumMatchesAcrossVariants() {
-		final IntSegmentTree intTree = new IntSegmentTree(N, Integer::sum, 0);
-		intTree.setAll(i -> i);
-		final LongSegmentTree longTree = new LongSegmentTree(N, Long::sum, 0);
-		longTree.setAll(i -> i);
-		final SegmentTree<Integer> tree = new SegmentTree<>(N, Integer::sum, 0);
-		tree.setAll(i -> i);
-		for (int l = 0; l <= N; l++) {
-			for (int r = l; r <= N; r++) {
-				final String at = "l=" + l + ", r=" + r;
-				final long expected = (long) (l + r - 1) * (r - l) / 2;
-				assertEquals(expected, intTree.query(l, r), at);
-				assertEquals(expected, longTree.query(l, r), at);
-				assertEquals(expected, (long) tree.query(l, r), at);
-			}
-		}
+	Target create(final long[] a, final Op op) {
+		return Adapter.of(Target.class, new SegmentTree<>(Arrays.stream(a).boxed().toArray(Long[]::new), operator(op), identity(op)));
+	}
+
+	Target createFromCollection(final long[] a, final Op op) {
+		return Adapter.of(Target.class, new SegmentTree<>(Arrays.stream(a).boxed().toList(), operator(op), identity(op)));
+	}
+
+	long inf() {
+		return Long.MAX_VALUE;
 	}
 
 	@Test
-	void fields() {
-		final IntSegmentTree intTree = new IntSegmentTree(N, Integer::sum, 0);
-		final LongSegmentTree longTree = new LongSegmentTree(N, Long::sum, 0);
-		final SegmentTree<Integer> tree = new SegmentTree<>(N, Integer::sum, 0);
-		assertEquals(N, intTree.size);
-		assertEquals(0, intTree.identity);
-		assertEquals(N, longTree.size);
-		assertEquals(0, longTree.identity);
-		assertEquals(N, tree.size);
-		assertEquals(0, tree.identity);
+	void stateOfGenericVersion() {
+		final SegmentTree<Long> t = new SegmentTree<>(List.of(1L, 2L), Long::sum, 0L);
+		assertEquals(2, t.size);
+		assertFalse(t.isEmpty());
+		assertTrue(new SegmentTree<>(0, Long::sum, 0L).isEmpty());
 	}
 
+	// 結合則だけを満たす演算（文字列の連結）でも左から順に集計する
 	@Test
-	void copyKeepsValues() {
-		final IntSegmentTree intTree = new IntSegmentTree(N, Integer::sum, 0);
-		intTree.setAll(i -> i);
-		assertEquals(intTree.query(3, 10), new IntSegmentTree(intTree).query(3, 10));
+	void nonCommutativeOperator() {
+		final SegmentTree<String> t = new SegmentTree<>(new String[]{"a", "b", "c", "d", "e"}, String::concat, "");
+		assertEquals("bcd", t.query(1, 4));
+		assertEquals("abcde", t.queryAll());
+		t.set(2, "X");
+		assertEquals("abXd", t.query(0, 4));
+		assertEquals(4, t.maxRight(1, s -> s.length() <= 3));
+		assertEquals(2, t.minLeft(5, s -> s.length() <= 3));
 	}
 
-	@Test
-	void fromCollection() {
-		final SegmentTree<Integer> tree = new SegmentTree<>(List.of(5, 1, 4), Math::min, Integer.MAX_VALUE);
-		assertEquals(3, tree.size);
-		assertEquals(Integer.MAX_VALUE, tree.identity);
-		assertEquals(1, tree.query(0, 3));
+	private static BinaryOperator<Long> operator(final Op op) {
+		return op == Op.SUM ? Long::sum : Math::min;
+	}
+
+	private static Long identity(final Op op) {
+		return op == Op.SUM ? 0L : Long.MAX_VALUE;
 	}
 }
