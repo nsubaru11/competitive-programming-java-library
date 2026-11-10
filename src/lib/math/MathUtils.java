@@ -452,7 +452,7 @@ public final class MathUtils {
 	 */
 	public static int invFact(final int n, final int mod) {
 		long ans = 1;
-		for (int a = modFact(n, mod), b = mod - 2; b > 0; a = a * a % mod, b >>= 1) {
+		for (long a = modFact(n, mod), b = mod - 2; b > 0; a = a * a % mod, b >>= 1) {
 			if ((b & 1) == 1) ans = ans * a % mod;
 		}
 		return (int) ans;
@@ -507,6 +507,7 @@ public final class MathUtils {
 
 	/**
 	 * nCrを求めます。
+	 * 途中の値 {@code nC(i-1) * (n-i+1)} が {@code long} に収まることを前提とします。
 	 *
 	 * @param n 二項係数を求めるのに用いる値
 	 * @param r 二項係数を求めるのに用いる値
@@ -515,12 +516,10 @@ public final class MathUtils {
 	public static long nCr(long n, int r) {
 		if (r < 0 || r > n) return 0;
 		r = (int) min(n - r, r);
-		long numer = 1, denom = 1;
-		for (int i = 1; i <= r; i++) {
-			numer *= n - i + 1;
-			denom *= i;
-		}
-		return numer / denom;
+		// ans は常に nC(i-1) なので、毎回割り切れる
+		long ans = 1;
+		for (int i = 1; i <= r; i++) ans = ans * (n - i + 1) / i;
+		return ans;
 	}
 
 	/**

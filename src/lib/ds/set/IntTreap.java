@@ -5,6 +5,8 @@ import java.util.stream.*;
 
 @SuppressWarnings("unused")
 public final class IntTreap implements Iterable<Integer> {
+	// TODO: 開発中。merge の後に size と木の要素数が食い違い、toArray が範囲外アクセスになるため、完成まで使用しない
+	// TODO: merge・splitHigher・splitCeiling・splitLower・splitFloor を検証し、Guide・Test を整備する
 	// -------------- Fields --------------
 	private Node root;
 	private int first, last;

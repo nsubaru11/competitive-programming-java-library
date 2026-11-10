@@ -26,7 +26,7 @@
 - **特徴**:
     - 既定コンストラクタ `new FastScanner()` で `FileDescriptor.in` を通じて標準入力へ接続。
     - 配列、行列、3 次元配列、各種コレクション、マルチセットなどをまとめて読み込み可能。
-    - `hasNext()` / `peek()` により EOF と次トークンを安全に確認可能。
+    - `hasNext()` により EOF を確認できる。
     - `nextInt0()` / `nextLong0()` とその配列版により、1-indexed 入力を 0-indexed に即変換可能。
     - `nextLine()` は `LF` / `CRLF` の両方を処理。
     - Java 24 版では数値パースで `VarHandle` を利用。

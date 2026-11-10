@@ -9,7 +9,7 @@ public final class Int128 extends Number implements Comparable<Int128> {
 	}
 
 	public Int128(long lo) {
-		this(0, lo);
+		this(lo >> 63, lo);
 	}
 
 	public Int128(long hi, long lo) {
@@ -230,6 +230,11 @@ public final class Int128 extends Number implements Comparable<Int128> {
 	}
 
 	public double doubleValue() {
+		// 負の値をそのまま足すと上位と下位が打ち消し合って桁が落ちるため、絶対値で計算する
+		if (hi < 0 && !(hi == Long.MIN_VALUE && lo == 0)) {
+			final long nlo = -lo, nhi = lo == 0 ? -hi : ~hi;
+			return -((double) nhi * 0x1.0p64 + toUnsignedDouble(nlo));
+		}
 		return (double) hi * 0x1.0p64 + toUnsignedDouble(lo);
 	}
 

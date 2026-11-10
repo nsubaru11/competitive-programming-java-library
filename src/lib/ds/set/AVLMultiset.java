@@ -137,7 +137,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 
 	// -------------- Arrays --------------
 	public T[] toArray() {
-		if (size == 0) return (T[]) new Object[0];
+		if (size == 0) return (T[]) new Comparable[0];
 		if (size > Integer.MAX_VALUE)
 			throw new IllegalStateException("Array too large: " + size + " elements (exceeds single-array limit)");
 		final T[] arr = (T[]) Array.newInstance(first.getClass(), (int) size);
@@ -147,7 +147,7 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	public T[] toUniqueArray() {
-		if (uniqueSize == 0) return (T[]) new Object[0];
+		if (uniqueSize == 0) return (T[]) new Comparable[0];
 		final Iterator<T> it = uniqueIterator();
 		final T[] arr = (T[]) Array.newInstance(first.getClass(), uniqueSize);
 		for (int i = 0; it.hasNext(); i++) arr[i] = it.next();
@@ -229,13 +229,11 @@ public final class AVLMultiset<T extends Comparable<T>> implements Iterable<T> {
 	}
 
 	public long rank(final T t) {
-		final long index = index(t, false);
-		return index < 0 ? ~index : index;
+		return index(t, false);
 	}
 
 	public long uniqueRank(final T t) {
-		final long index = index(t, true);
-		return index < 0 ? ~index : index;
+		return index(t, true);
 	}
 
 	private long index(final T t, final boolean unique) {

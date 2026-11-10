@@ -35,6 +35,8 @@ public final class Manacher {
 		int len = (chr.length << 1) - 1;
 		palindromeLengths = new int[len];
 		palindromeLengths[0] = palindromeLengths[len - 1] = 1;
+		// 両端の中心はループで調べないため、先頭の1文字を初期値にする
+		maxOddLen = 1;
 		computePalindromicLengths();
 	}
 

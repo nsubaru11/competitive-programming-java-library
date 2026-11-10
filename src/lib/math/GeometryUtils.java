@@ -13,6 +13,7 @@ import static java.lang.Math.*;
  */
 @SuppressWarnings("unused")
 public final class GeometryUtils {
+	// TODO: 仕様を整理し直す。3次元の判定（crossLine3D が同一平面上の交差を判定できない、crossRect3D の辺のみの接触、containsPointTri の同一平面上の外部）が誤っている
 
 	private static final double EPSILON = 1e-10;
 

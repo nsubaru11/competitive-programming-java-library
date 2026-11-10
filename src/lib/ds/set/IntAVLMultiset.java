@@ -226,13 +226,11 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	}
 
 	public long rank(final int t) {
-		final long index = index(t, false);
-		return index < 0 ? ~index : index;
+		return index(t, false);
 	}
 
 	public long uniqueRank(final int t) {
-		final long index = index(t, true);
-		return index < 0 ? ~index : index;
+		return index(t, true);
 	}
 
 	private long index(final int t, final boolean unique) {
@@ -356,26 +354,44 @@ public final class IntAVLMultiset implements Iterable<Integer> {
 	// -------------- sum --------------
 	public long prefixSum(final int i) {
 		if (i < 0 || size <= i) throw new IndexOutOfBoundsException();
-		final Node t = getByIndex(i, false);
-		return t.sum - t.rightSum();
+		return headSum(i + 1L, false);
 	}
 
 	public long prefixUniqueSum(final int i) {
 		if (i < 0 || uniqueSize <= i) throw new IndexOutOfBoundsException();
-		final Node t = getByIndex(i, true);
-		return t.uniqueSum - t.rightUniqueSum();
+		return headSum(i + 1L, true);
 	}
 
 	public long suffixSum(final int i) {
 		if (i < 0 || size <= i) throw new IndexOutOfBoundsException();
-		final Node t = getByIndex(i, false);
-		return t.sum - t.leftSum();
+		return sum - headSum(i, false);
 	}
 
 	public long suffixUniqueSum(final int i) {
 		if (i < 0 || uniqueSize <= i) throw new IndexOutOfBoundsException();
-		final Node t = getByIndex(i, true);
-		return t.uniqueSum - t.leftUniqueSum();
+		return uniqueSum - headSum(i, true);
+	}
+
+	/**
+	 * 小さい方から {@code k} 個の要素の和を返します。
+	 */
+	private long headSum(long k, final boolean unique) {
+		long res = 0;
+		Node cur = root;
+		while (cur != null && k > 0) {
+			final long leftSize = unique ? cur.leftUniqueSize() : cur.leftSize();
+			if (k <= leftSize) {
+				cur = cur.left;
+				continue;
+			}
+			res += unique ? cur.leftUniqueSum() : cur.leftSum();
+			k -= leftSize;
+			final long take = min(k, unique ? 1 : cur.cnt);
+			res += cur.label * take;
+			k -= take;
+			cur = cur.right;
+		}
+		return res;
 	}
 
 	public long sumRange(final int l, final int r) {

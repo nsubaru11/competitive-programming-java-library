@@ -1,6 +1,8 @@
 package lib.ds.trie;
 
 public final class PatriciaTrie {
+	// TODO: 開発中。接頭辞の関係にある単語（例: "a" と "ab"）を正しく検索できないため、完成まで使用しない
+	// TODO: 辺の分割と終端の扱いを見直し、Guide・Test を整備する
 	private Node root = new Node(0);
 
 	public void insert(String key) {

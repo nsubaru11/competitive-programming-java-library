@@ -128,7 +128,7 @@ public final class AVLSet<T extends Comparable<T>> implements Iterable<T> {
 
 	// -------------- Arrays --------------
 	public T[] toArray() {
-		if (size == 0) return (T[]) new Object[0];
+		if (size == 0) return (T[]) new Comparable[0];
 		final T[] arr = (T[]) Array.newInstance(first.getClass(), size);
 		int i = 0;
 		for (final T t : this) arr[i++] = t;

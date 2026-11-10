@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 @SuppressWarnings({"unused", "unchecked"})
 public final class Treap<T extends Comparable<T>> implements Iterable<T> {
+	// TODO: 開発中。IntTreap と同じ merge・split 系を実装し、Guide・Test を整備する
 	// -------------- Fields --------------
 	private final Comparator<? super T> comparator;
 	private Node root;
@@ -126,7 +127,7 @@ public final class Treap<T extends Comparable<T>> implements Iterable<T> {
 
 	// -------------- Arrays --------------
 	public T[] toArray() {
-		if (size == 0) return (T[]) new Object[0];
+		if (size == 0) return (T[]) new Comparable[0];
 		final T[] arr = (T[]) Array.newInstance(first.getClass(), size);
 		int i = 0;
 		for (final T t : this) arr[i++] = t;

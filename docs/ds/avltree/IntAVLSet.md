@@ -53,7 +53,7 @@ AVL木に基づいているため、要素の追加、削除、検索が対数�
 | `containsAll(Collection<Integer> c)` | `boolean`  | コレクションの全要素が含まれているか確認します     |
 | `getByIndex(int index)`              | `int`      | 指定インデックスの要素を返します                   |
 | `indexOf(int t)`                     | `int`      | 要素のインデックスを返します（存在しない場合は-1） |
-| `rank(int t)`                        | `int`      | 指定した値より小さい要素数を返します               |
+| `rank(int t)`                        | `int`      | 存在すればそのインデックス、存在しなければ挿入位置の補数（`~index`）を返します |
 | `first()`                            | `int`      | 最小の要素を返します                               |
 | `last()`                             | `int`      | 最大の要素を返します                               |
 

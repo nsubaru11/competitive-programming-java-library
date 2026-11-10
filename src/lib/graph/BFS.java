@@ -42,6 +42,7 @@ public final class BFS {
 		final int[] dq = new int[n];
 		int tail = 0;
 		for (final int si : s) {
+			if (dist[si] == 0) continue;
 			parent[si] = si;
 			dist[si] = 0;
 			dq[tail++] = si;

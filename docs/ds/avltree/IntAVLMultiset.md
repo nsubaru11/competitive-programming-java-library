@@ -62,8 +62,8 @@
 | `getByUniqueIndex(int index)`        | `int`      | 指定ユニークインデックスの要素を返します       |
 | `indexOf(int t)`                     | `long`     | 最初の要素のインデックスを返します             |
 | `uniqueIndexOf(int t)`               | `int`      | 要素のユニークインデックスを返します           |
-| `rank(int t)`                        | `long`     | tより小さい要素の総数を返します                |
-| `uniqueRank(int t)`                  | `long`     | tより小さいユニーク要素の数を返します          |
+| `rank(int t)`                        | `long`     | 存在すれば最初の要素のインデックス、存在しなければ挿入位置の補数（`~index`）を返します |
+| `uniqueRank(int t)`                  | `long`     | 存在すればユニーク要素のインデックス、存在しなければ挿入位置の補数（`~index`）を返します |
 
 ### 4. 境界探索系メソッド
 
@@ -73,8 +73,8 @@
 | `ceiling(int key)`  | `Integer`  | key以上の最小の要素を返します                 |
 | `lower(int key)`    | `Integer`  | keyより小さい最大の要素を返します             |
 | `floor(int key)`    | `Integer`  | key以下の最大の要素を返します                 |
-| `lowerBound(int t)` | `long`     | t以上の最初の要素のインデックスを返します     |
-| `upperBound(int t)` | `long`     | tより大きい最初の要素のインデックスを返します |
+| `lowerBound(int t)` | `long`     | tと一致する左端のインデックス、存在しなければ挿入位置の補数（`~index`）を返します |
+| `upperBound(int t)` | `long`     | tと一致する右端のインデックス、存在しなければ挿入位置の補数（`~index`）を返します |
 
 ### 5. 区間和系メソッド
 
@@ -142,6 +142,7 @@
 | **バージョン 1.0** | 2025-09-25 | 初版リリース                                                                                      |
 | **バージョン 2.0** | 2025-10-13 | 区間和機能の追加、差分更新最適化による30-40%の性能向上                                            |
 | **バージョン 2.1** | 2025-10-17 | ドキュメント修正: メソッド名表記（suffixSum 系）と空集合時の挙動、sumRange の半開区間仕様を明確化 |
+| **バージョン 3.0** | 2026-11-10 | `rank`・`uniqueRank` が存在しない値に挿入位置の補数を返すよう変更。`prefixSum`・`suffixSum`・`sumRange` と unique 版が部分木の中の和だけを返していた不具合を修正 |
 
 ### バージョン管理について
 

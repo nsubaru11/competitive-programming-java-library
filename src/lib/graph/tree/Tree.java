@@ -102,6 +102,7 @@ public class Tree extends UndirectedGraph {
 		return cost;
 	}
 
+	// TODO: 未完成。常に null を返すため、2回の探索で直径の両端と長さを求める実装を行う
 	public Diameter findDiameter() {
 		final int[] qV = new int[n], qF = new int[n];
 		final long[] qL = new long[n];
