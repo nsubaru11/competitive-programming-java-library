@@ -122,7 +122,7 @@
 
 ## 利用例
 
-準備中
+[IntTripleIntMapExample.java](../../../test/example/ds/map/IntTripleIntMapExample.java) · [IntTripleLongMapExample.java](../../../test/example/ds/map/IntTripleLongMapExample.java)
 
 ## 制約・注意事項
 

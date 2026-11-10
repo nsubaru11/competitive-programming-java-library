@@ -71,7 +71,7 @@
 
 ## 利用例
 
-準備中
+[GraphUtilsExample.java](../../../test/example/graph/GraphUtilsExample.java)
 
 ## 制約・注意事項
 

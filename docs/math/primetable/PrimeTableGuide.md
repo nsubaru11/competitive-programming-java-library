@@ -49,7 +49,7 @@
 
 ## 利用例
 
-準備中
+[PrimeTableExample.java](../../../test/example/math/PrimeTableExample.java)
 
 ## 制約・注意事項
 

@@ -40,7 +40,7 @@
 
 ## 利用例
 
-準備中
+[LCAExample.java](../../../test/example/graph/tree/LCAExample.java)
 
 ## 制約・注意事項
 

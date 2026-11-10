@@ -140,7 +140,7 @@
 
 ## 利用例
 
-準備中
+[SegmentTreeExample.java](../../../test/example/ds/segmenttree/SegmentTreeExample.java) · [IntSegmentTreeExample.java](../../../test/example/ds/segmenttree/IntSegmentTreeExample.java) · [LongSegmentTreeExample.java](../../../test/example/ds/segmenttree/LongSegmentTreeExample.java)
 
 ## 制約・注意事項
 

@@ -325,7 +325,7 @@
 
 ## 利用例
 
-準備中
+[IntPrefixSumExample.java](../../../test/example/ds/arrays/IntPrefixSumExample.java) · [LongPrefixSumExample.java](../../../test/example/ds/arrays/LongPrefixSumExample.java) · [IntPrefixSum2DExample.java](../../../test/example/ds/arrays/IntPrefixSum2DExample.java) · [LongPrefixSum2DExample.java](../../../test/example/ds/arrays/LongPrefixSum2DExample.java) · [IntPrefixSum3DExample.java](../../../test/example/ds/arrays/IntPrefixSum3DExample.java) · [LongPrefixSum3DExample.java](../../../test/example/ds/arrays/LongPrefixSum3DExample.java) · [IntPrefixModSumExample.java](../../../test/example/ds/arrays/IntPrefixModSumExample.java) · [LongPrefixModSumExample.java](../../../test/example/ds/arrays/LongPrefixModSumExample.java) · [IntPrefixModSum2DExample.java](../../../test/example/ds/arrays/IntPrefixModSum2DExample.java) · [LongPrefixModSum2DExample.java](../../../test/example/ds/arrays/LongPrefixModSum2DExample.java) · [IntPrefixModSum3DExample.java](../../../test/example/ds/arrays/IntPrefixModSum3DExample.java) · [LongPrefixModSum3DExample.java](../../../test/example/ds/arrays/LongPrefixModSum3DExample.java)
 
 ## 制約・注意事項
 

@@ -4,12 +4,12 @@
 
 ## クラス一覧
 
-| クラス              | 用途                                                    | Guide | ソース                                                          | Example / 検証                                                                                   |
-|---------------------|---------------------------------------------------------|-------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `PolynomialUtils`   | `double[]`係数の加減算・乗算・微積分・評価・次数・GCD。 | —     | [Java](../../../src/lib/math/polynomial/PolynomialUtils.java)   | [PolynomialUtilsExample.java](../../../test/example/math/polynomial/PolynomialUtilsExample.java) |
-| `Convolution`       | NTTによる多項式畳み込みと、各種演算の畳み込み。         | —     | [Java](../../../src/lib/math/polynomial/Convolution.java)       | [Judge1.java](../../../test/judge/math/polynomial/convolution/Judge1.java)                       |
-| `Transform`         | NTT・FWHT・ゼータ変換・メビウス変換。                   | —     | [Java](../../../src/lib/math/polynomial/Transform.java)         | [Judge1.java](../../../test/judge/math/polynomial/transform/Judge1.java)                         |
-| `FormalPowerSeries` | 形式的冪級数の操作をまとめる未実装クラス。              | —     | [Java](../../../src/lib/math/polynomial/FormalPowerSeries.java) | —                                                                                                |
+| クラス              | 用途                                                    | Guide | ソース                                                                       | 利用例                                                                       | テスト                                                                                                                                  |
+|---------------------|---------------------------------------------------------|-------|------------------------------------------------------------------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `PolynomialUtils`   | `double[]`係数の加減算・乗算・微積分・評価・次数・GCD。 | —     | [PolynomialUtils](../../../src/lib/math/polynomial/PolynomialUtils.java)     | [Example](../../../test/example/math/polynomial/PolynomialUtilsExample.java) | [Unit](../../../test/unit/math/polynomial/PolynomialUtilsTest.java)                                                                     |
+| `Convolution`       | NTTによる多項式畳み込みと、各種演算の畳み込み。         | —     | [Convolution](../../../src/lib/math/polynomial/Convolution.java)             | [Example](../../../test/example/math/polynomial/ConvolutionExample.java)     | [Unit](../../../test/unit/math/polynomial/ConvolutionTest.java) · [Judge1](../../../test/judge/math/polynomial/convolution/Judge1.java) |
+| `Transform`         | NTT・FWHT・ゼータ変換・メビウス変換。                   | —     | [Transform](../../../src/lib/math/polynomial/Transform.java)                 | [Example](../../../test/example/math/polynomial/TransformExample.java)       | [Unit](../../../test/unit/math/polynomial/TransformTest.java) · [Judge1](../../../test/judge/math/polynomial/transform/Judge1.java)     |
+| `FormalPowerSeries` | 形式的冪級数の操作をまとめる未実装クラス。              | —     | [FormalPowerSeries](../../../src/lib/math/polynomial/FormalPowerSeries.java) | —                                                                            | —                                                                                                                                       |
 
 ## 実装クラス
 
@@ -48,6 +48,6 @@
 - `Convolution`の通常多項式畳み込みは、NTT向けの法では`convolveNtt`、それ以外の法では`convolveArbitraryMod`を利用できる。FFTは未実装である。
 - `PolynomialUtils`の係数は次数の昇順に格納する。
 
-## Example / 検証
+## 利用例・テスト
 
 - [PolynomialUtilsExample.java](../../../test/example/math/polynomial/PolynomialUtilsExample.java)

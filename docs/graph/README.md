@@ -18,15 +18,15 @@
 
 専用READMEをまだ持たないグラフアルゴリズムのソースである。以下は現在すべて未実装の雛形である。
 
-| クラス                                 | ソース                                                      | 分野                       |
-|----------------------------------------|-------------------------------------------------------------|----------------------------|
-| `BipartiteMatching`                    | [Java](../../src/lib/graph/BipartiteMatching.java)          | 二部グラフの最大マッチング |
-| `GeneralMatching`                      | [Java](../../src/lib/graph/GeneralMatching.java)            | 一般グラフの最大マッチング |
-| `DominatorTree`                        | [Java](../../src/lib/graph/DominatorTree.java)              | 有向グラフの支配木         |
-| `EulerianTrail`                        | [Java](../../src/lib/graph/EulerianTrail.java)              | オイラー路・オイラー閉路   |
-| `Johnson`（未実装）                    | [Java](../../src/lib/graph/Johnson.java)                    | 全頂点対最短路             |
-| `OfflineDynamicConnectivity`（未実装） | [Java](../../src/lib/graph/OfflineDynamicConnectivity.java) | オフライン動的連結性       |
-| `StoerWagner`                          | [Java](../../src/lib/graph/StoerWagner.java)                | 大域最小カット             |
+| クラス                                 | ソース                                                                            | 分野                       |
+|----------------------------------------|-----------------------------------------------------------------------------------|----------------------------|
+| `BipartiteMatching`                    | [BipartiteMatching](../../src/lib/graph/BipartiteMatching.java)                   | 二部グラフの最大マッチング |
+| `GeneralMatching`                      | [GeneralMatching](../../src/lib/graph/GeneralMatching.java)                       | 一般グラフの最大マッチング |
+| `DominatorTree`                        | [DominatorTree](../../src/lib/graph/DominatorTree.java)                           | 有向グラフの支配木         |
+| `EulerianTrail`                        | [EulerianTrail](../../src/lib/graph/EulerianTrail.java)                           | オイラー路・オイラー閉路   |
+| `Johnson`（未実装）                    | [Johnson](../../src/lib/graph/Johnson.java)                                       | 全頂点対最短路             |
+| `OfflineDynamicConnectivity`（未実装） | [OfflineDynamicConnectivity](../../src/lib/graph/OfflineDynamicConnectivity.java) | オフライン動的連結性       |
+| `StoerWagner`                          | [StoerWagner](../../src/lib/graph/StoerWagner.java)                               | 大域最小カット             |
 
 ## 内部パッケージ
 

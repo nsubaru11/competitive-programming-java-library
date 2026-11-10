@@ -16,6 +16,8 @@
     - 安定ソート（同じ値の要素の相対的な順序が保持される）
 - **時間計算量**: $\mathcal{O}(n^2)$
 - **空間計算量**: $\mathcal{O}(1)$（追加のメモリを使用しない）
+- **利用例**: [BubbleSortExample.java](../../test/example/sort/BubbleSortExample.java)
+- **単体テスト**: [BubbleSortTest.java](../../test/unit/sort/BubbleSortTest.java)
 
 ### [SelectionSort](../../src/lib/sort/SelectionSort.java)
 
@@ -26,6 +28,8 @@
     - 不安定ソート
 - **時間計算量**: $\mathcal{O}(n^2)$
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [SelectionSortExample.java](../../test/example/sort/SelectionSortExample.java)
+- **単体テスト**: [SelectionSortTest.java](../../test/unit/sort/SelectionSortTest.java)
 
 ### [InsertionSort](../../src/lib/sort/InsertionSort.java)
 
@@ -36,6 +40,8 @@
     - 安定ソート
 - **時間計算量**: $\mathcal{O}(n^2)$（最悪）、$\mathcal{O}(n)$（ほぼソート済みの場合）
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [InsertionSortExample.java](../../test/example/sort/InsertionSortExample.java)
+- **単体テスト**: [InsertionSortTest.java](../../test/unit/sort/InsertionSortTest.java)
 
 ### [MergeSort](../../src/lib/sort/MergeSort.java)
 
@@ -46,6 +52,8 @@
     - 予測可能なパフォーマンス（常に$\mathcal{O}(n \log n)$）
 - **時間計算量**: $\mathcal{O}(n \log n)$
 - **空間計算量**: $\mathcal{O}(n)$
+- **利用例**: [MergeSortExample.java](../../test/example/sort/MergeSortExample.java)
+- **単体テスト**: [MergeSortTest.java](../../test/unit/sort/MergeSortTest.java)
 
 ### [QuickSort](../../src/lib/sort/QuickSort.java)
 
@@ -56,6 +64,8 @@
     - ピボット選択が重要
 - **時間計算量**: $\mathcal{O}(n \log n)$（平均）、$\mathcal{O}(n^2)$（最悪）
 - **空間計算量**: $\mathcal{O}(\log n)$（再帰のスタック）
+- **利用例**: [QuickSortExample.java](../../test/example/sort/QuickSortExample.java)
+- **単体テスト**: [QuickSortTest.java](../../test/unit/sort/QuickSortTest.java)
 
 ### [HeapSort](../../src/lib/sort/HeapSort.java)
 
@@ -66,6 +76,8 @@
     - 追加のメモリを使用しない
 - **時間計算量**: $\mathcal{O}(n \log n)$
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [HeapSortExample.java](../../test/example/sort/HeapSortExample.java)
+- **単体テスト**: [HeapSortTest.java](../../test/unit/sort/HeapSortTest.java)
 
 ### [ShellSort](../../src/lib/sort/ShellSort.java)
 
@@ -76,6 +88,8 @@
     - 中規模の配列に効率的
 - **時間計算量**: $\mathcal{O}(n \log^2 n)$〜$\mathcal{O}(n^2)$（ギャップシーケンスによる）
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [ShellSortExample.java](../../test/example/sort/ShellSortExample.java)
+- **単体テスト**: [ShellSortTest.java](../../test/unit/sort/ShellSortTest.java)
 
 ### [CombSort](../../src/lib/sort/CombSort.java)
 
@@ -86,6 +100,8 @@
     - 縮小率の選択が重要
 - **時間計算量**: $\mathcal{O}(n \log n)$（平均）、$\mathcal{O}(n^2)$（最悪）
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [CombSortExample.java](../../test/example/sort/CombSortExample.java)
+- **単体テスト**: [CombSortTest.java](../../test/unit/sort/CombSortTest.java)
 
 ### [ShakerSort](../../src/lib/sort/ShakerSort.java)
 
@@ -96,6 +112,8 @@
     - 小さな配列に適している
 - **時間計算量**: $\mathcal{O}(n^2)$
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [ShakerSortExample.java](../../test/example/sort/ShakerSortExample.java)
+- **単体テスト**: [ShakerSortTest.java](../../test/unit/sort/ShakerSortTest.java)
 
 ### [GnomeSort](../../src/lib/sort/GnomeSort.java)
 
@@ -106,6 +124,8 @@
     - 小さな配列に適している
 - **時間計算量**: $\mathcal{O}(n^2)$
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [GnomeSortExample.java](../../test/example/sort/GnomeSortExample.java)
+- **単体テスト**: [GnomeSortTest.java](../../test/unit/sort/GnomeSortTest.java)
 
 ### [OddEvenSort](../../src/lib/sort/OddEvenSort.java)
 
@@ -116,6 +136,8 @@
     - バブルソートの変種
 - **時間計算量**: $\mathcal{O}(n^2)$
 - **空間計算量**: $\mathcal{O}(1)$
+- **利用例**: [OddEvenSortExample.java](../../test/example/sort/OddEvenSortExample.java)
+- **単体テスト**: [OddEvenSortTest.java](../../test/unit/sort/OddEvenSortTest.java)
 
 ### [FordJohnson](../../src/lib/sort/FordJohnson.java)（未実装）
 

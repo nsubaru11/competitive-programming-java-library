@@ -113,7 +113,7 @@
 
 ## 利用例
 
-準備中
+[ArrayBinarySearchExample.java](../../../test/example/search/ArrayBinarySearchExample.java)
 
 ## 制約・注意事項
 

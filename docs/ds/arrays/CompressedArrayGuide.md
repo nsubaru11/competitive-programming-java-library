@@ -188,7 +188,7 @@ dense ranking に加え、competition ranking と modified competition ranking �
 
 ## 利用例
 
-準備中
+[IntCompressedArrayExample.java](../../../test/example/ds/arrays/IntCompressedArrayExample.java) · [LongCompressedArrayExample.java](../../../test/example/ds/arrays/LongCompressedArrayExample.java) · [IntCompressedArray2DExample.java](../../../test/example/ds/arrays/IntCompressedArray2DExample.java) · [LongCompressedArray2DExample.java](../../../test/example/ds/arrays/LongCompressedArray2DExample.java)
 
 ## 制約・注意事項
 

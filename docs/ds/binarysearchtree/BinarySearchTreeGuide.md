@@ -74,7 +74,7 @@
 
 ## 利用例
 
-準備中
+[BinarySearchTreeExample.java](../../../test/example/ds/set/BinarySearchTreeExample.java)
 
 ## 制約・注意事項
 

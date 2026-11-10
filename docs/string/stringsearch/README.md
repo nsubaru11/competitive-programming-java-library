@@ -7,13 +7,13 @@
 
 ## クラス一覧
 
-| クラス        | 用途                                                                   | Guide                                   | ソース                                                    | Example / 検証                                                                                                                                                     |
-|---------------|------------------------------------------------------------------------|-----------------------------------------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ZAlgorithm`  | 文字列の各位置から始まる最長の接頭辞一致を計算するアルゴリズム         | [ZAlgorithmGuide](./ZAlgorithmGuide.md) | [Java](../../../src/lib/string/matching/ZAlgorithm.java)  | [ZAlgorithmExample.java](../../../test/example/string/matching/ZAlgorithmExample.java) · [Judge1.java](../../../test/judge/string/matching/zalgorithm/Judge1.java) |
-| `KMP`         | 文字列内のパターンを線形時間で検索するアルゴリズム                     | —                                       | [Java](../../../src/lib/string/matching/KMP.java)         | —                                                                                                                                                                  |
-| `BM`          | 実用的に高速な文字列検索アルゴリズム                                   | —                                       | [Java](../../../src/lib/string/matching/BM.java)          | —                                                                                                                                                                  |
-| `RollingHash` | ハッシュ関数を使用して文字列の部分文字列を効率的に比較するアルゴリズム | —                                       | [Java](../../../src/lib/string/matching/RollingHash.java) | —                                                                                                                                                                  |
-| `AhoCorasick` | 複数パターンの同時検索                                                 | —                                       | [Java](../../../src/lib/string/matching/AhoCorasick.java) | —                                                                                                                                                                  |
+| クラス        | 用途                                                                   | Guide                                   | ソース                                                           | 利用例                                                                  | テスト                                                                                                                                |
+|---------------|------------------------------------------------------------------------|-----------------------------------------|------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `ZAlgorithm`  | 文字列の各位置から始まる最長の接頭辞一致を計算するアルゴリズム         | [ZAlgorithmGuide](./ZAlgorithmGuide.md) | [ZAlgorithm](../../../src/lib/string/matching/ZAlgorithm.java)   | [Example](../../../test/example/string/matching/ZAlgorithmExample.java) | [Unit](../../../test/unit/string/matching/ZAlgorithmTest.java) · [Judge1](../../../test/judge/string/matching/zalgorithm/Judge1.java) |
+| `KMP`         | 文字列内のパターンを線形時間で検索するアルゴリズム                     | —                                       | [KMP](../../../src/lib/string/matching/KMP.java)                 | —                                                                       | —                                                                                                                                     |
+| `BM`          | 実用的に高速な文字列検索アルゴリズム                                   | —                                       | [BM](../../../src/lib/string/matching/BM.java)                   | —                                                                       | —                                                                                                                                     |
+| `RollingHash` | ハッシュ関数を使用して文字列の部分文字列を効率的に比較するアルゴリズム | —                                       | [RollingHash](../../../src/lib/string/matching/RollingHash.java) | —                                                                       | —                                                                                                                                     |
+| `AhoCorasick` | 複数パターンの同時検索                                                 | —                                       | [AhoCorasick](../../../src/lib/string/matching/AhoCorasick.java) | —                                                                       | —                                                                                                                                     |
 
 ## 実装クラス（開発中）
 
@@ -82,6 +82,6 @@
 - 現在利用可能なのは`ZAlgorithm`のみである。KMP / BM / RollingHash / AhoCorasickはTODO雛形である
 - 実際の使用前にアルゴリズムの特性と制限を理解することが重要である
 
-## Example / 検証
+## 利用例・テスト
 
 - [ZAlgorithmExample.java](../../../test/example/string/matching/ZAlgorithmExample.java)

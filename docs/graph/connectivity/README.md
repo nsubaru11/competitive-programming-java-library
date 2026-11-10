@@ -6,10 +6,10 @@
 
 ## クラス一覧
 
-| クラス                       | 用途                                     | Guide                                       | ソース                                                         | Example / 検証                                                          |
-|------------------------------|------------------------------------------|---------------------------------------------|----------------------------------------------------------------|-------------------------------------------------------------------------|
-| `Connectivity`               | - 橋・関節点の検出                       | [ConnectivityGuide](./ConnectivityGuide.md) | [Java](../../../src/lib/graph/Connectivity.java)               | [ConnectivityTest.java](../../../test/unit/graph/ConnectivityTest.java) |
-| `OfflineDynamicConnectivity` | OfflineDynamicConnectivityの用途・状態。 | —                                           | [Java](../../../src/lib/graph/OfflineDynamicConnectivity.java) | —                                                                       |
+| クラス                       | 用途                                     | Guide                                       | ソース                                                                               | 利用例                                                          | テスト                                                 |
+|------------------------------|------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------|
+| `Connectivity`               | - 橋・関節点の検出                       | [ConnectivityGuide](./ConnectivityGuide.md) | [Connectivity](../../../src/lib/graph/Connectivity.java)                             | [Example](../../../test/example/graph/ConnectivityExample.java) | [Unit](../../../test/unit/graph/ConnectivityTest.java) |
+| `OfflineDynamicConnectivity` | OfflineDynamicConnectivityの用途・状態。 | —                                           | [OfflineDynamicConnectivity](../../../src/lib/graph/OfflineDynamicConnectivity.java) | —                                                               | —                                                      |
 
 ## 実装クラス
 

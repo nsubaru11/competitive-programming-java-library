@@ -50,7 +50,7 @@
 
 ## 利用例
 
-準備中
+[BFSExample.java](../../../test/example/graph/BFSExample.java)
 
 ## 制約・注意事項
 

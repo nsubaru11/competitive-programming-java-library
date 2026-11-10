@@ -51,7 +51,7 @@
 
 ## 利用例
 
-準備中
+[BellmanFordExample.java](../../../test/example/graph/BellmanFordExample.java)
 
 ## 制約・注意事項
 

@@ -13,11 +13,11 @@
 
 ## クラス一覧
 
-| クラス               | 用途                                           | Guide                                     | ソース                                                       | Example / 検証                                                                                                                                    |
-|----------------------|------------------------------------------------|-------------------------------------------|--------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| `FastPrinter`        | 標準出力への高速な書き込みを提供するクラス。   | [FastPrinterGuide](./FastPrinterGuide.md) | [Java](../../../src/lib/io/compat17/FastPrinter.java)        | [FastPrinterExample.java](../../../test/example/io/compat17/FastPrinterExample.java) · [Judge0.java](../../../test/judge/io/compat17/Judge0.java) |
-| `FastScanner`        | 標準入力からの高速な読み込みを提供するクラス。 | [FastScannerGuide](./FastScannerGuide.md) | [Java](../../../src/lib/io/compat17/FastScanner.java)        | [FastScannerExample.java](../../../test/example/io/compat17/FastScannerExample.java) · [Judge0.java](../../../test/judge/io/compat17/Judge0.java) |
-| `InteractiveScanner` | 対話型問題向けに入力を逐次読み取るスキャナ。   | —                                         | [Java](../../../src/lib/io/compat17/InteractiveScanner.java) | —                                                                                                                                                 |
+| クラス               | 用途                                           | Guide                                     | ソース                                                                     | 利用例                                                                      | テスト                                                                                                                                                                   |
+|----------------------|------------------------------------------------|-------------------------------------------|----------------------------------------------------------------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FastPrinter`        | 標準出力への高速な書き込みを提供するクラス。   | [FastPrinterGuide](./FastPrinterGuide.md) | [FastPrinter](../../../src/lib/io/compat17/FastPrinter.java)               | [Example](../../../test/example/io/compat17/FastPrinterExample.java)        | [Unit](../../../test/unit/io/compat17/FastPrinterTest.java) · [Unit](../../../test/unit/io/FastPrinterTest.java) · [Judge0](../../../test/judge/io/compat17/Judge0.java) |
+| `FastScanner`        | 標準入力からの高速な読み込みを提供するクラス。 | [FastScannerGuide](./FastScannerGuide.md) | [FastScanner](../../../src/lib/io/compat17/FastScanner.java)               | [Example](../../../test/example/io/compat17/FastScannerExample.java)        | [Unit](../../../test/unit/io/compat17/FastScannerTest.java) · [Unit](../../../test/unit/io/FastScannerTest.java) · [Judge0](../../../test/judge/io/compat17/Judge0.java) |
+| `InteractiveScanner` | 対話型問題向けに入力を逐次読み取るスキャナ。   | —                                         | [InteractiveScanner](../../../src/lib/io/compat17/InteractiveScanner.java) | [Example](../../../test/example/io/compat17/InteractiveScannerExample.java) | [Unit](../../../test/unit/io/compat17/InteractiveScannerTest.java) · [Unit](../../../test/unit/io/InteractiveScannerTest.java)                                           |
 
 ## 実装クラス
 
@@ -75,6 +75,6 @@
 - 以前の `ContestScanner/Printer` および `CompressedFastScanner/Printer` は、機能が `FastScanner/Printer`
   に統合されたため削除された。
 
-## Example / 検証
+## 利用例・テスト
 
 - [FastPrinterExample.java](../../../test/example/io/compat17/FastPrinterExample.java) · [FastScannerExample.java](../../../test/example/io/compat17/FastScannerExample.java)

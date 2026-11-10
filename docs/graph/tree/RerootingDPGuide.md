@@ -38,7 +38,7 @@
 
 ## 利用例
 
-準備中
+[RerootingDPExample.java](../../../test/example/graph/tree/RerootingDPExample.java)
 
 ## 制約・注意事項
 

@@ -7,21 +7,21 @@
 
 ## クラス一覧
 
-| クラス                     | 用途                            | Guide | ソース                                                               | Example / 検証 |
-|----------------------------|---------------------------------|-------|----------------------------------------------------------------------|----------------|
-| `IntBinaryConsumer`        | `(int, int) -> void`            | —     | [Java](../../../src/lib/util/function/IntBinaryConsumer.java)        | —              |
-| `IntTernaryConsumer`       | `(int, int, int) -> void`       | —     | [Java](../../../src/lib/util/function/IntTernaryConsumer.java)       | —              |
-| `IntQuaternaryConsumer`    | `(int, int, int, int) -> void`  | —     | [Java](../../../src/lib/util/function/IntQuaternaryConsumer.java)    | —              |
-| `IntLongConsumer`          | `(int, long) -> void`           | —     | [Java](../../../src/lib/util/function/IntLongConsumer.java)          | —              |
-| `LongIntConsumer`          | `(long, int) -> void`           | —     | [Java](../../../src/lib/util/function/LongIntConsumer.java)          | —              |
-| `LongBinaryConsumer`       | `(long, long) -> void`          | —     | [Java](../../../src/lib/util/function/LongBinaryConsumer.java)       | —              |
-| `IntBinaryLongConsumer`    | `(int, int, long) -> void`      | —     | [Java](../../../src/lib/util/function/IntBinaryLongConsumer.java)    | —              |
-| `IntTernaryLongConsumer`   | `(int, int, int, long) -> void` | —     | [Java](../../../src/lib/util/function/IntTernaryLongConsumer.java)   | —              |
-| `IntBinaryToLongFunction`  | `(int, int) -> long`            | —     | [Java](../../../src/lib/util/function/IntBinaryToLongFunction.java)  | —              |
-| `IntTernaryOperator`       | `(int, int, int) -> int`        | —     | [Java](../../../src/lib/util/function/IntTernaryOperator.java)       | —              |
-| `IntTernaryToLongFunction` | `(int, int, int) -> long`       | —     | [Java](../../../src/lib/util/function/IntTernaryToLongFunction.java) | —              |
-| `IntComparator`            | `(int, int) -> int`             | —     | [Java](../../../src/lib/util/function/IntComparator.java)            | —              |
-| `LongComparator`           | `(long, long) -> int`           | —     | [Java](../../../src/lib/util/function/LongComparator.java)           | —              |
+| クラス                     | 用途                            | Guide | ソース                                                                                   | 利用例 | テスト                                                                     |
+|----------------------------|---------------------------------|-------|------------------------------------------------------------------------------------------|--------|----------------------------------------------------------------------------|
+| `IntBinaryConsumer`        | `(int, int) -> void`            | —     | [IntBinaryConsumer](../../../src/lib/util/function/IntBinaryConsumer.java)               | —      | [Unit](../../../test/unit/util/function/IntBinaryConsumerTest.java)        |
+| `IntTernaryConsumer`       | `(int, int, int) -> void`       | —     | [IntTernaryConsumer](../../../src/lib/util/function/IntTernaryConsumer.java)             | —      | [Unit](../../../test/unit/util/function/IntTernaryConsumerTest.java)       |
+| `IntQuaternaryConsumer`    | `(int, int, int, int) -> void`  | —     | [IntQuaternaryConsumer](../../../src/lib/util/function/IntQuaternaryConsumer.java)       | —      | [Unit](../../../test/unit/util/function/IntQuaternaryConsumerTest.java)    |
+| `IntLongConsumer`          | `(int, long) -> void`           | —     | [IntLongConsumer](../../../src/lib/util/function/IntLongConsumer.java)                   | —      | [Unit](../../../test/unit/util/function/IntLongConsumerTest.java)          |
+| `LongIntConsumer`          | `(long, int) -> void`           | —     | [LongIntConsumer](../../../src/lib/util/function/LongIntConsumer.java)                   | —      | [Unit](../../../test/unit/util/function/LongIntConsumerTest.java)          |
+| `LongBinaryConsumer`       | `(long, long) -> void`          | —     | [LongBinaryConsumer](../../../src/lib/util/function/LongBinaryConsumer.java)             | —      | [Unit](../../../test/unit/util/function/LongBinaryConsumerTest.java)       |
+| `IntBinaryLongConsumer`    | `(int, int, long) -> void`      | —     | [IntBinaryLongConsumer](../../../src/lib/util/function/IntBinaryLongConsumer.java)       | —      | [Unit](../../../test/unit/util/function/IntBinaryLongConsumerTest.java)    |
+| `IntTernaryLongConsumer`   | `(int, int, int, long) -> void` | —     | [IntTernaryLongConsumer](../../../src/lib/util/function/IntTernaryLongConsumer.java)     | —      | [Unit](../../../test/unit/util/function/IntTernaryLongConsumerTest.java)   |
+| `IntBinaryToLongFunction`  | `(int, int) -> long`            | —     | [IntBinaryToLongFunction](../../../src/lib/util/function/IntBinaryToLongFunction.java)   | —      | [Unit](../../../test/unit/util/function/IntBinaryToLongFunctionTest.java)  |
+| `IntTernaryOperator`       | `(int, int, int) -> int`        | —     | [IntTernaryOperator](../../../src/lib/util/function/IntTernaryOperator.java)             | —      | —                                                                          |
+| `IntTernaryToLongFunction` | `(int, int, int) -> long`       | —     | [IntTernaryToLongFunction](../../../src/lib/util/function/IntTernaryToLongFunction.java) | —      | [Unit](../../../test/unit/util/function/IntTernaryToLongFunctionTest.java) |
+| `IntComparator`            | `(int, int) -> int`             | —     | [IntComparator](../../../src/lib/util/function/IntComparator.java)                       | —      | [Unit](../../../test/unit/util/function/IntComparatorTest.java)            |
+| `LongComparator`           | `(long, long) -> int`           | —     | [LongComparator](../../../src/lib/util/function/LongComparator.java)                     | —      | [Unit](../../../test/unit/util/function/LongComparatorTest.java)           |
 
 ## インターフェース
 

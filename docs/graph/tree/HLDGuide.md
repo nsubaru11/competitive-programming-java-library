@@ -70,7 +70,7 @@ LCA、距離、k-th ancestor、パス・部分木の区間処理を提供する�
 
 ## 利用例
 
-準備中
+[HLDExample.java](../../../test/example/graph/tree/HLDExample.java)
 
 ## 制約・注意事項
 

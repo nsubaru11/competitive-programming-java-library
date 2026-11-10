@@ -52,7 +52,7 @@
 
 ## 利用例
 
-準備中
+[DijkstraExample.java](../../../test/example/graph/DijkstraExample.java)
 
 ## 制約・注意事項
 

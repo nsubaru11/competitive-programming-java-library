@@ -44,7 +44,7 @@
 
 ## 利用例
 
-準備中
+[FactorialTableExample.java](../../../test/example/math/FactorialTableExample.java)
 
 ## 制約・注意事項
 

@@ -44,7 +44,7 @@
 
 ## 利用例
 
-準備中
+[WarshallFloydExample.java](../../../test/example/graph/WarshallFloydExample.java)
 
 ## 制約・注意事項
 

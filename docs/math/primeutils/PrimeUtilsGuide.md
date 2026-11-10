@@ -38,7 +38,7 @@
 
 ## 利用例
 
-準備中
+[PrimeUtilsExample.java](../../../test/example/math/PrimeUtilsExample.java)
 
 ## 制約・注意事項
 

@@ -27,17 +27,17 @@
 
 | クラス                                    | ソース                                                                                                                                                    | 主な用途                              |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------|
-| `CartesianTree`（実装予定）               | [Java](../../src/lib/ds/CartesianTree.java)                                                                                                               | 配列からCartesian Treeを構築          |
-| `DisjointSparseTable`（実装予定）         | [Java](../../src/lib/ds/DisjointSparseTable.java)                                                                                                         | 静的な区間演算を定数時間で問い合わせ  |
+| `CartesianTree`（実装予定）               | [CartesianTree](../../src/lib/ds/CartesianTree.java)                                                                                                      | 配列からCartesian Treeを構築          |
+| `DisjointSparseTable`（実装予定）         | [DisjointSparseTable](../../src/lib/ds/DisjointSparseTable.java)                                                                                          | 静的な区間演算を定数時間で問い合わせ  |
 | `IntCollection` / `LongCollection`        | [IntCollection.java](../../src/lib/ds/IntCollection.java) · [LongCollection.java](../../src/lib/ds/LongCollection.java)                                   | プリミティブ整数コレクションの共通API |
-| `IntervalSet`（実装予定）                 | [Java](../../src/lib/ds/IntervalSet.java)                                                                                                                 | 整数区間集合                          |
-| `SlidingWindowAggregation`（実装予定）    | [Java](../../src/lib/ds/SlidingWindowAggregation.java)                                                                                                    | モノイド上のキュー集約                |
-| `SegmentTreeBeats`（実装予定）            | [Java](../../src/lib/ds/segmenttree/SegmentTreeBeats.java)                                                                                                | 区間chmin/chmaxを扱うセグメント木     |
-| `ImplicitTreap`（実装予定）               | [Java](../../src/lib/ds/set/ImplicitTreap.java)                                                                                                           | 列を管理する暗黙Treap                 |
-| `LinkCutTree`（実装予定）                 | [Java](../../src/lib/ds/tree/LinkCutTree.java)                                                                                                            | 動的森上のパス操作                    |
-| `BinaryTrie`（実装予定）                  | [Java](../../src/lib/ds/trie/BinaryTrie.java)                                                                                                             | 整数キーTrie                          |
+| `IntervalSet`（実装予定）                 | [IntervalSet](../../src/lib/ds/IntervalSet.java)                                                                                                          | 整数区間集合                          |
+| `SlidingWindowAggregation`（実装予定）    | [SlidingWindowAggregation](../../src/lib/ds/SlidingWindowAggregation.java)                                                                                | モノイド上のキュー集約                |
+| `SegmentTreeBeats`（実装予定）            | [SegmentTreeBeats](../../src/lib/ds/segmenttree/SegmentTreeBeats.java)                                                                                    | 区間chmin/chmaxを扱うセグメント木     |
+| `ImplicitTreap`（実装予定）               | [ImplicitTreap](../../src/lib/ds/set/ImplicitTreap.java)                                                                                                  | 列を管理する暗黙Treap                 |
+| `LinkCutTree`（実装予定）                 | [LinkCutTree](../../src/lib/ds/tree/LinkCutTree.java)                                                                                                     | 動的森上のパス操作                    |
+| `BinaryTrie`（実装予定）                  | [BinaryTrie](../../src/lib/ds/trie/BinaryTrie.java)                                                                                                       | 整数キーTrie                          |
 | `RollbackUnionFind` / `WeightedUnionFind` | [RollbackUnionFind.java](../../src/lib/ds/unionfind/RollbackUnionFind.java) · [WeightedUnionFind.java](../../src/lib/ds/unionfind/WeightedUnionFind.java) | 巻き戻し・ポテンシャル管理の実装予定  |
-| `WaveletMatrix`                           | [Java](../../src/lib/ds/WaveletMatrix.java)                                                                                                               | 静的数列の順位・頻度クエリの実装予定  |
+| `WaveletMatrix`                           | [WaveletMatrix](../../src/lib/ds/WaveletMatrix.java)                                                                                                      | 静的数列の順位・頻度クエリの実装予定  |
 
 ## 内部パッケージ
 

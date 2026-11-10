@@ -12,11 +12,11 @@
 
 ## クラス一覧
 
-| クラス               | 用途                                           | Guide                                     | ソース                                              | Example / 検証                                                                                                                            |
-|----------------------|------------------------------------------------|-------------------------------------------|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `FastPrinter`        | 標準出力への高速な書き込みを提供するクラス。   | [FastPrinterGuide](./FastPrinterGuide.md) | [Java](../../../src/lib/io/FastPrinter.java)        | [FastPrinterExample.java](../../../test/example/io/FastPrinterExample.java) · [Test1.java](../../../test/benchmark/io/bench24/Test1.java) |
-| `FastScanner`        | 標準入力からの高速な読み込みを提供するクラス。 | [FastScannerGuide](./FastScannerGuide.md) | [Java](../../../src/lib/io/FastScanner.java)        | [FastScannerExample.java](../../../test/example/io/FastScannerExample.java) · [Test1.java](../../../test/benchmark/io/bench24/Test1.java) |
-| `InteractiveScanner` | 対話型問題向けに入力を逐次読み取るスキャナ。   | —                                         | [Java](../../../src/lib/io/InteractiveScanner.java) | —                                                                                                                                         |
+| クラス               | 用途                                           | Guide                                     | ソース                                                            | 利用例                                                             | テスト                                                                                                                                                                     |
+|----------------------|------------------------------------------------|-------------------------------------------|-------------------------------------------------------------------|--------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FastPrinter`        | 標準出力への高速な書き込みを提供するクラス。   | [FastPrinterGuide](./FastPrinterGuide.md) | [FastPrinter](../../../src/lib/io/FastPrinter.java)               | [Example](../../../test/example/io/FastPrinterExample.java)        | [Unit](../../../test/unit/io/compat17/FastPrinterTest.java) · [Unit](../../../test/unit/io/FastPrinterTest.java) · [Bench1](../../../test/benchmark/io/bench24/Test1.java) |
+| `FastScanner`        | 標準入力からの高速な読み込みを提供するクラス。 | [FastScannerGuide](./FastScannerGuide.md) | [FastScanner](../../../src/lib/io/FastScanner.java)               | [Example](../../../test/example/io/FastScannerExample.java)        | [Unit](../../../test/unit/io/compat17/FastScannerTest.java) · [Unit](../../../test/unit/io/FastScannerTest.java) · [Bench1](../../../test/benchmark/io/bench24/Test1.java) |
+| `InteractiveScanner` | 対話型問題向けに入力を逐次読み取るスキャナ。   | —                                         | [InteractiveScanner](../../../src/lib/io/InteractiveScanner.java) | [Example](../../../test/example/io/InteractiveScannerExample.java) | [Unit](../../../test/unit/io/compat17/InteractiveScannerTest.java) · [Unit](../../../test/unit/io/InteractiveScannerTest.java)                                             |
 
 ## 実装クラス
 
@@ -75,6 +75,6 @@
 - 以前の `ContestScanner/Printer` および `CompressedFastScanner/Printer` は、機能が `FastScanner/Printer`
   に統合されたため削除された。
 
-## Example / 検証
+## 利用例・テスト
 
 - [FastPrinterExample.java](../../../test/example/io/FastPrinterExample.java) · [FastScannerExample.java](../../../test/example/io/FastScannerExample.java)

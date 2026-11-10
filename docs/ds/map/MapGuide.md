@@ -207,7 +207,7 @@
 
 ## 利用例
 
-準備中
+[IntIntMapExample.java](../../../test/example/ds/map/IntIntMapExample.java) · [IntLongMapExample.java](../../../test/example/ds/map/IntLongMapExample.java) · [LongIntMapExample.java](../../../test/example/ds/map/LongIntMapExample.java) · [LongLongMapExample.java](../../../test/example/ds/map/LongLongMapExample.java)
 
 ## 制約・注意事項
 

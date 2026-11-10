@@ -124,7 +124,7 @@
 
 ## 利用例
 
-準備中
+[BinarySearchExample.java](../../../test/example/search/BinarySearchExample.java)
 
 ## 制約・注意事項
 

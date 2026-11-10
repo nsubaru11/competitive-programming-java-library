@@ -55,7 +55,7 @@
 
 ## 利用例
 
-準備中
+[TopologicalShortestPathExample.java](../../../test/example/graph/TopologicalShortestPathExample.java)
 
 ## 制約・注意事項
 

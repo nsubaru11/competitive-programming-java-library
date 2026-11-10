@@ -45,7 +45,7 @@
 
 ## 利用例
 
-準備中
+[PalindromeNaiveExample.java](../../../test/example/string/palindrome/PalindromeNaiveExample.java)
 
 ## 制約・注意事項
 

@@ -164,7 +164,7 @@
 
 ## 利用例
 
-準備中
+[ArrayUtilsExample.java](../../../test/example/util/ArrayUtilsExample.java)
 
 ## 制約・注意事項
 

@@ -46,7 +46,7 @@
 
 ## 利用例
 
-準備中
+[SparseTableExample.java](../../../test/example/ds/sparsetable/SparseTableExample.java) · [IntSparseTableExample.java](../../../test/example/ds/sparsetable/IntSparseTableExample.java) · [LongSparseTableExample.java](../../../test/example/ds/sparsetable/LongSparseTableExample.java)
 
 ## 制約・注意事項
 

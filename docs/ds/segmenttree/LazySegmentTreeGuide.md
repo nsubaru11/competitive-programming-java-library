@@ -148,7 +148,7 @@
 
 ## 利用例
 
-準備中
+[LazySegmentTreeExample.java](../../../test/example/ds/segmenttree/LazySegmentTreeExample.java) · [IntLazySegmentTreeExample.java](../../../test/example/ds/segmenttree/IntLazySegmentTreeExample.java) · [LongLazySegmentTreeExample.java](../../../test/example/ds/segmenttree/LongLazySegmentTreeExample.java)
 
 ## 制約・注意事項
 

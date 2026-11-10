@@ -53,7 +53,7 @@
 
 ## 利用例
 
-準備中
+[DirectedGraphExample.java](../../../test/example/graph/DirectedGraphExample.java)
 
 ## 制約・注意事項
 

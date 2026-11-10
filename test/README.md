@@ -13,7 +13,8 @@
 
 - package は `test/` からの相対ディレクトリに一致させる。例えば `test/judge/ds/arrays/intarraydeque/Judge2.java` の package は `judge.ds.arrays.intarraydeque` である。
 - オンラインジャッジ用クラスは `Judge*.java` とする。旧 Check 系の番号は維持する。テンプレートは親リポジトリの `templates/java/Judge.java`（IDE のファイルテンプレート）を使う。
-- 既存の Test・Example は、ファイル名と処理本体を維持して移動した。ファイル名だけで用途を判定しない。
+- 利用例は1クラスにつき1ファイルとし、`test/example/<lib のパッケージ>/{ClassName}Example.java` に置く。
+- benchmark の既存の Test は、ファイル名と処理本体を維持して移動した。ファイル名だけで用途を判定しない。
 - unit の配置と命名は [unit の README](./unit/README.md) に従う。
 - Judge の配置は受理済みであることを意味しない。比較用実装を内包するファイルもあり、現在の `src/lib` を直接検証するかは各ファイルで確認する。
 

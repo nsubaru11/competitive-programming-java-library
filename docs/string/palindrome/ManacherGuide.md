@@ -68,7 +68,7 @@
 
 ## 利用例
 
-準備中
+[ManacherExample.java](../../../test/example/string/palindrome/ManacherExample.java)
 
 ## 制約・注意事項
 

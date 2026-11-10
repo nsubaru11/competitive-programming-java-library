@@ -281,7 +281,7 @@
 
 ## 利用例
 
-準備中
+[BITExample.java](../../../test/example/ds/fenwick/BITExample.java) · [IntBITExample.java](../../../test/example/ds/fenwick/IntBITExample.java) · [LongBITExample.java](../../../test/example/ds/fenwick/LongBITExample.java) · [IntBIT2DExample.java](../../../test/example/ds/fenwick/IntBIT2DExample.java) · [LongBIT2DExample.java](../../../test/example/ds/fenwick/LongBIT2DExample.java) · [IntRangeBITExample.java](../../../test/example/ds/fenwick/IntRangeBITExample.java) · [LongRangeBITExample.java](../../../test/example/ds/fenwick/LongRangeBITExample.java)
 
 ## 制約・注意事項
 

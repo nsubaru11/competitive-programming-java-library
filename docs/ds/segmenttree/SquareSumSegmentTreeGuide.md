@@ -74,7 +74,7 @@
 
 ## 利用例
 
-準備中
+[IntSquareSumSegmentTreeExample.java](../../../test/example/ds/segmenttree/IntSquareSumSegmentTreeExample.java)
 
 ## 制約・注意事項
 

@@ -5,10 +5,10 @@
 
 ## クラス一覧
 
-| クラス        | 用途                                                                                          | Guide                                     | ソース                                         | Example / 検証                                                                |
-|---------------|-----------------------------------------------------------------------------------------------|-------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------------|
-| `Permutation` | `Permutation`は、配列の重複を除いた辞書順位置と、次・前の順列を扱う静的ユーティリティである。 | [PermutationGuide](./PermutationGuide.md) | [Java](../../../src/lib/util/Permutation.java) | [PermutationExample.java](../../../test/example/util/PermutationExample.java) |
+| クラス        | 用途                                                                                          | Guide                                     | ソース                                                | 利用例                                                        | テスト                                               |
+|---------------|-----------------------------------------------------------------------------------------------|-------------------------------------------|-------------------------------------------------------|---------------------------------------------------------------|------------------------------------------------------|
+| `Permutation` | `Permutation`は、配列の重複を除いた辞書順位置と、次・前の順列を扱う静的ユーティリティである。 | [PermutationGuide](./PermutationGuide.md) | [Permutation](../../../src/lib/util/Permutation.java) | [Example](../../../test/example/util/PermutationExample.java) | [Unit](../../../test/unit/util/PermutationTest.java) |
 
-## Example / 検証
+## 利用例・テスト
 
 - [PermutationExample.java](../../../test/example/util/PermutationExample.java)

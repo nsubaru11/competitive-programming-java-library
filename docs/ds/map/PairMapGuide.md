@@ -121,7 +121,7 @@
 
 ## 利用例
 
-準備中
+[IntPairIntMapExample.java](../../../test/example/ds/map/IntPairIntMapExample.java) · [IntPairLongMapExample.java](../../../test/example/ds/map/IntPairLongMapExample.java)
 
 ## 制約・注意事項
 

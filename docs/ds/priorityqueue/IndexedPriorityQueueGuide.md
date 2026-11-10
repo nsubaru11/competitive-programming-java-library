@@ -219,7 +219,7 @@ active の判定は `position[i]` が `[0, size)` にあり、かつ `heap[posit
 
 ## 利用例
 
-準備中
+[IndexedPriorityQueueExample.java](../../../test/example/ds/priorityqueue/IndexedPriorityQueueExample.java) · [IntIndexedPriorityQueueExample.java](../../../test/example/ds/priorityqueue/IntIndexedPriorityQueueExample.java) · [LongIndexedPriorityQueueExample.java](../../../test/example/ds/priorityqueue/LongIndexedPriorityQueueExample.java)
 
 ## 制約・注意事項
 

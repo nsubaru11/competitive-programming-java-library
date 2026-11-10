@@ -47,7 +47,7 @@ UnionFind（素集合データ構造）は、グラフの連結成分管理や�
 
 ## 利用例
 
-準備中
+[UnionFindExample.java](../../../test/example/ds/unionfind/UnionFindExample.java)
 
 ## 制約・注意事項
 

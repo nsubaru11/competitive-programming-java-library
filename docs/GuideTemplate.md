@@ -50,10 +50,6 @@
 
 [{ClassName}Example.java](../../../test/example/{path}/{ClassName}Example.java)
 
-### `{ClassName}`
-
-{Example.javaを参照する利用例}
-
 ## 制約・注意事項
 
 - {添字や区間の規約、前提条件}
