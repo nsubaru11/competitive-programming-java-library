@@ -1,0 +1,20 @@
+package example.sort;
+
+import java.util.*;
+
+import lib.sort.*;
+
+public final class HeapSortExample {
+
+	public static void main(final String[] args) {
+		// 配列
+		int[] a = {5, 2, 9, 1, 5, 6, 3};
+		System.out.println(Arrays.toString(a));
+		System.out.println();
+
+		// 整列
+		int[] b = a.clone();
+		HeapSort.heapSort(b);
+		System.out.println(Arrays.toString(b));
+	}
+}
