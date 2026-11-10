@@ -13,7 +13,7 @@ final class QuickSortTest extends SortContract {
 
 	Map<String, Consumer<int[]>> sorters() {
 		return Map.ofEntries(
-			Map.entry("quickSort", (Consumer<int[]>) a -> QuickSort.quickSort(a, 0, a.length - 1))
+				Map.entry("quickSort", (Consumer<int[]>) a -> QuickSort.quickSort(a, 0, a.length - 1))
 		);
 	}
 

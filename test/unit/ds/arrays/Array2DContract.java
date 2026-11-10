@@ -18,6 +18,85 @@ abstract class Array2DContract {
 	// 2行3列。行優先で 1 2 3 / 4 5 6
 	static final long[][] SAMPLE = {{1, 2, 3}, {4, 5, 6}};
 
+	/**
+	 * 反時計回りに90度回転した新しい配列を返す。
+	 */
+	private static long[][] rotateLeft(final long[][] m) {
+		final int h = m.length, w = m[0].length;
+		final long[][] res = new long[w][h];
+		for (int i = 0; i < w; i++) for (int j = 0; j < h; j++) res[i][j] = m[j][w - 1 - i];
+		return res;
+	}
+
+	private static long[][] transpose(final long[][] m) {
+		final int h = m.length, w = m[0].length;
+		final long[][] res = new long[w][h];
+		for (int i = 0; i < w; i++) for (int j = 0; j < h; j++) res[i][j] = m[j][i];
+		return res;
+	}
+
+	abstract Target create(int h, int w);
+
+	abstract Target create(int h, int w, long v);
+
+	abstract Target create(int h, int w, long[] rowMajor);
+
+	abstract Target create(long[][] a);
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int h = 1 + random.nextInt(5), w = 1 + random.nextInt(5);
+		final long[][][] naive = {new long[h][w]};
+		for (final long[] row : naive[0]) for (int j = 0; j < w; j++) row[j] = random.nextInt(100);
+		final Target a = create(naive[0]);
+		new RandomOperations()
+				.add("rotateLeft", (r, at) -> {
+					final int d = r.nextInt(-4, 5);
+					a.rotateLeft(d);
+					for (int k = Math.floorMod(d, 4); k > 0; k--) naive[0] = rotateLeft(naive[0]);
+				})
+				.add("rotateRight", (r, at) -> {
+					a.rotateRight();
+					for (int k = 0; k < 3; k++) naive[0] = rotateLeft(naive[0]);
+				})
+				.add("transpose", (r, at) -> {
+					a.transpose();
+					naive[0] = transpose(naive[0]);
+				})
+				.add("flipHorizontal", (r, at) -> {
+					a.flipHorizontal();
+					for (final long[] row : naive[0])
+						for (int i = 0, j = row.length - 1; i < j; i++, j--) {
+							final long t = row[i];
+							row[i] = row[j];
+							row[j] = t;
+						}
+				})
+				.add("flipVertical", (r, at) -> {
+					a.flipVertical();
+					final long[][] m = naive[0];
+					for (int i = 0, j = m.length - 1; i < j; i++, j--) {
+						final long[] t = m[i];
+						m[i] = m[j];
+						m[j] = t;
+					}
+				})
+				.add("set", 2, (r, at) -> {
+					final long[][] m = naive[0];
+					final int i = r.nextInt(m.length), j = r.nextInt(m[0].length);
+					final long v = r.nextInt(100);
+					assertEquals(m[i][j], a.set(i, j, v), at);
+					m[i][j] = v;
+				})
+				.add("toArray2D", 2, (r, at) -> {
+					assertEquals(naive[0].length, a.h(), at);
+					assertArrayEquals(naive[0], a.toArray2D(), at);
+				})
+				.run(seed, random, 200);
+	}
+
 	interface Target {
 		Object self();
 
@@ -63,14 +142,6 @@ abstract class Array2DContract {
 
 		Spliterator<? extends Number> spliterator();
 	}
-
-	abstract Target create(int h, int w);
-
-	abstract Target create(int h, int w, long v);
-
-	abstract Target create(int h, int w, long[] rowMajor);
-
-	abstract Target create(long[][] a);
 
 	@Nested
 	class Construction {
@@ -223,75 +294,5 @@ abstract class Array2DContract {
 			a.toArray2D()[0][0] = 9;
 			assertEquals(1L, a.get(0, 0));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int h = 1 + random.nextInt(5), w = 1 + random.nextInt(5);
-		final long[][][] naive = {new long[h][w]};
-		for (final long[] row : naive[0]) for (int j = 0; j < w; j++) row[j] = random.nextInt(100);
-		final Target a = create(naive[0]);
-		new RandomOperations()
-			.add("rotateLeft", (r, at) -> {
-				final int d = r.nextInt(-4, 5);
-				a.rotateLeft(d);
-				for (int k = Math.floorMod(d, 4); k > 0; k--) naive[0] = rotateLeft(naive[0]);
-			})
-			.add("rotateRight", (r, at) -> {
-				a.rotateRight();
-				for (int k = 0; k < 3; k++) naive[0] = rotateLeft(naive[0]);
-			})
-			.add("transpose", (r, at) -> {
-				a.transpose();
-				naive[0] = transpose(naive[0]);
-			})
-			.add("flipHorizontal", (r, at) -> {
-				a.flipHorizontal();
-				for (final long[] row : naive[0]) for (int i = 0, j = row.length - 1; i < j; i++, j--) {
-					final long t = row[i];
-					row[i] = row[j];
-					row[j] = t;
-				}
-			})
-			.add("flipVertical", (r, at) -> {
-				a.flipVertical();
-				final long[][] m = naive[0];
-				for (int i = 0, j = m.length - 1; i < j; i++, j--) {
-					final long[] t = m[i];
-					m[i] = m[j];
-					m[j] = t;
-				}
-			})
-			.add("set", 2, (r, at) -> {
-				final long[][] m = naive[0];
-				final int i = r.nextInt(m.length), j = r.nextInt(m[0].length);
-				final long v = r.nextInt(100);
-				assertEquals(m[i][j], a.set(i, j, v), at);
-				m[i][j] = v;
-			})
-			.add("toArray2D", 2, (r, at) -> {
-				assertEquals(naive[0].length, a.h(), at);
-				assertArrayEquals(naive[0], a.toArray2D(), at);
-			})
-			.run(seed, random, 200);
-	}
-
-	/**
-	 * 反時計回りに90度回転した新しい配列を返す。
-	 */
-	private static long[][] rotateLeft(final long[][] m) {
-		final int h = m.length, w = m[0].length;
-		final long[][] res = new long[w][h];
-		for (int i = 0; i < w; i++) for (int j = 0; j < h; j++) res[i][j] = m[j][w - 1 - i];
-		return res;
-	}
-
-	private static long[][] transpose(final long[][] m) {
-		final int h = m.length, w = m[0].length;
-		final long[][] res = new long[w][h];
-		for (int i = 0; i < w; i++) for (int j = 0; j < h; j++) res[i][j] = m[j][i];
-		return res;
 	}
 }

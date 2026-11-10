@@ -15,6 +15,68 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class SortedSetContract {
 
+	abstract Target create();
+
+	/**
+	 * 対象の要素型（Integer・Long）のコレクションを作る。
+	 */
+	abstract Collection<?> collection(long... values);
+
+	Target of(final long... values) {
+		final Target s = create();
+		for (final long v : values) s.add(v);
+		return s;
+	}
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final Target s = create();
+		final TreeSet<Long> naive = new TreeSet<>();
+		new RandomOperations()
+				.add("add", 4, (r, at) -> {
+					final long v = r.nextInt(-30, 30);
+					assertEquals(naive.add(v), s.add(v), at);
+				})
+				.add("remove", 2, (r, at) -> {
+					final long v = r.nextInt(-30, 30);
+					assertEquals(naive.remove(v), s.remove(v), at);
+				})
+				.add("removeAt", (r, at) -> {
+					if (naive.isEmpty()) return;
+					final int i = r.nextInt(naive.size());
+					final long v = naive.stream().skip(i).findFirst().orElseThrow();
+					naive.remove(v);
+					assertTrue(s.removeAt(i), at);
+				})
+				.add("poll", (r, at) -> {
+					if (naive.isEmpty()) return;
+					if (r.nextBoolean()) assertEquals((long) naive.pollFirst(), s.pollFirst(), at);
+					else assertEquals((long) naive.pollLast(), s.pollLast(), at);
+				})
+				.add("navigation", 2, (r, at) -> {
+					final long k = r.nextInt(-35, 35);
+					assertEquals(naive.higher(k), s.higher(k), at);
+					assertEquals(naive.ceiling(k), s.ceiling(k), at);
+					assertEquals(naive.lower(k), s.lower(k), at);
+					assertEquals(naive.floor(k), s.floor(k), at);
+					final int less = naive.headSet(k).size();
+					assertEquals(naive.contains(k) ? less : ~less, s.rank(k), at);
+					assertEquals(naive.contains(k) ? naive.headSet(k).size() : -1, s.indexOf(k), at);
+				})
+				.add("index", (r, at) -> {
+					assertEquals(naive.size(), s.size(), at);
+					if (naive.isEmpty()) return;
+					final int i = r.nextInt(naive.size());
+					assertEquals((long) naive.stream().skip(i).findFirst().orElseThrow(), s.getByIndex(i), at);
+					assertEquals((long) naive.first(), s.first(), at);
+					assertEquals((long) naive.last(), s.last(), at);
+				})
+				.add("toArray", (r, at) -> assertArrayEquals(naive.stream().mapToLong(Long::longValue).toArray(), s.toArray(), at))
+				.run(seed, random, 400);
+	}
+
 	interface Target {
 		int size();
 
@@ -63,19 +125,6 @@ abstract class SortedSetContract {
 		long pollFirst();
 
 		long pollLast();
-	}
-
-	abstract Target create();
-
-	/**
-	 * 対象の要素型（Integer・Long）のコレクションを作る。
-	 */
-	abstract Collection<?> collection(long... values);
-
-	Target of(final long... values) {
-		final Target s = create();
-		for (final long v : values) s.add(v);
-		return s;
 	}
 
 	@Nested
@@ -207,54 +256,5 @@ abstract class SortedSetContract {
 			assertEquals("[-1, 2, 3]", s.toString());
 			assertEquals("[]", create().toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final Target s = create();
-		final TreeSet<Long> naive = new TreeSet<>();
-		new RandomOperations()
-			.add("add", 4, (r, at) -> {
-				final long v = r.nextInt(-30, 30);
-				assertEquals(naive.add(v), s.add(v), at);
-			})
-			.add("remove", 2, (r, at) -> {
-				final long v = r.nextInt(-30, 30);
-				assertEquals(naive.remove(v), s.remove(v), at);
-			})
-			.add("removeAt", (r, at) -> {
-				if (naive.isEmpty()) return;
-				final int i = r.nextInt(naive.size());
-				final long v = naive.stream().skip(i).findFirst().orElseThrow();
-				naive.remove(v);
-				assertTrue(s.removeAt(i), at);
-			})
-			.add("poll", (r, at) -> {
-				if (naive.isEmpty()) return;
-				if (r.nextBoolean()) assertEquals((long) naive.pollFirst(), s.pollFirst(), at);
-				else assertEquals((long) naive.pollLast(), s.pollLast(), at);
-			})
-			.add("navigation", 2, (r, at) -> {
-				final long k = r.nextInt(-35, 35);
-				assertEquals(naive.higher(k), s.higher(k), at);
-				assertEquals(naive.ceiling(k), s.ceiling(k), at);
-				assertEquals(naive.lower(k), s.lower(k), at);
-				assertEquals(naive.floor(k), s.floor(k), at);
-				final int less = naive.headSet(k).size();
-				assertEquals(naive.contains(k) ? less : ~less, s.rank(k), at);
-				assertEquals(naive.contains(k) ? naive.headSet(k).size() : -1, s.indexOf(k), at);
-			})
-			.add("index", (r, at) -> {
-				assertEquals(naive.size(), s.size(), at);
-				if (naive.isEmpty()) return;
-				final int i = r.nextInt(naive.size());
-				assertEquals((long) naive.stream().skip(i).findFirst().orElseThrow(), s.getByIndex(i), at);
-				assertEquals((long) naive.first(), s.first(), at);
-				assertEquals((long) naive.last(), s.last(), at);
-			})
-			.add("toArray", (r, at) -> assertArrayEquals(naive.stream().mapToLong(Long::longValue).toArray(), s.toArray(), at))
-			.run(seed, random, 400);
 	}
 }

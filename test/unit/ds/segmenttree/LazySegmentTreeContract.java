@@ -15,14 +15,90 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class LazySegmentTreeContract {
 
+	static final long[] SAMPLE = {5, 2, 7, 1, 3};
+
+	static long[] values(final Target t) {
+		final long[] res = new long[t.size()];
+		for (int i = 0; i < res.length; i++) res[i] = t.get(i);
+		return res;
+	}
+
+	abstract Target create(int n, Act act);
+
+	abstract Target create(long[] a, Act act);
+
+	abstract Target createFromCollection(long[] a, Act act);
+
+	/**
+	 * 最小値の単位元（その型の最大値）。
+	 */
+	abstract long inf();
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(20);
+		final Act act = random.nextBoolean() ? Act.ADD : Act.ASSIGN;
+		final long[] naive = random.longs(n, 0, 100).toArray();
+		final Target t = create(naive.clone(), act);
+		new RandomOperations()
+				.add("applyRange", 3, (r, at) -> {
+					final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
+					final long f = act == Act.ADD ? r.nextInt(-10, 11) : r.nextInt(100);
+					t.apply(l, rr, f);
+					for (int i = l; i < rr; i++) naive[i] = act == Act.ADD ? naive[i] + f : f;
+				})
+				.add("applyPoint", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long f = act == Act.ADD ? r.nextInt(-10, 11) : r.nextInt(100);
+					naive[i] = act == Act.ADD ? naive[i] + f : f;
+					assertEquals(naive[i], t.apply(i, f), at);
+				})
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long v = r.nextInt(100);
+					assertEquals(naive[i], t.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("query", 3, (r, at) -> {
+					final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
+					assertEquals(min(naive, l, rr), t.query(l, rr), at);
+					assertEquals(min(naive, 0, n), t.queryAll(), at);
+				})
+				.add("maxRight", (r, at) -> {
+					final int l = r.nextInt(n + 1);
+					final long w = r.nextInt(-50, 150);
+					int expected = l;
+					while (expected < n && naive[expected] >= w) expected++;
+					assertEquals(expected, t.maxRight(l, m -> m >= w), at);
+				})
+				.add("minLeft", (r, at) -> {
+					final int rr = r.nextInt(n + 1);
+					final long w = r.nextInt(-50, 150);
+					int expected = rr;
+					while (expected > 0 && naive[expected - 1] >= w) expected--;
+					assertEquals(expected, t.minLeft(rr, m -> m >= w), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(naive[i], t.get(i), at);
+				})
+				.run(seed, random, 300);
+	}
+
+	long min(final long[] a, final int l, final int r) {
+		long res = inf();
+		for (int i = l; i < r; i++) res = Math.min(res, a[i]);
+		return res;
+	}
+
 	/**
 	 * ADD は mapping・composition に加算を渡し、ASSIGN は省略して既定の区間代入にする。
 	 */
 	enum Act {
 		ADD, ASSIGN
 	}
-
-	static final long[] SAMPLE = {5, 2, 7, 1, 3};
 
 	interface Target {
 		Target copy();
@@ -53,17 +129,6 @@ abstract class LazySegmentTreeContract {
 
 		Iterator<?> iterator();
 	}
-
-	abstract Target create(int n, Act act);
-
-	abstract Target create(long[] a, Act act);
-
-	abstract Target createFromCollection(long[] a, Act act);
-
-	/**
-	 * 最小値の単位元（その型の最大値）。
-	 */
-	abstract long inf();
 
 	@Nested
 	class Construction {
@@ -197,70 +262,5 @@ abstract class LazySegmentTreeContract {
 			assertThrows(NoSuchElementException.class, it::next);
 			assertEquals("", create(0, Act.ADD).toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(20);
-		final Act act = random.nextBoolean() ? Act.ADD : Act.ASSIGN;
-		final long[] naive = random.longs(n, 0, 100).toArray();
-		final Target t = create(naive.clone(), act);
-		new RandomOperations()
-			.add("applyRange", 3, (r, at) -> {
-				final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
-				final long f = act == Act.ADD ? r.nextInt(-10, 11) : r.nextInt(100);
-				t.apply(l, rr, f);
-				for (int i = l; i < rr; i++) naive[i] = act == Act.ADD ? naive[i] + f : f;
-			})
-			.add("applyPoint", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long f = act == Act.ADD ? r.nextInt(-10, 11) : r.nextInt(100);
-				naive[i] = act == Act.ADD ? naive[i] + f : f;
-				assertEquals(naive[i], t.apply(i, f), at);
-			})
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long v = r.nextInt(100);
-				assertEquals(naive[i], t.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("query", 3, (r, at) -> {
-				final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
-				assertEquals(min(naive, l, rr), t.query(l, rr), at);
-				assertEquals(min(naive, 0, n), t.queryAll(), at);
-			})
-			.add("maxRight", (r, at) -> {
-				final int l = r.nextInt(n + 1);
-				final long w = r.nextInt(-50, 150);
-				int expected = l;
-				while (expected < n && naive[expected] >= w) expected++;
-				assertEquals(expected, t.maxRight(l, m -> m >= w), at);
-			})
-			.add("minLeft", (r, at) -> {
-				final int rr = r.nextInt(n + 1);
-				final long w = r.nextInt(-50, 150);
-				int expected = rr;
-				while (expected > 0 && naive[expected - 1] >= w) expected--;
-				assertEquals(expected, t.minLeft(rr, m -> m >= w), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(naive[i], t.get(i), at);
-			})
-			.run(seed, random, 300);
-	}
-
-	long min(final long[] a, final int l, final int r) {
-		long res = inf();
-		for (int i = l; i < r; i++) res = Math.min(res, a[i]);
-		return res;
-	}
-
-	static long[] values(final Target t) {
-		final long[] res = new long[t.size()];
-		for (int i = 0; i < res.length; i++) res[i] = t.get(i);
-		return res;
 	}
 }

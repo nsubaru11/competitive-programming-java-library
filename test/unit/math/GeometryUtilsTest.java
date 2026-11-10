@@ -20,16 +20,16 @@ final class GeometryUtilsTest {
 
 		@ParameterizedTest(name = "{8}")
 		@CsvSource({
-			"0, 0, 2, 2, 0, 2, 2, 0, 2",
-			"0, 0, 2, 0, 1, -1, 2, 2, 1",
-			"0, 0, 1, 1, 0, 0, 1, 1, 0",
-			"0, 0, 2, 0, 1, 0, 3, 0, -1",
-			"0, 0, 1, 0, 1, 0, 2, 0, -2",
-			"0, 0, 2, 0, 1, 0, 1, 2, -3",
-			"0, 0, 2, 0, 1, 0, 2, 1, -4",
-			"0, 0, 1, 0, 0, 1, 1, 1, -5",
-			"0, 0, 1, 0, 3, -1, 3, 1, -6",
-			"0, 0, 1, 0, 3, 1, 4, 3, -7",
+				"0, 0, 2, 2, 0, 2, 2, 0, 2",
+				"0, 0, 2, 0, 1, -1, 2, 2, 1",
+				"0, 0, 1, 1, 0, 0, 1, 1, 0",
+				"0, 0, 2, 0, 1, 0, 3, 0, -1",
+				"0, 0, 1, 0, 1, 0, 2, 0, -2",
+				"0, 0, 2, 0, 1, 0, 1, 2, -3",
+				"0, 0, 2, 0, 1, 0, 2, 1, -4",
+				"0, 0, 1, 0, 0, 1, 1, 1, -5",
+				"0, 0, 1, 0, 3, -1, 3, 1, -6",
+				"0, 0, 1, 0, 3, 1, 4, 3, -7",
 		})
 		void crossLine(final double x11, final double y11, final double x12, final double y12, final double x21, final double y21, final double x22, final double y22, final int expected) {
 			assertEquals(expected, GeometryUtils.crossLine(x11, y11, x12, y12, x21, y21, x22, y22));

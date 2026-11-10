@@ -10,6 +10,90 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class GraphUtilsTest {
 
+	static Set<Integer> set(final int[] a) {
+		final Set<Integer> res = new HashSet<>();
+		for (final int v : a) res.add(v);
+		return res;
+	}
+
+	@RepeatedTest(100)
+	void directedMatchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(8);
+		final List<Naive.Edge> edges = random.nextBoolean()
+				? Naive.randomDagEdges(random, n, random.nextInt(12), () -> 1)
+				: Naive.randomEdges(random, n, random.nextInt(12), () -> 1, true);
+		final DirectedGraph g = Naive.directed(n, edges);
+		final boolean[][] reach = Naive.reach(n, edges);
+		final String at = "seed=" + seed + ", edges=" + edges;
+		final boolean cyclic = edges.stream().anyMatch(e -> reach[e.v()][e.u()]);
+		assertEquals(cyclic, GraphUtils.hasCycle(g), at);
+		final int[] topo = GraphUtils.topologicalSort(g);
+		if (cyclic) {
+			assertNull(topo, at);
+			final GraphUtils.Cycle c = GraphUtils.findCycle(g);
+			assertNotNull(c, at);
+			assertEquals(c.size(), set(c.vertices()).size(), at + ", 頂点は重複しない");
+			for (int i = 0; i < c.size(); i++) {
+				final Naive.Edge e = edges.get(c.edges()[i]);
+				assertEquals(c.vertices()[i], e.u(), at);
+				assertEquals(c.vertices()[(i + 1) % c.size()], e.v(), at);
+			}
+		} else {
+			final int[] pos = new int[n];
+			for (int i = 0; i < n; i++) pos[topo[i]] = i;
+			assertEquals(n, set(topo).size(), at);
+			for (final Naive.Edge e : edges) assertTrue(pos[e.u()] < pos[e.v()], at);
+			assertNull(GraphUtils.findCycle(g), at);
+		}
+		final int[][] sccs = GraphUtils.scc(g);
+		final int[] comp = new int[n];
+		Arrays.fill(comp, -1);
+		for (int i = 0; i < sccs.length; i++) for (final int v : sccs[i]) comp[v] = i;
+		for (int u = 0; u < n; u++) {
+			assertNotEquals(-1, comp[u], at);
+			for (int v = 0; v < n; v++) assertEquals(reach[u][v] && reach[v][u], comp[u] == comp[v], at);
+		}
+		for (final Naive.Edge e : edges) assertTrue(comp[e.u()] <= comp[e.v()], at + ", 成分はトポロジカル順");
+		final int s = random.nextInt(n);
+		final int[] order = GraphUtils.bfs(g, s);
+		final Set<Integer> expected = new HashSet<>();
+		for (int v = 0; v < n; v++) if (reach[s][v]) expected.add(v);
+		assertEquals(expected, set(order), at);
+		final long[] dist = Naive.shortest(n, edges, s);
+		for (int i = 0; i + 1 < order.length; i++) assertTrue(dist[order[i]] <= dist[order[i + 1]], at);
+	}
+
+	@RepeatedTest(100)
+	void undirectedMatchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(8);
+		final List<Naive.Edge> edges = Naive.randomEdges(random, n, random.nextInt(10), () -> 1, false);
+		final UndirectedGraph g = Naive.undirected(n, edges);
+		final String at = "seed=" + seed + ", edges=" + edges;
+		final boolean cyclic = edges.size() > n - Naive.components(n, edges);
+		assertEquals(cyclic, GraphUtils.hasCycle(g), at);
+		final GraphUtils.Cycle c = GraphUtils.findCycle(g);
+		assertEquals(cyclic, c != null, at);
+		if (c != null) {
+			assertEquals(c.size(), set(c.vertices()).size(), at);
+			assertEquals(c.size(), set(c.edges()).size(), at + ", 辺は重複しない");
+			for (int i = 0; i < c.size(); i++) {
+				final Naive.Edge e = edges.get(c.edges()[i]);
+				final int a = c.vertices()[i], b = c.vertices()[(i + 1) % c.size()];
+				assertTrue(e.u() == a && e.v() == b || e.u() == b && e.v() == a, at);
+			}
+		}
+		boolean bipartite = false;
+		for (int mask = 0; mask < 1 << n && !bipartite; mask++) {
+			final int coloring = mask;
+			bipartite = edges.stream().allMatch(e -> (coloring >> e.u() & 1) != (coloring >> e.v() & 1));
+		}
+		assertEquals(bipartite, GraphUtils.isBipartite(g), at);
+	}
+
 	@Nested
 	class Search {
 
@@ -94,89 +178,5 @@ final class GraphUtilsTest {
 			assertTrue(comps.indexOf(Set.of(0, 1)) < comps.indexOf(Set.of(2, 3)));
 			assertTrue(comps.contains(Set.of(4)));
 		}
-	}
-
-	@RepeatedTest(100)
-	void directedMatchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(8);
-		final List<Naive.Edge> edges = random.nextBoolean()
-			? Naive.randomDagEdges(random, n, random.nextInt(12), () -> 1)
-			: Naive.randomEdges(random, n, random.nextInt(12), () -> 1, true);
-		final DirectedGraph g = Naive.directed(n, edges);
-		final boolean[][] reach = Naive.reach(n, edges);
-		final String at = "seed=" + seed + ", edges=" + edges;
-		final boolean cyclic = edges.stream().anyMatch(e -> reach[e.v()][e.u()]);
-		assertEquals(cyclic, GraphUtils.hasCycle(g), at);
-		final int[] topo = GraphUtils.topologicalSort(g);
-		if (cyclic) {
-			assertNull(topo, at);
-			final GraphUtils.Cycle c = GraphUtils.findCycle(g);
-			assertNotNull(c, at);
-			assertEquals(c.size(), set(c.vertices()).size(), at + ", 頂点は重複しない");
-			for (int i = 0; i < c.size(); i++) {
-				final Naive.Edge e = edges.get(c.edges()[i]);
-				assertEquals(c.vertices()[i], e.u(), at);
-				assertEquals(c.vertices()[(i + 1) % c.size()], e.v(), at);
-			}
-		} else {
-			final int[] pos = new int[n];
-			for (int i = 0; i < n; i++) pos[topo[i]] = i;
-			assertEquals(n, set(topo).size(), at);
-			for (final Naive.Edge e : edges) assertTrue(pos[e.u()] < pos[e.v()], at);
-			assertNull(GraphUtils.findCycle(g), at);
-		}
-		final int[][] sccs = GraphUtils.scc(g);
-		final int[] comp = new int[n];
-		Arrays.fill(comp, -1);
-		for (int i = 0; i < sccs.length; i++) for (final int v : sccs[i]) comp[v] = i;
-		for (int u = 0; u < n; u++) {
-			assertNotEquals(-1, comp[u], at);
-			for (int v = 0; v < n; v++) assertEquals(reach[u][v] && reach[v][u], comp[u] == comp[v], at);
-		}
-		for (final Naive.Edge e : edges) assertTrue(comp[e.u()] <= comp[e.v()], at + ", 成分はトポロジカル順");
-		final int s = random.nextInt(n);
-		final int[] order = GraphUtils.bfs(g, s);
-		final Set<Integer> expected = new HashSet<>();
-		for (int v = 0; v < n; v++) if (reach[s][v]) expected.add(v);
-		assertEquals(expected, set(order), at);
-		final long[] dist = Naive.shortest(n, edges, s);
-		for (int i = 0; i + 1 < order.length; i++) assertTrue(dist[order[i]] <= dist[order[i + 1]], at);
-	}
-
-	@RepeatedTest(100)
-	void undirectedMatchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(8);
-		final List<Naive.Edge> edges = Naive.randomEdges(random, n, random.nextInt(10), () -> 1, false);
-		final UndirectedGraph g = Naive.undirected(n, edges);
-		final String at = "seed=" + seed + ", edges=" + edges;
-		final boolean cyclic = edges.size() > n - Naive.components(n, edges);
-		assertEquals(cyclic, GraphUtils.hasCycle(g), at);
-		final GraphUtils.Cycle c = GraphUtils.findCycle(g);
-		assertEquals(cyclic, c != null, at);
-		if (c != null) {
-			assertEquals(c.size(), set(c.vertices()).size(), at);
-			assertEquals(c.size(), set(c.edges()).size(), at + ", 辺は重複しない");
-			for (int i = 0; i < c.size(); i++) {
-				final Naive.Edge e = edges.get(c.edges()[i]);
-				final int a = c.vertices()[i], b = c.vertices()[(i + 1) % c.size()];
-				assertTrue(e.u() == a && e.v() == b || e.u() == b && e.v() == a, at);
-			}
-		}
-		boolean bipartite = false;
-		for (int mask = 0; mask < 1 << n && !bipartite; mask++) {
-			final int coloring = mask;
-			bipartite = edges.stream().allMatch(e -> (coloring >> e.u() & 1) != (coloring >> e.v() & 1));
-		}
-		assertEquals(bipartite, GraphUtils.isBipartite(g), at);
-	}
-
-	static Set<Integer> set(final int[] a) {
-		final Set<Integer> res = new HashSet<>();
-		for (final int v : a) res.add(v);
-		return res;
 	}
 }

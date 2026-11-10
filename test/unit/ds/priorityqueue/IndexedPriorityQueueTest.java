@@ -12,6 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class IndexedPriorityQueueTest extends IndexedPriorityQueueContract {
 
+	private static Long[] box(final long[] a) {
+		return Arrays.stream(a).boxed().toArray(Long[]::new);
+	}
+
 	Target create(final int n) {
 		return Adapter.of(Target.class, new IndexedPriorityQueue<Long>(n));
 	}
@@ -48,9 +52,5 @@ final class IndexedPriorityQueueTest extends IndexedPriorityQueueContract {
 	@Test
 	void comparatorMustNotBeNull() {
 		assertThrows(NullPointerException.class, () -> new IndexedPriorityQueue<Long>(1, (Comparator<Long>) null));
-	}
-
-	private static Long[] box(final long[] a) {
-		return Arrays.stream(a).boxed().toArray(Long[]::new);
 	}
 }

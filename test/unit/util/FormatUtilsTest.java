@@ -14,6 +14,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class FormatUtilsTest {
 
+	@RepeatedTest(200)
+	void matchesJdkFormatting(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final long[] a = random.longs(random.nextInt(6), -1000, 1000).toArray();
+		final String at = "a=" + Arrays.toString(a);
+		assertEquals(Arrays.stream(a).mapToObj(Long::toString).collect(Collectors.joining(" ")), FormatUtils.join(a), at);
+		assertEquals(Arrays.stream(a).mapToObj(Long::toString).collect(Collectors.joining("--")), FormatUtils.join(Arrays.stream(a).mapToInt(x -> (int) x).toArray(), "--"), at);
+		// 高速化のため double で 10^digits 倍してから丸めるので、境界付近では誤差が入る。
+		// x を 1/8 の倍数にして、10^digits 倍しても誤差が出ない値だけで比べる
+		final double x = random.nextInt(-1_000_000, 1_000_000) / 8.0;
+		final int digits = random.nextInt(0, 6);
+		for (final RoundingMode mode : new RoundingMode[]{RoundingMode.HALF_UP, RoundingMode.FLOOR, RoundingMode.CEILING}) {
+			final BigDecimal expected = new BigDecimal(x).setScale(digits, mode);
+			// 負の値が 0 に丸められる場合の符号は Guide に定めがないので比べない
+			if (x < 0 && expected.signum() == 0) continue;
+			assertEquals(expected.toPlainString(), FormatUtils.formatDouble(x, digits, mode), "x=" + x + ", digits=" + digits + ", " + mode);
+		}
+		final long v = random.nextLong(-100000, 100000);
+		final int width = random.nextInt(0, 10), radix = random.nextInt(2, 37);
+		final String body = Long.toString(Math.abs(v), radix), sign = v < 0 ? "-" : "";
+		final String expected = sign + "0".repeat(Math.max(0, width - sign.length() - body.length())) + body;
+		assertEquals(expected, FormatUtils.toPaddedString(v, width, radix), "v=" + v + ", width=" + width + ", radix=" + radix);
+	}
+
 	@Nested
 	class Join {
 
@@ -46,17 +70,17 @@ final class FormatUtilsTest {
 
 		@ParameterizedTest
 		@CsvSource({
-			"1.25, UP, 1.3",
-			"1.25, DOWN, 1.2",
-			"1.25, CEILING, 1.3",
-			"1.25, FLOOR, 1.2",
-			"1.25, HALF_UP, 1.3",
-			"1.25, HALF_DOWN, 1.2",
-			"1.25, HALF_EVEN, 1.2",
-			"1.35, HALF_EVEN, 1.4",
-			"-1.25, CEILING, -1.2",
-			"-1.25, FLOOR, -1.3",
-			"1.2, UNNECESSARY, 1.2",
+				"1.25, UP, 1.3",
+				"1.25, DOWN, 1.2",
+				"1.25, CEILING, 1.3",
+				"1.25, FLOOR, 1.2",
+				"1.25, HALF_UP, 1.3",
+				"1.25, HALF_DOWN, 1.2",
+				"1.25, HALF_EVEN, 1.2",
+				"1.35, HALF_EVEN, 1.4",
+				"-1.25, CEILING, -1.2",
+				"-1.25, FLOOR, -1.3",
+				"1.2, UNNECESSARY, 1.2",
 		})
 		void roundingModes(final double value, final RoundingMode mode, final String expected) {
 			assertEquals(expected, FormatUtils.formatDouble(value, 1, mode));
@@ -89,29 +113,5 @@ final class FormatUtilsTest {
 			assertEquals("**1f", FormatUtils.toPaddedString(31, 4, 16, '*'));
 			assertEquals("12345", FormatUtils.toPaddedString(12345, 3));
 		}
-	}
-
-	@RepeatedTest(200)
-	void matchesJdkFormatting(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final long[] a = random.longs(random.nextInt(6), -1000, 1000).toArray();
-		final String at = "a=" + Arrays.toString(a);
-		assertEquals(Arrays.stream(a).mapToObj(Long::toString).collect(Collectors.joining(" ")), FormatUtils.join(a), at);
-		assertEquals(Arrays.stream(a).mapToObj(Long::toString).collect(Collectors.joining("--")), FormatUtils.join(Arrays.stream(a).mapToInt(x -> (int) x).toArray(), "--"), at);
-		// 高速化のため double で 10^digits 倍してから丸めるので、境界付近では誤差が入る。
-		// x を 1/8 の倍数にして、10^digits 倍しても誤差が出ない値だけで比べる
-		final double x = random.nextInt(-1_000_000, 1_000_000) / 8.0;
-		final int digits = random.nextInt(0, 6);
-		for (final RoundingMode mode : new RoundingMode[]{RoundingMode.HALF_UP, RoundingMode.FLOOR, RoundingMode.CEILING}) {
-			final BigDecimal expected = new BigDecimal(x).setScale(digits, mode);
-			// 負の値が 0 に丸められる場合の符号は Guide に定めがないので比べない
-			if (x < 0 && expected.signum() == 0) continue;
-			assertEquals(expected.toPlainString(), FormatUtils.formatDouble(x, digits, mode), "x=" + x + ", digits=" + digits + ", " + mode);
-		}
-		final long v = random.nextLong(-100000, 100000);
-		final int width = random.nextInt(0, 10), radix = random.nextInt(2, 37);
-		final String body = Long.toString(Math.abs(v), radix), sign = v < 0 ? "-" : "";
-		final String expected = sign + "0".repeat(Math.max(0, width - sign.length() - body.length())) + body;
-		assertEquals(expected, FormatUtils.toPaddedString(v, width, radix), "v=" + v + ", width=" + width + ", radix=" + radix);
 	}
 }

@@ -15,18 +15,37 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class ShortestPathContract {
 
-	interface Solver {
-		PathResult solve(Graph g, int s);
+	/**
+	 * static メソッドへの参照から Solver を作る。
+	 */
+	static Solver of(final BiFunction<Graph, Integer, PathResult> solve1, final BiFunction<Graph, int[], PathResult> solveN,
+					 final BiFunction<Graph, Integer, long[]> dist1, final BiFunction<Graph, int[], long[]> distN,
+					 final ToLongTriFunction dist, final TriFunction<int[]> path) {
+		return new Solver() {
+			public PathResult solve(final Graph g, final int s) {
+				return solve1.apply(g, s);
+			}
 
-		PathResult solve(Graph g, int... s);
+			public PathResult solve(final Graph g, final int... s) {
+				return solveN.apply(g, s);
+			}
 
-		long[] dist(Graph g, int s);
+			public long[] dist(final Graph g, final int s) {
+				return dist1.apply(g, s);
+			}
 
-		long[] dist(Graph g, int... s);
+			public long[] dist(final Graph g, final int... s) {
+				return distN.apply(g, s);
+			}
 
-		long dist(Graph g, int s, int t);
+			public long dist(final Graph g, final int s, final int t) {
+				return dist.apply(g, s, t);
+			}
 
-		int[] path(Graph g, int s, int t);
+			public int[] path(final Graph g, final int s, final int t) {
+				return path.apply(g, s, t);
+			}
+		};
 	}
 
 	abstract Solver solver();
@@ -41,6 +60,54 @@ abstract class ShortestPathContract {
 	 */
 	boolean supportsUndirected() {
 		return true;
+	}
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(8), m = random.nextInt(16);
+		final boolean undirected = supportsUndirected() && random.nextBoolean();
+		final List<Naive.Edge> edges = Naive.randomEdges(random, n, m, () -> weight(random), !undirected);
+		final Graph g = undirected ? Naive.undirected(n, edges) : Naive.directed(n, edges);
+		final List<Naive.Edge> arcs = Naive.arcs(edges, undirected);
+		final int s = random.nextInt(n), t = random.nextInt(n);
+		final String at = "seed=" + seed + ", undirected=" + undirected + ", edges=" + edges + ", s=" + s + ", t=" + t;
+		final long[] expected = Naive.shortest(n, arcs, s);
+		final PathResult r = solver().solve(g, s);
+		assertArrayEquals(expected, r.dist, at);
+		assertArrayEquals(expected, solver().dist(g, s), at);
+		assertEquals(expected[t], solver().dist(g, s, t), at);
+		if (expected[t] != Long.MAX_VALUE && expected[t] != Long.MIN_VALUE) {
+			assertTrue(Naive.isPath(r.pathTo(t), arcs, s, t, expected[t], false), at + ", path=" + Arrays.toString(r.pathTo(t)));
+			assertTrue(Naive.isPath(solver().path(g, s, t), arcs, s, t, expected[t], false), at);
+		} else {
+			assertNull(solver().path(g, s, t), at);
+		}
+		final int s2 = random.nextInt(n);
+		assertArrayEquals(Naive.shortest(n, arcs, s, s2), solver().dist(g, new int[]{s, s2}), at + ", s2=" + s2);
+	}
+
+	interface Solver {
+		PathResult solve(Graph g, int s);
+
+		PathResult solve(Graph g, int... s);
+
+		long[] dist(Graph g, int s);
+
+		long[] dist(Graph g, int... s);
+
+		long dist(Graph g, int s, int t);
+
+		int[] path(Graph g, int s, int t);
+	}
+
+	interface ToLongTriFunction {
+		long apply(Graph g, int s, int t);
+	}
+
+	interface TriFunction<R> {
+		R apply(Graph g, int s, int t);
 	}
 
 	@Nested
@@ -90,72 +157,5 @@ abstract class ShortestPathContract {
 			assertEquals(4, r.pathTo(3)[0], "近い方の始点から復元する");
 			assertTrue(r.toString().startsWith("s: [0, 4]\nhasNegCycle: false\ndist: [0, 1, 2, 1, 0]"));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(8), m = random.nextInt(16);
-		final boolean undirected = supportsUndirected() && random.nextBoolean();
-		final List<Naive.Edge> edges = Naive.randomEdges(random, n, m, () -> weight(random), !undirected);
-		final Graph g = undirected ? Naive.undirected(n, edges) : Naive.directed(n, edges);
-		final List<Naive.Edge> arcs = Naive.arcs(edges, undirected);
-		final int s = random.nextInt(n), t = random.nextInt(n);
-		final String at = "seed=" + seed + ", undirected=" + undirected + ", edges=" + edges + ", s=" + s + ", t=" + t;
-		final long[] expected = Naive.shortest(n, arcs, s);
-		final PathResult r = solver().solve(g, s);
-		assertArrayEquals(expected, r.dist, at);
-		assertArrayEquals(expected, solver().dist(g, s), at);
-		assertEquals(expected[t], solver().dist(g, s, t), at);
-		if (expected[t] != Long.MAX_VALUE && expected[t] != Long.MIN_VALUE) {
-			assertTrue(Naive.isPath(r.pathTo(t), arcs, s, t, expected[t], false), at + ", path=" + Arrays.toString(r.pathTo(t)));
-			assertTrue(Naive.isPath(solver().path(g, s, t), arcs, s, t, expected[t], false), at);
-		} else {
-			assertNull(solver().path(g, s, t), at);
-		}
-		final int s2 = random.nextInt(n);
-		assertArrayEquals(Naive.shortest(n, arcs, s, s2), solver().dist(g, new int[]{s, s2}), at + ", s2=" + s2);
-	}
-
-	/**
-	 * static メソッドへの参照から Solver を作る。
-	 */
-	static Solver of(final BiFunction<Graph, Integer, PathResult> solve1, final BiFunction<Graph, int[], PathResult> solveN,
-		final BiFunction<Graph, Integer, long[]> dist1, final BiFunction<Graph, int[], long[]> distN,
-		final ToLongTriFunction dist, final TriFunction<int[]> path) {
-		return new Solver() {
-			public PathResult solve(final Graph g, final int s) {
-				return solve1.apply(g, s);
-			}
-
-			public PathResult solve(final Graph g, final int... s) {
-				return solveN.apply(g, s);
-			}
-
-			public long[] dist(final Graph g, final int s) {
-				return dist1.apply(g, s);
-			}
-
-			public long[] dist(final Graph g, final int... s) {
-				return distN.apply(g, s);
-			}
-
-			public long dist(final Graph g, final int s, final int t) {
-				return dist.apply(g, s, t);
-			}
-
-			public int[] path(final Graph g, final int s, final int t) {
-				return path.apply(g, s, t);
-			}
-		};
-	}
-
-	interface ToLongTriFunction {
-		long apply(Graph g, int s, int t);
-	}
-
-	interface TriFunction<R> {
-		R apply(Graph g, int s, int t);
 	}
 }

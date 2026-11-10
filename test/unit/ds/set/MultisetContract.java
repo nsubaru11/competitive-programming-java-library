@@ -15,6 +15,81 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class MultisetContract {
 
+	static List<Long> collect(final Iterator<?> it) {
+		final List<Long> res = new ArrayList<>();
+		it.forEachRemaining(v -> res.add(((Number) v).longValue()));
+		return res;
+	}
+
+	abstract Target create();
+
+	abstract Collection<?> collection(long... values);
+
+	Target of(final long... values) {
+		final Target s = create();
+		for (final long v : values) s.add(v);
+		return s;
+	}
+
+	// 昇順は 10 20 20 20 30
+	Target sample() {
+		return of(20, 10, 20, 30, 20);
+	}
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final Target s = create();
+		final TreeMap<Long, Long> naive = new TreeMap<>();
+		new RandomOperations()
+				.add("add", 4, (r, at) -> {
+					final long v = r.nextInt(-10, 10), c = r.nextInt(1, 3);
+					naive.merge(v, c, Long::sum);
+					assertTrue(s.add(v, c), at);
+				})
+				.add("remove", 2, (r, at) -> {
+					final long v = r.nextInt(-10, 10);
+					final boolean had = naive.containsKey(v);
+					if (had && naive.merge(v, -1L, Long::sum) == 0) naive.remove(v);
+					assertEquals(had, s.remove(v), at);
+				})
+				.add("removeAll", (r, at) -> {
+					final long v = r.nextInt(-10, 10);
+					assertEquals(naive.remove(v) != null, s.removeAll(v), at);
+				})
+				.add("query", 3, (r, at) -> {
+					final long k = r.nextInt(-12, 12);
+					final long less = naive.headMap(k).values().stream().mapToLong(Long::longValue).sum();
+					assertEquals(naive.getOrDefault(k, 0L), s.count(k), at);
+					final boolean has = naive.containsKey(k);
+					final long uniqueLess = naive.headMap(k).size();
+					assertEquals(has ? less : ~less, s.rank(k), at);
+					assertEquals(has ? uniqueLess : ~uniqueLess, s.uniqueRank(k), at);
+					assertEquals(has ? less : ~less, s.lowerBound(k), at);
+					assertEquals(has ? less + naive.get(k) - 1 : ~less, s.upperBound(k), at);
+					assertEquals(naive.containsKey(k) ? less : -1, s.indexOf(k), at);
+					assertEquals(naive.higherKey(k), s.higher(k), at);
+					assertEquals(naive.floorKey(k), s.floor(k), at);
+				})
+				.add("toArray", (r, at) -> {
+					final List<Long> expected = new ArrayList<>();
+					naive.forEach((v, c) -> {
+						for (long i = 0; i < c; i++) expected.add(v);
+					});
+					assertEquals(expected, collect(s.iterator()), at);
+					assertEquals(expected.size(), s.size(), at);
+					assertEquals(naive.size(), s.uniqueSize(), at);
+					if (!expected.isEmpty()) {
+						final int i = r.nextInt(expected.size());
+						assertEquals((long) expected.get(i), s.getByIndex(i), at);
+						assertEquals((long) naive.firstKey(), s.first(), at);
+						assertEquals((long) naive.lastKey(), s.last(), at);
+					}
+				})
+				.run(seed, random, 400);
+	}
+
 	interface Target {
 		long size();
 
@@ -95,21 +170,6 @@ abstract class MultisetContract {
 		Iterator<?> iterator();
 
 		Iterator<?> uniqueIterator();
-	}
-
-	abstract Target create();
-
-	abstract Collection<?> collection(long... values);
-
-	Target of(final long... values) {
-		final Target s = create();
-		for (final long v : values) s.add(v);
-		return s;
-	}
-
-	// 昇順は 10 20 20 20 30
-	Target sample() {
-		return of(20, 10, 20, 30, 20);
 	}
 
 	@Nested
@@ -261,65 +321,5 @@ abstract class MultisetContract {
 			assertEquals(List.of(10L, 20L, 30L), collect(s.uniqueIterator()));
 			assertEquals("[10, 20, 20, 20, 30]", s.toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final Target s = create();
-		final TreeMap<Long, Long> naive = new TreeMap<>();
-		new RandomOperations()
-			.add("add", 4, (r, at) -> {
-				final long v = r.nextInt(-10, 10), c = r.nextInt(1, 3);
-				naive.merge(v, c, Long::sum);
-				assertTrue(s.add(v, c), at);
-			})
-			.add("remove", 2, (r, at) -> {
-				final long v = r.nextInt(-10, 10);
-				final boolean had = naive.containsKey(v);
-				if (had && naive.merge(v, -1L, Long::sum) == 0) naive.remove(v);
-				assertEquals(had, s.remove(v), at);
-			})
-			.add("removeAll", (r, at) -> {
-				final long v = r.nextInt(-10, 10);
-				assertEquals(naive.remove(v) != null, s.removeAll(v), at);
-			})
-			.add("query", 3, (r, at) -> {
-				final long k = r.nextInt(-12, 12);
-				final long less = naive.headMap(k).values().stream().mapToLong(Long::longValue).sum();
-				assertEquals(naive.getOrDefault(k, 0L), s.count(k), at);
-				final boolean has = naive.containsKey(k);
-				final long uniqueLess = naive.headMap(k).size();
-				assertEquals(has ? less : ~less, s.rank(k), at);
-				assertEquals(has ? uniqueLess : ~uniqueLess, s.uniqueRank(k), at);
-				assertEquals(has ? less : ~less, s.lowerBound(k), at);
-				assertEquals(has ? less + naive.get(k) - 1 : ~less, s.upperBound(k), at);
-				assertEquals(naive.containsKey(k) ? less : -1, s.indexOf(k), at);
-				assertEquals(naive.higherKey(k), s.higher(k), at);
-				assertEquals(naive.floorKey(k), s.floor(k), at);
-			})
-			.add("toArray", (r, at) -> {
-				final List<Long> expected = new ArrayList<>();
-				naive.forEach((v, c) -> {
-					for (long i = 0; i < c; i++) expected.add(v);
-				});
-				assertEquals(expected, collect(s.iterator()), at);
-				assertEquals(expected.size(), s.size(), at);
-				assertEquals(naive.size(), s.uniqueSize(), at);
-				if (!expected.isEmpty()) {
-					final int i = r.nextInt(expected.size());
-					assertEquals((long) expected.get(i), s.getByIndex(i), at);
-					assertEquals((long) naive.firstKey(), s.first(), at);
-					assertEquals((long) naive.lastKey(), s.last(), at);
-				}
-			})
-			.run(seed, random, 400);
-	}
-
-	static List<Long> collect(final Iterator<?> it) {
-		final List<Long> res = new ArrayList<>();
-		it.forEachRemaining(v -> res.add(((Number) v).longValue()));
-		return res;
 	}
 }

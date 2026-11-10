@@ -15,6 +15,162 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class MapContract {
 
+	static Object[] args(final long[] key, final Object... rest) {
+		final Object[] res = new Object[key.length + rest.length];
+		for (int i = 0; i < key.length; i++) res[i] = key[i];
+		System.arraycopy(rest, 0, res, key.length, rest.length);
+		return res;
+	}
+
+	static long call(final Object m, final String name, final Object... args) {
+		return Adapter.call(Long.class, m, name, args);
+	}
+
+	static long get(final Object m, final long[] key) {
+		return call(m, "get", args(key));
+	}
+
+	static long put(final Object m, final long[] key, final long v) {
+		return call(m, "put", args(key, v));
+	}
+
+	static boolean contains(final Object m, final long[] key) {
+		return Adapter.call(Boolean.class, m, "containsKey", args(key));
+	}
+
+	static int size(final Object m) {
+		return Adapter.call(Integer.class, m, "size");
+	}
+
+	static List<Long> column(final long[][] cols, final int i) {
+		final List<Long> res = new ArrayList<>();
+		for (final long[] c : cols) res.add(c[i]);
+		return res;
+	}
+
+	static List<Long> list(final long[] k) {
+		return Arrays.stream(k).boxed().toList();
+	}
+
+	/**
+	 * キーの成分を受け取り、定数 v を返す関数。
+	 */
+	static Object fn(final int arity, final long v) {
+		return fnWith(arity, () -> v);
+	}
+
+	static Object fnWith(final int arity, final LongSupplier body) {
+		return switch (arity) {
+			case 1 -> (Fn1) a -> body.getAsLong();
+			case 2 -> (Fn2) (a, b) -> body.getAsLong();
+			default -> (Fn3) (a, b, c) -> body.getAsLong();
+		};
+	}
+
+	/**
+	 * キーの成分数。1〜3。
+	 */
+	abstract int arity();
+
+	abstract Object create();
+
+	abstract Object create(int expectedSize);
+
+	abstract Object create(int expectedSize, long defaultValue);
+
+	abstract Object copy(Object map);
+
+	/**
+	 * ランダムな照合で使うキーの1成分。
+	 */
+	long keyComponent(final Random random) {
+		return random.nextInt(-20, 20);
+	}
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final long def = random.nextInt(-3, 4);
+		final Object m = create(1 + random.nextInt(8), def);
+		final Map<List<Long>, Long> naive = new HashMap<>();
+		new RandomOperations()
+				.add("put", 3, (r, at) -> {
+					final long[] k = randomKey(r);
+					final long v = r.nextInt(-100, 100);
+					final Long old = naive.put(list(k), v);
+					assertEquals(old == null ? def : old, put(m, k, v), at);
+				})
+				.add("remove", 2, (r, at) -> {
+					final long[] k = randomKey(r);
+					final Long old = naive.remove(list(k));
+					assertEquals(old == null ? def : old, call(m, "remove", args(k)), at);
+				})
+				.add("add", 2, (r, at) -> {
+					final long[] k = randomKey(r);
+					final long d = r.nextInt(-5, 6);
+					assertEquals((long) naive.merge(list(k), def + d, (x, y) -> x + d), call(m, "add", args(k, d)), at);
+				})
+				.add("mergeMax", (r, at) -> {
+					final long[] k = randomKey(r);
+					final long v = r.nextInt(-100, 100);
+					assertEquals((long) naive.merge(list(k), v, Math::max), call(m, "mergeMax", args(k, v)), at);
+				})
+				.add("get", 3, (r, at) -> {
+					final long[] k = randomKey(r);
+					assertEquals(naive.getOrDefault(list(k), def), get(m, k), at);
+					assertEquals(naive.containsKey(list(k)), contains(m, k), at);
+				})
+				.add("clear", (r, at) -> {
+					if (r.nextInt(10) != 0) return;
+					naive.clear();
+					Adapter.call(Void.class, m, "clear");
+				})
+				.add("entries", (r, at) -> {
+					assertEquals(naive.size(), size(m), at);
+					final long[][] entries = Adapter.call(long[][].class, m, "entries");
+					final Map<List<Long>, Long> actual = new HashMap<>();
+					for (int i = 0; i < naive.size(); i++)
+						actual.put(column(Arrays.copyOf(entries, arity()), i), entries[arity()][i]);
+					assertEquals(naive, actual, at);
+				})
+				.run(seed, random, 500);
+	}
+
+	long[] key(final long base) {
+		final long[] k = new long[arity()];
+		for (int i = 0; i < k.length; i++) k[i] = base + i;
+		return k;
+	}
+
+	long[] randomKey(final Random random) {
+		final long[] k = new long[arity()];
+		for (int i = 0; i < k.length; i++) k[i] = keyComponent(random) / (i + 1);
+		return k;
+	}
+
+	/**
+	 * keys() を成分ごとの列にそろえる。1成分のマップは1次元配列を返すため、1行の2次元配列にする。
+	 */
+	long[][] keyColumns(final Object m) {
+		if (arity() == 1) return new long[][]{Adapter.call(long[].class, m, "keys")};
+		return Adapter.call(long[][].class, m, "keys");
+	}
+
+	Object sample() {
+		final Object m = create();
+		expectedSample().forEach((k, v) -> put(m, k.stream().mapToLong(Long::longValue).toArray(), v));
+		return m;
+	}
+
+	// ---- 成分数によらない呼び出し ----
+
+	Map<List<Long>, Long> expectedSample() {
+		final Map<List<Long>, Long> res = new HashMap<>();
+		for (int i = -3; i <= 3; i++) res.put(list(key(i * 7L)), 10L * i);
+		return res;
+	}
+
 	interface Fn1 {
 		long apply(long a);
 	}
@@ -45,26 +201,6 @@ abstract class MapContract {
 
 	interface Consumer4 {
 		void accept(long a, long b, long c, long d);
-	}
-
-	/**
-	 * キーの成分数。1〜3。
-	 */
-	abstract int arity();
-
-	abstract Object create();
-
-	abstract Object create(int expectedSize);
-
-	abstract Object create(int expectedSize, long defaultValue);
-
-	abstract Object copy(Object map);
-
-	/**
-	 * ランダムな照合で使うキーの1成分。
-	 */
-	long keyComponent(final Random random) {
-		return random.nextInt(-20, 20);
 	}
 
 	@Nested
@@ -312,140 +448,5 @@ abstract class MapContract {
 			assertEquals(100 + keySum, call(m, "reduceKeys", 100L, keyAcc));
 			assertEquals(100 + valueSum, call(m, "reduceValues", 100L, (LongBinaryOperator) Long::sum));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final long def = random.nextInt(-3, 4);
-		final Object m = create(1 + random.nextInt(8), def);
-		final Map<List<Long>, Long> naive = new HashMap<>();
-		new RandomOperations()
-			.add("put", 3, (r, at) -> {
-				final long[] k = randomKey(r);
-				final long v = r.nextInt(-100, 100);
-				final Long old = naive.put(list(k), v);
-				assertEquals(old == null ? def : old, put(m, k, v), at);
-			})
-			.add("remove", 2, (r, at) -> {
-				final long[] k = randomKey(r);
-				final Long old = naive.remove(list(k));
-				assertEquals(old == null ? def : old, call(m, "remove", args(k)), at);
-			})
-			.add("add", 2, (r, at) -> {
-				final long[] k = randomKey(r);
-				final long d = r.nextInt(-5, 6);
-				assertEquals((long) naive.merge(list(k), def + d, (x, y) -> x + d), call(m, "add", args(k, d)), at);
-			})
-			.add("mergeMax", (r, at) -> {
-				final long[] k = randomKey(r);
-				final long v = r.nextInt(-100, 100);
-				assertEquals((long) naive.merge(list(k), v, Math::max), call(m, "mergeMax", args(k, v)), at);
-			})
-			.add("get", 3, (r, at) -> {
-				final long[] k = randomKey(r);
-				assertEquals(naive.getOrDefault(list(k), def), get(m, k), at);
-				assertEquals(naive.containsKey(list(k)), contains(m, k), at);
-			})
-			.add("clear", (r, at) -> {
-				if (r.nextInt(10) != 0) return;
-				naive.clear();
-				Adapter.call(Void.class, m, "clear");
-			})
-			.add("entries", (r, at) -> {
-				assertEquals(naive.size(), size(m), at);
-				final long[][] entries = Adapter.call(long[][].class, m, "entries");
-				final Map<List<Long>, Long> actual = new HashMap<>();
-				for (int i = 0; i < naive.size(); i++) actual.put(column(Arrays.copyOf(entries, arity()), i), entries[arity()][i]);
-				assertEquals(naive, actual, at);
-			})
-			.run(seed, random, 500);
-	}
-
-	// ---- 成分数によらない呼び出し ----
-
-	long[] key(final long base) {
-		final long[] k = new long[arity()];
-		for (int i = 0; i < k.length; i++) k[i] = base + i;
-		return k;
-	}
-
-	long[] randomKey(final Random random) {
-		final long[] k = new long[arity()];
-		for (int i = 0; i < k.length; i++) k[i] = keyComponent(random) / (i + 1);
-		return k;
-	}
-
-	static Object[] args(final long[] key, final Object... rest) {
-		final Object[] res = new Object[key.length + rest.length];
-		for (int i = 0; i < key.length; i++) res[i] = key[i];
-		System.arraycopy(rest, 0, res, key.length, rest.length);
-		return res;
-	}
-
-	static long call(final Object m, final String name, final Object... args) {
-		return Adapter.call(Long.class, m, name, args);
-	}
-
-	static long get(final Object m, final long[] key) {
-		return call(m, "get", args(key));
-	}
-
-	static long put(final Object m, final long[] key, final long v) {
-		return call(m, "put", args(key, v));
-	}
-
-	static boolean contains(final Object m, final long[] key) {
-		return Adapter.call(Boolean.class, m, "containsKey", args(key));
-	}
-
-	static int size(final Object m) {
-		return Adapter.call(Integer.class, m, "size");
-	}
-
-	/**
-	 * keys() を成分ごとの列にそろえる。1成分のマップは1次元配列を返すため、1行の2次元配列にする。
-	 */
-	long[][] keyColumns(final Object m) {
-		if (arity() == 1) return new long[][]{Adapter.call(long[].class, m, "keys")};
-		return Adapter.call(long[][].class, m, "keys");
-	}
-
-	static List<Long> column(final long[][] cols, final int i) {
-		final List<Long> res = new ArrayList<>();
-		for (final long[] c : cols) res.add(c[i]);
-		return res;
-	}
-
-	static List<Long> list(final long[] k) {
-		return Arrays.stream(k).boxed().toList();
-	}
-
-	/**
-	 * キーの成分を受け取り、定数 v を返す関数。
-	 */
-	static Object fn(final int arity, final long v) {
-		return fnWith(arity, () -> v);
-	}
-
-	static Object fnWith(final int arity, final LongSupplier body) {
-		return switch (arity) {
-			case 1 -> (Fn1) a -> body.getAsLong();
-			case 2 -> (Fn2) (a, b) -> body.getAsLong();
-			default -> (Fn3) (a, b, c) -> body.getAsLong();
-		};
-	}
-
-	Object sample() {
-		final Object m = create();
-		expectedSample().forEach((k, v) -> put(m, k.stream().mapToLong(Long::longValue).toArray(), v));
-		return m;
-	}
-
-	Map<List<Long>, Long> expectedSample() {
-		final Map<List<Long>, Long> res = new HashMap<>();
-		for (int i = -3; i <= 3; i++) res.put(list(key(i * 7L)), 10L * i);
-		return res;
 	}
 }

@@ -11,6 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class FractionTest {
 
+	private static Fraction reduce(final long n, final long d) {
+		final long g = BigInteger.valueOf(n).gcd(BigInteger.valueOf(d)).longValue();
+		final Fraction f = new Fraction(n, d);
+		assertEquals(Math.abs(d / g), f.denominator, "既約分数");
+		return f;
+	}
+
 	@Nested
 	class Construction {
 
@@ -88,12 +95,5 @@ final class FractionTest {
 			assertNotEquals(new Fraction(1, 2), new Fraction(1, 3));
 			assertNotEquals(new Fraction(1, 2), "1/2");
 		}
-	}
-
-	private static Fraction reduce(final long n, final long d) {
-		final long g = BigInteger.valueOf(n).gcd(BigInteger.valueOf(d)).longValue();
-		final Fraction f = new Fraction(n, d);
-		assertEquals(Math.abs(d / g), f.denominator, "既約分数");
-		return f;
 	}
 }

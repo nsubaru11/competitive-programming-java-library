@@ -34,6 +34,26 @@ public abstract class ScannerContract {
 		return call(Long.class, sc, "nextLong");
 	}
 
+	@RepeatedTest(30)
+	void numbersMatchNaive(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final List<Long> values = new ArrayList<>();
+		final StringBuilder sb = new StringBuilder();
+		final String[] spaces = {" ", "\n", "  ", "\r\n", "\t"};
+		for (int i = random.nextInt(1, 300); i > 0; i--) {
+			final long v = random.nextBoolean() ? random.nextInt() : random.nextLong(-1_000_000_000_000_000_000L, 1_000_000_000_000_000_000L);
+			values.add(v);
+			sb.append(v).append(spaces[random.nextInt(spaces.length)]);
+		}
+		final Object sc = create(sb.toString());
+		for (final long v : values) {
+			if (v == (int) v && random.nextBoolean())
+				assertEquals((int) v, (int) call(Integer.class, sc, "nextInt"), "seed=" + info.getCurrentRepetition());
+			else assertEquals(v, nextLong(sc), "seed=" + info.getCurrentRepetition());
+		}
+		assertFalse(call(Boolean.class, sc, "hasNext"));
+	}
+
 	@Nested
 	class Primitives {
 
@@ -240,24 +260,5 @@ public abstract class ScannerContract {
 			assertEquals(2, lower[1]);
 			assertArrayEquals(new int[]{1, 0, 2}, call(int[].class, create("c e e"), "nextCharMultiset", 3, 'c', 'e'), "閉区間 [l, r]");
 		}
-	}
-
-	@RepeatedTest(30)
-	void numbersMatchNaive(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final List<Long> values = new ArrayList<>();
-		final StringBuilder sb = new StringBuilder();
-		final String[] spaces = {" ", "\n", "  ", "\r\n", "\t"};
-		for (int i = random.nextInt(1, 300); i > 0; i--) {
-			final long v = random.nextBoolean() ? random.nextInt() : random.nextLong(-1_000_000_000_000_000_000L, 1_000_000_000_000_000_000L);
-			values.add(v);
-			sb.append(v).append(spaces[random.nextInt(spaces.length)]);
-		}
-		final Object sc = create(sb.toString());
-		for (final long v : values) {
-			if (v == (int) v && random.nextBoolean()) assertEquals((int) v, (int) call(Integer.class, sc, "nextInt"), "seed=" + info.getCurrentRepetition());
-			else assertEquals(v, nextLong(sc), "seed=" + info.getCurrentRepetition());
-		}
-		assertFalse(call(Boolean.class, sc, "hasNext"));
 	}
 }

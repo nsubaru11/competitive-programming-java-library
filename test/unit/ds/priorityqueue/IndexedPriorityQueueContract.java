@@ -14,6 +14,100 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class IndexedPriorityQueueContract {
 
+	static final Comparator<Long> CUSTOM = PriorityQueueContract.CUSTOM;
+
+	/**
+	 * キュー内の添字のうち、except を除いて最も優先されるものを返す。コストが同順位なら添字の小さい方。なければ -1。
+	 */
+	private static int best(final int[] state, final long[] cost, final Comparator<Long> order, final int except) {
+		int res = -1;
+		for (int i = 0; i < state.length; i++) {
+			if (state[i] != 1 || i == except) continue;
+			if (res < 0 || order.compare(cost[i], cost[res]) < 0) res = i;
+		}
+		return res;
+	}
+
+	private static void assertPollIndices(final Target q, final int... expected) {
+		for (final int i : expected) assertEquals(i, q.pollIndex());
+		assertTrue(q.isEmpty());
+	}
+
+	abstract Target create(int n);
+
+	abstract Target create(int n, boolean descending);
+
+	/**
+	 * 比較順を PriorityQueueContract.CUSTOM とする。
+	 */
+	abstract Target createWithComparator(int n);
+
+	abstract Target create(long[] costs, boolean descending);
+
+	abstract Target createWithComparator(long[] costs);
+
+	abstract Target createFromCollection(long[] costs, boolean descending);
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(12), kind = random.nextInt(3);
+		final Comparator<Long> order = kind == 0 ? Comparator.naturalOrder() : kind == 1 ? Comparator.reverseOrder() : CUSTOM;
+		final Target q = kind == 2 ? createWithComparator(n) : create(n, kind == 1);
+		// 0: 未追加、1: キュー内、2: 取り出し済み
+		final int[] state = new int[n];
+		final long[] cost = new long[n];
+		new RandomOperations()
+				.add("set", 2, (r, at) -> {
+					final int i = r.nextInt(n);
+					final long c = r.nextInt(-20, 20);
+					assertEquals(state[i] != 1, q.set(i, c), at);
+					state[i] = 1;
+					cost[i] = c;
+				})
+				.add("add", 2, (r, at) -> {
+					final int i = r.nextInt(n);
+					final long c = r.nextInt(-20, 20);
+					assertEquals(state[i] != 1, q.add(i, c), at);
+					if (state[i] != 1) cost[i] = c;
+					state[i] = 1;
+				})
+				.add("relax", 2, (r, at) -> {
+					final int i = r.nextInt(n);
+					final long c = r.nextInt(-20, 20);
+					final boolean expected = state[i] == 0 || state[i] == 1 && order.compare(c, cost[i]) < 0;
+					assertEquals(expected, q.relax(i, c), at);
+					if (expected) {
+						state[i] = 1;
+						cost[i] = c;
+					}
+				})
+				.add("poll", 2, (r, at) -> {
+					final int best = best(state, cost, order, -1);
+					assertEquals(best, q.pollIndexOrDefault(-1), at);
+					if (best >= 0) state[best] = 2;
+				})
+				.add("remove", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(state[i] == 1, q.remove(i), at);
+					if (state[i] == 1) state[i] = 2;
+				})
+				.add("peek", 2, (r, at) -> {
+					final int best = best(state, cost, order, -1);
+					assertEquals(best, q.peekIndexOrDefault(-1), at);
+					assertEquals(best(state, cost, order, best), q.peekSecondIndexOrDefault(-1), at);
+					if (best >= 0) assertEquals(cost[best], q.peek(), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(state[i] == 1 ? cost[i] : -999, q.getOrDefault(i, -999), at);
+					assertEquals(state[i] != 0 ? cost[i] : -999, q.getCostOrDefault(i, -999), at);
+					assertEquals(Arrays.stream(state).filter(s -> s == 1).count(), q.size(), at);
+				})
+				.run(seed, random, 400);
+	}
+
 	interface Target {
 		Target copy();
 
@@ -73,23 +167,6 @@ abstract class IndexedPriorityQueueContract {
 
 		Iterator<?> iterator();
 	}
-
-	abstract Target create(int n);
-
-	abstract Target create(int n, boolean descending);
-
-	/**
-	 * 比較順を PriorityQueueContract.CUSTOM とする。
-	 */
-	abstract Target createWithComparator(int n);
-
-	abstract Target create(long[] costs, boolean descending);
-
-	abstract Target createWithComparator(long[] costs);
-
-	abstract Target createFromCollection(long[] costs, boolean descending);
-
-	static final Comparator<Long> CUSTOM = PriorityQueueContract.CUSTOM;
 
 	@Nested
 	class Construction {
@@ -274,82 +351,5 @@ abstract class IndexedPriorityQueueContract {
 			assertEquals(List.of(3L, 5L), Arrays.stream(q.toString().split(" ")).map(Long::parseLong).sorted().toList());
 			assertEquals("", create(1).toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(12), kind = random.nextInt(3);
-		final Comparator<Long> order = kind == 0 ? Comparator.naturalOrder() : kind == 1 ? Comparator.reverseOrder() : CUSTOM;
-		final Target q = kind == 2 ? createWithComparator(n) : create(n, kind == 1);
-		// 0: 未追加、1: キュー内、2: 取り出し済み
-		final int[] state = new int[n];
-		final long[] cost = new long[n];
-		new RandomOperations()
-			.add("set", 2, (r, at) -> {
-				final int i = r.nextInt(n);
-				final long c = r.nextInt(-20, 20);
-				assertEquals(state[i] != 1, q.set(i, c), at);
-				state[i] = 1;
-				cost[i] = c;
-			})
-			.add("add", 2, (r, at) -> {
-				final int i = r.nextInt(n);
-				final long c = r.nextInt(-20, 20);
-				assertEquals(state[i] != 1, q.add(i, c), at);
-				if (state[i] != 1) cost[i] = c;
-				state[i] = 1;
-			})
-			.add("relax", 2, (r, at) -> {
-				final int i = r.nextInt(n);
-				final long c = r.nextInt(-20, 20);
-				final boolean expected = state[i] == 0 || state[i] == 1 && order.compare(c, cost[i]) < 0;
-				assertEquals(expected, q.relax(i, c), at);
-				if (expected) {
-					state[i] = 1;
-					cost[i] = c;
-				}
-			})
-			.add("poll", 2, (r, at) -> {
-				final int best = best(state, cost, order, -1);
-				assertEquals(best, q.pollIndexOrDefault(-1), at);
-				if (best >= 0) state[best] = 2;
-			})
-			.add("remove", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(state[i] == 1, q.remove(i), at);
-				if (state[i] == 1) state[i] = 2;
-			})
-			.add("peek", 2, (r, at) -> {
-				final int best = best(state, cost, order, -1);
-				assertEquals(best, q.peekIndexOrDefault(-1), at);
-				assertEquals(best(state, cost, order, best), q.peekSecondIndexOrDefault(-1), at);
-				if (best >= 0) assertEquals(cost[best], q.peek(), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(state[i] == 1 ? cost[i] : -999, q.getOrDefault(i, -999), at);
-				assertEquals(state[i] != 0 ? cost[i] : -999, q.getCostOrDefault(i, -999), at);
-				assertEquals(Arrays.stream(state).filter(s -> s == 1).count(), q.size(), at);
-			})
-			.run(seed, random, 400);
-	}
-
-	/**
-	 * キュー内の添字のうち、except を除いて最も優先されるものを返す。コストが同順位なら添字の小さい方。なければ -1。
-	 */
-	private static int best(final int[] state, final long[] cost, final Comparator<Long> order, final int except) {
-		int res = -1;
-		for (int i = 0; i < state.length; i++) {
-			if (state[i] != 1 || i == except) continue;
-			if (res < 0 || order.compare(cost[i], cost[res]) < 0) res = i;
-		}
-		return res;
-	}
-
-	private static void assertPollIndices(final Target q, final int... expected) {
-		for (final int i : expected) assertEquals(i, q.pollIndex());
-		assertTrue(q.isEmpty());
 	}
 }

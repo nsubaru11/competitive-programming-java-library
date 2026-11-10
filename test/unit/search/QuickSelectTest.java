@@ -26,6 +26,7 @@ final class QuickSelectTest {
 		final int[] a = random.ints(1 + random.nextInt(30), -10, 10).toArray();
 		final int[] sorted = a.clone();
 		Arrays.sort(sorted);
-		for (int k = 0; k < a.length; k++) assertEquals(sorted[k], QuickSelect.select(a, k), "a=" + Arrays.toString(a) + ", k=" + k);
+		for (int k = 0; k < a.length; k++)
+			assertEquals(sorted[k], QuickSelect.select(a, k), "a=" + Arrays.toString(a) + ", k=" + k);
 	}
 }

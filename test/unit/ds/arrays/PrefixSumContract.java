@@ -14,6 +14,83 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class PrefixSumContract {
 
+	static long get(final Object a, final int[] p) {
+		return Adapter.call(Long.class, a, "get", box(p));
+	}
+
+	static long getOrDefault(final Object a, final int[] p, final long defaultValue) {
+		final Object[] args = Arrays.copyOf(box(p), p.length + 1);
+		args[p.length] = defaultValue;
+		return Adapter.call(Long.class, a, "getOrDefault", args);
+	}
+
+	static long sum(final Object a, final int[] hi) {
+		return Adapter.call(Long.class, a, "sum", box(hi));
+	}
+
+	static long sum(final Object a, final int[] lo, final int[] hi) {
+		final Object[] args = new Object[lo.length * 2];
+		for (int k = 0; k < lo.length; k++) {
+			args[k] = lo[k];
+			args[lo.length + k] = hi[k];
+		}
+		return Adapter.call(Long.class, a, "sum", args);
+	}
+
+	static int[] point(final Random random, final int[] shape) {
+		final int[] p = new int[shape.length];
+		for (int k = 0; k < p.length; k++) p[k] = random.nextInt(shape[k]);
+		return p;
+	}
+
+	static int[] coordinate(final int[] shape, int p) {
+		final int[] c = new int[shape.length];
+		for (int k = shape.length - 1; k >= 0; k--) {
+			c[k] = p % shape[k];
+			p /= shape[k];
+		}
+		return c;
+	}
+
+	static int size(final int[] shape) {
+		int n = 1;
+		for (final int s : shape) n *= s;
+		return n;
+	}
+
+	static int[] last(final int[] shape) {
+		final int[] res = new int[shape.length];
+		for (int k = 0; k < res.length; k++) res[k] = shape[k] - 1;
+		return res;
+	}
+
+	static int[] fill(final int n, final int v) {
+		final int[] res = new int[n];
+		Arrays.fill(res, v);
+		return res;
+	}
+
+	// ---- 次元によらない呼び出し ----
+
+	static long[][] reshape2(final int[] s, final long[] flat) {
+		final long[][] res = new long[s[0]][s[1]];
+		for (int i = 0; i < s[0]; i++) System.arraycopy(flat, i * s[1], res[i], 0, s[1]);
+		return res;
+	}
+
+	static long[][][] reshape3(final int[] s, final long[] flat) {
+		final long[][][] res = new long[s[0]][s[1]][s[2]];
+		for (int i = 0; i < s[0]; i++)
+			for (int j = 0; j < s[1]; j++) System.arraycopy(flat, (i * s[1] + j) * s[2], res[i][j], 0, s[2]);
+		return res;
+	}
+
+	private static Object[] box(final int[] p) {
+		final Object[] res = new Object[p.length];
+		for (int k = 0; k < p.length; k++) res[k] = p[k];
+		return res;
+	}
+
 	/**
 	 * 次元数。1〜3。
 	 */
@@ -23,6 +100,8 @@ abstract class PrefixSumContract {
 	 * 法。法を取らない版は0。
 	 */
 	abstract long mod();
+
+	// ---- 愚直解と入力の生成 ----
 
 	/**
 	 * 配列を受け取るコンストラクタで作る。flat は行優先順に並べた値である。
@@ -39,6 +118,37 @@ abstract class PrefixSumContract {
 	 */
 	long bound() {
 		return mod() > 0 ? mod() : 1000;
+	}
+
+	long[] toArray(final Object a) {
+		final List<Long> res = new ArrayList<>();
+		((Iterable<?>) a).forEach(v -> res.add(((Number) v).longValue()));
+		return res.stream().mapToLong(Long::longValue).toArray();
+	}
+
+	long naiveSum(final int[] shape, final long[] flat, final int[] lo, final int[] hi) {
+		long s = 0;
+		for (int p = 0; p < flat.length; p++) {
+			final int[] c = coordinate(shape, p);
+			boolean in = true;
+			for (int k = 0; k < c.length; k++) in &= lo[k] <= c[k] && c[k] <= hi[k];
+			// 法を取る版は足すたびに剰余を取り、long のあふれを避ける
+			if (in) s = mod() > 0 ? (s + flat[p]) % mod() : s + flat[p];
+		}
+		return s;
+	}
+
+	int[] shape(final Random random) {
+		final int[] s = new int[dims()];
+		for (int k = 0; k < s.length; k++) s[k] = 1 + random.nextInt(dims() == 1 ? 12 : 4);
+		return s;
+	}
+
+	long[] values(final Random random, final int n) {
+		final long[] res = new long[n];
+		final boolean signed = mod() == 0;
+		for (int i = 0; i < n; i++) res[i] = signed ? random.nextLong(-bound() + 1, bound()) : random.nextLong(bound());
+		return res;
 	}
 
 	@Nested
@@ -165,114 +275,5 @@ abstract class PrefixSumContract {
 			}
 			assertEquals(expected.toString(), create(shape, flat).toString());
 		}
-	}
-
-	// ---- 次元によらない呼び出し ----
-
-	static long get(final Object a, final int[] p) {
-		return Adapter.call(Long.class, a, "get", box(p));
-	}
-
-	static long getOrDefault(final Object a, final int[] p, final long defaultValue) {
-		final Object[] args = Arrays.copyOf(box(p), p.length + 1);
-		args[p.length] = defaultValue;
-		return Adapter.call(Long.class, a, "getOrDefault", args);
-	}
-
-	static long sum(final Object a, final int[] hi) {
-		return Adapter.call(Long.class, a, "sum", box(hi));
-	}
-
-	static long sum(final Object a, final int[] lo, final int[] hi) {
-		final Object[] args = new Object[lo.length * 2];
-		for (int k = 0; k < lo.length; k++) {
-			args[k] = lo[k];
-			args[lo.length + k] = hi[k];
-		}
-		return Adapter.call(Long.class, a, "sum", args);
-	}
-
-	long[] toArray(final Object a) {
-		final List<Long> res = new ArrayList<>();
-		((Iterable<?>) a).forEach(v -> res.add(((Number) v).longValue()));
-		return res.stream().mapToLong(Long::longValue).toArray();
-	}
-
-	// ---- 愚直解と入力の生成 ----
-
-	long naiveSum(final int[] shape, final long[] flat, final int[] lo, final int[] hi) {
-		long s = 0;
-		for (int p = 0; p < flat.length; p++) {
-			final int[] c = coordinate(shape, p);
-			boolean in = true;
-			for (int k = 0; k < c.length; k++) in &= lo[k] <= c[k] && c[k] <= hi[k];
-			// 法を取る版は足すたびに剰余を取り、long のあふれを避ける
-			if (in) s = mod() > 0 ? (s + flat[p]) % mod() : s + flat[p];
-		}
-		return s;
-	}
-
-	int[] shape(final Random random) {
-		final int[] s = new int[dims()];
-		for (int k = 0; k < s.length; k++) s[k] = 1 + random.nextInt(dims() == 1 ? 12 : 4);
-		return s;
-	}
-
-	long[] values(final Random random, final int n) {
-		final long[] res = new long[n];
-		final boolean signed = mod() == 0;
-		for (int i = 0; i < n; i++) res[i] = signed ? random.nextLong(-bound() + 1, bound()) : random.nextLong(bound());
-		return res;
-	}
-
-	static int[] point(final Random random, final int[] shape) {
-		final int[] p = new int[shape.length];
-		for (int k = 0; k < p.length; k++) p[k] = random.nextInt(shape[k]);
-		return p;
-	}
-
-	static int[] coordinate(final int[] shape, int p) {
-		final int[] c = new int[shape.length];
-		for (int k = shape.length - 1; k >= 0; k--) {
-			c[k] = p % shape[k];
-			p /= shape[k];
-		}
-		return c;
-	}
-
-	static int size(final int[] shape) {
-		int n = 1;
-		for (final int s : shape) n *= s;
-		return n;
-	}
-
-	static int[] last(final int[] shape) {
-		final int[] res = new int[shape.length];
-		for (int k = 0; k < res.length; k++) res[k] = shape[k] - 1;
-		return res;
-	}
-
-	static int[] fill(final int n, final int v) {
-		final int[] res = new int[n];
-		Arrays.fill(res, v);
-		return res;
-	}
-
-	static long[][] reshape2(final int[] s, final long[] flat) {
-		final long[][] res = new long[s[0]][s[1]];
-		for (int i = 0; i < s[0]; i++) System.arraycopy(flat, i * s[1], res[i], 0, s[1]);
-		return res;
-	}
-
-	static long[][][] reshape3(final int[] s, final long[] flat) {
-		final long[][][] res = new long[s[0]][s[1]][s[2]];
-		for (int i = 0; i < s[0]; i++) for (int j = 0; j < s[1]; j++) System.arraycopy(flat, (i * s[1] + j) * s[2], res[i][j], 0, s[2]);
-		return res;
-	}
-
-	private static Object[] box(final int[] p) {
-		final Object[] res = new Object[p.length];
-		for (int k = 0; k < p.length; k++) res[k] = p[k];
-		return res;
 	}
 }

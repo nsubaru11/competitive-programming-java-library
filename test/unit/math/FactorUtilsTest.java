@@ -31,6 +31,34 @@ final class FactorUtilsTest {
 		return new long[][]{m.keySet().stream().mapToLong(Long::longValue).toArray(), m.values().stream().mapToLong(Long::longValue).toArray()};
 	}
 
+	@Test
+	void matchesNaive() {
+		final Random random = new Random(1);
+		for (int t = 0; t < 3000; t++) {
+			final long n = t < 2000 ? t + 1 : random.nextLong(2, 1L << 34);
+			final List<Long> f = naiveFactors(n);
+			final String at = "n=" + n;
+			assertArrayEquals(f.stream().mapToLong(Long::longValue).toArray(), FactorUtils.primeFactors(n), at);
+			assertArrayEquals(naive2D(n), FactorUtils.primeFactors2D(n), at);
+			assertEquals(f.size(), FactorUtils.primeFactorCount(n), at);
+			assertEquals(f.stream().distinct().count(), FactorUtils.uniquePrimeFactorCount(n), at);
+			long divisorCount = 1;
+			for (final long e : naive2D(n)[1]) divisorCount *= e + 1;
+			assertEquals(divisorCount, FactorUtils.divisorCount(n), at);
+			if (n <= 2000) {
+				final int m = (int) n;
+				assertArrayEquals(f.stream().mapToInt(Long::intValue).toArray(), FactorUtils.primeFactors(m), at);
+				final long[] d = FactorUtils.divisors(n);
+				assertEquals(divisorCount, d.length, at);
+				for (int i = 0; i < d.length; i++) {
+					assertEquals(0, n % d[i], at);
+					if (i > 0) assertTrue(d[i - 1] < d[i], at);
+				}
+				assertArrayEquals(Arrays.stream(d).mapToInt(x -> (int) x).toArray(), FactorUtils.divisors(m), at);
+			}
+		}
+	}
+
 	@Nested
 	class Aggregation {
 
@@ -77,34 +105,6 @@ final class FactorUtilsTest {
 			assertArrayEquals(new long[]{1, 2, 3, 6}, FactorUtils.divisors(6L));
 			assertEquals(List.of(1, 2, 3, 4, 6, 12), FactorUtils.<ArrayList<Integer>>divisors(12, ArrayList::new));
 			assertEquals(List.of(1L, 7L), FactorUtils.divisors(7L, ArrayList::new));
-		}
-	}
-
-	@Test
-	void matchesNaive() {
-		final Random random = new Random(1);
-		for (int t = 0; t < 3000; t++) {
-			final long n = t < 2000 ? t + 1 : random.nextLong(2, 1L << 34);
-			final List<Long> f = naiveFactors(n);
-			final String at = "n=" + n;
-			assertArrayEquals(f.stream().mapToLong(Long::longValue).toArray(), FactorUtils.primeFactors(n), at);
-			assertArrayEquals(naive2D(n), FactorUtils.primeFactors2D(n), at);
-			assertEquals(f.size(), FactorUtils.primeFactorCount(n), at);
-			assertEquals(f.stream().distinct().count(), FactorUtils.uniquePrimeFactorCount(n), at);
-			long divisorCount = 1;
-			for (final long e : naive2D(n)[1]) divisorCount *= e + 1;
-			assertEquals(divisorCount, FactorUtils.divisorCount(n), at);
-			if (n <= 2000) {
-				final int m = (int) n;
-				assertArrayEquals(f.stream().mapToInt(Long::intValue).toArray(), FactorUtils.primeFactors(m), at);
-				final long[] d = FactorUtils.divisors(n);
-				assertEquals(divisorCount, d.length, at);
-				for (int i = 0; i < d.length; i++) {
-					assertEquals(0, n % d[i], at);
-					if (i > 0) assertTrue(d[i - 1] < d[i], at);
-				}
-				assertArrayEquals(Arrays.stream(d).mapToInt(x -> (int) x).toArray(), FactorUtils.divisors(m), at);
-			}
 		}
 	}
 }

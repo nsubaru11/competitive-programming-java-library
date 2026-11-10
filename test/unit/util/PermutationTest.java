@@ -17,14 +17,41 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class PermutationTest {
 
-	enum Kind {
-		INT(int[].class, int[][].class), LONG(long[].class, long[][].class), CHAR(char[].class, char[][].class);
+	private static long expectedIndexFull(final long[] base) {
+		return new ArrayList<>(permutations(base)).indexOf(Arrays.stream(base).boxed().toList());
+	}
 
-		final Class<?> type1D, type2D;
+	private static List<Long> toList(final Object a) {
+		return Arrays.stream((long[]) Adapter.convert(a, long[].class)).boxed().toList();
+	}
 
-		Kind(final Class<?> type1D, final Class<?> type2D) {
-			this.type1D = type1D;
-			this.type2D = type2D;
+	/**
+	 * すべての並び（重複あり）。TreeSet に入れて重複を除き、辞書順に並べる。
+	 */
+	private static Set<List<Long>> permutations(final long[] a) {
+		final Set<List<Long>> res = new TreeSet<>((x, y) -> {
+			for (int i = 0; i < x.size(); i++) {
+				final int c = Long.compare(x.get(i), y.get(i));
+				if (c != 0) return c;
+			}
+			return 0;
+		});
+		permute(a, new boolean[a.length], new ArrayList<>(), res);
+		return res;
+	}
+
+	private static void permute(final long[] a, final boolean[] used, final List<Long> cur, final Set<List<Long>> res) {
+		if (cur.size() == a.length) {
+			res.add(List.copyOf(cur));
+			return;
+		}
+		for (int i = 0; i < a.length; i++) {
+			if (used[i]) continue;
+			used[i] = true;
+			cur.add(a[i]);
+			permute(a, used, cur, res);
+			cur.removeLast();
+			used[i] = false;
 		}
 	}
 
@@ -93,41 +120,14 @@ final class PermutationTest {
 		}
 	}
 
-	private static long expectedIndexFull(final long[] base) {
-		return new ArrayList<>(permutations(base)).indexOf(Arrays.stream(base).boxed().toList());
-	}
+	enum Kind {
+		INT(int[].class, int[][].class), LONG(long[].class, long[][].class), CHAR(char[].class, char[][].class);
 
-	private static List<Long> toList(final Object a) {
-		return Arrays.stream((long[]) Adapter.convert(a, long[].class)).boxed().toList();
-	}
+		final Class<?> type1D, type2D;
 
-	/**
-	 * すべての並び（重複あり）。TreeSet に入れて重複を除き、辞書順に並べる。
-	 */
-	private static Set<List<Long>> permutations(final long[] a) {
-		final Set<List<Long>> res = new TreeSet<>((x, y) -> {
-			for (int i = 0; i < x.size(); i++) {
-				final int c = Long.compare(x.get(i), y.get(i));
-				if (c != 0) return c;
-			}
-			return 0;
-		});
-		permute(a, new boolean[a.length], new ArrayList<>(), res);
-		return res;
-	}
-
-	private static void permute(final long[] a, final boolean[] used, final List<Long> cur, final Set<List<Long>> res) {
-		if (cur.size() == a.length) {
-			res.add(List.copyOf(cur));
-			return;
-		}
-		for (int i = 0; i < a.length; i++) {
-			if (used[i]) continue;
-			used[i] = true;
-			cur.add(a[i]);
-			permute(a, used, cur, res);
-			cur.removeLast();
-			used[i] = false;
+		Kind(final Class<?> type1D, final Class<?> type2D) {
+			this.type1D = type1D;
+			this.type2D = type2D;
 		}
 	}
 }

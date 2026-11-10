@@ -12,6 +12,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class UnionFindTest {
 
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(30);
+		final UnionFind uf = new UnionFind(n);
+		final int[] label = new int[n], edges = new int[n];
+		for (int i = 0; i < n; i++) label[i] = i;
+		new RandomOperations()
+				.add("union", 3, (r, at) -> {
+					final int x = r.nextInt(n), y = r.nextInt(n), lx = label[x], ly = label[y];
+					assertEquals(lx != ly, uf.union(x, y), at);
+					edges[lx]++;
+					if (lx == ly) return;
+					edges[lx] += edges[ly];
+					for (int i = 0; i < n; i++) if (label[i] == ly) label[i] = lx;
+				})
+				.add("query", 2, (r, at) -> {
+					final int x = r.nextInt(n), y = r.nextInt(n);
+					assertEquals(label[x] == label[y], uf.isConnected(x, y), at);
+					assertEquals(Arrays.stream(label).filter(l -> l == label[x]).count(), uf.size(x), at);
+					assertEquals(edges[label[x]], uf.pathCount(x), at);
+					assertEquals(Arrays.stream(label).distinct().count(), uf.groupCount(), at);
+				})
+				.run(seed, random, 200);
+	}
+
 	@Nested
 	class State {
 
@@ -69,32 +96,5 @@ final class UnionFindTest {
 			assertEquals(List.of(1), groups.get(1));
 			assertEquals(List.of(2), groups.get(2));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(30);
-		final UnionFind uf = new UnionFind(n);
-		final int[] label = new int[n], edges = new int[n];
-		for (int i = 0; i < n; i++) label[i] = i;
-		new RandomOperations()
-			.add("union", 3, (r, at) -> {
-				final int x = r.nextInt(n), y = r.nextInt(n), lx = label[x], ly = label[y];
-				assertEquals(lx != ly, uf.union(x, y), at);
-				edges[lx]++;
-				if (lx == ly) return;
-				edges[lx] += edges[ly];
-				for (int i = 0; i < n; i++) if (label[i] == ly) label[i] = lx;
-			})
-			.add("query", 2, (r, at) -> {
-				final int x = r.nextInt(n), y = r.nextInt(n);
-				assertEquals(label[x] == label[y], uf.isConnected(x, y), at);
-				assertEquals(Arrays.stream(label).filter(l -> l == label[x]).count(), uf.size(x), at);
-				assertEquals(edges[label[x]], uf.pathCount(x), at);
-				assertEquals(Arrays.stream(label).distinct().count(), uf.groupCount(), at);
-			})
-			.run(seed, random, 200);
 	}
 }

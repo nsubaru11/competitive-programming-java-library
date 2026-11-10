@@ -19,6 +19,12 @@ final class PrimeTableTest {
 		table = new PrimeTable(LIMIT);
 	}
 
+	private static boolean isPrimeNaive(final long n) {
+		if (n < 2) return false;
+		for (long d = 2; d * d <= n; d++) if (n % d == 0) return false;
+		return true;
+	}
+
 	@Nested
 	class State {
 
@@ -149,11 +155,5 @@ final class PrimeTableTest {
 			assertFalse(iterator.hasNext());
 			assertThrows(NoSuchElementException.class, iterator::nextLong);
 		}
-	}
-
-	private static boolean isPrimeNaive(final long n) {
-		if (n < 2) return false;
-		for (long d = 2; d * d <= n; d++) if (n % d == 0) return false;
-		return true;
 	}
 }

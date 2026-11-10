@@ -14,6 +14,31 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class SpanningForestContract {
 
+	/**
+	 * 重みの順に辺を見て、閉路を作らない辺を採用する。
+	 */
+	static long naiveForestCost(final int n, final List<Naive.Edge> edges, final boolean max) {
+		final List<Naive.Edge> sorted = new ArrayList<>(edges);
+		sorted.sort(Comparator.comparingLong(e -> max ? -e.c() : e.c()));
+		final List<Naive.Edge> chosen = new ArrayList<>();
+		long cost = 0;
+		for (final Naive.Edge e : sorted) {
+			chosen.add(e);
+			if (Naive.components(n, chosen) == n - chosen.size()) {
+				cost += e.c();
+			} else {
+				chosen.removeLast();
+			}
+		}
+		return cost;
+	}
+
+	static Set<Integer> toSet(final int[] a) {
+		final Set<Integer> res = new HashSet<>();
+		for (final int v : a) res.add(v);
+		return res;
+	}
+
 	abstract Function<UndirectedGraph, SpanningForestResult> minimum();
 
 	abstract Function<UndirectedGraph, SpanningForestResult> maximum();
@@ -21,6 +46,28 @@ abstract class SpanningForestContract {
 	abstract ToLongFunction<UndirectedGraph> minimumCost();
 
 	abstract ToLongFunction<UndirectedGraph> maximumCost();
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(8);
+		final List<Naive.Edge> edges = Naive.randomEdges(random, n, random.nextInt(14), () -> random.nextInt(-5, 10), false);
+		final UndirectedGraph g = Naive.undirected(n, edges);
+		final String at = "seed=" + seed + ", edges=" + edges;
+		final int components = Naive.components(n, edges);
+		for (final boolean max : new boolean[]{false, true}) {
+			final long expected = naiveForestCost(n, edges, max);
+			final SpanningForestResult r = (max ? maximum() : minimum()).apply(g);
+			assertEquals(expected, r.cost, at + ", max=" + max);
+			assertEquals(expected, (max ? maximumCost() : minimumCost()).applyAsLong(g), at);
+			assertEquals(components, r.componentCount, at);
+			assertEquals(n - components, r.edgeCount(), at);
+			final List<Naive.Edge> chosen = Arrays.stream(r.edgeIds).mapToObj(edges::get).toList();
+			assertEquals(expected, chosen.stream().mapToLong(Naive.Edge::c).sum(), at);
+			assertEquals(components, Naive.components(n, chosen), at + ", 採用辺で同じ連結成分になる");
+		}
+	}
 
 	@Nested
 	class Aggregation {
@@ -73,52 +120,5 @@ abstract class SpanningForestContract {
 			assertEquals(0, r.edgeCount());
 			assertEquals(2, r.componentCount);
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(8);
-		final List<Naive.Edge> edges = Naive.randomEdges(random, n, random.nextInt(14), () -> random.nextInt(-5, 10), false);
-		final UndirectedGraph g = Naive.undirected(n, edges);
-		final String at = "seed=" + seed + ", edges=" + edges;
-		final int components = Naive.components(n, edges);
-		for (final boolean max : new boolean[]{false, true}) {
-			final long expected = naiveForestCost(n, edges, max);
-			final SpanningForestResult r = (max ? maximum() : minimum()).apply(g);
-			assertEquals(expected, r.cost, at + ", max=" + max);
-			assertEquals(expected, (max ? maximumCost() : minimumCost()).applyAsLong(g), at);
-			assertEquals(components, r.componentCount, at);
-			assertEquals(n - components, r.edgeCount(), at);
-			final List<Naive.Edge> chosen = Arrays.stream(r.edgeIds).mapToObj(edges::get).toList();
-			assertEquals(expected, chosen.stream().mapToLong(Naive.Edge::c).sum(), at);
-			assertEquals(components, Naive.components(n, chosen), at + ", 採用辺で同じ連結成分になる");
-		}
-	}
-
-	/**
-	 * 重みの順に辺を見て、閉路を作らない辺を採用する。
-	 */
-	static long naiveForestCost(final int n, final List<Naive.Edge> edges, final boolean max) {
-		final List<Naive.Edge> sorted = new ArrayList<>(edges);
-		sorted.sort(Comparator.comparingLong(e -> max ? -e.c() : e.c()));
-		final List<Naive.Edge> chosen = new ArrayList<>();
-		long cost = 0;
-		for (final Naive.Edge e : sorted) {
-			chosen.add(e);
-			if (Naive.components(n, chosen) == n - chosen.size()) {
-				cost += e.c();
-			} else {
-				chosen.removeLast();
-			}
-		}
-		return cost;
-	}
-
-	static Set<Integer> toSet(final int[] a) {
-		final Set<Integer> res = new HashSet<>();
-		for (final int v : a) res.add(v);
-		return res;
 	}
 }

@@ -13,6 +13,22 @@ final class FactorialTableTest {
 	private static final int MOD = 998244353;
 	private static final BigInteger BIG_MOD = BigInteger.valueOf(MOD);
 
+	private static long mod(final BigInteger v) {
+		return v.mod(BIG_MOD).longValue();
+	}
+
+	private static BigInteger binom(final int n, final int r) {
+		BigInteger c = BigInteger.ONE;
+		for (int i = 0; i < r; i++) c = c.multiply(BigInteger.valueOf(n - i)).divide(BigInteger.valueOf(i + 1));
+		return c;
+	}
+
+	private static BigInteger fact(final int n) {
+		BigInteger f = BigInteger.ONE;
+		for (int i = 2; i <= n; i++) f = f.multiply(BigInteger.valueOf(i));
+		return f;
+	}
+
 	@Nested
 	class Construction {
 
@@ -80,21 +96,5 @@ final class FactorialTableTest {
 				}
 			}
 		}
-	}
-
-	private static long mod(final BigInteger v) {
-		return v.mod(BIG_MOD).longValue();
-	}
-
-	private static BigInteger binom(final int n, final int r) {
-		BigInteger c = BigInteger.ONE;
-		for (int i = 0; i < r; i++) c = c.multiply(BigInteger.valueOf(n - i)).divide(BigInteger.valueOf(i + 1));
-		return c;
-	}
-
-	private static BigInteger fact(final int n) {
-		BigInteger f = BigInteger.ONE;
-		for (int i = 2; i <= n; i++) f = f.multiply(BigInteger.valueOf(i));
-		return f;
 	}
 }

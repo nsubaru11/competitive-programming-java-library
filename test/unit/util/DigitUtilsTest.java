@@ -15,16 +15,53 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class DigitUtilsTest {
 
+	@RepeatedTest(200)
+	void matchesStringOperations(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final long v = random.nextBoolean() ? random.nextInt(Integer.MAX_VALUE) : random.nextLong(Long.MAX_VALUE);
+		final String s = Long.toString(v);
+		final String at = "v=" + v;
+		assertEquals(Long.toBinaryString(v).length(), DigitUtils.digits2(v), at);
+		assertEquals(s.length(), DigitUtils.digits10(v), at);
+		final char[] asc = s.toCharArray();
+		Arrays.sort(asc);
+		final String ascending = new String(asc), descending = new StringBuilder(ascending).reverse().toString();
+		assertEquals(Long.parseLong(ascending), DigitUtils.sort(v), at);
+		// 降順に並べた値が long に収まる場合だけ比べる
+		if (descending.length() < 19 || descending.compareTo(Long.toString(Long.MAX_VALUE)) <= 0) {
+			assertEquals(Long.parseLong(descending), DigitUtils.descendingSort(v), at);
+		}
+		final String reversed = new StringBuilder(s).reverse().toString();
+		if (reversed.length() < 19 || reversed.compareTo(Long.toString(Long.MAX_VALUE)) <= 0) {
+			assertEquals(Long.parseLong(reversed), DigitUtils.reverse(v), at);
+		}
+		if (v <= Integer.MAX_VALUE) {
+			final int iv = (int) v;
+			assertEquals(Integer.toBinaryString(iv).length(), DigitUtils.digits2(iv), at);
+			assertEquals(s.length(), DigitUtils.digits10(iv), at);
+			assertEquals(Long.parseLong(ascending), DigitUtils.sort(iv), at);
+			if (Long.parseLong(descending) <= Integer.MAX_VALUE)
+				assertEquals(Integer.parseInt(descending), DigitUtils.descendingSort(iv), at);
+			if (Long.parseLong(reversed) <= Integer.MAX_VALUE)
+				assertEquals(Integer.parseInt(reversed), DigitUtils.reverse(iv), at);
+		}
+		final String text = random.ints(random.nextInt(10), 'a', 'z' + 1).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+		final char[] t = text.toCharArray();
+		Arrays.sort(t);
+		assertEquals(new String(t), DigitUtils.sort(text), at);
+		assertEquals(new StringBuilder(new String(t)).reverse().toString(), DigitUtils.descendingSort(text), at);
+	}
+
 	@Nested
 	class Aggregation {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 1",
-			"1, 1",
-			"2, 2",
-			"2147483647, 31",
-			"9223372036854775807, 63",
+				"0, 1",
+				"1, 1",
+				"2, 2",
+				"2147483647, 31",
+				"9223372036854775807, 63",
 		})
 		void binaryDigits(final long n, final int expected) {
 			assertEquals(expected, DigitUtils.digits2(n));
@@ -33,11 +70,11 @@ final class DigitUtilsTest {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 1",
-			"9, 1",
-			"10, 2",
-			"1000, 4",
-			"9223372036854775807, 19",
+				"0, 1",
+				"9, 1",
+				"10, 2",
+				"1000, 4",
+				"9223372036854775807, 19",
 		})
 		void decimalDigits(final long n, final int expected) {
 			assertEquals(expected, DigitUtils.digits10(n));
@@ -68,40 +105,5 @@ final class DigitUtilsTest {
 			assertEquals("01abc", DigitUtils.sort("cab01"));
 			assertEquals("cba10", DigitUtils.descendingSort("cab01"));
 		}
-	}
-
-	@RepeatedTest(200)
-	void matchesStringOperations(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final long v = random.nextBoolean() ? random.nextInt(Integer.MAX_VALUE) : random.nextLong(Long.MAX_VALUE);
-		final String s = Long.toString(v);
-		final String at = "v=" + v;
-		assertEquals(Long.toBinaryString(v).length(), DigitUtils.digits2(v), at);
-		assertEquals(s.length(), DigitUtils.digits10(v), at);
-		final char[] asc = s.toCharArray();
-		Arrays.sort(asc);
-		final String ascending = new String(asc), descending = new StringBuilder(ascending).reverse().toString();
-		assertEquals(Long.parseLong(ascending), DigitUtils.sort(v), at);
-		// 降順に並べた値が long に収まる場合だけ比べる
-		if (descending.length() < 19 || descending.compareTo(Long.toString(Long.MAX_VALUE)) <= 0) {
-			assertEquals(Long.parseLong(descending), DigitUtils.descendingSort(v), at);
-		}
-		final String reversed = new StringBuilder(s).reverse().toString();
-		if (reversed.length() < 19 || reversed.compareTo(Long.toString(Long.MAX_VALUE)) <= 0) {
-			assertEquals(Long.parseLong(reversed), DigitUtils.reverse(v), at);
-		}
-		if (v <= Integer.MAX_VALUE) {
-			final int iv = (int) v;
-			assertEquals(Integer.toBinaryString(iv).length(), DigitUtils.digits2(iv), at);
-			assertEquals(s.length(), DigitUtils.digits10(iv), at);
-			assertEquals(Long.parseLong(ascending), DigitUtils.sort(iv), at);
-			if (Long.parseLong(descending) <= Integer.MAX_VALUE) assertEquals(Integer.parseInt(descending), DigitUtils.descendingSort(iv), at);
-			if (Long.parseLong(reversed) <= Integer.MAX_VALUE) assertEquals(Integer.parseInt(reversed), DigitUtils.reverse(iv), at);
-		}
-		final String text = random.ints(random.nextInt(10), 'a', 'z' + 1).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
-		final char[] t = text.toCharArray();
-		Arrays.sort(t);
-		assertEquals(new String(t), DigitUtils.sort(text), at);
-		assertEquals(new StringBuilder(new String(t)).reverse().toString(), DigitUtils.descendingSort(text), at);
 	}
 }

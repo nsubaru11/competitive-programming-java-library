@@ -15,9 +15,6 @@ final class Naive {
 	private Naive() {
 	}
 
-	record Edge(int u, int v, long c) {
-	}
-
 	/**
 	 * n 頂点・m 本の辺をランダムに作る。cost が辺の重みを返す。selfLoop が false なら自己ループを作らない。
 	 */
@@ -116,8 +113,8 @@ final class Naive {
 		for (int i = 0; i + 1 < path.length; i++) {
 			final int a = path[i], b = path[i + 1];
 			final OptionalLong w = maximize
-				? arcs.stream().filter(e -> e.u == a && e.v == b).mapToLong(Edge::c).max()
-				: arcs.stream().filter(e -> e.u == a && e.v == b).mapToLong(Edge::c).min();
+					? arcs.stream().filter(e -> e.u == a && e.v == b).mapToLong(Edge::c).max()
+					: arcs.stream().filter(e -> e.u == a && e.v == b).mapToLong(Edge::c).min();
 			if (w.isEmpty()) return false;
 			total += w.getAsLong();
 		}
@@ -145,7 +142,11 @@ final class Naive {
 		final boolean[][] r = new boolean[n][n];
 		for (int i = 0; i < n; i++) r[i][i] = true;
 		for (final Edge e : arcs) r[e.u][e.v] = true;
-		for (int k = 0; k < n; k++) for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) r[i][j] |= r[i][k] && r[k][j];
+		for (int k = 0; k < n; k++)
+			for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) r[i][j] |= r[i][k] && r[k][j];
 		return r;
+	}
+
+	record Edge(int u, int v, long c) {
 	}
 }

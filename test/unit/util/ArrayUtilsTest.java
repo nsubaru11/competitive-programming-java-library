@@ -20,25 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class ArrayUtilsTest {
 
-	enum Kind {
-		CHAR('a', a -> Adapter.convert(a, char[].class)),
-		INT(0, a -> Adapter.convert(a, int[].class)),
-		LONG(0, long[]::clone),
-		INT_ARRAY(0, a -> new IntArrayDeque((int[]) Adapter.convert(a, int[].class))),
-		LONG_ARRAY(0, LongArrayDeque::new);
-
-		/**
-		 * 値に足すずれ。char 版は英小文字にする。
-		 */
-		final long offset;
-		final Function<long[], Object> array;
-
-		Kind(final long offset, final Function<long[], Object> array) {
-			this.offset = offset;
-			this.array = array;
-		}
-	}
-
 	/**
 	 * 型に対応するオーバーロードがあれば呼び出し、なければ empty を返す。
 	 */
@@ -53,6 +34,71 @@ final class ArrayUtilsTest {
 
 	private static void expect(final String at, final Object expected, final Optional<?> actual) {
 		actual.ifPresent(v -> assertEquals(expected, v, at));
+	}
+
+	// long 版は変換しても同じ配列が返るため、書き換えられないよう深いコピーを渡す
+	private static long[][] copy(final long[][] a) {
+		return Arrays.stream(a).map(long[]::clone).toArray(long[][]::new);
+	}
+
+	private static long[] back(final Object a) {
+		return (long[]) Adapter.convert(a, long[].class);
+	}
+
+	private static long[] reversed(final long[] a, final int l, final int r) {
+		final long[] res = a.clone();
+		for (int i = l, j = r - 1; i < j; i++, j--) {
+			res[i] = a[j];
+			res[j] = a[i];
+		}
+		return res;
+	}
+
+	private static int indexOf(final long[] a, final long v) {
+		for (int i = 0; i < a.length; i++) if (a[i] == v) return i;
+		return -1;
+	}
+
+	private static int lastIndexOf(final long[] a, final long v) {
+		for (int i = a.length - 1; i >= 0; i--) if (a[i] == v) return i;
+		return -1;
+	}
+
+	private static boolean isSorted(final long[] a) {
+		for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
+		return true;
+	}
+
+	private static int maxRun(final long[] a) {
+		int best = 0;
+		for (int i = 0; i < a.length; ) {
+			int j = i;
+			while (j < a.length && a[j] == a[i]) j++;
+			best = Math.max(best, j - i);
+			i = j;
+		}
+		return best;
+	}
+
+	/**
+	 * sign が 1 なら両隣より真に大きい内部要素、-1 なら真に小さい内部要素を数える。
+	 */
+	private static int localCount(final long[] a, final int sign) {
+		int c = 0;
+		for (int i = 1; i + 1 < a.length; i++)
+			if (Long.compare(a[i], a[i - 1]) == sign && Long.compare(a[i], a[i + 1]) == sign) c++;
+		return c;
+	}
+
+	private static int longest(final long[] a, final Rel rel) {
+		final int[] dp = new int[a.length];
+		int best = 0;
+		for (int i = 0; i < a.length; i++) {
+			dp[i] = 1;
+			for (int j = 0; j < i; j++) if (rel.test(a[j], a[i])) dp[i] = Math.max(dp[i], dp[j] + 1);
+			best = Math.max(best, dp[i]);
+		}
+		return best;
 	}
 
 	@ParameterizedTest
@@ -165,7 +211,8 @@ final class ArrayUtilsTest {
 			final Object g1 = Adapter.convert(copy(grid), type2D);
 			Adapter.callStatic(Void.class, ArrayUtils.class, "reverse", g1, l, r);
 			final long[][] g1Back = (long[][]) Adapter.convert(g1, long[][].class);
-			for (int k = 0; k < a.length; k++) assertArrayEquals(grid[k >= l && k < r ? l + r - 1 - k : k], g1Back[k], at);
+			for (int k = 0; k < a.length; k++)
+				assertArrayEquals(grid[k >= l && k < r ? l + r - 1 - k : k], g1Back[k], at);
 			final Object g2 = Adapter.convert(copy(grid), type2D);
 			Adapter.callStatic(Void.class, ArrayUtils.class, "reverse", g2);
 			assertArrayEquals(grid[0], ((long[][]) Adapter.convert(g2, long[][].class))[a.length - 1], at);
@@ -173,6 +220,29 @@ final class ArrayUtilsTest {
 			Adapter.callStatic(Void.class, ArrayUtils.class, "swapRow", g3, i, j);
 			assertArrayEquals(grid[j], ((long[][]) Adapter.convert(g3, long[][].class))[i], at);
 		}
+	}
+
+	enum Kind {
+		CHAR('a', a -> Adapter.convert(a, char[].class)),
+		INT(0, a -> Adapter.convert(a, int[].class)),
+		LONG(0, long[]::clone),
+		INT_ARRAY(0, a -> new IntArrayDeque((int[]) Adapter.convert(a, int[].class))),
+		LONG_ARRAY(0, LongArrayDeque::new);
+
+		/**
+		 * 値に足すずれ。char 版は英小文字にする。
+		 */
+		final long offset;
+		final Function<long[], Object> array;
+
+		Kind(final long offset, final Function<long[], Object> array) {
+			this.offset = offset;
+			this.array = array;
+		}
+	}
+
+	private interface Rel {
+		boolean test(long prev, long next);
 	}
 
 	@Nested
@@ -220,73 +290,5 @@ final class ArrayUtilsTest {
 			expect(at, (long) any, call(Long.class, "subsetDp", la, target));
 			expect(at, (long) sized, call(Long.class, "subsetRecursion", la, target, k));
 		}
-	}
-
-	// long 版は変換しても同じ配列が返るため、書き換えられないよう深いコピーを渡す
-	private static long[][] copy(final long[][] a) {
-		return Arrays.stream(a).map(long[]::clone).toArray(long[][]::new);
-	}
-
-	private static long[] back(final Object a) {
-		return (long[]) Adapter.convert(a, long[].class);
-	}
-
-	private static long[] reversed(final long[] a, final int l, final int r) {
-		final long[] res = a.clone();
-		for (int i = l, j = r - 1; i < j; i++, j--) {
-			res[i] = a[j];
-			res[j] = a[i];
-		}
-		return res;
-	}
-
-	private static int indexOf(final long[] a, final long v) {
-		for (int i = 0; i < a.length; i++) if (a[i] == v) return i;
-		return -1;
-	}
-
-	private static int lastIndexOf(final long[] a, final long v) {
-		for (int i = a.length - 1; i >= 0; i--) if (a[i] == v) return i;
-		return -1;
-	}
-
-	private static boolean isSorted(final long[] a) {
-		for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
-		return true;
-	}
-
-	private static int maxRun(final long[] a) {
-		int best = 0;
-		for (int i = 0; i < a.length; ) {
-			int j = i;
-			while (j < a.length && a[j] == a[i]) j++;
-			best = Math.max(best, j - i);
-			i = j;
-		}
-		return best;
-	}
-
-	/**
-	 * sign が 1 なら両隣より真に大きい内部要素、-1 なら真に小さい内部要素を数える。
-	 */
-	private static int localCount(final long[] a, final int sign) {
-		int c = 0;
-		for (int i = 1; i + 1 < a.length; i++) if (Long.compare(a[i], a[i - 1]) == sign && Long.compare(a[i], a[i + 1]) == sign) c++;
-		return c;
-	}
-
-	private interface Rel {
-		boolean test(long prev, long next);
-	}
-
-	private static int longest(final long[] a, final Rel rel) {
-		final int[] dp = new int[a.length];
-		int best = 0;
-		for (int i = 0; i < a.length; i++) {
-			dp[i] = 1;
-			for (int j = 0; j < i; j++) if (rel.test(a[j], a[i])) dp[i] = Math.max(dp[i], dp[j] + 1);
-			best = Math.max(best, dp[i]);
-		}
-		return best;
 	}
 }

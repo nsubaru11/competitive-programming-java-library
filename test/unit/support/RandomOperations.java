@@ -11,14 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public final class RandomOperations {
 
-	/**
-	 * 1回の操作。at は失敗メッセージに含める位置情報である。
-	 */
-	@FunctionalInterface
-	public interface Operation {
-		void run(Random random, String at);
-	}
-
 	private final List<String> names = new ArrayList<>();
 	private final List<Operation> operations = new ArrayList<>();
 	private final List<Integer> weights = new ArrayList<>();
@@ -47,5 +39,13 @@ public final class RandomOperations {
 		for (int k = 0; k < executed.length; k++) {
 			assertNotEquals(0, executed[k], "seed=" + seed + ": 操作 " + names.get(k) + " が一度も選ばれなかった");
 		}
+	}
+
+	/**
+	 * 1回の操作。at は失敗メッセージに含める位置情報である。
+	 */
+	@FunctionalInterface
+	public interface Operation {
+		void run(Random random, String at);
 	}
 }

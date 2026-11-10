@@ -23,7 +23,8 @@ final class RerootingDPTest {
 		final boolean[] doneUp = new boolean[n];
 		RerootingDP.run(t, (v, p, e) -> {
 			// 子はすべて処理済み
-			for (int c = 0; c < n; c++) if (c != v && naive.parent[c] == v && c != root) assertTrue(doneUp[c], "seed=" + seed);
+			for (int c = 0; c < n; c++)
+				if (c != v && naive.parent[c] == v && c != root) assertTrue(doneUp[c], "seed=" + seed);
 			assertEquals(naive.parent[v], p);
 			assertEquals(naive.parentEdge[v], e);
 			doneUp[v] = true;

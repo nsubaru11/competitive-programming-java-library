@@ -13,6 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class SegmentTreeTest extends SegmentTreeContract {
 
+	private static BinaryOperator<Long> operator(final Op op) {
+		return op == Op.SUM ? Long::sum : Math::min;
+	}
+
+	private static Long identity(final Op op) {
+		return op == Op.SUM ? 0L : Long.MAX_VALUE;
+	}
+
 	Target create(final int n, final Op op) {
 		return Adapter.of(Target.class, new SegmentTree<>(n, operator(op), identity(op)));
 	}
@@ -47,13 +55,5 @@ final class SegmentTreeTest extends SegmentTreeContract {
 		assertEquals("abXd", t.query(0, 4));
 		assertEquals(4, t.maxRight(1, s -> s.length() <= 3));
 		assertEquals(2, t.minLeft(5, s -> s.length() <= 3));
-	}
-
-	private static BinaryOperator<Long> operator(final Op op) {
-		return op == Op.SUM ? Long::sum : Math::min;
-	}
-
-	private static Long identity(final Op op) {
-		return op == Op.SUM ? 0L : Long.MAX_VALUE;
 	}
 }

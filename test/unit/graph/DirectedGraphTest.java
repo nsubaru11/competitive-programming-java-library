@@ -10,6 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class DirectedGraphTest {
 
+	static Set<Integer> toSet(final int[] a) {
+		return GraphUtilsTest.set(a);
+	}
+
 	@Nested
 	class Construction {
 
@@ -90,9 +94,5 @@ final class DirectedGraphTest {
 			for (final int e : g.adjEdgeIds(0)) assertTrue(g.to(e) == 1 || g.to(e) == 2);
 			assertEquals(0, g.adj(2).length);
 		}
-	}
-
-	static Set<Integer> toSet(final int[] a) {
-		return GraphUtilsTest.set(a);
 	}
 }

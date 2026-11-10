@@ -11,6 +11,39 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class NumericMultisetContract extends MultisetContract {
 
+	abstract Numeric createNumeric();
+
+	// 昇順は 10 20 20 20 30
+	Numeric numericSample() {
+		final Numeric s = createNumeric();
+		for (final long v : new long[]{20, 10, 20, 30, 20}) s.add(v);
+		return s;
+	}
+
+	@RepeatedTest(50)
+	void sumsMatchNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final Numeric s = createNumeric();
+		final List<Long> all = new ArrayList<>();
+		for (int k = random.nextInt(1, 40); k > 0; k--) {
+			final long v = random.nextInt(-20, 20);
+			all.add(v);
+			s.add(v);
+		}
+		Collections.sort(all);
+		final List<Long> unique = all.stream().distinct().toList();
+		final String at = "seed=" + seed + ", values=" + all;
+		for (int i = 0; i < all.size(); i++) {
+			assertEquals(all.subList(0, i + 1).stream().mapToLong(Long::longValue).sum(), s.prefixSum(i), at + ", i=" + i);
+			assertEquals(all.subList(i, all.size()).stream().mapToLong(Long::longValue).sum(), s.suffixSum(i), at + ", i=" + i);
+		}
+		for (int i = 0; i < unique.size(); i++) {
+			assertEquals(unique.subList(0, i + 1).stream().mapToLong(Long::longValue).sum(), s.prefixUniqueSum(i), at + ", i=" + i);
+			assertEquals(unique.subList(i, unique.size()).stream().mapToLong(Long::longValue).sum(), s.suffixUniqueSum(i), at + ", i=" + i);
+		}
+	}
+
 	interface Numeric {
 		boolean add(long t);
 
@@ -29,15 +62,6 @@ abstract class NumericMultisetContract extends MultisetContract {
 		long sumRange(int l, int r);
 
 		long uniqueSumRange(int l, int r);
-	}
-
-	abstract Numeric createNumeric();
-
-	// 昇順は 10 20 20 20 30
-	Numeric numericSample() {
-		final Numeric s = createNumeric();
-		for (final long v : new long[]{20, 10, 20, 30, 20}) s.add(v);
-		return s;
 	}
 
 	@Nested
@@ -71,30 +95,6 @@ abstract class NumericMultisetContract extends MultisetContract {
 			assertEquals(0L, s.sumRange(2, 2));
 			assertEquals(50L, s.uniqueSumRange(0, 2));
 			assertThrows(IndexOutOfBoundsException.class, () -> s.sumRange(3, 1));
-		}
-	}
-
-	@RepeatedTest(50)
-	void sumsMatchNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final Numeric s = createNumeric();
-		final List<Long> all = new ArrayList<>();
-		for (int k = random.nextInt(1, 40); k > 0; k--) {
-			final long v = random.nextInt(-20, 20);
-			all.add(v);
-			s.add(v);
-		}
-		Collections.sort(all);
-		final List<Long> unique = all.stream().distinct().toList();
-		final String at = "seed=" + seed + ", values=" + all;
-		for (int i = 0; i < all.size(); i++) {
-			assertEquals(all.subList(0, i + 1).stream().mapToLong(Long::longValue).sum(), s.prefixSum(i), at + ", i=" + i);
-			assertEquals(all.subList(i, all.size()).stream().mapToLong(Long::longValue).sum(), s.suffixSum(i), at + ", i=" + i);
-		}
-		for (int i = 0; i < unique.size(); i++) {
-			assertEquals(unique.subList(0, i + 1).stream().mapToLong(Long::longValue).sum(), s.prefixUniqueSum(i), at + ", i=" + i);
-			assertEquals(unique.subList(i, unique.size()).stream().mapToLong(Long::longValue).sum(), s.suffixUniqueSum(i), at + ", i=" + i);
 		}
 	}
 }

@@ -15,6 +15,31 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class ConversionsTest {
 
+	@RepeatedTest(100)
+	void roundTripsMatchStrings(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final long v = random.nextBoolean() ? random.nextInt(Integer.MAX_VALUE) : random.nextLong(Long.MAX_VALUE);
+		final String s = Long.toString(v), reversed = new StringBuilder(s).reverse().toString();
+		final String at = "v=" + v;
+		assertEquals(s, new String(Conversions.toCharArray(v)), at);
+		assertEquals(v, Conversions.toLong(s.toCharArray()), at);
+		assertEquals(v, Conversions.toLong(reversed.toCharArray(), true), at);
+		final int[] digits = Conversions.toIntArray(s);
+		assertEquals(v, Conversions.toLong(digits), at);
+		assertArrayEquals(s.toCharArray(), Conversions.toCharArray(digits), at);
+		final int width = random.nextInt(1, 25);
+		final String padded = width >= s.length() ? "0".repeat(width - s.length()) + s : s.substring(s.length() - width);
+		assertEquals(padded, new String(Conversions.toCharArray(v, width)), at + ", width=" + width);
+		assertEquals(new StringBuilder(padded).reverse().toString(), new String(Conversions.toCharArray(v, width, true)), at);
+		if (v <= Integer.MAX_VALUE) {
+			final int iv = (int) v;
+			assertEquals(iv, Conversions.toInt(s.toCharArray()), at);
+			assertEquals(iv, Conversions.toInt(digits), at);
+			assertEquals(s, new String(Conversions.toCharArray(iv)), at);
+			assertEquals(padded, new String(Conversions.toCharArray(iv, width)), at);
+		}
+	}
+
 	@Nested
 	class ToNumber {
 
@@ -45,11 +70,11 @@ final class ConversionsTest {
 		// 桁数が足りなければ上位を 0 で埋め、超えれば上位の桁から切り捨てる
 		@ParameterizedTest
 		@CsvSource({
-			"121, 5, false, 00121",
-			"121, 5, true, 12100",
-			"121, 2, false, 21",
-			"121, 2, true, 12",
-			"1234567890, 8, false, 34567890",
+				"121, 5, false, 00121",
+				"121, 5, true, 12100",
+				"121, 2, false, 21",
+				"121, 2, true, 12",
+				"1234567890, 8, false, 34567890",
 		})
 		void fixedWidth(final int value, final int width, final boolean littleEndian, final String expected) {
 			assertEquals(expected, new String(Conversions.toCharArray(value, width, littleEndian)));
@@ -74,31 +99,6 @@ final class ConversionsTest {
 			assertArrayEquals("1234".toCharArray(), Conversions.toCharArray(new int[]{1, 2, 3, 4}, false));
 			assertArrayEquals(new int[]{1, 2, 3, 4}, Conversions.toIntArray("1234".toCharArray()));
 			assertArrayEquals(new int[]{0, 0, 1, 2, 1}, Conversions.toIntArray("00121"));
-		}
-	}
-
-	@RepeatedTest(100)
-	void roundTripsMatchStrings(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final long v = random.nextBoolean() ? random.nextInt(Integer.MAX_VALUE) : random.nextLong(Long.MAX_VALUE);
-		final String s = Long.toString(v), reversed = new StringBuilder(s).reverse().toString();
-		final String at = "v=" + v;
-		assertEquals(s, new String(Conversions.toCharArray(v)), at);
-		assertEquals(v, Conversions.toLong(s.toCharArray()), at);
-		assertEquals(v, Conversions.toLong(reversed.toCharArray(), true), at);
-		final int[] digits = Conversions.toIntArray(s);
-		assertEquals(v, Conversions.toLong(digits), at);
-		assertArrayEquals(s.toCharArray(), Conversions.toCharArray(digits), at);
-		final int width = random.nextInt(1, 25);
-		final String padded = width >= s.length() ? "0".repeat(width - s.length()) + s : s.substring(s.length() - width);
-		assertEquals(padded, new String(Conversions.toCharArray(v, width)), at + ", width=" + width);
-		assertEquals(new StringBuilder(padded).reverse().toString(), new String(Conversions.toCharArray(v, width, true)), at);
-		if (v <= Integer.MAX_VALUE) {
-			final int iv = (int) v;
-			assertEquals(iv, Conversions.toInt(s.toCharArray()), at);
-			assertEquals(iv, Conversions.toInt(digits), at);
-			assertEquals(s, new String(Conversions.toCharArray(iv)), at);
-			assertEquals(padded, new String(Conversions.toCharArray(iv, width)), at);
 		}
 	}
 }

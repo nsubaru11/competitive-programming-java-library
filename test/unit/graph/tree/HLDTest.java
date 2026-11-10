@@ -10,27 +10,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class HLDTest {
 
-	@Nested
-	class Search {
+	private static long sum(final long[] a, final int l, final int r) {
+		long s = 0;
+		for (int i = l; i < r; i++) s += a[i];
+		return s;
+	}
 
-		@Test
-		void ancestorsAndJump() {
-			// 0 - 1 - 2 - 3 と 1 - 4
-			final RootedTree t = new RootedTree(5, 0);
-			t.add(0, 1, 1);
-			t.add(1, 2, 1);
-			t.add(2, 3, 1);
-			t.add(1, 4, 5);
-			final HLD hld = new HLD(t);
-			assertEquals(1, hld.lca(3, 4));
-			assertEquals(7L, hld.distance(3, 4));
-			assertEquals(1, hld.kthAncestor(3, 2));
-			assertEquals(3, hld.kthAncestor(3, 0));
-			assertEquals(-1, hld.kthAncestor(3, 4), "存在しなければ -1");
-			assertEquals(2, hld.jump(3, 4, 1));
-			assertEquals(4, hld.jump(3, 4, 3));
-			assertEquals(-1, hld.jump(3, 4, 4), "パス外なら -1");
-		}
+	private static Set<Integer> positions(final List<Integer> path, final HLD hld, final int except) {
+		final Set<Integer> res = new HashSet<>();
+		for (final int x : path) if (x != except) res.add(hld.enter(x));
+		return res;
+	}
+
+	/**
+	 * 渡された区間の和集合を返す。区間が重なれば失敗させる。
+	 */
+	private static Set<Integer> covered(final int n, final java.util.function.Consumer<lib.util.function.IntBinaryConsumer> call) {
+		final Set<Integer> res = new HashSet<>();
+		call.accept((l, r) -> {
+			for (int i = l; i < r; i++) assertTrue(res.add(i), "区間が重なる");
+		});
+		return res;
 	}
 
 	@RepeatedTest(100)
@@ -92,26 +92,26 @@ final class HLDTest {
 		}
 	}
 
-	private static long sum(final long[] a, final int l, final int r) {
-		long s = 0;
-		for (int i = l; i < r; i++) s += a[i];
-		return s;
-	}
+	@Nested
+	class Search {
 
-	private static Set<Integer> positions(final List<Integer> path, final HLD hld, final int except) {
-		final Set<Integer> res = new HashSet<>();
-		for (final int x : path) if (x != except) res.add(hld.enter(x));
-		return res;
-	}
-
-	/**
-	 * 渡された区間の和集合を返す。区間が重なれば失敗させる。
-	 */
-	private static Set<Integer> covered(final int n, final java.util.function.Consumer<lib.util.function.IntBinaryConsumer> call) {
-		final Set<Integer> res = new HashSet<>();
-		call.accept((l, r) -> {
-			for (int i = l; i < r; i++) assertTrue(res.add(i), "区間が重なる");
-		});
-		return res;
+		@Test
+		void ancestorsAndJump() {
+			// 0 - 1 - 2 - 3 と 1 - 4
+			final RootedTree t = new RootedTree(5, 0);
+			t.add(0, 1, 1);
+			t.add(1, 2, 1);
+			t.add(2, 3, 1);
+			t.add(1, 4, 5);
+			final HLD hld = new HLD(t);
+			assertEquals(1, hld.lca(3, 4));
+			assertEquals(7L, hld.distance(3, 4));
+			assertEquals(1, hld.kthAncestor(3, 2));
+			assertEquals(3, hld.kthAncestor(3, 0));
+			assertEquals(-1, hld.kthAncestor(3, 4), "存在しなければ -1");
+			assertEquals(2, hld.jump(3, 4, 1));
+			assertEquals(4, hld.jump(3, 4, 3));
+			assertEquals(-1, hld.jump(3, 4, 4), "パス外なら -1");
+		}
 	}
 }

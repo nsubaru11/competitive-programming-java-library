@@ -11,14 +11,33 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class SparseTableContract {
 
-	interface Target {
-		long query(int l, int r);
-	}
-
 	/**
 	 * max が true なら最大値、false なら最小値の Sparse Table を作る。
 	 */
 	abstract Target create(long[] a, boolean max);
+
+	@RepeatedTest(50)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(40);
+		final long[] a = random.longs(n, -100, 100).toArray();
+		final Target min = create(a, false), max = create(a, true);
+		for (int l = 0; l < n; l++) {
+			long mn = Long.MAX_VALUE, mx = Long.MIN_VALUE;
+			for (int r = l + 1; r <= n; r++) {
+				mn = Math.min(mn, a[r - 1]);
+				mx = Math.max(mx, a[r - 1]);
+				final String at = "seed=" + seed + ", l=" + l + ", r=" + r;
+				assertEquals(mn, min.query(l, r), at);
+				assertEquals(mx, max.query(l, r), at);
+			}
+		}
+	}
+
+	interface Target {
+		long query(int l, int r);
+	}
 
 	@Nested
 	class Aggregation {
@@ -45,25 +64,6 @@ abstract class SparseTableContract {
 		@Test
 		void singleElement() {
 			assertEquals(4L, create(new long[]{4}, true).query(0, 1));
-		}
-	}
-
-	@RepeatedTest(50)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(40);
-		final long[] a = random.longs(n, -100, 100).toArray();
-		final Target min = create(a, false), max = create(a, true);
-		for (int l = 0; l < n; l++) {
-			long mn = Long.MAX_VALUE, mx = Long.MIN_VALUE;
-			for (int r = l + 1; r <= n; r++) {
-				mn = Math.min(mn, a[r - 1]);
-				mx = Math.max(mx, a[r - 1]);
-				final String at = "seed=" + seed + ", l=" + l + ", r=" + r;
-				assertEquals(mn, min.query(l, r), at);
-				assertEquals(mx, max.query(l, r), at);
-			}
 		}
 	}
 }

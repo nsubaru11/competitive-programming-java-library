@@ -18,6 +18,76 @@ abstract class RangeBITContract {
 
 	static final long[] SAMPLE = {2, 0, 3, 1};
 
+	abstract Target create(int n);
+
+	abstract Target create(long[] a);
+
+	/**
+	 * ランダムな照合で使う値の上限。その型で和や積があふれない大きさにする。
+	 */
+	abstract long bound();
+
+	@RepeatedTest(200)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final long b = bound();
+		final int n = 1 + random.nextInt(32);
+		final long[] naive = new long[n];
+		for (int i = 0; i < n; i++) naive[i] = random.nextLong(-b, b + 1);
+		final Target bit = create(naive.clone());
+		new RandomOperations()
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long v = r.nextLong(-b, b + 1);
+					assertEquals(naive[i], bit.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("add", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long d = r.nextLong(-b, b + 1) - naive[i];
+					naive[i] += d;
+					assertEquals(naive[i], bit.add(i, d), at);
+				})
+				.add("addRange", 2, (r, at) -> {
+					// 値が広がりすぎないよう、0 へ戻す向きに寄せて加える
+					final int i = r.nextInt(n), j = r.nextInt(n);
+					final long d = r.nextLong(-b / 10, b / 10 + 1) - Long.signum(naive[i]) * (b / 20);
+					bit.add(i, j, d);
+					for (int k = i; k <= j; k++) naive[k] += d;
+				})
+				.add("multiply", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long m = Math.abs(naive[i]) > b ? 0 : r.nextInt(5) - 2;
+					naive[i] *= m;
+					assertEquals(naive[i], bit.multiply(i, m), at);
+				})
+				.add("affine", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long m = Math.abs(naive[i]) > b ? 0 : r.nextInt(5) - 2, d = r.nextLong(-b / 10, b / 10 + 1);
+					naive[i] = naive[i] * m + d;
+					assertEquals(naive[i], bit.affine(i, m, d), at);
+				})
+				.add("apply", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long x = r.nextLong(-b, b + 1);
+					naive[i] = Math.min(naive[i], x);
+					assertEquals(naive[i], bit.apply(i, x, Math::min), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(naive[i], bit.get(i), at);
+				})
+				.add("sum", 2, (r, at) -> {
+					final int i = r.nextInt(n), j = r.nextInt(n);
+					assertEquals(Naive.sum(naive, i, j), bit.sum(i, j), at);
+					assertEquals(Naive.sum(naive, 0, i), bit.sum(i), at);
+					assertEquals(Naive.sum(naive, 0, n - 1), bit.sumAll(), at);
+				})
+				.add("toArray", (r, at) -> assertArrayEquals(naive, bit.toArray(), at))
+				.run(seed, random, 500);
+	}
+
 	/**
 	 * テスト対象の操作を long で受け渡すアダプター。
 	 */
@@ -58,15 +128,6 @@ abstract class RangeBITContract {
 
 		Iterator<? extends Number> iterator();
 	}
-
-	abstract Target create(int n);
-
-	abstract Target create(long[] a);
-
-	/**
-	 * ランダムな照合で使う値の上限。その型で和や積があふれない大きさにする。
-	 */
-	abstract long bound();
 
 	@Nested
 	class Construction {
@@ -181,11 +242,11 @@ abstract class RangeBITContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 0, 2",
-			"0, 3, 6",
-			"1, 2, 3",
-			"3, 3, 1",
-			"2, 1, 0",
+				"0, 0, 2",
+				"0, 3, 6",
+				"1, 2, 3",
+				"3, 3, 1",
+				"2, 1, 0",
 		})
 		void sumClosedRange(final int i, final int j, final long expected) {
 			assertEquals(expected, create(SAMPLE).sum(i, j));
@@ -193,10 +254,10 @@ abstract class RangeBITContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 2",
-			"1, 2",
-			"2, 5",
-			"3, 6",
+				"0, 2",
+				"1, 2",
+				"2, 5",
+				"3, 6",
 		})
 		void sumPrefix(final int i, final long expected) {
 			assertEquals(expected, create(SAMPLE).sum(i));
@@ -228,66 +289,5 @@ abstract class RangeBITContract {
 			assertEquals("2 0 3 1", create(SAMPLE).toString());
 			assertEquals("", create(0).toString());
 		}
-	}
-
-	@RepeatedTest(200)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final long b = bound();
-		final int n = 1 + random.nextInt(32);
-		final long[] naive = new long[n];
-		for (int i = 0; i < n; i++) naive[i] = random.nextLong(-b, b + 1);
-		final Target bit = create(naive.clone());
-		new RandomOperations()
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long v = r.nextLong(-b, b + 1);
-				assertEquals(naive[i], bit.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("add", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long d = r.nextLong(-b, b + 1) - naive[i];
-				naive[i] += d;
-				assertEquals(naive[i], bit.add(i, d), at);
-			})
-			.add("addRange", 2, (r, at) -> {
-				// 値が広がりすぎないよう、0 へ戻す向きに寄せて加える
-				final int i = r.nextInt(n), j = r.nextInt(n);
-				final long d = r.nextLong(-b / 10, b / 10 + 1) - Long.signum(naive[i]) * (b / 20);
-				bit.add(i, j, d);
-				for (int k = i; k <= j; k++) naive[k] += d;
-			})
-			.add("multiply", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long m = Math.abs(naive[i]) > b ? 0 : r.nextInt(5) - 2;
-				naive[i] *= m;
-				assertEquals(naive[i], bit.multiply(i, m), at);
-			})
-			.add("affine", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long m = Math.abs(naive[i]) > b ? 0 : r.nextInt(5) - 2, d = r.nextLong(-b / 10, b / 10 + 1);
-				naive[i] = naive[i] * m + d;
-				assertEquals(naive[i], bit.affine(i, m, d), at);
-			})
-			.add("apply", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long x = r.nextLong(-b, b + 1);
-				naive[i] = Math.min(naive[i], x);
-				assertEquals(naive[i], bit.apply(i, x, Math::min), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(naive[i], bit.get(i), at);
-			})
-			.add("sum", 2, (r, at) -> {
-				final int i = r.nextInt(n), j = r.nextInt(n);
-				assertEquals(Naive.sum(naive, i, j), bit.sum(i, j), at);
-				assertEquals(Naive.sum(naive, 0, i), bit.sum(i), at);
-				assertEquals(Naive.sum(naive, 0, n - 1), bit.sumAll(), at);
-			})
-			.add("toArray", (r, at) -> assertArrayEquals(naive, bit.toArray(), at))
-			.run(seed, random, 500);
 	}
 }

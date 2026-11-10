@@ -15,6 +15,12 @@ final class MathUtilsTest {
 
 	private static final long MOD = 998244353;
 
+	private static BigInteger binom(final int n, final int r) {
+		BigInteger c = BigInteger.ONE;
+		for (int i = 0; i < r; i++) c = c.multiply(BigInteger.valueOf(n - i)).divide(BigInteger.valueOf(i + 1));
+		return c;
+	}
+
 	@Nested
 	class MinMax {
 
@@ -262,17 +268,12 @@ final class MathUtilsTest {
 		void eulerTotient() {
 			for (int n = 1; n < 1000; n++) {
 				int expected = 0;
-				for (int k = 1; k <= n; k++) if (BigInteger.valueOf(k).gcd(BigInteger.valueOf(n)).intValue() == 1) expected++;
+				for (int k = 1; k <= n; k++)
+					if (BigInteger.valueOf(k).gcd(BigInteger.valueOf(n)).intValue() == 1) expected++;
 				assertEquals(expected, MathUtils.eulerTotient(n), "n=" + n);
 				assertEquals(expected, MathUtils.eulerTotient((long) n));
 			}
 			assertEquals(1000000006L * 998244352L, MathUtils.eulerTotient(1000000007L * 998244353L));
 		}
-	}
-
-	private static BigInteger binom(final int n, final int r) {
-		BigInteger c = BigInteger.ONE;
-		for (int i = 0; i < r; i++) c = c.multiply(BigInteger.valueOf(n - i)).divide(BigInteger.valueOf(i + 1));
-		return c;
 	}
 }

@@ -10,6 +10,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class WarshallFloydTest {
 
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(7);
+		final boolean undirected = random.nextBoolean();
+		final List<Naive.Edge> edges = Naive.randomEdges(random, n, random.nextInt(14), () -> undirected ? random.nextInt(10) : random.nextInt(-3, 10), !undirected);
+		final Graph g = undirected ? Naive.undirected(n, edges) : Naive.directed(n, edges);
+		final List<Naive.Edge> arcs = Naive.arcs(edges, undirected);
+		final WarshallFloyd.Result r = WarshallFloyd.solve(g);
+		boolean neg = false;
+		for (int u = 0; u < n; u++) {
+			final long[] expected = Naive.shortest(n, arcs, u);
+			neg |= expected[u] == Long.MIN_VALUE;
+			assertArrayEquals(expected, r.dist[u], "seed=" + seed + ", edges=" + edges + ", u=" + u);
+		}
+		assertEquals(neg, r.hasNegCycle, "seed=" + seed);
+	}
+
 	@Nested
 	class Aggregation {
 
@@ -41,24 +60,5 @@ final class WarshallFloydTest {
 			assertTrue(r.reachable(0, 2));
 			assertEquals(Long.MAX_VALUE, r.dist(2, 0));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(7);
-		final boolean undirected = random.nextBoolean();
-		final List<Naive.Edge> edges = Naive.randomEdges(random, n, random.nextInt(14), () -> undirected ? random.nextInt(10) : random.nextInt(-3, 10), !undirected);
-		final Graph g = undirected ? Naive.undirected(n, edges) : Naive.directed(n, edges);
-		final List<Naive.Edge> arcs = Naive.arcs(edges, undirected);
-		final WarshallFloyd.Result r = WarshallFloyd.solve(g);
-		boolean neg = false;
-		for (int u = 0; u < n; u++) {
-			final long[] expected = Naive.shortest(n, arcs, u);
-			neg |= expected[u] == Long.MIN_VALUE;
-			assertArrayEquals(expected, r.dist[u], "seed=" + seed + ", edges=" + edges + ", u=" + u);
-		}
-		assertEquals(neg, r.hasNegCycle, "seed=" + seed);
 	}
 }

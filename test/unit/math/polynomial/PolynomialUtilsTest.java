@@ -15,6 +15,20 @@ final class PolynomialUtilsTest {
 
 	private static final double EPS = 1e-9;
 
+	@RepeatedTest(50)
+	void matchesNaive(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final double[] a = random.ints(1 + random.nextInt(6), -5, 6).asDoubleStream().toArray(), b = random.ints(1 + random.nextInt(6), -5, 6).asDoubleStream().toArray();
+		final double x = random.nextInt(-3, 4);
+		final double va = PolynomialUtils.evaluate(a, x), vb = PolynomialUtils.evaluate(b, x);
+		double naive = 0;
+		for (final double c : a) naive = naive * x + c;
+		assertEquals(naive, va, EPS);
+		assertEquals(va + vb, PolynomialUtils.evaluate(PolynomialUtils.add(a, b), x), EPS);
+		assertEquals(va - vb, PolynomialUtils.evaluate(PolynomialUtils.subtract(a, b), x), EPS);
+		assertEquals(va * vb, PolynomialUtils.evaluate(PolynomialUtils.multiply(a, b), x), EPS);
+	}
+
 	@Nested
 	class Arithmetic {
 
@@ -61,19 +75,5 @@ final class PolynomialUtilsTest {
 			assertEquals(0.0, PolynomialUtils.evaluate(g, 1), EPS);
 			assertNotEquals(0.0, PolynomialUtils.evaluate(g, 2), EPS);
 		}
-	}
-
-	@RepeatedTest(50)
-	void matchesNaive(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final double[] a = random.ints(1 + random.nextInt(6), -5, 6).asDoubleStream().toArray(), b = random.ints(1 + random.nextInt(6), -5, 6).asDoubleStream().toArray();
-		final double x = random.nextInt(-3, 4);
-		final double va = PolynomialUtils.evaluate(a, x), vb = PolynomialUtils.evaluate(b, x);
-		double naive = 0;
-		for (final double c : a) naive = naive * x + c;
-		assertEquals(naive, va, EPS);
-		assertEquals(va + vb, PolynomialUtils.evaluate(PolynomialUtils.add(a, b), x), EPS);
-		assertEquals(va - vb, PolynomialUtils.evaluate(PolynomialUtils.subtract(a, b), x), EPS);
-		assertEquals(va * vb, PolynomialUtils.evaluate(PolynomialUtils.multiply(a, b), x), EPS);
 	}
 }

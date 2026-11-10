@@ -43,10 +43,10 @@ final class LongMutableArrayTest {
 
 		@ParameterizedTest
 		@CsvSource({
-			"-1, -9",
-			"0, 3",
-			"2, 4",
-			"3, -9",
+				"-1, -9",
+				"0, 3",
+				"2, 4",
+				"3, -9",
 		})
 		void getOrDefault(final int i, final long expected) {
 			assertEquals(expected, of(3, 1, 4).getOrDefault(i, -9));

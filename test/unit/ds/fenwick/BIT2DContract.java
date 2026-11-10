@@ -19,6 +19,71 @@ abstract class BIT2DContract {
 	// 2行3列。行優先で 1 2 3 / 4 5 6
 	static final long[][] SAMPLE = {{1, 2, 3}, {4, 5, 6}};
 
+	abstract Target create(int h, int w);
+
+	abstract Target create(long[][] a);
+
+	/**
+	 * ランダムな照合で使う値の上限。その型で和や積があふれない大きさにする。
+	 */
+	abstract long bound();
+
+	@RepeatedTest(200)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final long b = bound();
+		final int h = 1 + random.nextInt(8), w = 1 + random.nextInt(8);
+		final long[][] naive = new long[h][w];
+		for (final long[] row : naive) for (int j = 0; j < w; j++) row[j] = random.nextLong(-b, b + 1);
+		final long[][] init = new long[h][];
+		for (int i = 0; i < h; i++) init[i] = naive[i].clone();
+		final Target bit = create(init);
+		new RandomOperations()
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(h), j = r.nextInt(w);
+					final long v = r.nextLong(-b, b + 1);
+					assertEquals(naive[i][j], bit.set(i, j, v), at);
+					naive[i][j] = v;
+				})
+				.add("add", (r, at) -> {
+					final int i = r.nextInt(h), j = r.nextInt(w);
+					final long d = r.nextLong(-b, b + 1) - naive[i][j];
+					naive[i][j] += d;
+					assertEquals(naive[i][j], bit.add(i, j, d), at);
+				})
+				.add("multiply", (r, at) -> {
+					final int i = r.nextInt(h), j = r.nextInt(w);
+					final long m = Math.abs(naive[i][j]) > b ? 0 : r.nextInt(5) - 2;
+					naive[i][j] *= m;
+					assertEquals(naive[i][j], bit.multiply(i, j, m), at);
+				})
+				.add("affine", (r, at) -> {
+					final int i = r.nextInt(h), j = r.nextInt(w);
+					final long m = Math.abs(naive[i][j]) > b ? 0 : r.nextInt(5) - 2, d = r.nextLong(-b / 10, b / 10 + 1);
+					naive[i][j] = naive[i][j] * m + d;
+					assertEquals(naive[i][j], bit.affine(i, j, m, d), at);
+				})
+				.add("apply", (r, at) -> {
+					final int i = r.nextInt(h), j = r.nextInt(w);
+					final long x = r.nextLong(-b, b + 1);
+					naive[i][j] = Math.max(naive[i][j], x);
+					assertEquals(naive[i][j], bit.apply(i, j, x, Math::max), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(h), j = r.nextInt(w);
+					assertEquals(naive[i][j], bit.get(i, j), at);
+				})
+				.add("sum", 2, (r, at) -> {
+					final int i1 = r.nextInt(h), j1 = r.nextInt(w), i2 = r.nextInt(h), j2 = r.nextInt(w);
+					assertEquals(Naive.sum(naive, i1, j1, i2, j2), bit.sum(i1, j1, i2, j2), at);
+					assertEquals(Naive.sum(naive, 0, 0, i1, j1), bit.sum(i1, j1), at);
+					assertEquals(Naive.sum(naive, 0, 0, h - 1, w - 1), bit.sumAll(), at);
+				})
+				.add("toArray2D", (r, at) -> assertArrayEquals(naive, bit.toArray2D(), at))
+				.run(seed, random, 500);
+	}
+
 	/**
 	 * テスト対象の操作を long で受け渡すアダプター。
 	 */
@@ -63,15 +128,6 @@ abstract class BIT2DContract {
 
 		Iterator<? extends Number> iterator();
 	}
-
-	abstract Target create(int h, int w);
-
-	abstract Target create(long[][] a);
-
-	/**
-	 * ランダムな照合で使う値の上限。その型で和や積があふれない大きさにする。
-	 */
-	abstract long bound();
 
 	@Nested
 	class Construction {
@@ -166,10 +222,10 @@ abstract class BIT2DContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 0, 1",
-			"0, 2, 6",
-			"1, 0, 5",
-			"1, 2, 21",
+				"0, 0, 1",
+				"0, 2, 6",
+				"1, 0, 5",
+				"1, 2, 21",
 		})
 		void sumPrefix(final int i, final int j, final long expected) {
 			assertEquals(expected, create(SAMPLE).sum(i, j));
@@ -177,13 +233,13 @@ abstract class BIT2DContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 0, 1, 2, 21",
-			"1, 1, 1, 2, 11",
-			"0, 1, 1, 1, 7",
-			"1, 2, 1, 2, 6",
-			// 始点が終点を超える軸があれば0
-			"1, 0, 0, 2, 0",
-			"0, 2, 1, 1, 0",
+				"0, 0, 1, 2, 21",
+				"1, 1, 1, 2, 11",
+				"0, 1, 1, 1, 7",
+				"1, 2, 1, 2, 6",
+				// 始点が終点を超える軸があれば0
+				"1, 0, 0, 2, 0",
+				"0, 2, 1, 1, 0",
 		})
 		void sumClosedRectangle(final int i1, final int j1, final int i2, final int j2, final long expected) {
 			assertEquals(expected, create(SAMPLE).sum(i1, j1, i2, j2));
@@ -225,61 +281,5 @@ abstract class BIT2DContract {
 			assertEquals("1 2 3\n4 5 6", create(SAMPLE).toString());
 			assertEquals("", create(0, 0).toString());
 		}
-	}
-
-	@RepeatedTest(200)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final long b = bound();
-		final int h = 1 + random.nextInt(8), w = 1 + random.nextInt(8);
-		final long[][] naive = new long[h][w];
-		for (final long[] row : naive) for (int j = 0; j < w; j++) row[j] = random.nextLong(-b, b + 1);
-		final long[][] init = new long[h][];
-		for (int i = 0; i < h; i++) init[i] = naive[i].clone();
-		final Target bit = create(init);
-		new RandomOperations()
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(h), j = r.nextInt(w);
-				final long v = r.nextLong(-b, b + 1);
-				assertEquals(naive[i][j], bit.set(i, j, v), at);
-				naive[i][j] = v;
-			})
-			.add("add", (r, at) -> {
-				final int i = r.nextInt(h), j = r.nextInt(w);
-				final long d = r.nextLong(-b, b + 1) - naive[i][j];
-				naive[i][j] += d;
-				assertEquals(naive[i][j], bit.add(i, j, d), at);
-			})
-			.add("multiply", (r, at) -> {
-				final int i = r.nextInt(h), j = r.nextInt(w);
-				final long m = Math.abs(naive[i][j]) > b ? 0 : r.nextInt(5) - 2;
-				naive[i][j] *= m;
-				assertEquals(naive[i][j], bit.multiply(i, j, m), at);
-			})
-			.add("affine", (r, at) -> {
-				final int i = r.nextInt(h), j = r.nextInt(w);
-				final long m = Math.abs(naive[i][j]) > b ? 0 : r.nextInt(5) - 2, d = r.nextLong(-b / 10, b / 10 + 1);
-				naive[i][j] = naive[i][j] * m + d;
-				assertEquals(naive[i][j], bit.affine(i, j, m, d), at);
-			})
-			.add("apply", (r, at) -> {
-				final int i = r.nextInt(h), j = r.nextInt(w);
-				final long x = r.nextLong(-b, b + 1);
-				naive[i][j] = Math.max(naive[i][j], x);
-				assertEquals(naive[i][j], bit.apply(i, j, x, Math::max), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(h), j = r.nextInt(w);
-				assertEquals(naive[i][j], bit.get(i, j), at);
-			})
-			.add("sum", 2, (r, at) -> {
-				final int i1 = r.nextInt(h), j1 = r.nextInt(w), i2 = r.nextInt(h), j2 = r.nextInt(w);
-				assertEquals(Naive.sum(naive, i1, j1, i2, j2), bit.sum(i1, j1, i2, j2), at);
-				assertEquals(Naive.sum(naive, 0, 0, i1, j1), bit.sum(i1, j1), at);
-				assertEquals(Naive.sum(naive, 0, 0, h - 1, w - 1), bit.sumAll(), at);
-			})
-			.add("toArray2D", (r, at) -> assertArrayEquals(naive, bit.toArray2D(), at))
-			.run(seed, random, 500);
 	}
 }

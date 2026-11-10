@@ -20,6 +20,24 @@ final class TopologicalShortestPathTest {
 		return g;
 	}
 
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(8);
+		final List<Naive.Edge> edges = Naive.randomDagEdges(random, n, random.nextInt(14), () -> random.nextInt(-5, 10));
+		final DirectedGraph g = Naive.directed(n, edges);
+		final int s = random.nextInt(n), t = random.nextInt(n);
+		final String at = "seed=" + seed + ", edges=" + edges + ", s=" + s + ", t=" + t;
+		final long[] shortest = Naive.shortest(n, edges, s), longest = Naive.longest(n, edges, s);
+		assertArrayEquals(shortest, TopologicalShortestPath.dist(g, s), at);
+		assertArrayEquals(longest, TopologicalShortestPath.distLongest(g, s), at);
+		if (shortest[t] != Long.MAX_VALUE) {
+			assertTrue(Naive.isPath(TopologicalShortestPath.path(g, s, t), edges, s, t, shortest[t], false), at);
+			assertTrue(Naive.isPath(TopologicalShortestPath.pathLongest(g, s, t), edges, s, t, longest[t], true), at);
+		}
+	}
+
 	@Nested
 	class Aggregation {
 
@@ -61,24 +79,6 @@ final class TopologicalShortestPathTest {
 			g.add(1, 0, 1);
 			assertThrows(IllegalArgumentException.class, () -> TopologicalShortestPath.solve(g, 0));
 			assertThrows(IllegalArgumentException.class, () -> TopologicalShortestPath.solveLongest(g, 0));
-		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(8);
-		final List<Naive.Edge> edges = Naive.randomDagEdges(random, n, random.nextInt(14), () -> random.nextInt(-5, 10));
-		final DirectedGraph g = Naive.directed(n, edges);
-		final int s = random.nextInt(n), t = random.nextInt(n);
-		final String at = "seed=" + seed + ", edges=" + edges + ", s=" + s + ", t=" + t;
-		final long[] shortest = Naive.shortest(n, edges, s), longest = Naive.longest(n, edges, s);
-		assertArrayEquals(shortest, TopologicalShortestPath.dist(g, s), at);
-		assertArrayEquals(longest, TopologicalShortestPath.distLongest(g, s), at);
-		if (shortest[t] != Long.MAX_VALUE) {
-			assertTrue(Naive.isPath(TopologicalShortestPath.path(g, s, t), edges, s, t, shortest[t], false), at);
-			assertTrue(Naive.isPath(TopologicalShortestPath.pathLongest(g, s, t), edges, s, t, longest[t], true), at);
 		}
 	}
 }

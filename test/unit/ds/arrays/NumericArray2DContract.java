@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class NumericArray2DContract extends Array2DContract {
 
+	abstract Numeric createNumeric(long[][] a);
+
 	interface Numeric {
 		long add(int i, int j, long d);
 
@@ -20,8 +22,6 @@ abstract class NumericArray2DContract extends Array2DContract {
 
 		Object rotateRight();
 	}
-
-	abstract Numeric createNumeric(long[][] a);
 
 	@Nested
 	class ArithmeticUpdates {

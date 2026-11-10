@@ -12,6 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class PriorityQueueTest extends PriorityQueueContract {
 
+	private static Long[] box(final long[] a) {
+		return Arrays.stream(a).boxed().toArray(Long[]::new);
+	}
+
 	Target create() {
 		return Adapter.of(Target.class, new PriorityQueue<Long>());
 	}
@@ -76,9 +80,5 @@ final class PriorityQueueTest extends PriorityQueueContract {
 	@Test
 	void comparatorMustNotBeNull() {
 		assertThrows(NullPointerException.class, () -> new PriorityQueue<Long>((Comparator<Long>) null));
-	}
-
-	private static Long[] box(final long[] a) {
-		return Arrays.stream(a).boxed().toArray(Long[]::new);
 	}
 }

@@ -10,6 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class LCATest {
 
+	@RepeatedTest(200)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(seed % 10 == 0 ? 300 : 30), root = random.nextInt(n);
+		final Naive naive = new Naive(random, n, root, 9);
+		final LCA lca = new LCA(naive.rooted());
+		for (int q = 0; q < 200; q++) {
+			final int u = random.nextInt(n), v = random.nextInt(n);
+			final String at = "seed=" + seed + ", u=" + u + ", v=" + v;
+			assertEquals(naive.lca(u, v), lca.lca(u, v), at);
+			assertEquals(naive.distance(u, v), lca.distance(u, v), at);
+		}
+	}
+
 	@Nested
 	class Search {
 
@@ -34,21 +49,6 @@ final class LCATest {
 			final LCA lca = new LCA(t);
 			assertEquals(1234, lca.lca(1234, 2999));
 			assertEquals(1765L, lca.distance(1234, 2999));
-		}
-	}
-
-	@RepeatedTest(200)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(seed % 10 == 0 ? 300 : 30), root = random.nextInt(n);
-		final Naive naive = new Naive(random, n, root, 9);
-		final LCA lca = new LCA(naive.rooted());
-		for (int q = 0; q < 200; q++) {
-			final int u = random.nextInt(n), v = random.nextInt(n);
-			final String at = "seed=" + seed + ", u=" + u + ", v=" + v;
-			assertEquals(naive.lca(u, v), lca.lca(u, v), at);
-			assertEquals(naive.distance(u, v), lca.distance(u, v), at);
 		}
 	}
 }

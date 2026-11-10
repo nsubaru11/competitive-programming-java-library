@@ -15,6 +15,29 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class MatrixUtilsContract {
 
 	static final long MOD = 998244353;
+	static final long[][] A = {{1, 2}, {3, 4}}, B = {{5, 6}, {7, 8}};
+
+	static long[][] randomMatrix(final Random random, final int n) {
+		final long[][] m = new long[n][];
+		for (int i = 0; i < n; i++) m[i] = random.longs(n, 0, MOD).toArray();
+		return m;
+	}
+
+	static long[][] naiveMul(final long[][] a, final long[][] b) {
+		final int n = a.length, m = b[0].length;
+		final long[][] res = new long[n][m];
+		for (int i = 0; i < n; i++)
+			for (int k = 0; k < b.length; k++)
+				for (int j = 0; j < m; j++) res[i][j] = (res[i][j] + a[i][k] * b[k][j]) % MOD;
+		return res;
+	}
+
+	static long[][] elementwise(final long[][] a, final long[][] b, final int sign) {
+		final long[][] res = new long[a.length][a[0].length];
+		for (int i = 0; i < a.length; i++)
+			for (int j = 0; j < a[0].length; j++) res[i][j] = Math.floorMod(a[i][j] + sign * b[i][j], MOD);
+		return res;
+	}
 
 	abstract Class<?> utils();
 
@@ -36,8 +59,6 @@ abstract class MatrixUtilsContract {
 	long[][] back(final Object m) {
 		return (long[][]) Adapter.convert(m, long[][].class);
 	}
-
-	static final long[][] A = {{1, 2}, {3, 4}}, B = {{5, 6}, {7, 8}};
 
 	@Nested
 	class Construction {
@@ -92,8 +113,8 @@ abstract class MatrixUtilsContract {
 		void scalarOperationsUpdateInPlace() {
 			final String[] names = {"affine", "affineRaw", "add", "addRaw", "sub", "subRaw", "mul", "mulRaw", "div", "divRaw"};
 			final long[][][] expected = {
-				{{3, 5}, {7, 9}}, {{3, 5}, {7, 9}}, {{3, 4}, {5, 6}}, {{3, 4}, {5, 6}}, {{-1, 0}, {1, 2}}, {{-1, 0}, {1, 2}},
-				{{2, 4}, {6, 8}}, {{2, 4}, {6, 8}}, {{0, 1}, {1, 2}}, {{0, 1}, {1, 2}},
+					{{3, 5}, {7, 9}}, {{3, 5}, {7, 9}}, {{3, 4}, {5, 6}}, {{3, 4}, {5, 6}}, {{-1, 0}, {1, 2}}, {{-1, 0}, {1, 2}},
+					{{2, 4}, {6, 8}}, {{2, 4}, {6, 8}}, {{0, 1}, {1, 2}}, {{0, 1}, {1, 2}},
 			};
 			for (int k = 0; k < names.length; k++) {
 				final Object a = matrix(A);
@@ -145,24 +166,5 @@ abstract class MatrixUtilsContract {
 			for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) aff[i][j] = Math.floorMod(3 * a[i][j] - 5, MOD);
 			assertArrayEquals(aff, back(raw3), at + ", 結果を [0, mod) に正規化する");
 		}
-	}
-
-	static long[][] randomMatrix(final Random random, final int n) {
-		final long[][] m = new long[n][];
-		for (int i = 0; i < n; i++) m[i] = random.longs(n, 0, MOD).toArray();
-		return m;
-	}
-
-	static long[][] naiveMul(final long[][] a, final long[][] b) {
-		final int n = a.length, m = b[0].length;
-		final long[][] res = new long[n][m];
-		for (int i = 0; i < n; i++) for (int k = 0; k < b.length; k++) for (int j = 0; j < m; j++) res[i][j] = (res[i][j] + a[i][k] * b[k][j]) % MOD;
-		return res;
-	}
-
-	static long[][] elementwise(final long[][] a, final long[][] b, final int sign) {
-		final long[][] res = new long[a.length][a[0].length];
-		for (int i = 0; i < a.length; i++) for (int j = 0; j < a[0].length; j++) res[i][j] = Math.floorMod(a[i][j] + sign * b[i][j], MOD);
-		return res;
 	}
 }

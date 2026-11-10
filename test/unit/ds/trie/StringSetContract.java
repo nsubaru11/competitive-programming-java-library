@@ -12,10 +12,30 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class StringSetContract {
 
+	static String randomWord(final Random random) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = random.nextInt(1, 6); i > 0; i--) sb.append((char) ('a' + random.nextInt(3)));
+		return sb.toString();
+	}
+
 	/**
 	 * words をすべて登録した集合を作り、search を返す。
 	 */
 	abstract Search build(List<String> words);
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final List<String> words = new ArrayList<>();
+		for (int i = random.nextInt(1, 30); i > 0; i--) words.add(randomWord(random));
+		final Set<String> naive = new HashSet<>(words);
+		final Search s = build(words);
+		for (int q = 0; q < 200; q++) {
+			final String w = q % 3 == 0 ? words.get(random.nextInt(words.size())) : randomWord(random);
+			assertEquals(naive.contains(w), s.search(w), "seed=" + seed + ", words=" + words + ", query=" + w);
+		}
+	}
 
 	interface Search {
 		boolean search(String word);
@@ -44,25 +64,5 @@ abstract class StringSetContract {
 			assertFalse(s.search("abcde"));
 			assertFalse(s.search("b"));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final List<String> words = new ArrayList<>();
-		for (int i = random.nextInt(1, 30); i > 0; i--) words.add(randomWord(random));
-		final Set<String> naive = new HashSet<>(words);
-		final Search s = build(words);
-		for (int q = 0; q < 200; q++) {
-			final String w = q % 3 == 0 ? words.get(random.nextInt(words.size())) : randomWord(random);
-			assertEquals(naive.contains(w), s.search(w), "seed=" + seed + ", words=" + words + ", query=" + w);
-		}
-	}
-
-	static String randomWord(final Random random) {
-		final StringBuilder sb = new StringBuilder();
-		for (int i = random.nextInt(1, 6); i > 0; i--) sb.append((char) ('a' + random.nextInt(3)));
-		return sb.toString();
 	}
 }

@@ -24,6 +24,56 @@ final class BITTest {
 		return new BIT<>(n, Long::sum, (a, b) -> a - b, 0L);
 	}
 
+	@RepeatedTest(200)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(32);
+		final long[] naive = new long[n];
+		final List<Long> init = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			naive[i] = random.nextLong(-1000, 1000);
+			init.add(naive[i]);
+		}
+		final BIT<Long> bit = new BIT<>(init, Long::sum, (a, b) -> a - b, 0L);
+		new RandomOperations()
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long v = r.nextLong(-1000, 1000);
+					assertEquals(naive[i], bit.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("add", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long d = r.nextLong(-1000, 1000);
+					naive[i] += d;
+					assertEquals(naive[i], bit.add(i, d), at);
+				})
+				.add("apply", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long x = r.nextLong(-1000, 1000);
+					naive[i] = Math.min(naive[i], x);
+					assertEquals(naive[i], bit.apply(i, x, Math::min), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(naive[i], bit.get(i), at);
+				})
+				.add("query", 2, (r, at) -> {
+					// 半開区間 [l, r) を閉区間 [l, r - 1] の愚直解と比べる
+					final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
+					assertEquals(Naive.sum(naive, l, rr - 1), bit.query(l, rr), at);
+					assertEquals(Naive.sum(naive, 0, rr - 1), bit.query(rr), at);
+					assertEquals(Naive.sum(naive, 0, n - 1), bit.queryAll(), at);
+				})
+				.add("iterator", (r, at) -> {
+					int k = 0;
+					for (final long v : bit) assertEquals(naive[k++], v, at);
+					assertEquals(n, k, at);
+				})
+				.run(seed, random, 500);
+	}
+
 	@Nested
 	class Construction {
 
@@ -110,12 +160,12 @@ final class BITTest {
 		// 半開区間 [l, r)。l >= r は単位元
 		@ParameterizedTest
 		@CsvSource({
-			"0, 0, 0",
-			"0, 1, 2",
-			"0, 4, 6",
-			"1, 3, 3",
-			"3, 4, 1",
-			"3, 1, 0",
+				"0, 0, 0",
+				"0, 1, 2",
+				"0, 4, 6",
+				"1, 3, 3",
+				"3, 4, 1",
+				"3, 1, 0",
 		})
 		void queryHalfOpen(final int l, final int r, final long expected) {
 			assertEquals(expected, sample().query(l, r));
@@ -123,10 +173,10 @@ final class BITTest {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 0",
-			"1, 2",
-			"3, 5",
-			"4, 6",
+				"0, 0",
+				"1, 2",
+				"3, 5",
+				"4, 6",
 		})
 		void queryPrefix(final int r, final long expected) {
 			assertEquals(expected, sample().query(r));
@@ -171,55 +221,5 @@ final class BITTest {
 			assertEquals("2 0 3 1", sample().toString());
 			assertEquals("", ofSize(0).toString());
 		}
-	}
-
-	@RepeatedTest(200)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(32);
-		final long[] naive = new long[n];
-		final List<Long> init = new ArrayList<>();
-		for (int i = 0; i < n; i++) {
-			naive[i] = random.nextLong(-1000, 1000);
-			init.add(naive[i]);
-		}
-		final BIT<Long> bit = new BIT<>(init, Long::sum, (a, b) -> a - b, 0L);
-		new RandomOperations()
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long v = r.nextLong(-1000, 1000);
-				assertEquals(naive[i], bit.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("add", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long d = r.nextLong(-1000, 1000);
-				naive[i] += d;
-				assertEquals(naive[i], bit.add(i, d), at);
-			})
-			.add("apply", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long x = r.nextLong(-1000, 1000);
-				naive[i] = Math.min(naive[i], x);
-				assertEquals(naive[i], bit.apply(i, x, Math::min), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(naive[i], bit.get(i), at);
-			})
-			.add("query", 2, (r, at) -> {
-				// 半開区間 [l, r) を閉区間 [l, r - 1] の愚直解と比べる
-				final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
-				assertEquals(Naive.sum(naive, l, rr - 1), bit.query(l, rr), at);
-				assertEquals(Naive.sum(naive, 0, rr - 1), bit.query(rr), at);
-				assertEquals(Naive.sum(naive, 0, n - 1), bit.queryAll(), at);
-			})
-			.add("iterator", (r, at) -> {
-				int k = 0;
-				for (final long v : bit) assertEquals(naive[k++], v, at);
-				assertEquals(n, k, at);
-			})
-			.run(seed, random, 500);
 	}
 }

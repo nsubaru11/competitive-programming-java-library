@@ -10,6 +10,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class RootedTreeTest {
 
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(12), root = random.nextInt(n);
+		final Naive naive = new Naive(random, n, root, 9);
+		final RootedTree t = naive.rooted();
+		final String at = "seed=" + seed;
+		final boolean[] used = new boolean[n];
+		for (int u = 0; u < n; u++) {
+			assertEquals(naive.parent[u], t.parent(u), at);
+			assertEquals(naive.parentEdge[u], t.parentEdge(u), at);
+			assertEquals(naive.depth[u], t.depth(u), at);
+			assertEquals(naive.dist[u], t.rootDistance(u), at);
+			assertEquals(naive.subtreeSize(u), t.subtreeSize(u), at);
+			assertEquals(u, t.preorderAt(t.in(u)), at);
+			assertEquals(t.in(u) + t.subtreeSize(u), t.out(u), at);
+			used[t.in(u)] = true;
+			for (int v = 0; v < n; v++) {
+				final boolean anc = naive.isAncestor(u, v);
+				assertEquals(anc, t.isAncestor(u, v), at);
+				assertEquals(anc, t.in(u) <= t.in(v) && t.in(v) < t.out(u), at + ", 部分木区間は子孫だけを含む");
+			}
+		}
+		for (final boolean b : used) assertTrue(b, at);
+		assertEquals(root, t.preorderAt(0), at);
+	}
+
 	@Nested
 	class Access {
 
@@ -44,33 +72,5 @@ final class RootedTreeTest {
 			assertArrayEquals(new int[]{t.in(1), t.out(1)}, seen);
 			assertEquals(100L * t.in(1) + t.out(1), t.querySubtree(1, (l, r) -> 100L * l + r));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(12), root = random.nextInt(n);
-		final Naive naive = new Naive(random, n, root, 9);
-		final RootedTree t = naive.rooted();
-		final String at = "seed=" + seed;
-		final boolean[] used = new boolean[n];
-		for (int u = 0; u < n; u++) {
-			assertEquals(naive.parent[u], t.parent(u), at);
-			assertEquals(naive.parentEdge[u], t.parentEdge(u), at);
-			assertEquals(naive.depth[u], t.depth(u), at);
-			assertEquals(naive.dist[u], t.rootDistance(u), at);
-			assertEquals(naive.subtreeSize(u), t.subtreeSize(u), at);
-			assertEquals(u, t.preorderAt(t.in(u)), at);
-			assertEquals(t.in(u) + t.subtreeSize(u), t.out(u), at);
-			used[t.in(u)] = true;
-			for (int v = 0; v < n; v++) {
-				final boolean anc = naive.isAncestor(u, v);
-				assertEquals(anc, t.isAncestor(u, v), at);
-				assertEquals(anc, t.in(u) <= t.in(v) && t.in(v) < t.out(u), at + ", 部分木区間は子孫だけを含む");
-			}
-		}
-		for (final boolean b : used) assertTrue(b, at);
-		assertEquals(root, t.preorderAt(0), at);
 	}
 }

@@ -12,6 +12,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ManacherTest {
 
+	@RepeatedTest(200)
+	void matchesNaive(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final String s = Naive.randomString(random, 20, 2);
+		if (s.isEmpty()) return;
+		final Manacher m = new Manacher(s);
+		final String at = "s=" + s;
+		assertEquals(Naive.longestPalindrome(s, true, true), m.getLongestLen(), at);
+		assertEquals(Naive.longestPalindrome(s, true, false), m.getOddLongestLen(), at);
+		assertEquals(Naive.longestPalindrome(s, false, true), m.getEvenLongestLen(), at);
+		final String longest = m.getLongestPalindrome();
+		assertEquals(m.getLongestLen(), longest.length(), at);
+		assertTrue(s.contains(longest) && Naive.isPalindrome(longest, 0, longest.length()), at);
+		for (int c = 0; c < s.length(); c++) {
+			final int odd = Naive.palindromeAt(s, c, true);
+			assertEquals(odd, m.getOddPalindromeLengthAt(c), at + ", c=" + c);
+			assertEquals(s.substring(c - odd / 2, c + odd / 2 + 1), m.getOddPalindromeAt(c), at + ", c=" + c);
+			if (c + 1 < s.length()) {
+				final int even = Naive.palindromeAt(s, c, false);
+				assertEquals(even, m.getEvenPalindromeLengthAt(c), at + ", c=" + c);
+				assertEquals(s.substring(c + 1 - even / 2, c + 1 + even / 2), m.getEvenPalindromeAt(c), at + ", c=" + c);
+			}
+		}
+		for (int l = 0; l <= s.length(); l++) {
+			for (int r = l; r <= s.length(); r++) {
+				assertEquals(l < r && Naive.isPalindrome(s, l, r), m.isPalindromeRange(l, r), at + ", [" + l + ", " + r + ")");
+			}
+		}
+	}
+
 	@Nested
 	class Access {
 
@@ -43,36 +73,6 @@ final class ManacherTest {
 			assertThrows(IllegalArgumentException.class, () -> m.getEvenPalindromeLengthAt(2), "偶数長の中心は n - 2 まで");
 			assertThrows(IllegalArgumentException.class, () -> m.getOddPalindromeAt(-1));
 			assertThrows(IllegalArgumentException.class, () -> m.getEvenPalindromeAt(2));
-		}
-	}
-
-	@RepeatedTest(200)
-	void matchesNaive(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final String s = Naive.randomString(random, 20, 2);
-		if (s.isEmpty()) return;
-		final Manacher m = new Manacher(s);
-		final String at = "s=" + s;
-		assertEquals(Naive.longestPalindrome(s, true, true), m.getLongestLen(), at);
-		assertEquals(Naive.longestPalindrome(s, true, false), m.getOddLongestLen(), at);
-		assertEquals(Naive.longestPalindrome(s, false, true), m.getEvenLongestLen(), at);
-		final String longest = m.getLongestPalindrome();
-		assertEquals(m.getLongestLen(), longest.length(), at);
-		assertTrue(s.contains(longest) && Naive.isPalindrome(longest, 0, longest.length()), at);
-		for (int c = 0; c < s.length(); c++) {
-			final int odd = Naive.palindromeAt(s, c, true);
-			assertEquals(odd, m.getOddPalindromeLengthAt(c), at + ", c=" + c);
-			assertEquals(s.substring(c - odd / 2, c + odd / 2 + 1), m.getOddPalindromeAt(c), at + ", c=" + c);
-			if (c + 1 < s.length()) {
-				final int even = Naive.palindromeAt(s, c, false);
-				assertEquals(even, m.getEvenPalindromeLengthAt(c), at + ", c=" + c);
-				assertEquals(s.substring(c + 1 - even / 2, c + 1 + even / 2), m.getEvenPalindromeAt(c), at + ", c=" + c);
-			}
-		}
-		for (int l = 0; l <= s.length(); l++) {
-			for (int r = l; r <= s.length(); r++) {
-				assertEquals(l < r && Naive.isPalindrome(s, l, r), m.isPalindromeRange(l, r), at + ", [" + l + ", " + r + ")");
-			}
 		}
 	}
 }

@@ -19,24 +19,30 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class ArrayBinarySearchTest {
 
-	/**
-	 * 配列の型。昇順の long[] から対象の配列と探索値を作る。
-	 */
-	enum Kind {
-		INT(a -> Arrays.stream(a).mapToInt(Math::toIntExact).toArray(), v -> (int) v),
-		LONG(long[]::clone, v -> v),
-		DOUBLE(a -> Arrays.stream(a).asDoubleStream().toArray(), v -> (double) v),
-		COMPARABLE(a -> Arrays.stream(a).boxed().toArray(Long[]::new), v -> v),
-		INT_ARRAY(a -> new IntArrayDeque(Arrays.stream(a).mapToInt(Math::toIntExact).toArray()), v -> (int) v),
-		LONG_ARRAY(a -> new LongArrayDeque(a), v -> v);
+	private static int call(final Kind kind, final String name, final Object... args) {
+		return Adapter.callStatic(Integer.class, ArrayBinarySearch.class, name, args);
+	}
 
-		final Function<long[], Object> array;
-		final LongFunction<Object> value;
-
-		Kind(final Function<long[], Object> array, final LongFunction<Object> value) {
-			this.array = array;
-			this.value = value;
+	private static int naiveLower(final long[] a, final int l, final int r, final long v) {
+		int less = l;
+		for (int i = l; i < r; i++) {
+			if (a[i] == v) return i;
+			if (a[i] < v) less = i + 1;
 		}
+		return ~less;
+	}
+
+	private static int naiveUpper(final long[] a, final int l, final int r, final long v) {
+		int less = l;
+		for (int i = r - 1; i >= l; i--) if (a[i] == v) return i;
+		for (int i = l; i < r; i++) if (a[i] < v) less = i + 1;
+		return ~less;
+	}
+
+	private static int naiveCount(final long[] a, final int l, final int r, final long v) {
+		int c = 0;
+		for (int i = l; i < r; i++) if (a[i] == v) c++;
+		return c;
 	}
 
 	@ParameterizedTest
@@ -81,29 +87,23 @@ final class ArrayBinarySearchTest {
 		}
 	}
 
-	private static int call(final Kind kind, final String name, final Object... args) {
-		return Adapter.callStatic(Integer.class, ArrayBinarySearch.class, name, args);
-	}
+	/**
+	 * 配列の型。昇順の long[] から対象の配列と探索値を作る。
+	 */
+	enum Kind {
+		INT(a -> Arrays.stream(a).mapToInt(Math::toIntExact).toArray(), v -> (int) v),
+		LONG(long[]::clone, v -> v),
+		DOUBLE(a -> Arrays.stream(a).asDoubleStream().toArray(), v -> (double) v),
+		COMPARABLE(a -> Arrays.stream(a).boxed().toArray(Long[]::new), v -> v),
+		INT_ARRAY(a -> new IntArrayDeque(Arrays.stream(a).mapToInt(Math::toIntExact).toArray()), v -> (int) v),
+		LONG_ARRAY(a -> new LongArrayDeque(a), v -> v);
 
-	private static int naiveLower(final long[] a, final int l, final int r, final long v) {
-		int less = l;
-		for (int i = l; i < r; i++) {
-			if (a[i] == v) return i;
-			if (a[i] < v) less = i + 1;
+		final Function<long[], Object> array;
+		final LongFunction<Object> value;
+
+		Kind(final Function<long[], Object> array, final LongFunction<Object> value) {
+			this.array = array;
+			this.value = value;
 		}
-		return ~less;
-	}
-
-	private static int naiveUpper(final long[] a, final int l, final int r, final long v) {
-		int less = l;
-		for (int i = r - 1; i >= l; i--) if (a[i] == v) return i;
-		for (int i = l; i < r; i++) if (a[i] < v) less = i + 1;
-		return ~less;
-	}
-
-	private static int naiveCount(final long[] a, final int l, final int r, final long v) {
-		int c = 0;
-		for (int i = l; i < r; i++) if (a[i] == v) c++;
-		return c;
 	}
 }

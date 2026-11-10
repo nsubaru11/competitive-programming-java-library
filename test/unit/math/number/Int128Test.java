@@ -96,7 +96,8 @@ final class Int128Test {
 				assertEquals(x.add(y), big(of(x).add(of(y))), at);
 				assertEquals(x.subtract(y), big(of(x).sub(of(y))), at);
 				assertEquals(x.multiply(y), big(of(x).mul(of(y))), at);
-				if (y.signum() != 0) assertEquals(x.multiply(x).divide(y), big(of(x.multiply(x)).div(of(y))), at + ", 0方向へ切り捨て");
+				if (y.signum() != 0)
+					assertEquals(x.multiply(x).divide(y), big(of(x.multiply(x)).div(of(y))), at + ", 0方向へ切り捨て");
 				assertEquals(Integer.signum(x.compareTo(y)), Integer.signum(of(x).compareTo(of(y))), at);
 			}
 		}

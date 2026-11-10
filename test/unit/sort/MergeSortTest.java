@@ -13,7 +13,7 @@ final class MergeSortTest extends SortContract {
 
 	Map<String, Consumer<int[]>> sorters() {
 		return Map.ofEntries(
-			Map.entry("mergeSort", (Consumer<int[]>) a -> assertSame(a, MergeSort.mergeSort(a, a.length)))
+				Map.entry("mergeSort", (Consumer<int[]>) a -> assertSame(a, MergeSort.mergeSort(a, a.length)))
 		);
 	}
 

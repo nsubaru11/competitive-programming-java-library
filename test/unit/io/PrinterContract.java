@@ -17,6 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public abstract class PrinterContract {
 
+	static Object call(final Object p, final String name, final Object... args) {
+		return Adapter.call(Object.class, p, name, args);
+	}
+
+	static List<String> tokens(final String s) {
+		return Arrays.stream(s.trim().split("\\s+")).toList();
+	}
+
 	/**
 	 * out へ書き込むプリンタを作る。
 	 */
@@ -33,8 +41,15 @@ public abstract class PrinterContract {
 		return out.toString(StandardCharsets.US_ASCII);
 	}
 
-	static Object call(final Object p, final String name, final Object... args) {
-		return Adapter.call(Object.class, p, name, args);
+	@RepeatedTest(20)
+	void numbersMatchToString(final RepetitionInfo info) {
+		final Random random = new Random(info.getCurrentRepetition());
+		final long[] values = random.longs(200).map(v -> random.nextBoolean() ? v : v % 1000).toArray();
+		final StringBuilder expected = new StringBuilder();
+		for (final long v : values) expected.append(v).append('\n');
+		assertEquals(expected.toString(), output(p -> {
+			for (final long v : values) call(p, "println", v);
+		}));
 	}
 
 	@Nested
@@ -189,20 +204,5 @@ public abstract class PrinterContract {
 			assertEquals("bye", out.toString(StandardCharsets.US_ASCII));
 			assertTrue(closed[0]);
 		}
-	}
-
-	@RepeatedTest(20)
-	void numbersMatchToString(final RepetitionInfo info) {
-		final Random random = new Random(info.getCurrentRepetition());
-		final long[] values = random.longs(200).map(v -> random.nextBoolean() ? v : v % 1000).toArray();
-		final StringBuilder expected = new StringBuilder();
-		for (final long v : values) expected.append(v).append('\n');
-		assertEquals(expected.toString(), output(p -> {
-			for (final long v : values) call(p, "println", v);
-		}));
-	}
-
-	static List<String> tokens(final String s) {
-		return Arrays.stream(s.trim().split("\\s+")).toList();
 	}
 }

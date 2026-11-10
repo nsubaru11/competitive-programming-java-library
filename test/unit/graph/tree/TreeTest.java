@@ -10,6 +10,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class TreeTest {
 
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(12);
+		final Naive naive = new Naive(random, n, 0, 9);
+		final Tree t = naive.tree();
+		int hops = 0;
+		long cost = 0;
+		for (int u = 0; u < n; u++) {
+			for (int v = 0; v < n; v++) {
+				hops = Math.max(hops, naive.path(u, v).size() - 1);
+				cost = Math.max(cost, naive.distance(u, v));
+			}
+		}
+		final String at = "seed=" + seed;
+		assertEquals(hops, t.diameter(), at);
+		assertEquals(cost, t.diameterCost(), at);
+	}
+
 	@Nested
 	class Aggregation {
 
@@ -29,25 +49,5 @@ final class TreeTest {
 			assertEquals(13L, star.diameterCost());
 			assertEquals(0, new Tree(1).diameter());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(12);
-		final Naive naive = new Naive(random, n, 0, 9);
-		final Tree t = naive.tree();
-		int hops = 0;
-		long cost = 0;
-		for (int u = 0; u < n; u++) {
-			for (int v = 0; v < n; v++) {
-				hops = Math.max(hops, naive.path(u, v).size() - 1);
-				cost = Math.max(cost, naive.distance(u, v));
-			}
-		}
-		final String at = "seed=" + seed;
-		assertEquals(hops, t.diameter(), at);
-		assertEquals(cost, t.diameterCost(), at);
 	}
 }

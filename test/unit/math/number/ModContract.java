@@ -12,6 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class ModContract {
 
+	abstract Target create(long value, long mod);
+
+	/**
+	 * ランダムな照合で使う素数の法。
+	 */
+	abstract long[] mods();
+
 	interface Target {
 		Object self();
 
@@ -29,13 +36,6 @@ abstract class ModContract {
 
 		Target pow(int exp);
 	}
-
-	abstract Target create(long value, long mod);
-
-	/**
-	 * ランダムな照合で使う素数の法。
-	 */
-	abstract long[] mods();
 
 	@Nested
 	class Access {

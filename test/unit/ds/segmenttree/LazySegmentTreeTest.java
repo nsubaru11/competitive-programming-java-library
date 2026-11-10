@@ -46,7 +46,7 @@ final class LazySegmentTreeTest extends LazySegmentTreeContract {
 	void rangeAddRangeSumWithLength() {
 		final long[][] init = {{1, 1}, {2, 1}, {3, 1}, {4, 1}};
 		final LazySegmentTree<long[]> t = new LazySegmentTree<>(init, (x, y) -> new long[]{x[0] + y[0], x[1] + y[1]}, new long[]{0, 0},
-			(f, x) -> new long[]{x[0] + f[0] * x[1], x[1]}, (f, g) -> new long[]{f[0] + g[0], 0});
+				(f, x) -> new long[]{x[0] + f[0] * x[1], x[1]}, (f, g) -> new long[]{f[0] + g[0], 0});
 		t.apply(1, 3, new long[]{10, 0});
 		assertEquals(26L, t.query(0, 3)[0]);
 		assertEquals(30L, t.queryAll()[0]);

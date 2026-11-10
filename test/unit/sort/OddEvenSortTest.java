@@ -9,7 +9,7 @@ final class OddEvenSortTest extends SortContract {
 
 	Map<String, Consumer<int[]>> sorters() {
 		return Map.ofEntries(
-			Map.entry("oddEvenSort", (Consumer<int[]>) OddEvenSort::oddEvenSort)
+				Map.entry("oddEvenSort", (Consumer<int[]>) OddEvenSort::oddEvenSort)
 		);
 	}
 }

@@ -14,6 +14,69 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class CircularArrayContract {
 
+	/**
+	 * 左へ d だけずらす。d が負なら右へずらす。
+	 */
+	private static void rotate(final long[] a, final int d) {
+		final int n = a.length, s = Math.floorMod(d, n);
+		final long[] b = new long[n];
+		for (int i = 0; i < n; i++) b[i] = a[(i + s) % n];
+		System.arraycopy(b, 0, a, 0, n);
+	}
+
+	abstract Target create(int n);
+
+	abstract Target create(int n, long v);
+
+	abstract Target create(long[] a);
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(10);
+		final long[] naive = new long[n];
+		for (int i = 0; i < n; i++) naive[i] = random.nextInt(1000);
+		final Target c = create(naive.clone());
+		final long[] rotation = {0};
+		new RandomOperations()
+				.add("rotateLeft", (r, at) -> {
+					final int d = r.nextInt(-25, 26);
+					c.rotateLeft(d);
+					rotation[0] += d;
+					rotate(naive, d);
+					assertEquals(rotation[0], c.rotation(), at);
+				})
+				.add("rotateRight", (r, at) -> {
+					final int d = r.nextInt(-25, 26);
+					c.rotateRight(d);
+					rotation[0] -= d;
+					rotate(naive, -d);
+					assertEquals(rotation[0], c.rotation(), at);
+				})
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long v = r.nextInt(1000);
+					assertEquals(naive[i], c.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("reverse", (r, at) -> {
+					final int l = r.nextInt(n + 1), rr = l + r.nextInt(n - l + 1);
+					c.reverse(l, rr);
+					for (int i = l, j = rr - 1; i < j; i++, j--) {
+						final long t = naive[i];
+						naive[i] = naive[j];
+						naive[j] = t;
+					}
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(naive[i], c.get(i), at);
+				})
+				.add("toArray", (r, at) -> assertArrayEquals(naive, c.toArray(), at))
+				.run(seed, random, 300);
+	}
+
 	interface Target {
 		Object self();
 
@@ -53,12 +116,6 @@ abstract class CircularArrayContract {
 
 		Iterator<? extends Number> iterator();
 	}
-
-	abstract Target create(int n);
-
-	abstract Target create(int n, long v);
-
-	abstract Target create(long[] a);
 
 	@Nested
 	class Construction {
@@ -203,62 +260,5 @@ abstract class CircularArrayContract {
 			assertThrows(NoSuchElementException.class, it::next);
 			assertEquals("3 1 2", c.toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(10);
-		final long[] naive = new long[n];
-		for (int i = 0; i < n; i++) naive[i] = random.nextInt(1000);
-		final Target c = create(naive.clone());
-		final long[] rotation = {0};
-		new RandomOperations()
-			.add("rotateLeft", (r, at) -> {
-				final int d = r.nextInt(-25, 26);
-				c.rotateLeft(d);
-				rotation[0] += d;
-				rotate(naive, d);
-				assertEquals(rotation[0], c.rotation(), at);
-			})
-			.add("rotateRight", (r, at) -> {
-				final int d = r.nextInt(-25, 26);
-				c.rotateRight(d);
-				rotation[0] -= d;
-				rotate(naive, -d);
-				assertEquals(rotation[0], c.rotation(), at);
-			})
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long v = r.nextInt(1000);
-				assertEquals(naive[i], c.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("reverse", (r, at) -> {
-				final int l = r.nextInt(n + 1), rr = l + r.nextInt(n - l + 1);
-				c.reverse(l, rr);
-				for (int i = l, j = rr - 1; i < j; i++, j--) {
-					final long t = naive[i];
-					naive[i] = naive[j];
-					naive[j] = t;
-				}
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(naive[i], c.get(i), at);
-			})
-			.add("toArray", (r, at) -> assertArrayEquals(naive, c.toArray(), at))
-			.run(seed, random, 300);
-	}
-
-	/**
-	 * 左へ d だけずらす。d が負なら右へずらす。
-	 */
-	private static void rotate(final long[] a, final int d) {
-		final int n = a.length, s = Math.floorMod(d, n);
-		final long[] b = new long[n];
-		for (int i = 0; i < n; i++) b[i] = a[(i + s) % n];
-		System.arraycopy(b, 0, a, 0, n);
 	}
 }

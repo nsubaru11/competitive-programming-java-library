@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class NumericSegmentTreeContract extends SegmentTreeContract {
 
+	abstract Numeric createNumeric(long[] a);
+
 	interface Numeric {
 		long add(int i, long d);
 
@@ -20,8 +22,6 @@ abstract class NumericSegmentTreeContract extends SegmentTreeContract {
 
 		long[] toArray();
 	}
-
-	abstract Numeric createNumeric(long[] a);
 
 	@Nested
 	class ArithmeticUpdates {

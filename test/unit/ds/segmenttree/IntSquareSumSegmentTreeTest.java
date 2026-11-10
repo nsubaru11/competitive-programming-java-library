@@ -15,6 +15,53 @@ final class IntSquareSumSegmentTreeTest {
 
 	private static final int[] SAMPLE = {1, 2, 3, 4};
 
+	private static long affine(final long x, final long m, final long d, final long mod) {
+		return Math.floorMod(Math.floorMod(m, mod) * x % mod + d, mod);
+	}
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(20);
+		final int mod = random.nextBoolean() ? 998244353 : random.nextBoolean() ? 2_000_000_000 : 1 + random.nextInt(20);
+		final long[] naive = new long[n];
+		final int[] init = new int[n];
+		for (int i = 0; i < n; i++) {
+			init[i] = random.nextInt(-mod + 1, mod);
+			naive[i] = Math.floorMod(init[i], mod);
+		}
+		final IntSquareSumSegmentTree t = new IntSquareSumSegmentTree(init, mod);
+		new RandomOperations()
+				.add("affineRange", 3, (r, at) -> {
+					final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1), m = r.nextInt(-mod + 1, mod), d = r.nextInt(-mod + 1, mod);
+					t.affine(l, rr, m, d);
+					for (int i = l; i < rr; i++) naive[i] = affine(naive[i], m, d, mod);
+				})
+				.add("affinePoint", (r, at) -> {
+					final int i = r.nextInt(n), m = r.nextInt(-mod + 1, mod), d = r.nextInt(-mod + 1, mod);
+					naive[i] = affine(naive[i], m, d, mod);
+					assertEquals(naive[i], t.affine(i, m, d), at);
+				})
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(n), v = r.nextInt(mod);
+					assertEquals(naive[i], t.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("query", 3, (r, at) -> {
+					final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
+					long s = 0, s2 = 0;
+					for (int i = l; i < rr; i++) {
+						s = (s + naive[i]) % mod;
+						s2 = (s2 + naive[i] * naive[i] % mod) % mod;
+					}
+					assertEquals(s, t.query(l, rr), at);
+					assertEquals(s2, t.query2(l, rr), at);
+				})
+				.add("toArray", (r, at) -> assertArrayEquals(naive, Arrays.stream(t.toArray()).asLongStream().toArray(), at))
+				.run(seed, random, 300);
+	}
+
 	@Nested
 	class Construction {
 
@@ -130,52 +177,5 @@ final class IntSquareSumSegmentTreeTest {
 			assertThrows(NoSuchElementException.class, it::nextInt);
 			assertEquals("", new IntSquareSumSegmentTree(0).toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(20);
-		final int mod = random.nextBoolean() ? 998244353 : random.nextBoolean() ? 2_000_000_000 : 1 + random.nextInt(20);
-		final long[] naive = new long[n];
-		final int[] init = new int[n];
-		for (int i = 0; i < n; i++) {
-			init[i] = random.nextInt(-mod + 1, mod);
-			naive[i] = Math.floorMod(init[i], mod);
-		}
-		final IntSquareSumSegmentTree t = new IntSquareSumSegmentTree(init, mod);
-		new RandomOperations()
-			.add("affineRange", 3, (r, at) -> {
-				final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1), m = r.nextInt(-mod + 1, mod), d = r.nextInt(-mod + 1, mod);
-				t.affine(l, rr, m, d);
-				for (int i = l; i < rr; i++) naive[i] = affine(naive[i], m, d, mod);
-			})
-			.add("affinePoint", (r, at) -> {
-				final int i = r.nextInt(n), m = r.nextInt(-mod + 1, mod), d = r.nextInt(-mod + 1, mod);
-				naive[i] = affine(naive[i], m, d, mod);
-				assertEquals(naive[i], t.affine(i, m, d), at);
-			})
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(n), v = r.nextInt(mod);
-				assertEquals(naive[i], t.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("query", 3, (r, at) -> {
-				final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
-				long s = 0, s2 = 0;
-				for (int i = l; i < rr; i++) {
-					s = (s + naive[i]) % mod;
-					s2 = (s2 + naive[i] * naive[i] % mod) % mod;
-				}
-				assertEquals(s, t.query(l, rr), at);
-				assertEquals(s2, t.query2(l, rr), at);
-			})
-			.add("toArray", (r, at) -> assertArrayEquals(naive, Arrays.stream(t.toArray()).asLongStream().toArray(), at))
-			.run(seed, random, 300);
-	}
-
-	private static long affine(final long x, final long m, final long d, final long mod) {
-		return Math.floorMod(Math.floorMod(m, mod) * x % mod + d, mod);
 	}
 }

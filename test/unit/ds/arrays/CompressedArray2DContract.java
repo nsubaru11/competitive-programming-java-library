@@ -16,6 +16,32 @@ abstract class CompressedArray2DContract {
 	// 昇順は 10 20 20 30 40 50
 	static final long[][] SAMPLE = {{30, 10, 20}, {50, 20, 40}};
 
+	abstract Target create(long[][] a);
+
+	abstract Target create(long[][] a, RankType type);
+
+	abstract Target create(long[][] a, RankType type, boolean oneBased);
+
+	@RepeatedTest(50)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int h = 1 + random.nextInt(5), w = 1 + random.nextInt(5);
+		final long[][] a = new long[h][w];
+		final long[] flat = new long[h * w];
+		for (int i = 0; i < h; i++) for (int j = 0; j < w; j++) flat[i * w + j] = a[i][j] = random.nextInt(-5, 5);
+		for (final RankType type : RankType.values()) {
+			final String at = "seed=" + seed + ", " + type;
+			final Target c = create(a, type, true);
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
+					assertEquals(CompressedArrayContract.rank(flat, a[i][j], type) + 1, c.get(i, j), at);
+				}
+			}
+			assertArrayEquals(a, c.restore(), at);
+		}
+	}
+
 	interface Target {
 		Target copy();
 
@@ -53,12 +79,6 @@ abstract class CompressedArray2DContract {
 
 		Spliterator<? extends Number> spliterator();
 	}
-
-	abstract Target create(long[][] a);
-
-	abstract Target create(long[][] a, RankType type);
-
-	abstract Target create(long[][] a, RankType type, boolean oneBased);
 
 	@Nested
 	class Construction {
@@ -145,26 +165,6 @@ abstract class CompressedArray2DContract {
 			assertThrows(NoSuchElementException.class, it::next);
 			assertEquals(6, c.spliterator().estimateSize());
 			assertEquals("2 0 1\n4 1 3", c.toString());
-		}
-	}
-
-	@RepeatedTest(50)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int h = 1 + random.nextInt(5), w = 1 + random.nextInt(5);
-		final long[][] a = new long[h][w];
-		final long[] flat = new long[h * w];
-		for (int i = 0; i < h; i++) for (int j = 0; j < w; j++) flat[i * w + j] = a[i][j] = random.nextInt(-5, 5);
-		for (final RankType type : RankType.values()) {
-			final String at = "seed=" + seed + ", " + type;
-			final Target c = create(a, type, true);
-			for (int i = 0; i < h; i++) {
-				for (int j = 0; j < w; j++) {
-					assertEquals(CompressedArrayContract.rank(flat, a[i][j], type) + 1, c.get(i, j), at);
-				}
-			}
-			assertArrayEquals(a, c.restore(), at);
 		}
 	}
 }

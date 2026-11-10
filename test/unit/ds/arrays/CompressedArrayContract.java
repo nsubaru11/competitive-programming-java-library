@@ -18,6 +18,52 @@ abstract class CompressedArrayContract {
 	// 昇順は 10 20 20 30
 	static final long[] SAMPLE = {30, 10, 20, 20};
 
+	/**
+	 * 順位の定義どおりに数える。DENSE は v 未満の値の種類数、COMPETITION は v 未満の個数、MODIFIED_COMPETITION は v 以下の個数 - 1。
+	 */
+	static int rank(final long[] a, final long v, final RankType type) {
+		return switch (type) {
+			case DENSE -> (int) Arrays.stream(a).filter(x -> x < v).distinct().count();
+			case COMPETITION -> (int) Arrays.stream(a).filter(x -> x < v).count();
+			case MODIFIED_COMPETITION -> (int) Arrays.stream(a).filter(x -> x <= v).count() - 1;
+		};
+	}
+
+	abstract Target create(long[] a);
+
+	abstract Target create(long[] a, RankType type);
+
+	abstract Target create(long[] a, RankType type, boolean oneBased);
+
+	/**
+	 * IntCollection・LongCollection を受け取るコンストラクタで作る。
+	 */
+	abstract Target createFromCollection(long[] a, RankType type, boolean oneBased);
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(30);
+		final long[] a = new long[n];
+		for (int i = 0; i < n; i++) a[i] = random.nextInt(-10, 10);
+		for (final RankType type : RankType.values()) {
+			for (final boolean oneBased : new boolean[]{false, true}) {
+				final String at = "seed=" + seed + ", " + type + ", oneBased=" + oneBased;
+				final Target c = create(a, type, oneBased);
+				final int[] expected = new int[n];
+				for (int i = 0; i < n; i++) expected[i] = rank(a, a[i], type) + (oneBased ? 1 : 0);
+				assertArrayEquals(expected, c.toArray(), at);
+				assertEquals(Arrays.stream(a).distinct().count(), c.uniqueSize(), at);
+				assertArrayEquals(a, c.restore(), at);
+				for (int i = 0; i < n; i++) {
+					assertEquals(expected[i], c.rankOfValue(a[i]), at);
+					assertEquals(a[i], c.valueOfRank(expected[i]), at);
+				}
+			}
+		}
+	}
+
 	interface Target {
 		Target copy();
 
@@ -50,17 +96,6 @@ abstract class CompressedArrayContract {
 		Spliterator<? extends Number> spliterator();
 	}
 
-	abstract Target create(long[] a);
-
-	abstract Target create(long[] a, RankType type);
-
-	abstract Target create(long[] a, RankType type, boolean oneBased);
-
-	/**
-	 * IntCollection・LongCollection を受け取るコンストラクタで作る。
-	 */
-	abstract Target createFromCollection(long[] a, RankType type, boolean oneBased);
-
 	@Nested
 	class Construction {
 
@@ -72,12 +107,12 @@ abstract class CompressedArrayContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"DENSE, false, '2 0 1 1'",
-			"DENSE, true, '3 1 2 2'",
-			"COMPETITION, false, '3 0 1 1'",
-			"COMPETITION, true, '4 1 2 2'",
-			"MODIFIED_COMPETITION, false, '3 0 2 2'",
-			"MODIFIED_COMPETITION, true, '4 1 3 3'",
+				"DENSE, false, '2 0 1 1'",
+				"DENSE, true, '3 1 2 2'",
+				"COMPETITION, false, '3 0 1 1'",
+				"COMPETITION, true, '4 1 2 2'",
+				"MODIFIED_COMPETITION, false, '3 0 2 2'",
+				"MODIFIED_COMPETITION, true, '4 1 3 3'",
 		})
 		void rankTypes(final RankType type, final boolean oneBased, final String expected) {
 			assertEquals(expected, create(SAMPLE, type, oneBased).toString());
@@ -190,40 +225,5 @@ abstract class CompressedArrayContract {
 			assertEquals(4, s.estimateSize());
 			assertTrue(s.hasCharacteristics(Spliterator.ORDERED));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(30);
-		final long[] a = new long[n];
-		for (int i = 0; i < n; i++) a[i] = random.nextInt(-10, 10);
-		for (final RankType type : RankType.values()) {
-			for (final boolean oneBased : new boolean[]{false, true}) {
-				final String at = "seed=" + seed + ", " + type + ", oneBased=" + oneBased;
-				final Target c = create(a, type, oneBased);
-				final int[] expected = new int[n];
-				for (int i = 0; i < n; i++) expected[i] = rank(a, a[i], type) + (oneBased ? 1 : 0);
-				assertArrayEquals(expected, c.toArray(), at);
-				assertEquals(Arrays.stream(a).distinct().count(), c.uniqueSize(), at);
-				assertArrayEquals(a, c.restore(), at);
-				for (int i = 0; i < n; i++) {
-					assertEquals(expected[i], c.rankOfValue(a[i]), at);
-					assertEquals(a[i], c.valueOfRank(expected[i]), at);
-				}
-			}
-		}
-	}
-
-	/**
-	 * 順位の定義どおりに数える。DENSE は v 未満の値の種類数、COMPETITION は v 未満の個数、MODIFIED_COMPETITION は v 以下の個数 - 1。
-	 */
-	static int rank(final long[] a, final long v, final RankType type) {
-		return switch (type) {
-			case DENSE -> (int) Arrays.stream(a).filter(x -> x < v).distinct().count();
-			case COMPETITION -> (int) Arrays.stream(a).filter(x -> x < v).count();
-			case MODIFIED_COMPETITION -> (int) Arrays.stream(a).filter(x -> x <= v).count() - 1;
-		};
 	}
 }

@@ -13,6 +13,85 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class PriorityQueueContract {
 
+	static final Comparator<Long> CUSTOM = Comparator.<Long>comparingLong(v -> Math.floorMod(v, 10)).thenComparing(Comparator.reverseOrder());
+
+	private static long second(final java.util.PriorityQueue<Long> naive, final Comparator<Long> order) {
+		if (naive.size() < 2) return -999;
+		return naive.stream().sorted(order).skip(1).findFirst().orElseThrow();
+	}
+
+	/**
+	 * extra を追加したあと、全要素が order 順に取り出されることを確かめる。all はキューが既に持つ要素である。
+	 */
+	private static void assertPollOrder(final Target q, final long[] extra, final Comparator<Long> order, final long[]... all) {
+		final List<Long> expected = new ArrayList<>();
+		for (final long[] a : all) for (final long v : a) expected.add(v);
+		for (final long v : extra) {
+			q.add(v);
+			expected.add(v);
+		}
+		expected.sort(order);
+		final List<Long> actual = new ArrayList<>();
+		while (!q.isEmpty()) actual.add(q.poll());
+		assertEquals(expected, actual);
+	}
+
+	abstract Target create();
+
+	abstract Target create(int initialCapacity);
+
+	abstract Target create(boolean descending);
+
+	abstract Target create(int initialCapacity, boolean descending);
+
+	/**
+	 * 比較関数を受け取るコンストラクタで作る。比較順は「10 で割った余りの昇順、同じなら値の降順」とする。
+	 */
+	abstract Target createWithComparator(int initialCapacity);
+
+	abstract Target create(long[] values, boolean descending);
+
+	abstract Target createWithComparator(long[] values);
+
+	/**
+	 * IntCollection・Collection などを受け取るコンストラクタで作る。
+	 */
+	abstract Target createFromCollection(long[] values, boolean descending);
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int kind = random.nextInt(3);
+		final Comparator<Long> order = kind == 0 ? Comparator.naturalOrder() : kind == 1 ? Comparator.reverseOrder() : CUSTOM;
+		final Target q = kind == 2 ? createWithComparator(1) : create(1, kind == 1);
+		final java.util.PriorityQueue<Long> naive = new java.util.PriorityQueue<>(order);
+		new RandomOperations()
+				.add("add", 4, (r, at) -> {
+					final long v = r.nextInt(-50, 50);
+					naive.add(v);
+					q.add(v);
+				})
+				.add("addAll", (r, at) -> {
+					final long[] a = r.longs(r.nextInt(5), -50, 50).toArray();
+					for (final long v : a) naive.add(v);
+					assertEquals(a.length > 0, q.addAll(a), at);
+				})
+				.add("poll", 3, (r, at) -> assertEquals(naive.isEmpty() ? -999L : naive.poll(), q.pollOrDefault(-999), at))
+				.add("replaceTop", (r, at) -> {
+					if (naive.isEmpty()) return;
+					final long v = r.nextInt(-50, 50);
+					assertEquals((long) naive.poll(), q.replaceTop(v), at);
+					naive.add(v);
+				})
+				.add("peek", 2, (r, at) -> {
+					assertEquals(naive.isEmpty() ? -999L : naive.peek(), q.peekOrDefault(-999), at);
+					assertEquals(second(naive, order), q.peekSecondOrDefault(-999), at);
+					assertEquals(naive.size(), q.size(), at);
+				})
+				.run(seed, random, 400);
+	}
+
 	interface Target {
 		Target copy();
 
@@ -44,30 +123,6 @@ abstract class PriorityQueueContract {
 
 		Iterator<?> iterator();
 	}
-
-	abstract Target create();
-
-	abstract Target create(int initialCapacity);
-
-	abstract Target create(boolean descending);
-
-	abstract Target create(int initialCapacity, boolean descending);
-
-	/**
-	 * 比較関数を受け取るコンストラクタで作る。比較順は「10 で割った余りの昇順、同じなら値の降順」とする。
-	 */
-	abstract Target createWithComparator(int initialCapacity);
-
-	abstract Target create(long[] values, boolean descending);
-
-	abstract Target createWithComparator(long[] values);
-
-	/**
-	 * IntCollection・Collection などを受け取るコンストラクタで作る。
-	 */
-	abstract Target createFromCollection(long[] values, boolean descending);
-
-	static final Comparator<Long> CUSTOM = Comparator.<Long>comparingLong(v -> Math.floorMod(v, 10)).thenComparing(Comparator.reverseOrder());
 
 	@Nested
 	class Construction {
@@ -207,60 +262,5 @@ abstract class PriorityQueueContract {
 			assertEquals(List.of(1L, 2L, 3L), Arrays.stream(q.toString().split(" ")).map(Long::parseLong).sorted().toList());
 			assertEquals("", create().toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int kind = random.nextInt(3);
-		final Comparator<Long> order = kind == 0 ? Comparator.naturalOrder() : kind == 1 ? Comparator.reverseOrder() : CUSTOM;
-		final Target q = kind == 2 ? createWithComparator(1) : create(1, kind == 1);
-		final java.util.PriorityQueue<Long> naive = new java.util.PriorityQueue<>(order);
-		new RandomOperations()
-			.add("add", 4, (r, at) -> {
-				final long v = r.nextInt(-50, 50);
-				naive.add(v);
-				q.add(v);
-			})
-			.add("addAll", (r, at) -> {
-				final long[] a = r.longs(r.nextInt(5), -50, 50).toArray();
-				for (final long v : a) naive.add(v);
-				assertEquals(a.length > 0, q.addAll(a), at);
-			})
-			.add("poll", 3, (r, at) -> assertEquals(naive.isEmpty() ? -999L : naive.poll(), q.pollOrDefault(-999), at))
-			.add("replaceTop", (r, at) -> {
-				if (naive.isEmpty()) return;
-				final long v = r.nextInt(-50, 50);
-				assertEquals((long) naive.poll(), q.replaceTop(v), at);
-				naive.add(v);
-			})
-			.add("peek", 2, (r, at) -> {
-				assertEquals(naive.isEmpty() ? -999L : naive.peek(), q.peekOrDefault(-999), at);
-				assertEquals(second(naive, order), q.peekSecondOrDefault(-999), at);
-				assertEquals(naive.size(), q.size(), at);
-			})
-			.run(seed, random, 400);
-	}
-
-	private static long second(final java.util.PriorityQueue<Long> naive, final Comparator<Long> order) {
-		if (naive.size() < 2) return -999;
-		return naive.stream().sorted(order).skip(1).findFirst().orElseThrow();
-	}
-
-	/**
-	 * extra を追加したあと、全要素が order 順に取り出されることを確かめる。all はキューが既に持つ要素である。
-	 */
-	private static void assertPollOrder(final Target q, final long[] extra, final Comparator<Long> order, final long[]... all) {
-		final List<Long> expected = new ArrayList<>();
-		for (final long[] a : all) for (final long v : a) expected.add(v);
-		for (final long v : extra) {
-			q.add(v);
-			expected.add(v);
-		}
-		expected.sort(order);
-		final List<Long> actual = new ArrayList<>();
-		while (!q.isEmpty()) actual.add(q.poll());
-		assertEquals(expected, actual);
 	}
 }

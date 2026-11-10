@@ -18,6 +18,75 @@ abstract class PointBITContract {
 
 	static final long[] SAMPLE = {2, 0, 3, 1};
 
+	abstract Target create(int n);
+
+	abstract Target create(long[] a);
+
+	/**
+	 * ランダムな照合で使う値の上限。その型で和や積があふれない大きさにする。
+	 */
+	abstract long bound();
+
+	// 要素を非負に保ち、境界探索の前提を満たす
+	@RepeatedTest(200)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final long b = bound();
+		final int n = 1 + random.nextInt(32);
+		final long[] naive = new long[n];
+		for (int i = 0; i < n; i++) naive[i] = random.nextLong(b + 1);
+		final Target bit = create(naive.clone());
+		new RandomOperations()
+				.add("set", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long v = r.nextLong(b + 1);
+					assertEquals(naive[i], bit.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("add", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long d = r.nextLong(b + 1) - naive[i];
+					naive[i] += d;
+					assertEquals(naive[i], bit.add(i, d), at);
+				})
+				.add("multiply", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long m = naive[i] > b ? 0 : r.nextInt(3);
+					naive[i] *= m;
+					assertEquals(naive[i], bit.multiply(i, m), at);
+				})
+				.add("affine", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long m = naive[i] > b ? 0 : r.nextInt(3), d = r.nextLong(b / 10 + 1);
+					naive[i] = naive[i] * m + d;
+					assertEquals(naive[i], bit.affine(i, m, d), at);
+				})
+				.add("apply", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long x = r.nextLong(b + 1);
+					naive[i] = Math.max(naive[i], x);
+					assertEquals(naive[i], bit.apply(i, x, Math::max), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(naive[i], bit.get(i), at);
+				})
+				.add("sum", 2, (r, at) -> {
+					final int i = r.nextInt(n), j = r.nextInt(n);
+					assertEquals(Naive.sum(naive, i, j), bit.sum(i, j), at);
+					assertEquals(Naive.sum(naive, 0, i), bit.sum(i), at);
+					assertEquals(Naive.sum(naive, 0, n - 1), bit.sumAll(), at);
+				})
+				.add("bound", 2, (r, at) -> {
+					final long w = r.nextLong(-1, Naive.sum(naive, 0, n - 1) + 2);
+					assertEquals(Naive.lowerBound(naive, w), bit.lowerBound(w), at);
+					assertEquals(Naive.upperBound(naive, w), bit.upperBound(w), at);
+				})
+				.add("toArray", (r, at) -> assertArrayEquals(naive, bit.toArray(), at))
+				.run(seed, random, 500);
+	}
+
 	/**
 	 * テスト対象の操作を long で受け渡すアダプター。
 	 */
@@ -62,15 +131,6 @@ abstract class PointBITContract {
 
 		Iterator<? extends Number> iterator();
 	}
-
-	abstract Target create(int n);
-
-	abstract Target create(long[] a);
-
-	/**
-	 * ランダムな照合で使う値の上限。その型で和や積があふれない大きさにする。
-	 */
-	abstract long bound();
 
 	@Nested
 	class Construction {
@@ -160,11 +220,11 @@ abstract class PointBITContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 0, 2",
-			"0, 3, 6",
-			"1, 2, 3",
-			"3, 3, 1",
-			"2, 1, 0",
+				"0, 0, 2",
+				"0, 3, 6",
+				"1, 2, 3",
+				"3, 3, 1",
+				"2, 1, 0",
 		})
 		void sumClosedRange(final int i, final int j, final long expected) {
 			assertEquals(expected, create(SAMPLE).sum(i, j));
@@ -172,10 +232,10 @@ abstract class PointBITContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"0, 2",
-			"1, 2",
-			"2, 5",
-			"3, 6",
+				"0, 2",
+				"1, 2",
+				"2, 5",
+				"3, 6",
 		})
 		void sumPrefix(final int i, final long expected) {
 			assertEquals(expected, create(SAMPLE).sum(i));
@@ -198,13 +258,13 @@ abstract class PointBITContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"-1, 0",
-			"0, 0",
-			"1, 0",
-			"2, 0",
-			"3, 2",
-			"6, 3",
-			"7, 4",
+				"-1, 0",
+				"0, 0",
+				"1, 0",
+				"2, 0",
+				"3, 2",
+				"6, 3",
+				"7, 4",
 		})
 		void lowerBound(final long w, final int expected) {
 			assertEquals(expected, create(SAMPLE).lowerBound(w));
@@ -212,12 +272,12 @@ abstract class PointBITContract {
 
 		@ParameterizedTest
 		@CsvSource({
-			"-1, 0",
-			"0, 0",
-			"1, 0",
-			"2, 2",
-			"5, 3",
-			"6, 4",
+				"-1, 0",
+				"0, 0",
+				"1, 0",
+				"2, 2",
+				"5, 3",
+				"6, 4",
 		})
 		void upperBound(final long w, final int expected) {
 			assertEquals(expected, create(SAMPLE).upperBound(w));
@@ -256,65 +316,5 @@ abstract class PointBITContract {
 			assertEquals("2 0 3 1", create(SAMPLE).toString());
 			assertEquals("", create(0).toString());
 		}
-	}
-
-	// 要素を非負に保ち、境界探索の前提を満たす
-	@RepeatedTest(200)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final long b = bound();
-		final int n = 1 + random.nextInt(32);
-		final long[] naive = new long[n];
-		for (int i = 0; i < n; i++) naive[i] = random.nextLong(b + 1);
-		final Target bit = create(naive.clone());
-		new RandomOperations()
-			.add("set", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long v = r.nextLong(b + 1);
-				assertEquals(naive[i], bit.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("add", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long d = r.nextLong(b + 1) - naive[i];
-				naive[i] += d;
-				assertEquals(naive[i], bit.add(i, d), at);
-			})
-			.add("multiply", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long m = naive[i] > b ? 0 : r.nextInt(3);
-				naive[i] *= m;
-				assertEquals(naive[i], bit.multiply(i, m), at);
-			})
-			.add("affine", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long m = naive[i] > b ? 0 : r.nextInt(3), d = r.nextLong(b / 10 + 1);
-				naive[i] = naive[i] * m + d;
-				assertEquals(naive[i], bit.affine(i, m, d), at);
-			})
-			.add("apply", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long x = r.nextLong(b + 1);
-				naive[i] = Math.max(naive[i], x);
-				assertEquals(naive[i], bit.apply(i, x, Math::max), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(naive[i], bit.get(i), at);
-			})
-			.add("sum", 2, (r, at) -> {
-				final int i = r.nextInt(n), j = r.nextInt(n);
-				assertEquals(Naive.sum(naive, i, j), bit.sum(i, j), at);
-				assertEquals(Naive.sum(naive, 0, i), bit.sum(i), at);
-				assertEquals(Naive.sum(naive, 0, n - 1), bit.sumAll(), at);
-			})
-			.add("bound", 2, (r, at) -> {
-				final long w = r.nextLong(-1, Naive.sum(naive, 0, n - 1) + 2);
-				assertEquals(Naive.lowerBound(naive, w), bit.lowerBound(w), at);
-				assertEquals(Naive.upperBound(naive, w), bit.upperBound(w), at);
-			})
-			.add("toArray", (r, at) -> assertArrayEquals(naive, bit.toArray(), at))
-			.run(seed, random, 500);
 	}
 }

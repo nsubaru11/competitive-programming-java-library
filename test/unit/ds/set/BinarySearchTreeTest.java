@@ -18,6 +18,34 @@ final class BinarySearchTreeTest {
 		return t;
 	}
 
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final BinarySearchTree<Integer> t = new BinarySearchTree<>();
+		final TreeSet<Integer> naive = new TreeSet<>();
+		new RandomOperations()
+				.add("add", 3, (r, at) -> {
+					final int v = r.nextInt(-20, 20);
+					assertEquals(naive.add(v), t.add(v), at);
+				})
+				.add("remove", 2, (r, at) -> {
+					final int v = r.nextInt(-20, 20);
+					assertEquals(naive.remove(v), t.remove(v), at);
+				})
+				.add("navigation", 2, (r, at) -> {
+					final int k = r.nextInt(-22, 22);
+					assertEquals(naive.higher(k), t.higher(k), at);
+					assertEquals(naive.floor(k), t.floor(k), at);
+					assertEquals(naive.contains(k), t.contains(k), at);
+				})
+				.add("iterate", (r, at) -> {
+					assertEquals(List.copyOf(naive), List.copyOf(t), at);
+					assertEquals(naive.size(), t.size(), at);
+				})
+				.run(seed, random, 300);
+	}
+
 	@Nested
 	class State {
 
@@ -117,33 +145,5 @@ final class BinarySearchTreeTest {
 			assertEquals(List.of(3, 2, 1), List.copyOf(t));
 			assertEquals(1, t.higher(2));
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final BinarySearchTree<Integer> t = new BinarySearchTree<>();
-		final TreeSet<Integer> naive = new TreeSet<>();
-		new RandomOperations()
-			.add("add", 3, (r, at) -> {
-				final int v = r.nextInt(-20, 20);
-				assertEquals(naive.add(v), t.add(v), at);
-			})
-			.add("remove", 2, (r, at) -> {
-				final int v = r.nextInt(-20, 20);
-				assertEquals(naive.remove(v), t.remove(v), at);
-			})
-			.add("navigation", 2, (r, at) -> {
-				final int k = r.nextInt(-22, 22);
-				assertEquals(naive.higher(k), t.higher(k), at);
-				assertEquals(naive.floor(k), t.floor(k), at);
-				assertEquals(naive.contains(k), t.contains(k), at);
-			})
-			.add("iterate", (r, at) -> {
-				assertEquals(List.copyOf(naive), List.copyOf(t), at);
-				assertEquals(naive.size(), t.size(), at);
-			})
-			.run(seed, random, 300);
 	}
 }

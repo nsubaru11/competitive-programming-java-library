@@ -14,6 +14,62 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class ArrayDequeContract {
 
+	private static long[] toArray(final Deque<Long> d) {
+		return d.stream().mapToLong(Long::longValue).toArray();
+	}
+
+	abstract Target create();
+
+	abstract Target create(int capacity);
+
+	abstract Target create(long[] a);
+
+	/**
+	 * 先頭側から追加して head を配列の途中へ動かした deque を作る。要素は a の順に並ぶ。
+	 */
+	Target wrapped(final long[] a) {
+		final Target dq = create(4);
+		for (int i = a.length - 1; i >= 0; i--) dq.addFirst(a[i]);
+		return dq;
+	}
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final ArrayDeque<Long> naive = new ArrayDeque<>();
+		final Target dq = create(1 + random.nextInt(4));
+		new RandomOperations()
+				.add("addFirst", 3, (r, at) -> {
+					final long v = r.nextInt(1000);
+					naive.addFirst(v);
+					dq.addFirst(v);
+				})
+				.add("addLast", 3, (r, at) -> {
+					final long v = r.nextInt(1000);
+					naive.addLast(v);
+					dq.addLast(v);
+				})
+				.add("removeFirst", 2, (r, at) -> assertEquals(naive.isEmpty() ? -1L : naive.removeFirst(), dq.removeFirstOrDefault(-1), at))
+				.add("removeLast", 2, (r, at) -> assertEquals(naive.isEmpty() ? -1L : naive.removeLast(), dq.removeLastOrDefault(-1), at))
+				.add("getSet", 2, (r, at) -> {
+					if (naive.isEmpty()) return;
+					final long[] a = toArray(naive);
+					final int i = r.nextInt(a.length);
+					assertEquals(a[i], dq.get(i), at);
+					final long v = r.nextInt(1000);
+					assertEquals(a[i], dq.set(i, v), at);
+					a[i] = v;
+					naive.clear();
+					for (final long x : a) naive.addLast(x);
+				})
+				.add("toArray", (r, at) -> {
+					assertEquals(naive.size(), dq.size(), at);
+					assertArrayEquals(toArray(naive), dq.toArray(), at);
+				})
+				.run(seed, random, 400);
+	}
+
 	interface Target {
 		Object self();
 
@@ -54,21 +110,6 @@ abstract class ArrayDequeContract {
 		long[] toArray();
 
 		Iterator<? extends Number> iterator();
-	}
-
-	abstract Target create();
-
-	abstract Target create(int capacity);
-
-	abstract Target create(long[] a);
-
-	/**
-	 * 先頭側から追加して head を配列の途中へ動かした deque を作る。要素は a の順に並ぶ。
-	 */
-	Target wrapped(final long[] a) {
-		final Target dq = create(4);
-		for (int i = a.length - 1; i >= 0; i--) dq.addFirst(a[i]);
-		return dq;
 	}
 
 	@Nested
@@ -220,46 +261,5 @@ abstract class ArrayDequeContract {
 			assertEquals("3 1 4", dq.toString());
 			assertEquals("", create().toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final ArrayDeque<Long> naive = new ArrayDeque<>();
-		final Target dq = create(1 + random.nextInt(4));
-		new RandomOperations()
-			.add("addFirst", 3, (r, at) -> {
-				final long v = r.nextInt(1000);
-				naive.addFirst(v);
-				dq.addFirst(v);
-			})
-			.add("addLast", 3, (r, at) -> {
-				final long v = r.nextInt(1000);
-				naive.addLast(v);
-				dq.addLast(v);
-			})
-			.add("removeFirst", 2, (r, at) -> assertEquals(naive.isEmpty() ? -1L : naive.removeFirst(), dq.removeFirstOrDefault(-1), at))
-			.add("removeLast", 2, (r, at) -> assertEquals(naive.isEmpty() ? -1L : naive.removeLast(), dq.removeLastOrDefault(-1), at))
-			.add("getSet", 2, (r, at) -> {
-				if (naive.isEmpty()) return;
-				final long[] a = toArray(naive);
-				final int i = r.nextInt(a.length);
-				assertEquals(a[i], dq.get(i), at);
-				final long v = r.nextInt(1000);
-				assertEquals(a[i], dq.set(i, v), at);
-				a[i] = v;
-				naive.clear();
-				for (final long x : a) naive.addLast(x);
-			})
-			.add("toArray", (r, at) -> {
-				assertEquals(naive.size(), dq.size(), at);
-				assertArrayEquals(toArray(naive), dq.toArray(), at);
-			})
-			.run(seed, random, 400);
-	}
-
-	private static long[] toArray(final Deque<Long> d) {
-		return d.stream().mapToLong(Long::longValue).toArray();
 	}
 }

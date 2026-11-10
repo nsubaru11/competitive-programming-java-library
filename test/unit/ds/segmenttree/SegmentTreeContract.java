@@ -15,14 +15,83 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 abstract class SegmentTreeContract {
 
+	static final long[] SAMPLE = {5, 2, 7, 1, 3};
+
+	abstract Target create(int n, Op op);
+
+	abstract Target create(long[] a, Op op);
+
+	/**
+	 * IntCollection・Collection などを受け取るコンストラクタで作る。
+	 */
+	abstract Target createFromCollection(long[] a, Op op);
+
+	/**
+	 * Op.MIN の単位元。
+	 */
+	abstract long inf();
+
+	@RepeatedTest(100)
+	void matchesNaive(final RepetitionInfo info) {
+		final long seed = info.getCurrentRepetition();
+		final Random random = new Random(seed);
+		final int n = 1 + random.nextInt(20);
+		final Op op = random.nextBoolean() ? Op.SUM : Op.MIN;
+		final long[] naive = random.longs(n, 0, 100).toArray();
+		final Target t = create(naive.clone(), op);
+		new RandomOperations()
+				.add("set", 2, (r, at) -> {
+					final int i = r.nextInt(n);
+					final long v = r.nextInt(100);
+					assertEquals(naive[i], t.set(i, v), at);
+					naive[i] = v;
+				})
+				.add("apply", (r, at) -> {
+					final int i = r.nextInt(n);
+					final long x = r.nextInt(100);
+					naive[i] = Math.min(naive[i], x);
+					assertEquals(naive[i], t.apply(i, x, Math::min), at);
+				})
+				.add("query", 3, (r, at) -> {
+					final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
+					assertEquals(fold(naive, l, rr, op), t.query(l, rr), at);
+					assertEquals(fold(naive, 0, n, op), t.queryAll(), at);
+				})
+				.add("maxRight", 2, (r, at) -> {
+					final int l = r.nextInt(n + 1);
+					final long w = r.nextInt(300);
+					final LongPredicate tester = op == Op.SUM ? s -> s <= w : s -> s >= w % 100;
+					int expected = l;
+					while (expected < n && tester.test(fold(naive, l, expected + 1, op))) expected++;
+					assertEquals(expected, t.maxRight(l, tester), at);
+				})
+				.add("minLeft", 2, (r, at) -> {
+					final int rr = r.nextInt(n + 1);
+					final long w = r.nextInt(300);
+					final LongPredicate tester = op == Op.SUM ? s -> s <= w : s -> s >= w % 100;
+					int expected = rr;
+					while (expected > 0 && tester.test(fold(naive, expected - 1, rr, op))) expected--;
+					assertEquals(expected, t.minLeft(rr, tester), at);
+				})
+				.add("get", (r, at) -> {
+					final int i = r.nextInt(n);
+					assertEquals(naive[i], t.get(i), at);
+				})
+				.run(seed, random, 300);
+	}
+
+	long fold(final long[] a, final int l, final int r, final Op op) {
+		long res = op == Op.SUM ? 0 : inf();
+		for (int i = l; i < r; i++) res = op == Op.SUM ? res + a[i] : Math.min(res, a[i]);
+		return res;
+	}
+
 	/**
 	 * テストで使う演算。SUM は和（単位元0）、MIN は最小値（単位元はその型の最大値）。
 	 */
 	enum Op {
 		SUM, MIN
 	}
-
-	static final long[] SAMPLE = {5, 2, 7, 1, 3};
 
 	interface Target {
 		Target copy();
@@ -51,20 +120,6 @@ abstract class SegmentTreeContract {
 
 		Iterator<?> iterator();
 	}
-
-	abstract Target create(int n, Op op);
-
-	abstract Target create(long[] a, Op op);
-
-	/**
-	 * IntCollection・Collection などを受け取るコンストラクタで作る。
-	 */
-	abstract Target createFromCollection(long[] a, Op op);
-
-	/**
-	 * Op.MIN の単位元。
-	 */
-	abstract long inf();
 
 	@Nested
 	class Construction {
@@ -196,60 +251,5 @@ abstract class SegmentTreeContract {
 			assertEquals("5 2 7 1 3", t.toString());
 			assertEquals("", create(0, Op.SUM).toString());
 		}
-	}
-
-	@RepeatedTest(100)
-	void matchesNaive(final RepetitionInfo info) {
-		final long seed = info.getCurrentRepetition();
-		final Random random = new Random(seed);
-		final int n = 1 + random.nextInt(20);
-		final Op op = random.nextBoolean() ? Op.SUM : Op.MIN;
-		final long[] naive = random.longs(n, 0, 100).toArray();
-		final Target t = create(naive.clone(), op);
-		new RandomOperations()
-			.add("set", 2, (r, at) -> {
-				final int i = r.nextInt(n);
-				final long v = r.nextInt(100);
-				assertEquals(naive[i], t.set(i, v), at);
-				naive[i] = v;
-			})
-			.add("apply", (r, at) -> {
-				final int i = r.nextInt(n);
-				final long x = r.nextInt(100);
-				naive[i] = Math.min(naive[i], x);
-				assertEquals(naive[i], t.apply(i, x, Math::min), at);
-			})
-			.add("query", 3, (r, at) -> {
-				final int l = r.nextInt(n + 1), rr = r.nextInt(n + 1);
-				assertEquals(fold(naive, l, rr, op), t.query(l, rr), at);
-				assertEquals(fold(naive, 0, n, op), t.queryAll(), at);
-			})
-			.add("maxRight", 2, (r, at) -> {
-				final int l = r.nextInt(n + 1);
-				final long w = r.nextInt(300);
-				final LongPredicate tester = op == Op.SUM ? s -> s <= w : s -> s >= w % 100;
-				int expected = l;
-				while (expected < n && tester.test(fold(naive, l, expected + 1, op))) expected++;
-				assertEquals(expected, t.maxRight(l, tester), at);
-			})
-			.add("minLeft", 2, (r, at) -> {
-				final int rr = r.nextInt(n + 1);
-				final long w = r.nextInt(300);
-				final LongPredicate tester = op == Op.SUM ? s -> s <= w : s -> s >= w % 100;
-				int expected = rr;
-				while (expected > 0 && tester.test(fold(naive, expected - 1, rr, op))) expected--;
-				assertEquals(expected, t.minLeft(rr, tester), at);
-			})
-			.add("get", (r, at) -> {
-				final int i = r.nextInt(n);
-				assertEquals(naive[i], t.get(i), at);
-			})
-			.run(seed, random, 300);
-	}
-
-	long fold(final long[] a, final int l, final int r, final Op op) {
-		long res = op == Op.SUM ? 0 : inf();
-		for (int i = l; i < r; i++) res = op == Op.SUM ? res + a[i] : Math.min(res, a[i]);
-		return res;
 	}
 }

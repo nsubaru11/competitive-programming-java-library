@@ -9,7 +9,7 @@ final class HeapSortTest extends SortContract {
 
 	Map<String, Consumer<int[]>> sorters() {
 		return Map.ofEntries(
-			Map.entry("heapSort", (Consumer<int[]>) HeapSort::heapSort)
+				Map.entry("heapSort", (Consumer<int[]>) HeapSort::heapSort)
 		);
 	}
 }
