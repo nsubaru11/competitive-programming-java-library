@@ -65,7 +65,7 @@
 
   `javac --release 24 -encoding UTF-8 -d out (rg --files src -g '*.java')`
 
-- Run executable examples by fully qualified name, for example `java -cp "out;out/test" example.graph.Example` on Windows, after compiling the test sources other than `test/unit/` against `out`. See `test/README.md` for the layout and commands, and `test/unit/README.md` for unit-test conventions.
+- Run executable examples by fully qualified name, for example `java -cp "out;out/test" example.graph.KruskalExample` on Windows, after compiling the test sources other than `test/unit/` against `out`. See `test/README.md` for the layout and commands, and `test/unit/README.md` for unit-test conventions.
 - The Java 24 benchmark entrypoints are `docs/io/java24/benchmark/run_tests_24.sh` and `.bat`; generated files stay under that directory's `work/` folder.
 
 ## Submission Integration

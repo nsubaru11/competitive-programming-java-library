@@ -39,7 +39,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/ds/trie/Example.java)
+- [TrieExample.java](../../../test/example/ds/trie/TrieExample.java)
 
 ## 制約・注意事項
 

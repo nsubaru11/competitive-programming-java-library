@@ -159,7 +159,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/io/compat17/Example.java)
+- [FastScannerExample.java](../../../test/example/io/compat17/FastScannerExample.java)
 
 ## 制約・注意事項
 

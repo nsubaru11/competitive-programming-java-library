@@ -51,7 +51,7 @@ cost-only版でも辺のソートとUnion-Findは必要であるが、採用辺I
 
 総コストだけが必要な場合はcost-only版の`minimumCost`・`maximumCost`を使用します。
 
-- [Example.java](../../../test/example/graph/Example.java)
+- [KruskalExample.java](../../../test/example/graph/KruskalExample.java)
 
 ## 制約・注意事項
 

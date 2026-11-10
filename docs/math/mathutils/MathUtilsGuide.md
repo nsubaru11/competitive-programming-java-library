@@ -79,7 +79,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/math/mathutils/Example.java) · [CombinatoricsExample.java](../../../test/example/math/mathutils/CombinatoricsExample.java) · [GcdExample.java](../../../test/example/math/mathutils/GcdExample.java)
+- [MathUtilsExample.java](../../../test/example/math/MathUtilsExample.java)
 
 ## 制約・注意事項
 

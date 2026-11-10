@@ -31,7 +31,7 @@ Java標準ライブラリ以外への依存はない。
 
 ## 利用例
 
-- [Example.java](../../../test/example/string/matching/zalgorithm/Example.java)
+- [ZAlgorithmExample.java](../../../test/example/string/matching/ZAlgorithmExample.java)
 
 ## 制約・注意事項
 

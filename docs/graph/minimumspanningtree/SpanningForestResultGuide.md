@@ -47,7 +47,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/graph/Example.java)
+- [KruskalExample.java](../../../test/example/graph/KruskalExample.java) · [PrimExample.java](../../../test/example/graph/PrimExample.java)
 
 ## 制約・注意事項
 

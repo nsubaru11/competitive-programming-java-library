@@ -114,7 +114,7 @@
 
 ## 利用例
 
-[Test.java](../../../test/example/ds/arrays/Test.java)
+[IntCircularArrayExample.java](../../../test/example/ds/arrays/IntCircularArrayExample.java) · [LongCircularArrayExample.java](../../../test/example/ds/arrays/LongCircularArrayExample.java)
 
 ## 制約・注意事項
 

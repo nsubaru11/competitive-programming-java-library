@@ -78,7 +78,7 @@ AVL木に基づいているため、要素の追加、削除、検索が対数�
 
 ## 利用例
 
-[Example.java](../../../test/example/ds/set/Example.java)
+[AVLSetExample.java](../../../test/example/ds/set/AVLSetExample.java)
 
 ## 注意事項
 

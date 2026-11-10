@@ -160,7 +160,7 @@
 
 ## 利用例
 
-[Example.java](../../../test/example/ds/arrays/intarray2d/Example.java) · [Test.java](../../../test/example/ds/arrays/Test.java)
+[IntArray2DExample.java](../../../test/example/ds/arrays/IntArray2DExample.java) · [LongArray2DExample.java](../../../test/example/ds/arrays/LongArray2DExample.java) · [CharArray2DExample.java](../../../test/example/ds/arrays/CharArray2DExample.java)
 
 ## 制約・注意事項
 

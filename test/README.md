@@ -43,7 +43,7 @@ Gradle を使わずに example などの main を実行する場合は、ライ�
 javac --release 24 -encoding UTF-8 -d out (rg --files src -g '*.java')
 javac --release 24 -encoding UTF-8 -cp out -d out/test (rg --files test -g '*.java' -g '!test/unit/**')
 
-java -cp "out;out/test" example.ds.arrays.intarray2d.Example
+java -cp "out;out/test" example.ds.arrays.IntArray2DExample
 ```
 
 Judge は入力を用意して対応する main を起動する。ベンチマークの手順は [Java 17 FastIO Benchmark](../docs/io/java17/benchmark/README.md) / [Java 24 FastIO Benchmark](../docs/io/java24/benchmark/README.md) を参照する。

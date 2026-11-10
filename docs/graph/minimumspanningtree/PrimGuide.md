@@ -49,7 +49,7 @@ cost-only版は各連結成分の開始頂点をコスト0でキューへ追加�
 
 総コストだけが必要な場合はcost-only版の`minimumCost`・`maximumCost`を使用します。
 
-- [Example.java](../../../test/example/graph/Example.java)
+- [PrimExample.java](../../../test/example/graph/PrimExample.java)
 
 ## 制約・注意事項
 

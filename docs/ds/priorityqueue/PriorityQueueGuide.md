@@ -171,7 +171,7 @@
 
 ## 利用例
 
-`IntPriorityQueue` の追加と取り出し: [Example.java](../../../test/example/ds/priorityqueue/Example.java)
+`IntPriorityQueue` の追加と取り出し: [IntPriorityQueueExample.java](../../../test/example/ds/priorityqueue/IntPriorityQueueExample.java)
 
 ## 制約・注意事項
 

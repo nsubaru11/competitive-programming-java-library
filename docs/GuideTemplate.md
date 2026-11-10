@@ -48,7 +48,7 @@
 
 ## 利用例
 
-[{ClassName}Example.java](../../../test/example/{path}/Example.java)
+[{ClassName}Example.java](../../../test/example/{path}/{ClassName}Example.java)
 
 ### `{ClassName}`
 

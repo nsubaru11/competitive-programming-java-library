@@ -100,7 +100,7 @@
 
 ## 利用例
 
-[Example.java](../../../test/example/ds/set/Example.java)
+[AVLMultisetExample.java](../../../test/example/ds/set/AVLMultisetExample.java)
 
 ## 注意事項
 

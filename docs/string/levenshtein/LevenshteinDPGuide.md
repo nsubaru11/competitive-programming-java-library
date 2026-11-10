@@ -53,7 +53,7 @@
 
 ## 利用例
 
-[Test.java](../../../test/example/string/approximate/levenshteindp/Test.java)
+[LevenshteinDPExample.java](../../../test/example/string/approximate/LevenshteinDPExample.java)
 
 ## 制約・注意事項
 

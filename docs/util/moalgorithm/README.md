@@ -6,9 +6,9 @@
 
 ## クラス一覧
 
-| クラス        | 用途                                                               | Guide | ソース                                         | Example / 検証                                                                                                      |
-|---------------|--------------------------------------------------------------------|-------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| `MoAlgorithm` | 静的な区間クエリをオフラインで処理する Mo's Algorithm を提供する。 | —     | [Java](../../../src/lib/util/MoAlgorithm.java) | [Example.java](../../../test/example/util/mo/Example.java) · [Judge1.java](../../../test/judge/util/mo/Judge1.java) |
+| クラス        | 用途                                                               | Guide | ソース                                         | Example / 検証                                                                                                                         |
+|---------------|--------------------------------------------------------------------|-------|------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `MoAlgorithm` | 静的な区間クエリをオフラインで処理する Mo's Algorithm を提供する。 | —     | [Java](../../../src/lib/util/MoAlgorithm.java) | [MoAlgorithmExample.java](../../../test/example/util/MoAlgorithmExample.java) · [Judge1.java](../../../test/judge/util/mo/Judge1.java) |
 
 ## 実装クラス
 
@@ -34,7 +34,7 @@
 
 ## 使用例
 
-[Example.java](../../../test/example/util/mo/Example.java)
+[MoAlgorithmExample.java](../../../test/example/util/MoAlgorithmExample.java)
 
 1-indexed 閉区間 `[L, R]` を読む場合は、`l = L - 1`, `r = R` としてから渡すこと。MoAlgorithm 自体は常に `[l, r)` を受け取る。
 
@@ -61,4 +61,4 @@
 
 ## Example / 検証
 
-- [Example.java](../../../test/example/util/mo/Example.java)
+- [MoAlgorithmExample.java](../../../test/example/util/MoAlgorithmExample.java)

@@ -71,7 +71,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/io/Example.java)
+- [FastPrinterExample.java](../../../test/example/io/FastPrinterExample.java)
 
 ## 制約・注意事項
 

@@ -107,7 +107,7 @@
 
 ## 利用例
 
-[Test.java](../../../test/example/ds/arrays/Test.java)
+[IntArrayDequeExample.java](../../../test/example/ds/arrays/IntArrayDequeExample.java) · [LongArrayDequeExample.java](../../../test/example/ds/arrays/LongArrayDequeExample.java)
 
 ## 制約・注意事項
 

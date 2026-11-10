@@ -46,7 +46,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/math/geometryutils/Example.java)
+- [GeometryUtilsExample.java](../../../test/example/math/GeometryUtilsExample.java)
 
 ## 制約・注意事項
 

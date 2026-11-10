@@ -46,7 +46,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/util/permutation/Example.java)
+- [PermutationExample.java](../../../test/example/util/PermutationExample.java)
 
 ## 制約・注意事項
 

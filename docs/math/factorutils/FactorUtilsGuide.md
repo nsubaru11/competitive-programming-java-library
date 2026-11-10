@@ -51,7 +51,7 @@
 
 ## 利用例
 
-- [Example.java](../../../test/example/math/factorutils/Example.java)
+- [FactorUtilsExample.java](../../../test/example/math/FactorUtilsExample.java)
 
 ## 制約・注意事項
 
