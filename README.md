@@ -24,6 +24,26 @@
 
 配列とFenwick Treeの更新API・添字規約は、[Primitive Array Utilities](./docs/ds/arrays/README.md) と [Binary Indexed Tree](./docs/ds/fenwick/README.md) を参照する。
 
+## 使い方
+
+ソースのまま使う。jarは配布していない。
+
+| 方法                       | 手順                                                                                                              |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------|
+| 解答へ貼り付ける           | `src/lib`の必要なクラスを解答のファイルへコピーする。依存するクラスは各Guideの「依存関係」で確かめる              |
+| importして提出時に展開する | [Local Runner](https://github.com/nsubaru11/competitive-programming-tools/blob/main/local-runner/README.md)を使う |
+
+Local Runnerを使うと、`import lib.ds.unionfind.UnionFind;`のように通常のimportで書いた解答を、提出用の1つのソースへ展開できる。このリポジトリを入手し、`setlib`に`src/lib`を指定する。
+
+```bash
+git clone https://github.com/nsubaru11/competitive-programming-java-library.git
+setlib competitive-programming-java-library/src/lib
+```
+
+- `src/patterns`は読んで写すための雛形である。importして使う対象ではないので、`setlib`には`src/lib`を指定する
+- 展開の規則と、展開できない書き方（`import static`、完全修飾の参照）は、[Javaのライブラリを使う](https://github.com/nsubaru11/competitive-programming-tools/blob/main/local-runner/README.md#ライブラリを使う)を参照する
+- IDEで補完を使うには、`src`をソースルートに追加する
+
 ## 実装環境
 
 利用例・検証コードは `test/example`、`test/unit`、`test/judge`、`test/benchmark` に分ける。配置と実行方法は [テスト・利用例の構成](./test/README.md) を参照する。

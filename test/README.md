@@ -12,7 +12,7 @@
 ## 命名・移動方針
 
 - package は `test/` からの相対ディレクトリに一致させる。例えば `test/judge/ds/arrays/intarraydeque/Judge2.java` の package は `judge.ds.arrays.intarraydeque` である。
-- オンラインジャッジ用クラスは `Judge*.java` とする。旧 Check 系の番号は維持する。テンプレートは親リポジトリの `templates/java/Judge.java`（IDE のファイルテンプレート）を使う。
+- オンラインジャッジ用クラスは `Judge*.java` とする。旧 Check 系の番号は維持する。作者は、解答用のリポジトリにある [Judge.java](https://github.com/nsubaru11/competitive-programming/blob/main/templates/java/Judge.java)（IDE のファイルテンプレート）を雛形に使っている。
 - 利用例は1クラスにつき1ファイルとし、`test/example/<lib のパッケージ>/{ClassName}Example.java` に置く。
 - benchmark の既存の Test は、ファイル名と処理本体を維持して移動した。ファイル名だけで用途を判定しない。
 - unit の配置と命名は [unit の README](./unit/README.md) に従う。
@@ -20,8 +20,10 @@
 
 ## IntelliJ IDEA
 
-親リポジトリの `.ide/idea` を開く。`.ide/idea` は `library/java` を Gradle プロジェクトとしてリンクしており（Gradle ツールウィンドウから設定する）、IDE が `build.gradle.kts` から `library`・`library.main`（`src/`）・`library.test`（`test/`）の3つのモジュールを作る。JUnit などの依存も Gradle の設定から入る。4つの用途別フォルダを追加のソースルートにはしない。
-`build.gradle.kts` や `gradle/libs.versions.toml` を変えたら、Gradle ツールウィンドウの Reload All Gradle Projects で読み込み直す。設定の詳細は親リポジトリの `docs/IDE_SETUP.md` を参照する。
+このリポジトリを Gradle プロジェクトとして読み込む。IDE が `build.gradle.kts` から `library`・`library.main`（`src/`）・`library.test`（`test/`）の3つのモジュールを作る。JUnit などの依存も Gradle の設定から入る。4つの用途別フォルダを追加のソースルートにはしない。
+`build.gradle.kts` や `gradle/libs.versions.toml` を変えたら、Gradle ツールウィンドウの Reload All Gradle Projects で読み込み直す。
+
+作者は、このリポジトリを submodule として持つ解答用のリポジトリ（[competitive-programming](https://github.com/nsubaru11/competitive-programming)）の IDE のプロジェクトから、Gradle ツールウィンドウでリンクして使っている。その構成の設定は、解答用のリポジトリの [IDE_SETUP.md](https://github.com/nsubaru11/competitive-programming/blob/main/docs/IDE_SETUP.md) にある。
 
 JUnit のテストはガターから1件ずつ実行できる。example・judge・benchmark の main も従来どおり個別に実行・デバッグできる。
 

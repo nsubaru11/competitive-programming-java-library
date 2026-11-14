@@ -1,6 +1,6 @@
 # ローカル検証
 
-`lib` の公開 API を JUnit Jupiter で検査する。実行方法は [テスト・利用例の構成](../README.md#コマンドライン) を参照する。雛形は親リポジトリの `templates/java/Test.java` である。[ds/fenwick](./ds/fenwick) が以下の構成の見本である。
+`lib` の公開 API を JUnit Jupiter で検査する。実行方法は [テスト・利用例の構成](../README.md#コマンドライン) を参照する。作者は、解答用のリポジトリにある [Test.java](https://github.com/nsubaru11/competitive-programming/blob/main/templates/java/Test.java) を雛形に使っている。[ds/fenwick](./ds/fenwick) が以下の構成の見本である。
 
 ## 配置と命名
 

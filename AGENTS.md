@@ -73,7 +73,7 @@
 - Contest solutions should use ordinary imports such as `import lib.ds.UnionFind;` while editing locally.
 - Raw import-based solutions cannot be submitted to AtCoder. The runner's `run`, `localtest`, `test`, `tomain`, and `submit` paths must all operate on the bundled source.
 - Keep a manual fallback available: every bundled FQCN maps back to its source under `src/`, and bundler output reports the inlined class list.
-- The parent `competitive-programming` repository mounts this repository at `library/java/`. Other layouts can set `ATCODER_LIB_SRC` to this repository's `src` directory.
+- The author's `competitive-programming` repository mounts this repository at `library/java/` as a submodule; that layout is specific to it. Any layout works: the runner reads the library folder set with `setlib <path to src/lib>`.
 
 ## Documentation Conventions
 
